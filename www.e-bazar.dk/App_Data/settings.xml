@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<settings>
+  <security>
+    <setting name="MD5">true</setting>
+    <setting name="MD5_COUNT">4</setting><!--length of group in categorys url[4 or 7]: blabla-0:0:0:0-0:0:0:0-->
+    <setting name="GROUPS">2</setting>
+  </security>
+  <basic>
+    <setting name="SITE_NAME">www.e-bazar.dk</setting>
+    <setting name="SITE_NAME_SHORT">e-bazar.dk</setting>
+    <setting name="SITE_NAME_FULL">https://www.e-bazar.dk</setting>
+    <setting name="SLOGAN">Søg en kjole, gå hjem på et par hæle</setting>
+    <setting name="COMMENT">en basar for køb og salg af brugte varer</setting>
+    <setting name="EMAIL_ADMIN">admin@e-bazar.dk</setting>
+    <setting name="EMAIL_MAIL">mail@e-bazar.dk</setting>
+    <setting name="EMAIL_NO_REPLY">no-reply@e-bazar.dk</setting>
+    <setting name="EMAIL_TEST">test@e-bazar.dk</setting>
+    <setting name="IP">80.161.50.61</setting>
+  </basic>
+</settings>

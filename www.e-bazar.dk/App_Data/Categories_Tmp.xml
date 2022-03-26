@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+  <newupper name="inventar" id="7" category="FURNITURE">
+    <newdesc>(div. møbler)</newdesc>
+    <newlower name="spiseborde" id="11" />
+    <newlower name="skriveborde" id="12" />
+    <newlower name="sofaborde" id="55" />
+    <newlower name="tv-borde" id="13" />
+    <newlower name="lænestole" id="14" />
+    <newlower name="spisestole" id="15" />
+    <newlower name="sofaer" id="16" />
+    <newlower name="hjørnesofaer" id="17" />
+    <newlower name="chaiselon" id="18" />
+	<newlower name="skabe" id="79" />
+    <newlower name="senge" id="19" />
+    <newlower name="hylder" id="20" />
+    <newlower name="lamper" id="21" />
+    <newlower name="øvrige" id="58" />
+  </newupper>
+  <newupper name="beklædning" id="3" category="CLOTHES">
+    <newdesc>(div.beklædningsgenstande)</newdesc>
+    <newlower name="herretøj" id="22" />
+    <newlower name="dametøj" id="23" />
+    <newlower name="børnetøj" id="24" />
+    <newlower name="øvrige" id="59" />
+  </newupper>
+  <newupper name="smykker" id="5" category="JEWELRY">
+    <newdesc>(div. smykker)</newdesc>
+    <newlower name="fingerringe" id="25" />
+    <newlower name="armbånd" id="26" />
+    <newlower name="halskæder" id="27" />
+    <newlower name="øreringe" id="28" />
+    <newlower name="broscher" id="29" />
+    <newlower name="slipsenåle" id="30" />
+    <newlower name="manchetknapper" id="31" />
+    <newlower name="ure" id="56" />
+    <newlower name="øvrige" id="60" />
+  </newupper>
+  <newupper name="kunst" id="4" category="ART">
+    <newdesc>(f.eks. malerier, stentøj, keramik)</newdesc>
+    <newlower name="malerier" id="32" />
+    <newlower name="skulpturer" id="33" />
+    <newlower name="stentøj" id="34" />
+    <newlower name="keramik" id="35" />
+    <newlower name="plakater" id="36" />
+    <newlower name="brugskunst" id="8" />
+    <newlower name="øvrige" id="61" />
+  </newupper>
+  <newupper name="brugsgenstande" id="2" category="EVERYDAYOBJECTS">
+    <newdesc>(div. praktiske ting til boligen)</newdesc>
+    <newlower name="glas" id="43" />
+    <newlower name="service" id="44" />
+    <newlower name="bestik" id="45" />
+    <newlower name="køkkengrej" id="46" />
+    <newlower name="stiger" id="47" />
+    <newlower name="skamler" id="48" />
+    <newlower name="øvrige" id="63" />
+  </newupper>
+  <newupper name="hobby" id="1" category="HOBBY">
+    <newdesc>(f.eks. samlerobjekter, samlinger)</newdesc>
+    <newlower name="plader og cder" id="66" />
+	<newlower name="bøger og blade" id="67" />
+	<newlower name="modeller" id="89" />
+	<newlower name="dukker" id="41" />
+    <newlower name="figurer" id="68" />	
+    <newlower name="legetøj" id="57" />
+    <newlower name="øvrige" id="62" />
+  </newupper>
+  <newupper name="musik instrumenter" id="9" category="INSTRUMENTS">
+    <newdesc>(div. instrumenter)</newdesc>
+    <newlower name="slagtøj" id="49" />
+    <newlower name="strenginstrumenter" id="50" />
+    <newlower name="klaverer" id="51" />
+    <newlower name="blæseinstrimenter" id="52" />
+    <newlower name="øvrige" id="64" />
+  </newupper>
+  <newupper name="elektronik" id="77" category="ELECTRONICS">
+    <newdesc>(f.eks. kameraer, computere, osv..)</newdesc>
+	<newlower name="computeren" id="83" />
+	<newlower name="telefonen" id="88" />
+    <newlower name="tv" id="81" />
+    <newlower name="lyd" id="82" />
+    <newlower name="foto" id="80" />
+    <newlower name="øvrige" id="84" />
+  </newupper>
+  <newupper name="sport og fritid" id="91" category="SPORT">
+    <newdesc>(f.eks. udstyr)</newdesc>
+    <newlower name="tøj" id="" />
+    <newlower name="udstyr" id="" />
+	<newlower name="camping" id="" />
+    <newlower name="øvrige" id="87" />
+  </newupper>
+  <newupper name="værkstedet" id="85" category="WORKPLACE">
+    <newdesc>(f.eks. værktøj)</newdesc>
+    <newlower name="værktøj" id="" />
+    <newlower name="maskiner" id="" />
+	<newlower name="materialer" id="" />
+    <newlower name="øvrige" id="" />
+  </newupper>
+  <newupper name="haven" id="86" category="GARDEN">
+    <newdesc>(div. maskiner og udstyr til haven)</newdesc>
+    <newlower name="maskiner" id="" />
+    <newlower name="udstyr" id="" />
+	<newlower name="materialer" id="" />
+    <newlower name="øvrige" id="" />
+  </newupper>
+</root>

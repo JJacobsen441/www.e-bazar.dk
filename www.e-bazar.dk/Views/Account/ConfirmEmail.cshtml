@@ -1,0 +1,15 @@
+﻿@{
+    ViewBag.Title = "Email bekræftet";
+}
+
+<h2>@ViewBag.Title.</h2>
+<div>
+    <p>
+        Din e-mail er nu bekræftet, Tak. @Html.RouteLink("Tryk her", "Login1", routeValues: new { returnUrl = @Url.RouteUrl("UserProfile") }, htmlAttributes: new { @class="myfade", id = "loginLink" })
+    </p>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.z-myalert').hide();
+    });
+</script>

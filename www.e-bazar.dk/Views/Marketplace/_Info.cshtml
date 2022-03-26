@@ -1,0 +1,25 @@
+﻿@using www.e_bazar.dk.SharedClasses
+@{
+    ViewBag.Title = "Info";
+}
+
+<h2>Information om siden e-bazar.dk</h2>
+
+<p style="width:75%">
+    Her bliver listet informationer om nyudvikling, fejlrettelser og generel information til brugerne.
+</p>
+<br />
+<h4>
+    Info
+</h4>
+<br />
+@{
+    List<pageinfo> list = Info.GetInfo(-1);
+    foreach (pageinfo i in list)
+    {
+    <div>
+        <span class="bold">@i.date - @i.type: </span>
+        <span>@i.text</span>
+    </div>
+    }
+}

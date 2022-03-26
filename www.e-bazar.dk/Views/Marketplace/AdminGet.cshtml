@@ -1,0 +1,82 @@
+﻿
+@{
+    ViewBag.Title = "AdminGet";
+}
+
+<h1>Admin</h1>
+<br />
+<br />
+<input type="button" id="maintenance" onclick="maintenance(true);" value="Online" />
+<br />
+<br />
+<label for="admin">Command:</label>
+<select id="cmd" name="cmd" form="admin">
+    <option value="categorys">Categories</option>
+    <option value="deleteuser">Delete User</option>
+    <option value="none" selected>None</option>
+</select>
+<br />
+<br />
+<br />
+<hr />
+<div>
+    <form id="admin" action="@Url.RouteUrl("AdminPost")" method="post" target="_top">
+        <label for="admin">Categories:</label><br />
+        <label for="admin">Clean Install:</label>
+        <select id="bool1" name="bool1">
+            <option value="true" selected>True</option>
+            <option value="false">False</option>
+        </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <label for="admin">Clean Up:</label>
+        <select id="bool2" name="bool2">
+            <option value="true">True</option>
+            <option value="false" selected>False</option>
+        </select><br />
+
+        <hr />
+
+        <label for="admin">Delete User:</label><br />
+        <label for="admin">Email:</label>
+        <input type="text" name="value1" id="value1" value="test@e-bazar.dk" /><br />
+
+        <hr />
+        <br /><br />
+        <input type="password" name="pwd" id="pwd" />
+        <input type="submit" value="kør" />
+    </form>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        maintenance(false);
+    });
+    function maintenance(run) {
+        var path = '@Url.RouteUrl("Maintenance")';
+        var data = {};
+        data.run = run;
+        maintenance_Ajax(path, data);
+    }
+    function maintenance_Ajax(path, data) {
+        $.ajax({
+            url: path,
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify(data),
+            success: function (result) {
+                if (result.success) {
+                    $("#maintenance").val("Offline");
+                }
+                else {
+                    $("#maintenance").val("Online");
+                }
+                $('.z-loading').fadeOut(400);
+            },
+            error: function (er) {
+                myalert("error: " + er);
+                $('.z-loading').fadeOut(400);
+            }
+        });
+    }
+</script>

@@ -1,0 +1,135 @@
+﻿@model www.e_bazar.dk.Models.DTOs.dto_conversations
+<div class="col-md-12">
+    <div class="col-md-4">
+        <h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Egne samtaler</h4>
+        @if (Model.own != null && Model.own.Count > 0)
+        {
+            Model.own = Model.own.OrderByDescending(conn => conn.modified).ToList();
+            <ul>
+
+                @foreach (poco_conversation conn in Model.own)
+                {
+                    string firstname = conn.GetPersonOther().firstname;
+                    string lastname = conn.GetPersonOther().lastname;
+                    long id = conn.product_id != null ? (int)conn.product_id : conn.collection_id != null ? (long)conn.collection_id : (long)conn.booth_id;
+                    string type = conn.product_id != null ? "PRODUCT" : conn.collection_id != null ? "COLLECTION" : "BOOTH";
+                    string item = conn.product_poco != null ? conn.product_poco.name : conn.collection_poco != null ? conn.collection_poco.name : conn.booth_poco.name;
+                    bool viewed = conn.Viewed(false);
+                <li>
+                    @if (!viewed)
+                    {<i class="fas fa-envelope realred"></i>}
+                    else
+                    { <i class="far fa-square realred">&nbsp;</i>}
+                    @item<br />
+                    @*@using (Html.BeginRouteForm("MessageB", FormMethod.Get))
+                    {
+                        @Html.Hidden("id", id);
+                        @Html.Hidden("owner", conn.GetPersonStart().person_id);
+                        @Html.Hidden("type", type);
+                        <input type="submit" value="[&nbsp;@firstname @lastname&nbsp;]" class="myfade fakeLink" />
+                    }*@
+                <a class="myfade" onclick="location.href = '@Url.RouteUrl("MessageB", new { id = id, owner = conn.GetPersonStart().person_id, type = type })'; return false;">[&nbsp;@firstname @lastname&nbsp;]</a> 
+                    <br /><br />
+                </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <ul>
+                <li><a href="#" class="lightgreen">[&nbsp;Ingen.&nbsp;]</a></li>
+            </ul>
+        }
+    </div>
+    @if (@Model.is_salesman)
+    {
+        <div class="col-md-4">
+            <h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Aktive samtaler(boder)</h4>
+            @if (Model.booths != null && Model.booths.Count > 0)
+            {
+                Model.booths = Model.booths.OrderByDescending(conn => conn.modified).ToList();
+            <ul>
+                @foreach (poco_conversation conn in Model.booths)
+                {
+                    string firstname = conn.GetPersonStart().firstname;
+                    string lastname = conn.GetPersonStart().lastname;
+                    long id = (long)conn.booth_id;
+                    string type = "BOOTH";
+                    string item = conn.booth_poco.name;
+                    bool viewed = conn.Viewed(true);
+                <li>
+                    @if (!viewed)
+                    {<i class="fas fa-envelope realred"></i>}
+                    else
+                    { <i class="far fa-square realred">&nbsp;</i>}
+                    @item<br />
+                    @*<a href="#" class="myfade" onclick="location.href='@Url.Action("Message", "Marketplace", new { id = id, owner_id = conn.GetPersonStart().person_id, type = type })'">[&nbsp;@firstname @lastname&nbsp;]</a>*@
+                    @*@using (Html.BeginRouteForm("MessageB", FormMethod.Get))
+        {
+            @Html.Hidden("id", id);
+            @Html.Hidden("owner", conn.GetPersonStart().person_id);
+            @Html.Hidden("type", type);
+            <input type="submit" value="[&nbsp;@firstname @lastname&nbsp;]" class="myfade fakeLink" />
+        }*@
+                    <a class="myfade" onclick="location.href = '@Url.RouteUrl("MessageB", new { id = id, owner = conn.GetPersonStart().person_id, type = type })'; return false;">[&nbsp;@firstname @lastname&nbsp;]</a>
+                    <a href="#" class="red " onclick="deleteConversation(this, @conn.conversation_id)">Fjern</a><br /><br />
+                </li>
+                }
+            </ul>
+            }
+            else
+            {
+            <ul>
+                <li>
+                    <a href="#" class="lightgreen">[&nbsp;Ingen.&nbsp;]</a>
+                </li>
+            </ul>
+            }
+        </div>
+        <div class="col-md-4">
+            <h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Aktive samtaler(produkter)</h4>
+            @if (Model.items != null && Model.items.Count > 0)
+            {
+                Model.items = Model.items.OrderByDescending(conn => conn.modified).ToList();
+                <ul>
+                    @foreach (poco_conversation conn in Model.items)
+                    {
+                        string firstname = conn.GetPersonStart().firstname;
+                        string lastname = conn.GetPersonStart().lastname;
+                        long id = conn.product_id != null ? (int)conn.product_id : (long)conn.collection_id;
+                        string type = conn.product_id != null ? "PRODUCT" : "COLLECTION";
+                        string item = conn.product_poco != null ? conn.product_poco.name : conn.collection_poco.name;
+                        bool viewed = conn.Viewed(true);
+                    <li>
+                        @if (!viewed)
+                        {
+                            <i class="fas fa-envelope realred"></i>
+                        }
+                        else
+                        { <i class="far fa-square realred">&nbsp;</i>}
+                        @item<br />
+                        @*<a href="#" class="myfade" onclick="location.href='@Url.Action("Message", "Marketplace", new { id = id, owner_id = conn.GetPersonStart().person_id, type = type })'">[&nbsp;@firstname @lastname&nbsp;]</a>*@
+                        @*@using (Html.BeginRouteForm("MessageB", FormMethod.Get))
+        {
+            @Html.Hidden("id", id);
+            @Html.Hidden("owner", conn.GetPersonStart().person_id);
+            @Html.Hidden("type", type);
+            <input type="submit" value="[&nbsp;@firstname @lastname&nbsp;]" class="myfade fakeLink" />
+        }*@
+                        <a class="myfade" onclick="location.href = '@Url.RouteUrl("MessageB", new { id = id, owner = conn.GetPersonStart().person_id, type = type })'; return false;">[&nbsp;@firstname @lastname&nbsp;]</a>
+                        <a href="#" class="red " onclick="deleteConversation(this, @conn.conversation_id)">Fjern</a><br /><br />
+                    </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <ul>
+                    <li>
+                        <a href="#" class="lightgreen">[&nbsp;Ingen.&nbsp;]</a>
+                    </li>
+                </ul>
+            }
+        </div>
+    }
+</div>
