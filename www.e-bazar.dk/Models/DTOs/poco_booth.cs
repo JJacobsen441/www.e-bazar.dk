@@ -922,17 +922,17 @@ namespace www.e_bazar.dk.Models.DTOs
                         if (b.foldera.IsNull()) ;
                         if (b.followers.IsNull()) ;
 
-                        b.product = Null(b.product.ToList());
-                        b.collection = Null(b.collection.ToList());
-                        b.category_main = Null(b.category_main.ToList());
-                        b.boothrating = Null(b.boothrating.ToList());
-                        b.conversation = Null(b.conversation.ToList());
-                        b.foldera = Null(b.foldera.ToList());
-                        b.followers = Null(b.followers.ToList());
+                        b.product = NullHelper.BNull(b.product.ToList());
+                        b.collection = NullHelper.BNull(b.collection.ToList());
+                        b.category_main = NullHelper.BNull(b.category_main.ToList());
+                        b.boothrating = NullHelper.BNull(b.boothrating.ToList());
+                        b.conversation = NullHelper.BNull(b.conversation.ToList());
+                        b.foldera = NullHelper.BNull(b.foldera.ToList());
+                        b.followers = NullHelper.BNull(b.followers.ToList());
 
                         //var __e = System.Data.Entity.Core.Objects.ObjectContext.GetObjectType(b.region.GetType());
-                        b.region = Null(b.region);
-                        b.person = Null(b.person);
+                        b.region = NullHelper.BNull(b.region);
+                        b.person = NullHelper.BNull(b.person);
                     }
                     return booths.ToList();
                 }
@@ -958,14 +958,14 @@ namespace www.e_bazar.dk.Models.DTOs
             if (helper.IsNull())
                 throw new Exception("A-OK, Check");
 
-            string[] opt = helper.opt;
-            string op1 = helper.opt[0], op2 = helper.opt[1], op3 = helper.opt[2], op4 = helper.opt[3], op5 = helper.opt[4], op6 = helper.opt[5];
-            string[] cats = helper.cats;
-            string cat = helper.cat;
-            int fra = helper.fra, til = helper.til, zip = helper.zip;
+            string[] opt, cats;
+            string op1, op2, op3, op4, op5, op6, cat;
+            int fra, til, zip;
+            //RelevantHelper helper = RelevantHelper._Create(false);
+            helper.GetVals(out opt, out op1, out op2, out op3, out op4, out op5, out op6, out cats, out cat, out fra, out til, out zip);
 
             bool ok;
-            string desc = StringHelper.OnlyAlphanumeric(b.description.ToLower().Trim(), false, false, "notag", Statics.Characters.Space(), out ok);
+            string desc = StringHelper.OnlyAlphanumeric(b.description.ToLower().Trim(), false, false, "notag", CharacterHelper.Space(), out ok);
             this.relevant = (
                             (opt[0] != "") ?
                             (!string.IsNullOrEmpty(opt[0]) && (b.name.ToLower().Trim() == opt[0].ToLower().Trim())) ||
@@ -987,11 +987,11 @@ namespace www.e_bazar.dk.Models.DTOs
             if (helper.IsNull())
                 throw new Exception("A-OK, Check");
 
-            string[] opt = helper.opt;
-            string op1 = helper.opt[0], op2 = helper.opt[1], op3 = helper.opt[2], op4 = helper.opt[3], op5 = helper.opt[4], op6 = helper.opt[5];
-            string[] cats = helper.cats;
-            string cat = helper.cat;
-            int fra = helper.fra, til = helper.til, zip = helper.zip;
+            string[] opt, cats;
+            string op1, op2, op3, op4, op5, op6, cat;
+            int fra, til, zip;
+            //RelevantHelper helper = RelevantHelper._Create(false);
+            helper.GetVals(out opt, out op1, out op2, out op3, out op4, out op5, out op6, out cats, out cat, out fra, out til, out zip);
 
             this.relevant = (cat == "alle" ?
                             true :
@@ -1090,195 +1090,7 @@ namespace www.e_bazar.dk.Models.DTOs
             return result;
         }
 
-        private List<conversation> Null(List<conversation> c)
-        {
-            foreach (conversation _c in c)
-            {
-
-                if (_c.booth != null)
-                    _c.booth = null;
-                if (_c.product != null)
-                    _c.product = null;
-                if (_c.collection != null)
-                    _c.collection = null;
-                if (_c.person != null)
-                    _c.person = null;
-                if (_c.comment != null)
-                    _c.comment = null;
-
-            }
-
-            return c;
-        }
-
-        private List<folder> Null(List<folder> f)
-        {
-            foreach (folder _f in f)
-            {
-
-                if (_f.booth != null)
-                    _f.booth = null;
-                if (_f.children != null)
-                    _f.children = null;
-                //if (_f.collection != null)
-                //    _f.collection = null;
-                //if (_f.collection1 != null)
-                //    _f.collection1 = null;
-                //if (_f.product != null)
-                //    _f.product = null;
-                //if (_f.product1 != null)
-                //    _f.product1 = null;
-
-            }
-            return f;
-        }
-
-
-
-        private List<boothrating> Null(List<boothrating> b)
-        {
-            foreach (boothrating _b in b)
-            {
-
-                if (_b.booth != null)
-                    _b.booth = null;
-                if (_b.person != null)
-                    _b.person = null;
-            }
-
-            return b;
-        }
-
-        private region Null(region r)
-        {
-            if (r.booth != null)
-                r.booth = null;
-            
-            return r;
-        }
-
-        private List<person> Null(List<person> p)
-        {
-            foreach (person _p in p)
-                Null(_p);
-
-            return p;
-        }
-
-        private person Null(person per)
-        {
-            if (per.booth != null)
-                per.booth = null;
-            if (per.boothrating != null)
-                per.boothrating = null;
-            if (per.comment != null)
-                per.comment = null;
-            if (per.conversation != null)
-                per.conversation = null;
-            if (per.favorites_collection != null)
-                per.favorites_collection = null;
-            if (per.favorites_product != null)
-                per.favorites_product = null;
-            if (per.following != null)
-                per.following = null;
-
-            return per;
-        }
-
-        private List<product> Null(List<product> _p)
-        {
-            foreach (product p in _p)
-            {
-                if (p.booth != null)
-                    p.booth = null;
-                if (p.tag != null)
-                    p.tag = null;
-                if (p.foldera != null)
-                    p.foldera = null;
-                if (p.folderb != null)
-                    p.folderb = null;
-                if (p.category_main != null)
-                    p.category_main = null;
-                if (p.category_second != null)
-                    p.category_second = null;
-                if (p.collection != null)
-                    p.collection = null;
-                if (p.conversation != null)
-                    p.conversation = null;
-                if (p.favorites != null)
-                    p.favorites = null;
-                //if (p.image != null)
-                //    p.image = null;
-                if (p.product_param != null)
-                    p.product_param = null;                
-            }
-
-            return _p;
-        }
-
-        private List<collection> Null(List<collection> _p)
-        {
-            foreach (collection p in _p)
-            {
-                if (p.booth != null)
-                    p.booth = null;
-                if (p.tag != null)
-                    p.tag = null;
-                if (p.foldera != null)
-                    p.foldera = null;
-                if (p.folderb != null)
-                    p.folderb = null;
-                if (p.category_main != null)
-                    p.category_main = null;
-                if (p.category_second != null)
-                    p.category_second = null;
-                if (p.product != null)
-                    p.product = null;
-                if (p.conversation != null)
-                    p.conversation = null;
-                if (p.favorites != null)
-                    p.favorites = null;
-                //if (p.image != null)
-                //    p.image = null;
-                if (p.collection_param != null)
-                    p.collection_param = null;
-
-            }
-
-            return _p;
-        }
-
-        protected List<category> Null(List<category> c)
-        {
-            List<category> list = new List<category>();
-            foreach (category cat in c)
-            {
-                list.Add(Null(cat));
-            }
-            return list;
-        }
-
-        protected category Null(category cat)
-        {
-            if (cat.booth != null)
-                cat.booth = null;
-            if (cat.children != null)
-                cat.children = null;
-            if (cat.collection_main != null)
-                cat.collection_main = null;
-            if (cat.collection_second != null)
-                cat.collection_second = null;
-            if (cat.param != null)
-                cat.param = null;
-            if (cat.parent != null)
-                cat.parent = null;
-            if (cat.product_main != null)
-                cat.product_main = null;
-            if (cat.product_second != null)
-                cat.product_second = null;
-
-            return cat;
-        }
+        
 
         public List<poco_booth> ToPocoList(ICollection<booth> booths, List<Hit> rel)
         {
@@ -1333,7 +1145,7 @@ namespace www.e_bazar.dk.Models.DTOs
                 //this.salesman_poco.ToPoco<poco_salesman>(Null(b.person));
                 //string name = b.person.firstname;
                 person per = b.person;
-                this.salesman_poco.ToPoco<poco_salesman>(Null(per));
+                this.salesman_poco.ToPoco<poco_salesman>(NullHelper.BNull(per));
             }
 
             setupaddress(b);
@@ -1344,10 +1156,10 @@ namespace www.e_bazar.dk.Models.DTOs
             poco_folder fld_poco = new poco_folder();
             poco_category cat_poco = new poco_category();
 
-            this.product_pocos = b.product.IsNotNull() ? pro_poco.ToPocoList(Null(b.product.ToList()), rel, b.name) : new List<poco_product>();
-            this.collection_pocos = b.collection.IsNotNull() ? col_poco.ToPocoList(Null(b.collection.ToList()), rel, b.name) : new List<poco_collection>();
-            this.foldera_pocos = b.foldera.IsNotNull() ? fld_poco.ToPocoList(Null(b.foldera.ToList())) : new List<poco_folder>();
-            this.category_main = b.category_main.IsNotNull() ? cat_poco.ToPocoList(Null(b.category_main.Where(x=>x.name != ".ingen").ToList()), false/*used to be true*/, false) : new List<poco_category>();
+            this.product_pocos = b.product.IsNotNull() ? pro_poco.ToPocoList(NullHelper.BNull(b.product.ToList()), rel, b.name) : new List<poco_product>();
+            this.collection_pocos = b.collection.IsNotNull() ? col_poco.ToPocoList(NullHelper.BNull(b.collection.ToList()), rel, b.name) : new List<poco_collection>();
+            this.foldera_pocos = b.foldera.IsNotNull() ? fld_poco.ToPocoList(NullHelper.BNull(b.foldera.ToList())) : new List<poco_folder>();
+            this.category_main = b.category_main.IsNotNull() ? cat_poco.ToPocoList(NullHelper.BNull(b.category_main.Where(x=>x.name != ".ingen").ToList()), false/*used to be true*/, false) : new List<poco_category>();
             this.hits_items = rel.IsNotNull() ? rel.Where(x => x.booth == this.name).Count() : this.hits_items;
         }
     }

@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using www.e_bazar.dk.Extensions;
 using www.e_bazar.dk.Models.DTOs;
-using static www.e_bazar.dk.SharedClasses.Statics;
+using www.e_bazar.dk.SharedClasses;
 
-namespace www.e_bazar.dk.SharedClasses
+namespace www.e_bazar.dk.Extensions
 {
-    public class Check
+    public class CheckHelper
     {
         public class Generel
         {
@@ -113,7 +112,7 @@ namespace www.e_bazar.dk.SharedClasses
         {
             str = str.Replace(".", ",");
             str = str.Split(',')[0];
-            if (!string.IsNullOrEmpty(str) && (str == NOP.INGEN_PRIS.ToString() || Check.Generel.IsAmount(ref str)))
+            if (!string.IsNullOrEmpty(str) && (str == NOP.INGEN_PRIS.ToString() || CheckHelper.Generel.IsAmount(ref str)))
             {
                 err["PRODUCT_PRICE"] = ERROR_MESSAGE.OK;
                 //if (str =="0")
@@ -140,7 +139,7 @@ namespace www.e_bazar.dk.SharedClasses
             {
                 bool ok;
                 err["PRODUCT_NAME"] = ERROR_MESSAGE.OK;
-                str = StringHelper.OnlyAlphanumeric(str, false, true, "notag", Characters.Limited(false), out ok);
+                str = StringHelper.OnlyAlphanumeric(str, false, true, "notag", CharacterHelper.Limited(false), out ok);
                 //str = StringHelper.RemoveStrings(str, new string[] { "select ", "delete ", "update ", "alter ", "drop ", " from ", "SELECT ", "DELETE ", "UPDATE ", "ALTER ", "DROP ", " FROM " });
                 return str;
             }
@@ -164,7 +163,7 @@ namespace www.e_bazar.dk.SharedClasses
             {
                 err["PRODUCT_DESCRIPTION"] = ERROR_MESSAGE.OK;
                 bool ok;
-                str = StringHelper.OnlyAlphanumeric(str, true, true, "notag", Characters.All(true), out ok);
+                str = StringHelper.OnlyAlphanumeric(str, true, true, "notag", CharacterHelper.All(true), out ok);
 
                 //str = StringHelper.RemoveStrings(str, new string[] { "select ", "delete ", "update ", "alter ", "drop ", " from ", "SELECT ", "DELETE ", "UPDATE ", "ALTER ", "DROP ", " FROM " });
                 return str;
@@ -201,7 +200,7 @@ namespace www.e_bazar.dk.SharedClasses
         {
             str = str.Replace(".", ",");
             str = str.Split(',')[0];
-            if (!string.IsNullOrEmpty(str) && (str == NOP.INGEN_PRIS.ToString() || Check.Generel.IsAmount(ref str)))
+            if (!string.IsNullOrEmpty(str) && (str == NOP.INGEN_PRIS.ToString() || CheckHelper.Generel.IsAmount(ref str)))
             {
                 err["COLLECTION_PRICE"] = ERROR_MESSAGE.OK;
                 //if (str =="0")
@@ -229,7 +228,7 @@ namespace www.e_bazar.dk.SharedClasses
             {
                 bool ok;
                 err["COLLECTION_NAME"] = ERROR_MESSAGE.OK;
-                str = StringHelper.OnlyAlphanumeric(str, false, true, "notag", Characters.Limited(false), out ok);
+                str = StringHelper.OnlyAlphanumeric(str, false, true, "notag", CharacterHelper.Limited(false), out ok);
                 //str = StringHelper.RemoveStrings(str, new string[] { "select ", "delete ", "update ", "alter ", "drop ", " from ", "SELECT ", "DELETE ", "UPDATE ", "ALTER ", "DROP ", " FROM " });
                 return str;
             }
@@ -253,7 +252,7 @@ namespace www.e_bazar.dk.SharedClasses
             {
                 err["COLLECTION_DESCRIPTION"] = ERROR_MESSAGE.OK;
                 bool ok;
-                str = StringHelper.OnlyAlphanumeric(str, true, true, "notag", Characters.All(true), out ok);
+                str = StringHelper.OnlyAlphanumeric(str, true, true, "notag", CharacterHelper.All(true), out ok);
 
                 //str = StringHelper.RemoveStrings(str, new string[] { "select ", "delete ", "update ", "alter ", "drop ", " from ", "SELECT ", "DELETE ", "UPDATE ", "ALTER ", "DROP ", " FROM " });
                 return str;
@@ -277,7 +276,7 @@ namespace www.e_bazar.dk.SharedClasses
             {
                 err["BOOTH_NAME"] = ERROR_MESSAGE.OK;
                 bool ok;
-                str = StringHelper.OnlyAlphanumeric(str, false, true, "notag", Characters.Limited(false), out ok);
+                str = StringHelper.OnlyAlphanumeric(str, false, true, "notag", CharacterHelper.Limited(false), out ok);
                 //str = StringHelper.RemoveStrings(str, new string[] { "select ", "delete ", "update ", "alter ", "drop ", " from ", "SELECT ", "DELETE ", "UPDATE ", "ALTER ", "DROP ", " FROM " });
                 return str;
             }
@@ -290,7 +289,7 @@ namespace www.e_bazar.dk.SharedClasses
             {
                 err["BOOTH_DESCRIPTION"] = ERROR_MESSAGE.OK;
                 bool ok;
-                str = StringHelper.OnlyAlphanumeric(str, true, true, "notag", Characters.All(true), out ok);
+                str = StringHelper.OnlyAlphanumeric(str, true, true, "notag", CharacterHelper.All(true), out ok);
 
                 //str = StringHelper.RemoveStrings(str, new string[] { "select ", "delete ", "update ", "alter ", "drop ", " from ", "SELECT ", "DELETE ", "UPDATE ", "ALTER ", "DROP ", " FROM " });
                 return str;
@@ -305,7 +304,7 @@ namespace www.e_bazar.dk.SharedClasses
             {
                 bool ok;
                 err["PROFILE_FIRSTNAME"] = ERROR_MESSAGE.OK;
-                str = StringHelper.OnlyAlphanumeric(str, false, true, "notag", Characters.Name(), out ok);
+                str = StringHelper.OnlyAlphanumeric(str, false, true, "notag", CharacterHelper.Name(), out ok);
                 //str = StringHelper.RemoveStrings(str, new string[] { "select ", "delete ", "update ", "alter ", "drop ", " from ", "SELECT ", "DELETE ", "UPDATE ", "ALTER ", "DROP ", " FROM " });
                 return str;
             }
@@ -319,7 +318,7 @@ namespace www.e_bazar.dk.SharedClasses
             {
                 bool ok;
                 err["PROFILE_LASTNAME"] = ERROR_MESSAGE.OK;
-                str = StringHelper.OnlyAlphanumeric(str, false, true, "notag", Characters.Name(), out ok);
+                str = StringHelper.OnlyAlphanumeric(str, false, true, "notag", CharacterHelper.Name(), out ok);
                 //str = StringHelper.RemoveStrings(str, new string[] { "select ", "delete ", "update ", "alter ", "drop ", " from ", "SELECT ", "DELETE ", "UPDATE ", "ALTER ", "DROP ", " FROM " });
                 return str;
             }
@@ -338,7 +337,7 @@ namespace www.e_bazar.dk.SharedClasses
         }
         public static string ProfileEmail(string str, ref Dictionary<string, ERROR_MESSAGE> err)
         {
-            if (!string.IsNullOrEmpty(str) && str != Texts.GetNopValue(NOP.UDFYLD.ToString()) && Check.Generel.IsValidEmail(str))
+            if (!string.IsNullOrEmpty(str) && str != Texts.GetNopValue(NOP.UDFYLD.ToString()) && CheckHelper.Generel.IsValidEmail(str))
             {
                 err["PROFILE_EMAIL"] = ERROR_MESSAGE.OK;
                 //str = StringHelper.RemoveStrings(str, new string[] { "select ", "delete ", "update ", "alter ", "drop ", " from ", "SELECT ", "DELETE ", "UPDATE ", "ALTER ", "DROP ", " FROM " });
@@ -352,7 +351,7 @@ namespace www.e_bazar.dk.SharedClasses
             if (!string.IsNullOrEmpty(str))
             {
                 bool ok;
-                str = StringHelper.OnlyAlphanumeric(str, true, true, "notag", Characters.All(true), out ok);
+                str = StringHelper.OnlyAlphanumeric(str, true, true, "notag", CharacterHelper.All(true), out ok);
 
                 //return StringHelper.RemoveStrings(str, new string[] { "select ", "delete ", "update ", "alter ", "drop ", " from ", "SELECT ", "DELETE ", "UPDATE ", "ALTER ", "DROP ", " FROM " });
                 return str;
@@ -378,12 +377,12 @@ namespace www.e_bazar.dk.SharedClasses
         public static bool FullAddress(poco_booth model, ref Dictionary<string, ERROR_MESSAGE> err)
         {
             bool ok;
-            model.street_address = StringHelper.OnlyAlphanumeric(model.street_address, false, true, "notag", Characters.Address(), out ok);
+            model.street_address = StringHelper.OnlyAlphanumeric(model.street_address, false, true, "notag", CharacterHelper.Address(), out ok);
             //model.street_address = StringHelper.RemoveStrings(model.street_address, new string[] { "select ", "delete ", "update ", "alter ", "drop ", " from ", "SELECT ", "DELETE ", "UPDATE ", "ALTER ", "DROP ", " FROM " });
 
             string town = model.region_poco.town;
             int zip = model.region_poco.zip;
-            model.country = StringHelper.OnlyAlphanumeric(model.country, false, true, "notag", Characters.Country(), out ok);
+            model.country = StringHelper.OnlyAlphanumeric(model.country, false, true, "notag", CharacterHelper.Country(), out ok);
 
             //if(!model.fulladdress)
 

@@ -31,18 +31,18 @@ namespace www.e_bazar.dk.Extensions
             fra = this.fra; til = this.til; zip = this.zip;
         }
 
-        public int zip { get; set; }
-        public int fra { get; set; }
-        public int til { get; set; }
-        public bool kun_med_fast { get; set; }
+        private int zip { get; set; }
+        private int fra { get; set; }
+        private int til { get; set; }
+        private bool kun_med_fast { get; set; }
 
-        public string search = "";
-        public string categorys = "";
+        private string search = "";
+        private string categorys = "";
 
-        public string[] cats;
-        public string cat = "";
+        private string[] cats;
+        private string cat = "";
 
-        public string[] opt = new string[6];
+        private string[] opt = new string[6];
         public enum OTYPE { BASIC, TYPE2, TYPE3 }
 
         private string OPTION(string[] arr, int index, int len, OTYPE type)

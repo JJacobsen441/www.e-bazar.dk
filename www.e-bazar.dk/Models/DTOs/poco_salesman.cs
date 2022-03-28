@@ -262,7 +262,7 @@ namespace www.e_bazar.dk.Models.DTOs
                     foreach (poco_product poco in this.favorites_product)
                     {
                         product pro = new product();
-                        poco.ToProduct(false, ref pro);
+                        poco.ToProduct(false, ref pro, _db);
                         per.favorites_product.Add(pro);
                     }
                 }
@@ -271,7 +271,7 @@ namespace www.e_bazar.dk.Models.DTOs
                     foreach (poco_collection poco in this.favorites_collection)
                     {
                         collection pro = new collection();
-                        poco.ToCollection(false, ref pro);
+                        poco.ToCollection(false, ref pro, _db);
                         per.favorites_collection.Add(pro);
                     }
                 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using www.e_bazar.dk.Extensions;
 using www.e_bazar.dk.Models;
 using www.e_bazar.dk.Models.DataAccess;
 
@@ -204,7 +205,7 @@ namespace www.e_bazar.dk.SharedClasses
         {
             string path = Statics.Root + "App_Stat\\Statistics.xml";
             
-            if (Check.Generel.IsAdmin(ip))
+            if (CheckHelper.Generel.IsAdmin(ip))
                 this.SetUserPerMonth(path, 0);
             else
                 this.SetUserPerMonth(path, 1);
@@ -213,7 +214,7 @@ namespace www.e_bazar.dk.SharedClasses
             //bool ok;
             int users_per_day;
             int max_users_per_month;
-            if (Check.Generel.IsAdmin(ip))
+            if (CheckHelper.Generel.IsAdmin(ip))
                 this.SetUsersPerDay(ip, path/*, 0*/, out first, out users_per_day, out max_users_per_month);
             else
                 this.SetUsersPerDay(ip, path/*, 1*/, out first, out users_per_day, out max_users_per_month);

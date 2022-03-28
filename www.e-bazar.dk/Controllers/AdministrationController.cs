@@ -15,7 +15,6 @@ using www.e_bazar.dk.Models.DataAccess;
 using www.e_bazar.dk.Models.DTOs;
 using www.e_bazar.dk.Models.Identity;
 using www.e_bazar.dk.SharedClasses;
-using static www.e_bazar.dk.SharedClasses.Statics;
 
 namespace www.e_bazar.dk.Controllers
 {
@@ -212,7 +211,7 @@ namespace www.e_bazar.dk.Controllers
                 Dictionary<string, ERROR_MESSAGE> err = Setup.SetupSalesmanProfileFromClient(ref model);
                 Dictionary<string, string> dirs = Setup.SetupProfileDirs(model.salesman_poco);
 
-                if (Check.ErrorSalesmanProfile.HasError(err))
+                if (CheckHelper.ErrorSalesmanProfile.HasError(err))
                 {
                     Dictionary<string, string> errors = new Dictionary<string, string>();
                     if (err.ToList()[0].Value != ERROR_MESSAGE.OK)
@@ -284,7 +283,7 @@ namespace www.e_bazar.dk.Controllers
                 Dictionary<string, ERROR_MESSAGE> err = Setup.SetupCustomerProfileFromClient(ref model);
                 Dictionary<string, string> dirs = Setup.SetupProfileDirs(model.customer_poco);
 
-                if (Check.ErrorCustomerProfile.HasError(err))
+                if (CheckHelper.ErrorCustomerProfile.HasError(err))
                 {
                     Dictionary<string, string> errors = new Dictionary<string, string>();
                     if(err.ToList()[0].Value != ERROR_MESSAGE.OK)
@@ -419,7 +418,6 @@ namespace www.e_bazar.dk.Controllers
             }
         }
         
-        //[Route("Administration/CreateBooth")]
         [HttpPost]
         public ActionResult CreateBooth(poco_booth model)
         {
@@ -444,7 +442,7 @@ namespace www.e_bazar.dk.Controllers
                 //    return _NotFound();
                 Dictionary<string, string> dirs = Setup.SetupBoothDirs(ref model, salesman_poco.sysname);
 
-                if (Check.ErrorBooth.HasError(err))
+                if (CheckHelper.ErrorBooth.HasError(err))
                 {
                     Dictionary<string, string> errors = new Dictionary<string, string>();
                     if(err.ToList()[0].Value != ERROR_MESSAGE.OK)
@@ -602,7 +600,7 @@ namespace www.e_bazar.dk.Controllers
                 
                 Dictionary<string, string> dirs = Setup.SetupBoothDirs(ref booth_poco, salesman_poco.sysname);
 
-                if (Check.ErrorBooth.HasError(err))
+                if (CheckHelper.ErrorBooth.HasError(err))
                 {
                     Dictionary<string, string> errors = new Dictionary<string, string>();
                     if (err.ToList()[0].Value != ERROR_MESSAGE.OK)
@@ -740,9 +738,7 @@ namespace www.e_bazar.dk.Controllers
                     Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
-        }
-
-        
+        }        
         
         public ActionResult CreateProduct(int booth_id)
         {
@@ -771,15 +767,15 @@ namespace www.e_bazar.dk.Controllers
                     poco_product product_poco = new poco_product(false);
                     poco_booth booth_poco = new poco_booth();
                     booth b = booth_poco.GetBooth(booth_id, "", "", true, true, true, true, false, false, true);
-                    product p = new product();
+                    
                     booth_poco.ToPoco(b, null);
 
-                    p.booth = b;
-                    p.category_main = _db.category.Where(x => x.is_parent && x.priority == 1).FirstOrDefault();
                     product_poco.booth_poco = booth_poco;
-                    product_poco.category_main_id = p.category_main.Id;
+                    product_poco.category_main_id = _db.category.Where(x => x.name != ".ingen" && x.is_parent && x.priority == 1).FirstOrDefault().Id;
 
-                    product_poco.SetupToClient(p);
+                    product_poco.ToPoco(new product(), new List<poco_booth.Hit>(), "");
+                    product_poco.SetupToClient<poco_product>();
+                    
                     ViewBag.ProductCategoryMain = product_poco.category_main_selectlist;
                     ViewBag.ProductCategorySecond = product_poco.category_second_selectlist;
                     ViewBag.StatusStock = product_poco.status_stock_selectlist;
@@ -801,7 +797,7 @@ namespace www.e_bazar.dk.Controllers
                     model.booth_poco = DAL.GetInstance(/*true*/).GetBoothPOCO(booth_id, "", "", true, false, false, false, false, false, true);
                     //if (model.booth_poco == null)
                     //    return _NotFound();
-                    model.SetupToClient(null);
+                    model.SetupToClient<poco_product>();
                     ViewBag.StatusCondition = model.status_condition_selectlist;
                     ViewBag.StatusStock = model.status_stock_selectlist;
                     ViewBag.ProductCategoryMain = model.category_main_selectlist;
@@ -836,7 +832,6 @@ namespace www.e_bazar.dk.Controllers
             }
         }
         
-        //[Route("Administration/CreateProduct")]
         [HttpPost]
         public ActionResult CreateProduct(poco_product model)
         {
@@ -864,7 +859,7 @@ namespace www.e_bazar.dk.Controllers
                 //    return _NotFound();
                 Dictionary<string, string> dirs = Setup.SetupProductDirs(model, salesman_poco.sysname);
 
-                if (Check.ErrorProduct.HasError(err))
+                if (CheckHelper.ErrorProduct.HasError(err))
                 {
                     Dictionary<string, string> errors = new Dictionary<string, string>();
                     if (err.ToList()[0].Value != ERROR_MESSAGE.OK)
@@ -1011,7 +1006,7 @@ namespace www.e_bazar.dk.Controllers
                 
                 Dictionary<string, string> dirs = Setup.SetupProductDirs(model, salesman_poco.sysname);
                                
-                if (Check.ErrorProduct.HasError(err))
+                if (CheckHelper.ErrorProduct.HasError(err))
                 {
                     Dictionary<string, string> errors = new Dictionary<string, string>();
                     if (err.ToList()[0].Value != ERROR_MESSAGE.OK)
@@ -1073,6 +1068,7 @@ namespace www.e_bazar.dk.Controllers
                 }
             }
         }
+
         public ActionResult DeleteProduct(long product_id)
         {
             try
@@ -1120,6 +1116,7 @@ namespace www.e_bazar.dk.Controllers
                 }
             }
         }
+
         public ActionResult CreateCollection(int booth_id)
         {
             try
@@ -1144,16 +1141,15 @@ namespace www.e_bazar.dk.Controllers
                     poco_collection collection_poco = new poco_collection();
                     poco_booth booth_poco = new poco_booth();
                     booth b = booth_poco.GetBooth(booth_id, "", "", true, true, true, true, false, false, true);
-                    collection c = new collection();
+
                     booth_poco.ToPoco(b, null);
-                    
-                    c.booth = b;
-                    c.category_main = _db.category.Where(x => x.is_parent && x.priority == 1).FirstOrDefault();
+
                     collection_poco.booth_poco = booth_poco;
-                    collection_poco.category_main_id = c.category_main.Id;
-                    
-                    collection_poco.product_pocos = new List<poco_product>();
-                    collection_poco.SetupToClient(c);
+                    collection_poco.category_main_id = _db.category.Where(x => x.name != ".ingen" && x.is_parent && x.priority == 1).FirstOrDefault().Id;
+
+                    collection_poco.ToPoco(new collection(), new List<poco_booth.Hit>(), "");
+                    collection_poco.SetupToClient<poco_product>();
+
                     ViewBag.StatusCondition = collection_poco.status_condition_selectlist;
                     ViewBag.StatusStock = collection_poco.status_stock_selectlist;
                     ViewBag.CollectionCategoryMain = collection_poco.category_main_selectlist;
@@ -1177,7 +1173,7 @@ namespace www.e_bazar.dk.Controllers
                     
                     model.product_pocos = product_poco.GetProductPOCOsByCollectionId((int)model.id, false, false);
                     
-                    model.SetupToClient(null);
+                    model.SetupToClient<poco_collection>();
                     ViewBag.StatusCondition = model.status_condition_selectlist;
                     ViewBag.StatusStock = model.status_stock_selectlist;
                     ViewBag.CollectionCategoryMain = model.category_main_selectlist;
@@ -1236,7 +1232,7 @@ namespace www.e_bazar.dk.Controllers
                 
                 Dictionary<string, string> dirs = Setup.SetupCollectionDirs(model, salesman_poco.sysname);
 
-                if (Check.ErrorCollection.HasError(err))
+                if (CheckHelper.ErrorCollection.HasError(err))
                 {
                     Dictionary<string, string> errors = new Dictionary<string, string>();
                     if(err.ToList()[0].Value != ERROR_MESSAGE.OK)
@@ -1357,7 +1353,7 @@ namespace www.e_bazar.dk.Controllers
                 }
             }
         }
-        //[Route("Administration/EditCollection")]
+        
         [HttpPost]
         public ActionResult EditCollection(poco_collection model)
         {
@@ -1384,7 +1380,7 @@ namespace www.e_bazar.dk.Controllers
                 
                 Dictionary<string, string> dirs = Setup.SetupCollectionDirs(model, salesman_poco.sysname);
                 
-                if (Check.ErrorCollection.HasError(err))
+                if (CheckHelper.ErrorCollection.HasError(err))
                 {
                     Dictionary<string, string> errors = new Dictionary<string, string>();
                     if (err.ToList()[0].Value != ERROR_MESSAGE.OK)
@@ -1499,6 +1495,7 @@ namespace www.e_bazar.dk.Controllers
                 }
             }
         }
+
         public ActionResult AddProductToCollection(int collection_id, long product_id)
         {
             //SetupCurrentUser();
@@ -1533,6 +1530,7 @@ namespace www.e_bazar.dk.Controllers
                 }
             }
         }
+
         public ActionResult RemoveProductFromCollection(int collection_id, long product_id)
         {
             //SetupCurrentUser();
@@ -1566,8 +1564,7 @@ namespace www.e_bazar.dk.Controllers
                     Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
-        }
-        
+        }        
 
         [HttpPost]
         public void UploadImage()
@@ -1681,8 +1678,7 @@ namespace www.e_bazar.dk.Controllers
             }
             throw new Exception("A-OK, handled.");
         }
-        
-        
+                
         [HttpPost]
         public JsonResult RemoveImage(string ImageName, string BoothId, string ItemId, string type)
         {
@@ -1782,8 +1778,7 @@ namespace www.e_bazar.dk.Controllers
                 }
             }
         }
-        
-        //[Route("Administration/_GetTags")]
+                
         [HttpPost]
         public JsonResult GetTags(string TagName)
         {
@@ -1796,7 +1791,7 @@ namespace www.e_bazar.dk.Controllers
 
                 //string contains = System.Web.HttpContext.Current.Request.Form["TagName"];
                 bool ok;
-                TagName = StringHelper.OnlyAlphanumeric(TagName.ToLower().Trim(), false, false, "notag", Characters.Space(), out ok);
+                TagName = StringHelper.OnlyAlphanumeric(TagName.ToLower().Trim(), false, false, "notag", CharacterHelper.Space(), out ok);
                 List<poco_tag> tag_pocos = DAL.GetInstance(/*true*/).Get5TagPOCOs(TagName);
 
                 if (tag_pocos != null)
@@ -1822,9 +1817,7 @@ namespace www.e_bazar.dk.Controllers
                 }
             }
         }
-
-
-        //[Route("Administration/_SaveTag")]
+                
         [HttpPost]
         public JsonResult SaveTag(string tag_name, string id, string type)
         {
@@ -1844,7 +1837,7 @@ namespace www.e_bazar.dk.Controllers
                 long tag_id = 0;
                 bool success = true;
                 bool ok;
-                tag_name = StringHelper.OnlyAlphanumeric(tag_name.ToLower().Trim(), false, false, "notag", Characters.Space(), out ok);
+                tag_name = StringHelper.OnlyAlphanumeric(tag_name.ToLower().Trim(), false, false, "notag", CharacterHelper.Space(), out ok);
 
                 if (tag_name.Split(' ').Length > 3)
                     msg = "Max 3 søgeord";
@@ -1883,8 +1876,7 @@ namespace www.e_bazar.dk.Controllers
                 }
             }
         }
-
-        //[Route("Administration/_RemoveTag")]
+                
         [HttpPost]
         public JsonResult RemoveTag(string TagId, string Id, string type)
         {
@@ -1929,11 +1921,6 @@ namespace www.e_bazar.dk.Controllers
                 }
             }
         }
-
-
-
-
-
 
         [HttpPost]
         public JsonResult _SaveParam(long id, int param_id, int val_id, string type)
@@ -2001,7 +1988,6 @@ namespace www.e_bazar.dk.Controllers
             }
         }
 
-
         [HttpPost]
         public JsonResult _RemoveParam(int param_id, long id, string type)
         {
@@ -2062,12 +2048,6 @@ namespace www.e_bazar.dk.Controllers
             }
         }
 
-
-
-
-
-
-        //[Route("Administration/AddCategory")]
         [HttpPost]
         public JsonResult AddCategory(int CatId, int BoothId)
         {
@@ -2111,7 +2091,6 @@ namespace www.e_bazar.dk.Controllers
             }
         }
 
-        //[Route("Administration/RemoveCategory")]
         [HttpPost]
         public JsonResult RemoveCategory(int CatId, int BoothId)
         {
@@ -2151,6 +2130,7 @@ namespace www.e_bazar.dk.Controllers
                 }
             }
         }
+
         [HttpPost]
         public JsonResult DeleteConversation(long conversation_id)
         {
@@ -2180,6 +2160,7 @@ namespace www.e_bazar.dk.Controllers
                 }
             }
         }
+
         public ActionResult RemoveFavorite(long product_id, int collection_id)
         {
             try
@@ -2213,6 +2194,7 @@ namespace www.e_bazar.dk.Controllers
                 }
             }
         }
+
         public ActionResult RemoveFollowing(int booth_id)
         {
             try
@@ -2264,7 +2246,7 @@ namespace www.e_bazar.dk.Controllers
                 Enum.TryParse(type, out typeEnum);
 
                 bool ok;
-                fld_name = StringHelper.OnlyAlphanumeric(fld_name, false, true, "notag", Characters.Limited(false), out ok);
+                fld_name = StringHelper.OnlyAlphanumeric(fld_name, false, true, "notag", CharacterHelper.Limited(false), out ok);
                 if (ok)
                     DAL.GetInstance(/*true*/).CreateFolder(fld_name, int.Parse(id), typeEnum);
                 else
@@ -2296,6 +2278,7 @@ namespace www.e_bazar.dk.Controllers
                 }
             }
         }
+
         public ActionResult MoveFolder(string fld_id, string direction, string id, string type, string booth_id)
         {
             //SetupCurrentUser();
@@ -2332,6 +2315,7 @@ namespace www.e_bazar.dk.Controllers
                 }
             }
         }
+
         public ActionResult DeleteFolder(string fld_id, string id, string type, string booth_id)
         {
             //SetupCurrentUser();
@@ -2368,6 +2352,7 @@ namespace www.e_bazar.dk.Controllers
                 }
             }
         }
+
         public ActionResult SetFolder(string fld_id, string id, string type, string is_product)
         {
             //SetupCurrentUser();
@@ -2408,7 +2393,6 @@ namespace www.e_bazar.dk.Controllers
             }
         }
 
-        //[Route("Administration/GetEmail")]
         [HttpPost]
         [AllowAnonymous]
         public JsonResult GetEmail(string booth_id)
@@ -2455,7 +2439,6 @@ namespace www.e_bazar.dk.Controllers
             }
         }
 
-        //[Route("Administration/GetAddressTown")]
         [HttpPost]
         public JsonResult GetAddressTown(string Zip)
         {
@@ -2560,7 +2543,6 @@ namespace www.e_bazar.dk.Controllers
             }
         }
 
-        //[Route("Administration/RemoveCategory")]
         [HttpPost]
         public JsonResult ChangeBoothId(int BoothId, long ProductId)
         {
@@ -2597,6 +2579,7 @@ namespace www.e_bazar.dk.Controllers
                 }
             }
         }
+
         [HttpPost]
         public ActionResult Feedback(dto_email mail)
         {
@@ -2654,6 +2637,7 @@ namespace www.e_bazar.dk.Controllers
                 }
             }
         }
+
         public ActionResult ErrorPage()
         {
             string err_msg = TempData["err_msg"] as string;
@@ -2672,6 +2656,7 @@ namespace www.e_bazar.dk.Controllers
             
             return View("ErrorPage");
         }
+
         [AllowAnonymous]
         public ActionResult NotFound()
         {
@@ -2684,6 +2669,7 @@ namespace www.e_bazar.dk.Controllers
 
             return HttpNotFound(HttpStatusCode.NotFound.ToString());
         }
+
         private void AjaxError(string user_msg)
         {
             string err_msg = TempData["err_msg"] as string;
@@ -2694,6 +2680,7 @@ namespace www.e_bazar.dk.Controllers
 
             System.Web.HttpContext.Current.Response.Write(user_msg);//bliver nok ikke fanget på klienten
         }
+
         private JsonResult AjaxErrorReturn(string user_msg)
         {
             string err_msg = TempData["err_msg"] as string;

@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using www.e_bazar.dk.SharedClasses;
 
-namespace www.e_bazar.dk.SharedClasses
+namespace www.e_bazar.dk.Extensions
 {
     public class ImageHelper
     {

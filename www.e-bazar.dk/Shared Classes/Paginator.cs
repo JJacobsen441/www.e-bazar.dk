@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Web;
-using www.e_bazar.dk.SharedClasses;
 
-namespace www.e_bazar.dk.Extensions
+
+namespace www.e_bazar.dk.SharedClasses
 {
     public class Paginator
     {

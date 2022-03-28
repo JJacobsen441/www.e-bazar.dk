@@ -59,7 +59,7 @@ namespace www.e_bazar.dk.Controllers
 
             if (Statics.IsDebug)
                 return;
-            if (Check.Generel.IsAdmin(stats.ip))
+            if (CheckHelper.Generel.IsAdmin(stats.ip))
                 return;// msg = "Der har været en besøgende! - Admin" + ip_str + " [" + stats.users_per_day + "]";
             else
                 msg = "Der har været en besøgende! - URL" + ip_str + " [" + stats.users_per_day + "]";

@@ -203,6 +203,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Extensions\CharacterHelper.cs" />
+    <Compile Include="Extensions\NullHelper.cs" />
     <Compile Include="Extensions\RelevantHelper.cs" />
     <Compile Include="Models\AspNetRoles.cs" />
     <Compile Include="Models\AspNetUserClaims.cs" />
@@ -227,7 +229,7 @@
     <Compile Include="Models\DTOs\poco_value.cs" />
     <Compile Include="Models\EbazarDB.cs" />
     <Compile Include="Extensions\Extensions.cs" />
-    <Compile Include="Extensions\Paginator.cs" />
+    <Compile Include="Shared Classes\Paginator.cs" />
     <Compile Include="Extensions\Tuple.cs" />
     <Compile Include="Models\folder.cs" />
     <Compile Include="Global.asax.cs">
@@ -252,7 +254,7 @@
     <Compile Include="Shared Classes\Access.cs" />
     <Compile Include="Shared Classes\Admin.cs" />
     <Compile Include="Shared Classes\Categorys.cs" />
-    <Compile Include="Shared Classes\ImageHelper.cs" />
+    <Compile Include="Extensions\ImageHelper.cs" />
     <Compile Include="Shared Classes\Info.cs" />
     <Compile Include="Models\DTOs\dto_marketplace.cs" />
     <Compile Include="Models\DTOs\dto_message.cs" />
@@ -278,7 +280,7 @@
     <Compile Include="Models\Identity\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shared Classes\Areas.cs" />
-    <Compile Include="Shared Classes\Check.cs" />
+    <Compile Include="Extensions\CheckHelper.cs" />
     <Compile Include="Shared Classes\CurrentUser.cs" />
     <Compile Include="Extensions\EnumHelper.cs" />
     <Compile Include="Shared Classes\Enums.cs" />

@@ -220,7 +220,7 @@ namespace www.e_bazar.dk.Models.DTOs
                     {
                         //poco.db = this.db;
                         product pro = new product();
-                        poco.ToProduct(false, ref pro);
+                        poco.ToProduct(false, ref pro, _db);
                         per.favorites_product.Add(pro);
                     }
                 }
@@ -230,7 +230,7 @@ namespace www.e_bazar.dk.Models.DTOs
                     {
                         //poco.db = this.db;
                         collection pro = new collection();
-                        poco.ToCollection(false, ref pro);
+                        poco.ToCollection(false, ref pro, _db);
                         per.favorites_collection.Add(pro);
                     }
                 }

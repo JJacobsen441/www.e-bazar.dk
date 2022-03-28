@@ -14,7 +14,6 @@ using www.e_bazar.dk.Models.DataAccess;
 using www.e_bazar.dk.Models.DTOs;
 using www.e_bazar.dk.Models.Identity;
 using www.e_bazar.dk.SharedClasses;
-using static www.e_bazar.dk.SharedClasses.Statics;
 
 namespace www.e_bazar.dk.Controllers
 {
@@ -32,7 +31,7 @@ namespace www.e_bazar.dk.Controllers
 
         private Access access;
         private ErrorHandler err = new ErrorHandler();
-        private www.e_bazar.dk.Extensions.Paginator pag;
+        private Paginator pag;
         protected ApplicationDbContext ApplicationDbContext { get; set; }
         
         /// <summary>
@@ -93,7 +92,7 @@ namespace www.e_bazar.dk.Controllers
             {
                 HttpRequestBase httpRequestBase = new HttpRequestWrapper(System.Web.HttpContext.Current.Request);
                 string ip = RequestHelpers.GetClientIpAddress(httpRequestBase);
-                if (Check.Generel.IsAdmin(ip))
+                if (CheckHelper.Generel.IsAdmin(ip))
                     return View("AdminGet");// StatusCodes.Status200OK;
             }
 
@@ -130,7 +129,7 @@ namespace www.e_bazar.dk.Controllers
 
                 if (user.CurrentIsAuthenticated && role_name == "Administrator")
                 {
-                    if (Check.Generel.IsAdmin(ip))
+                    if (CheckHelper.Generel.IsAdmin(ip))
                     {
                         if (pwd == "asDf1234")
                         {
@@ -188,7 +187,7 @@ namespace www.e_bazar.dk.Controllers
 
             if (Statics.IsDebug)
                 return;
-            if (Check.Generel.IsAdmin(stats.ip))
+            if (CheckHelper.Generel.IsAdmin(stats.ip))
                 return;// msg = "Der har været en besøgende! - Admin" + ip_str + " [" + stats.users_per_day + "]";
             else
                 msg = "Der har været en besøgende! - URL" + ip_str + " [" + stats.users_per_day + "]";
@@ -293,7 +292,7 @@ namespace www.e_bazar.dk.Controllers
                 Stats stats_res = stats.GetStatistics(ip);
                 
                 bool ok;
-                search = StringHelper.OnlyAlphanumeric(s, false, true, "notag", Characters.Limited(true), out ok);
+                search = StringHelper.OnlyAlphanumeric(s, false, true, "notag", CharacterHelper.Limited(true), out ok);
                 zip = int.TryParse(z, out zip) && zip >= 0 && zip <= 10000 ? zip : 0;
                 zip = Areas.selected.Contains("dk") ? zip : 0;
                 til = int.TryParse(t, out til) && til >= 0 && til <= 999999 ? til : 999999;
@@ -849,7 +848,7 @@ namespace www.e_bazar.dk.Controllers
 
                 dto_message dto;
                 bool ok;
-                mess.message = StringHelper.OnlyAlphanumeric(mess.message, true, true, "notag", Characters.All(true), out ok);
+                mess.message = StringHelper.OnlyAlphanumeric(mess.message, true, true, "notag", CharacterHelper.All(true), out ok);
 
                 string conn_owner_id = "";
                 if (!string.IsNullOrEmpty(mess.message))

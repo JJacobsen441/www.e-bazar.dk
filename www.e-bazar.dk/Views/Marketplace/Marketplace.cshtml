@@ -247,7 +247,7 @@
                 <div class="col-xs-8">
                     <div class="row z-padding-sides-15">
 
-                        @www.e_bazar.dk.Extensions.Paginator.CreatePaginator("col-xs-6 z-padding-sides-0 paginator-div", "paginator-span")
+                        @www.e_bazar.dk.SharedClasses.Paginator.CreatePaginator("col-xs-6 z-padding-sides-0 paginator-div", "paginator-span")
                         @{
                             int dfra = ((ThisSession.Paginator - 1) * 6) + 1;
                             int dtil = dfra + Model.booths_list.Count() - 1;
@@ -528,7 +528,7 @@
                     <div class="col-xs-8">
                         <div class="row z-padding-sides-15">
 
-                            @www.e_bazar.dk.Extensions.Paginator.CreatePaginator("col-xs-6 z-padding-sides-0 paginator-div", "paginator-span")
+                            @www.e_bazar.dk.SharedClasses.Paginator.CreatePaginator("col-xs-6 z-padding-sides-0 paginator-div", "paginator-span")
                             @{
                                 int tfra = ((ThisSession.Paginator - 1) * 6) + 1;
                                 int ttil = tfra + Model.booths_list.Count() - 1;
@@ -743,7 +743,7 @@
                 <div class="col-xs-12 z-padding-sides-0">
                     <div class="col-xs-12">
                         <br />
-                        @www.e_bazar.dk.Extensions.Paginator.CreatePaginator("col-xs-12 z-padding-sides-0 paginator-div", "paginator-span")
+                        @www.e_bazar.dk.SharedClasses.Paginator.CreatePaginator("col-xs-12 z-padding-sides-0 paginator-div", "paginator-span")
                         @{
                             int mfra = ((ThisSession.Paginator - 1) * 6) + 1;
                             int mtil = mfra + Model.booths_list.Count() - 1;

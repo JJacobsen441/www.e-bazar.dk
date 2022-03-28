@@ -7,7 +7,6 @@ using System.Text;
 using www.e_bazar.dk.Extensions;
 using www.e_bazar.dk.Models;
 using www.e_bazar.dk.Models.DTOs;
-//using static www.e_bazar.dk.SharedClasses.Statics;
 
 namespace www.e_bazar.dk.SharedClasses
 {
@@ -25,7 +24,7 @@ namespace www.e_bazar.dk.SharedClasses
             {
                 List<poco_category> cats = Categorys.CatsYesYes;
 
-                if (Statics.IsNullOrEmpty(cats) || string.IsNullOrEmpty(top))
+                if (cats.IsNullOrEmpty() || string.IsNullOrEmpty(top))
                     throw new Exception("A-OK, Check.");
                 foreach (poco_category c in cats)
                 {
@@ -35,65 +34,13 @@ namespace www.e_bazar.dk.SharedClasses
             }
             throw new Exception("A-OK, Check.");
         }
+
         public static string Format(string str, string replace, bool tolower)
         {
             string s = str.Replace("ø", "oe").Replace("æ", "ae").Replace("å", "aa").Replace(" ", replace);
             return tolower ? s.ToLower() : s;
         }
-        /*private static string Replace(string cat, char split) 
-        {
-            string res = "";
-            if (special_ae.Where(c => c.Name == cat).Count() > 0)
-                res += cat + split;
-            else if (special_æ.Where(c => c.Name == cat.Replace("ae", "æ")).Count() > 0)
-                res += cat.Replace("ae", "æ") + split;
-            else if (special_æ.Where(c => c.Name == cat.Replace("oe", "ø")).Count() > 0)
-                res += cat.Replace("oe", "ø") + split;
-            else if (special_æ.Where(c => c.Name == cat.Replace("aa", "å")).Count() > 0)
-                res += cat.Replace("aa", "å") + split;
-
-            else if (special_æ.Where(c => c.Name == cat.Replace("ae", "æ").Replace("oe", "ø")).Count() > 0)
-                res += cat.Replace("ae", "æ").Replace("oe", "ø") + split;
-            else if (special_æ.Where(c => c.Name == cat.Replace("ae", "æ").Replace("aa", "å")).Count() > 0)
-                res += cat.Replace("ae", "æ").Replace("aa", "å") + split;
-            else if (special_æ.Where(c => c.Name == cat.Replace("oe", "ø").Replace("ae", "æ")).Count() > 0)
-                res += cat.Replace("oe", "ø").Replace("ae", "æ") + split;
-            else if (special_æ.Where(c => c.Name == cat.Replace("oe", "ø").Replace("aa", "å")).Count() > 0)
-                res += cat.Replace("oe", "ø").Replace("aa", "å") + split;
-            else if (special_æ.Where(c => c.Name == cat.Replace("aa", "å").Replace("ae", "æ")).Count() > 0)
-                res += cat.Replace("aa", "å").Replace("ae", "æ") + split;
-            else if (special_æ.Where(c => c.Name == cat.Replace("aa", "å").Replace("oe", "ø")).Count() > 0)
-                res += cat.Replace("aa", "å").Replace("oe", "ø") + split;
-
-            else
-                res += cat + split;
-            return res;
-        }
-        public static string FromOEToOrig(string categorys, char split)
-        {
-            using (centrdkContext db = new centrdkContext())
-            {
-
-
-                List<Category> db_cats = db.Category.ToList();
-                //special_ae = db.Category.Where(c => c.Name.Contains("ae")).ToList();
-                //special_æ = db.Category.Where(c => c.Name.Contains("æ") || c.Name.Contains("ø") || c.Name.Contains("å")).ToList();
-                List<string> request_cats = categorys/*.Replace("_", " ")/.Split(split).Where(c => c != "").ToList();
-                string res = "";
-                if (request_cats.Count() > 0 && categorys != "alle")
-                {
-                    foreach (string cat in request_cats)
-                    {
-                        res += Replace(cat, split);
-                    }
-                    if (res.Substring(res.Count() - 1) == "" + split)
-                        res = res.Substring(0, res.Count() - 1);
-                }
-                else
-                    res = categorys;
-                return res;
-            }
-        }*/
+        
         public static string OETOrig(string areas, char split)
         {
             List<Area> special_ae = www.e_bazar.dk.SharedClasses.Areas.GetAreas().Where(c => c.area.Contains("ae")).ToList();
@@ -116,6 +63,7 @@ namespace www.e_bazar.dk.SharedClasses
                 res = areas;
             return res.Replace(" ", "").ToLower();
         }
+
         public static string ListToString(List<string> list, char split)
         {
             string s = "";
@@ -126,6 +74,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             return s;
         }
+
         public static List<string> StringReplaceList(List<string> list, char split)
         {
             List<string> res = new List<string>();
@@ -133,17 +82,7 @@ namespace www.e_bazar.dk.SharedClasses
                 res.Add(OETOrig(s, split).Replace(" ", "").Replace("" + split, "").ToLower());
             return res;
         }
-        //public string HexToCats(string hex, EbazarDB db)
-        //{
-        //    string up = hex.Substring(0, hex.IndexOf('-') - 1);
-        //    string hex_rest = hex.Substring(hex.IndexOf('-'));
-        //    string cats = up + "-";
-        //    for(int i = 0; i < 4; i++)
-        //    {
-        //        if(hex_rest.ElementAt(i) == "1")
-        //            cats += db.category
-        //    }
-        //}
+        
         public static string GenerateHashSHA(string name)
         {
             SHA256 al = new SHA256Managed();
@@ -160,42 +99,19 @@ namespace www.e_bazar.dk.SharedClasses
                 res[i] = digest[i];
             return BitConverter.ToString(res, 0);
         }
+
         public static string GenerateHashMD5_B(string hash)
         {
             HashAlgorithm al = MD5.Create();
             byte[] res = al.ComputeHash(Encoding.UTF8.GetBytes(hash));
             return BitConverter.ToString(res, 0);
         }
+
         private static string Encode(string text)
         {
             return GenerateHashMD5_A(text, 2).Replace("-", "");
         }
-        /*public static string Decrypt(string hash, EbazarDB db)
-        {
-            foreach (category cat in db.category.ToList())
-            {
-                string cat_name = cat.name.Replace("ø", "oe").Replace("æ", "ae").Replace("å", "aa").Replace(" ", "_");
-                if (GenerateHashMD5(cat_name, 4).Replace("-", "") == hash)
-                    return cat_name;
-            }
-            return "none";
-        }
-        public static string DecryptCats(string c)
-        {
-            EbazarDB db = new EbazarDB();
-            string res = "";
-            string[] cats_arr = c.Split('-');
-            cats_arr = cats_arr.Where(s => s != "").ToArray();
-            res = cats_arr[0] != "alle" ? cats_arr[0] + "-" : cats_arr[0];
-            if (res != "alle")
-            {
-                for (int i = 1; i < cats_arr.Count(); i++)
-                {
-                    res += Decrypt(cats_arr[i], db) + "-";
-                }
-            }
-            return res;
-        }*/
+        
         private static List<poco_category> Dec_FromBitsToList(poco_category top, string bits, int index)
         {
             List<poco_category> children = Categorys.CatsYesYes.Where(c => c.parent != null && c.parent.name == top.name).OrderBy(c => c.priority).ToList();
@@ -216,6 +132,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             return res_list;
         }
+
         private static List<poco_category> Dec_FromHexToList(string top, char hex, int index/*, out int count*/)
         {
             List<poco_category> all = Categorys.CatsYesYes;
@@ -240,23 +157,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             return res_list;
         }
-        //public static List<Category> FromHexList(string top, char hex, int index, centrdkContext db)
-        //{
-        //    List<Category> children = db.Category.Where(c => c.Parent != null && c.Parent.Name == top).OrderBy(c => c.Priority).ToList();
-        //    List<Category> res_list = new List<Category>();
-        //    if ((int)hex != 0)
-        //    {
-        //        for (int i = 0; i < 4; i += 1)
-        //        {
-        //            if (((byte)((byte)hex << i) & (byte)0x08) == (byte)0x08)
-        //            {
-        //                if ((index * 4 + i) < (children.Count()))
-        //                    res_list.Add(children.ElementAt(index * 4 + i));
-        //            }
-        //        }
-        //    }
-        //    return res_list;
-        //}
+        
         private static byte conv(string s)
         {
             byte res = 0x00;
@@ -277,6 +178,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             return res;
         }
+
         private static string Dec_FromBitArrayToChar(string hash)
         {
             //string c_arr = "";
@@ -295,6 +197,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             return "none";
         }
+
         private static string Dec_FromHashToChar(string hash)
         {
             byte b = 0x00;
@@ -309,31 +212,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             return "none";
         }
-        //private static byte FromHashToByte(string hash)
-        //{
-        //    byte b = 0x00;
-        //    for (int i = 0; i < 16; i++)
-        //    {
-        //        if (Security.Encode("" + (char)b) == hash)
-        //            return b;
-        //        b = (byte)(b + 0x01);
-        //    }
-        //    return 0x00;
-        //}
-        //private static string ToBitArray(string top, int group_curr, string[] tmp_isset, centrdkContext db)
-        //{
-        //    Category cat = db.Category.Include("InverseParent").Where(c => c.Name == top).FirstOrDefault();
-        //    List<Category> children = cat.InverseParent.OrderBy(c => c.Priority).ToList();
-        //    string res = "";
-        //    for (int i = group_curr * 4; i < group_curr * 4 + 4; i++)
-        //    {
-        //        if (i < children.Count() && tmp_isset.Contains(children.ElementAt(i).Name.Replace("ø", "oe").Replace("æ", "ae").Replace("å", "aa").Replace(" ", "_")))
-        //            res += res == "" ? "1" : ":1";
-        //        else
-        //            res += res == "" ? "0" : ":0";
-        //    }
-        //    return res;
-        //}
+        
         private static char Enc_ToHexFromString(string top, int group_curr, string route, EbazarDB db)
         {
             string[] isset = Security.Format(route, "_", true).Split('-').Where(s => s != "").OrderBy(r => r.Substring(0, 1)).ToArray();
@@ -355,10 +234,6 @@ namespace www.e_bazar.dk.SharedClasses
             throw new Exception("A-OK, handled");
         }
 
-
-
-
-
         private static string Dec_FromArrayToString(List<poco_category> list)
         {
             string res = "";
@@ -366,33 +241,7 @@ namespace www.e_bazar.dk.SharedClasses
                 res += cat.name + "-";
             return res;
         }
-        /*public static string XDecodeCats(string c, bool to_ae)
-        {
-            using (centrdkContext db = new centrdkContext())
-            {
-
-                string res = "";
-                string[] cats_arr = c.Split('-');
-                cats_arr = cats_arr.Where(s => s != "").ToArray();
-                res = cats_arr[0] != "alle" ? GetTop(cats_arr[0]).Name + "-" : cats_arr[0];
-
-                if (res != "alle")
-                {
-                    for (int i = 1; i < cats_arr.Count(); i++)
-                    {
-                        string bits = cats_arr[i];
-                        if (bits == "none")
-                            res += bits;
-                        else
-                        {
-                            res += FromArrayToString(FromBits(GetTop(cats_arr[0]), bits, i - 1, db)/*, to_ae/);
-                        }
-                    }
-                }
-                //return FromOEToOrig(res, '-');//.Replace("_", " ");
-                return res;//.Replace("_", " ");
-            }
-        }*/
+        
         private static bool IsSecond(string[] cats) 
         {
             for (int i = 1; i < cats.Length; i++)
@@ -442,44 +291,7 @@ namespace www.e_bazar.dk.SharedClasses
                 return res.Replace("_", " ");
             }
         }
-        /*public static string XEncodeCats(string name1, string route)
-        {
-            using (centrdkContext db = new centrdkContext())
-            {
-
-                string[] tmp_isset = route.Split('-').Where(s => s != "").OrderBy(r => r.Substring(0, 1)).ToArray();
-
-                string res = "";
-                for (int i = 0; i < groups; i++)
-                {
-                    res += Security.ToBitArray(name1, i, tmp_isset, db) + (i < (groups - 1) ? "-" : "");//ToHex
-                }
-
-                return Security.Encode(name1) + "-" + res;
-            }
-        }
-        public static string XEncodeCats(string route)
-        {
-            using (centrdkContext db = new centrdkContext())
-            {
-
-                if (route == "alle")
-                    return route;
-                string[] tmp = route.Split('-').Where(s => s != "").ToArray();
-                string name1 = tmp[0];
-                string[] tmp_isset = new string[tmp.Count() - 1];// route.Split('-').Where(s => s != "").ToArray();
-                for (int i = 1; i < tmp.Count(); i++)
-                    tmp_isset[i - 1] = tmp[i];
-
-                string res = "";
-                for (int i = 0; i < groups; i++)
-                {
-                    res += Security.ToBitArray(name1, i, tmp_isset, db) + (i < (groups - 1) ? "-" : "");//ToHex
-                }
-
-                return Security.Encode(name1) + "-" + res;
-            }
-        }*/
+        
         public static string EncodeCats_MD5(bool is_top, string name1, string route)
         {
             using (EbazarDB db = new EbazarDB())
@@ -499,6 +311,7 @@ namespace www.e_bazar.dk.SharedClasses
                     return Security.Encode(Security.Format(name1, "_", true)) + "-" + res;
             }
         }
+
         public static string EncodeCats_MD5(bool is_top, string route)
         {
             using (EbazarDB db = new EbazarDB())
@@ -529,10 +342,6 @@ namespace www.e_bazar.dk.SharedClasses
             }
         }
 
-
-
-
-
         private static int PreliminaryCheck(string c, EbazarDB db)
         {
             int no_groups = 0;
@@ -548,7 +357,7 @@ namespace www.e_bazar.dk.SharedClasses
                 //List<category> cats = db.category.Where(ca => ca.is_parent).ToList();
                 List<poco_category> cats = Categorys.CatsNoNo;//.db.category.Where(ca => ca.is_parent).ToList();
                 cats = cats.Where(x => Security.Encode(Security.Format(x.name, "_", true)) == cats_arr[0]).ToList();
-                if (Statics.IsNullOrEmpty(cats))//kun parent?
+                if (cats.IsNullOrEmpty())//kun parent?
                     return -1;
                 no_groups++;
             }
@@ -563,6 +372,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             return no_groups;
         }
+
         private static bool _GetParamsSelected(string c, string p, int no_groups, out List<poco_params> _params)
         {
             _params = new List<poco_params>();
@@ -577,7 +387,7 @@ namespace www.e_bazar.dk.SharedClasses
             string[] pa_str = p.Split('_').ToArray();
 
             bool ok;
-            StringHelper.Only(p, Statics.Characters.Param(), out ok);
+            StringHelper.Only(p, CharacterHelper.Param(), out ok);
             if (!ok)
                 return false;
             foreach (string s1 in pa_str)
@@ -657,6 +467,7 @@ namespace www.e_bazar.dk.SharedClasses
 
             return true;
         }
+
         public static bool First(List<string> area_selected, string area_check, string c, string p, out string c_url, out string c_search, out List<poco_params> _params)
         {
             using (EbazarDB db = new EbazarDB())
@@ -695,8 +506,8 @@ namespace www.e_bazar.dk.SharedClasses
                 }
 
                 bool ok;
-                c_search = StringHelper.OnlyAlphanumeric(Security.DecodeCats_MD5(c, false), false, true, "notag", Statics.Characters.Category(), out ok);
-                c_url = StringHelper.OnlyAlphanumeric(Security.DecodeCats_MD5(c, true), false, true, "notag", Statics.Characters.Category(), out ok);
+                c_search = StringHelper.OnlyAlphanumeric(Security.DecodeCats_MD5(c, false), false, true, "notag", CharacterHelper.Category(), out ok);
+                c_url = StringHelper.OnlyAlphanumeric(Security.DecodeCats_MD5(c, true), false, true, "notag", CharacterHelper.Category(), out ok);
 
                 area_selected = area_selected != null ? Security.StringReplaceList(area_selected, '-') : null;
                 area_check = !string.IsNullOrEmpty(area_check) ? Security.OETOrig(area_check, '-') : "";
@@ -717,6 +528,7 @@ namespace www.e_bazar.dk.SharedClasses
                 return true;
             }
         }
+
         static int SparseBitcount(int n)
         {
             int count = 0;
@@ -727,6 +539,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             return count;
         }
+
         private static BYTE_CHECK CheckByte_Same(byte curr, byte prev)
         {
             int count = 0;
@@ -742,6 +555,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             return BYTE_CHECK.SAME;
         }
+
         private static BYTE_CHECK CheckByte_Up(byte curr, byte prev)
         {
             int count = 0;
@@ -760,6 +574,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             return count == 0 ? BYTE_CHECK.SAME : BYTE_CHECK.UP;
         }
+
         private static BYTE_CHECK CheckByte_Down(byte curr, byte prev)
         {
             int count = 0;
@@ -796,6 +611,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             return BYTE_CHECK.SAME;
         }
+
         private static bool CheckCats_SameGroup(string[] curr_arr, string[] prev_arr)
         {
             int same = 0;
@@ -806,6 +622,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             return same == 0;
         }
+
         private static BYTE_CHECK CheckCats_Up(string[] curr_arr, string[] prev_arr)
         {
             BYTE_CHECK ok = BYTE_CHECK.ERROR;
@@ -828,6 +645,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             return counter == 0 ? BYTE_CHECK.SAME : BYTE_CHECK.UP;
         }
+
         private static BYTE_CHECK CheckCats_Down(string[] curr_arr, string[] prev_arr)
         {
             BYTE_CHECK ok = BYTE_CHECK.ERROR;
@@ -850,6 +668,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             return counter == 0 ? BYTE_CHECK.SAME : BYTE_CHECK.DOWN;
         }
+
         public static Boolean ipv4(String strIP)
         {
             //  Split string by ".", check that array length is 3
@@ -877,6 +696,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             return true;
         }
+
         public static string CheckIPValid(string strIP)
         {
             //IPAddress result = null;
@@ -904,6 +724,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             return null;
         }
+
         public static bool Second(string ip, string cats)
         {
             if (string.IsNullOrEmpty(ip))
@@ -952,92 +773,5 @@ namespace www.e_bazar.dk.SharedClasses
             
             //return true;
         }
-
-        /*public static string Encrypt(string text)
-        {
-            string res = "";
-            for (int counter = 0; counter < 6; counter++)
-            {
-                char c = counter < text.Count() ? text.ElementAt(counter) : 'z';
-                string hex = Convert.ToByte(c).ToString("X2");
-                res += hex;
-                //Console.WriteLine(unicode < 128 ? "ASCII: {0}" : "Non-ASCII: {0}", unicode);
-            }
-            return res;
-        }
-        public static string Decrypt(string text, EbazarDB db)
-        {
-            string res = "";
-            int counter = 0;
-            for (; counter < text.Count(); counter += 2)
-            {
-                string sub = text.Substring(counter, 2);
-
-                char c = Convert.ToChar(Convert.ToInt32("0x00" + sub, 16));
-                res += c != 'z' ? c + "" : "";
-                //Console.WriteLine(unicode < 128 ? "ASCII: {0}" : "Non-ASCII: {0}", unicode);
-            }
-            string res_name = db.category.Where(c => c.name.Replace("ø", "oe").Replace("æ", "ae").Replace("å", "aa").Replace(" ", "_").StartsWith(res)).FirstOrDefault().name;
-            return res_name;//.Replace("ø", "oe").Replace("æ", "ae").Replace("å", "aa").Replace(" ", "_");
-        }
-        public static string DecryptCats(string c)
-        {
-            EbazarDB db = new EbazarDB();
-            string res = "";
-            string[] cats_arr = c.Split('-');
-            cats_arr = cats_arr.Where(s => s != "").ToArray();
-            res = cats_arr[0] != "alle" ? cats_arr[0] + "-" : cats_arr[0];
-            if (res != "alle")
-            {
-                for (int i = 1; i < cats_arr.Count(); i++)
-                {
-                    res += Decrypt(cats_arr[i], db) + "-";
-                }
-            }
-            return res;
-        }*/
-
-        /*public static string Encrypt(string text)
-        {
-            string res = "";
-            foreach (char c in text)
-            {
-                string hex = Convert.ToByte(c).ToString("X2");
-                res += hex;
-                //Console.WriteLine(unicode < 128 ? "ASCII: {0}" : "Non-ASCII: {0}", unicode);
-            }
-            return res;
-        }
-        public static string Decrypt(string text)
-        {
-            string res = "";
-            int counter = 0;
-            for (; counter < text.Count(); counter +=2)
-            {
-                string sub = text.Substring(counter, 2);
-
-                char c = Convert.ToChar(Convert.ToInt32("0x00" + sub, 16));
-                res += c;
-                //Console.WriteLine(unicode < 128 ? "ASCII: {0}" : "Non-ASCII: {0}", unicode);
-            }
-            return res;
-        }
-        public static string DecryptCats(string c) 
-        {
-            string res = "";
-            int index = c.IndexOf("&subid=");
-            string cat_up = c != "alle" && index != -1 ? c.Substring(0, index) : c != "alle" ? c : "alle";
-            res = cat_up != "alle" ? cat_up + "-" : cat_up;
-            if (res != "alle")
-            {
-                string[] cats_low = index != -1 ? c.Substring(index).Split('-') : new string[0];
-                cats_low = cats_low.Where(s => s != "").ToArray();
-                for (int i = 1; i < cats_low.Count(); i++)
-                {
-                    res += Decrypt(cats_low[i]) + "-";
-                }
-            }
-            return res;
-        }*/
     }
 }

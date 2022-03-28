@@ -94,7 +94,63 @@ namespace www.e_bazar.dk.Models.DTOs
         public string cat_main = "";
         public string cat_second = "";
 
-        
+
+
+        public void SetupToClient<T>() where T : booth_item
+        {
+            
+            EbazarDB _db = DAL.GetInstance().GetContext();
+
+            if (!this.IsNull() && !this.booth_poco.IsNull())
+            {
+                if (!this.category_main_id.IsNull())
+                {
+                    poco_category cat_poco = new poco_category();
+                    List<poco_category> cats_top = cat_poco._GetAll(true, true);
+
+                    this.category_main_selectlist = new SelectList(cats_top, "category_id", "name", this.category_main_id);
+
+                    this.category_second_selectlist = this.category_second_id == 0 ?
+                        new SelectList(cats_top.OrderBy(x => x.priority).FirstOrDefault().children, "category_id", "name", this.category_second_id) :
+                        new SelectList(cats_top.Where(x => x.category_id == this.category_main_id).FirstOrDefault().children, "category_id", "name", this.category_second_id);
+                }
+
+                poco_folder tmpa = this.foldera;
+                poco_folder tmpb = this.folderb;
+
+                List<folder> lista = new List<folder>() { new folder() { Id = -1, name = "ingen.." } };
+                lista = lista.Concat(_db.folder.Where(l => l.booth_id == this.booth_poco.booth_id).OrderBy(l => l.priority)).ToList();
+
+                List<folder> listb = new List<folder>() { new folder() { Id = -1, name = "ingen.." } };
+                listb = !tmpa.IsNull() ? listb.Concat(_db.folder.Where(l => l.parent_id == tmpa.id).OrderBy(l => l.priority)).ToList() : listb;
+
+                this.foldera_selectlist = !tmpa.IsNull() && lista.Count() > 0 ?
+                    new SelectList(lista, "Id", "name", tmpa.id) :
+                    new SelectList(lista, "Id", "name", -1);
+
+                this.folderb_selectlist = !tmpa.IsNull() && !tmpb.IsNull() && listb.Count() > 0 ?
+                    new SelectList(listb, "Id", "name", tmpb.id) :
+                    new SelectList(listb, "Id", "name", -1);
+            }
+
+            this.status_stock = string.IsNullOrEmpty(this.status_stock) ? STOCK.PÅ_LAGER.ToString() : this.status_stock;
+            this.status_stock_selectlist = EnumHelper.SelectListFor(Texts.GetStockEnum(this.status_stock));
+
+            this.status_condition = string.IsNullOrEmpty(this.status_condition) ? CONDITION.VELHOLDT.ToString() : this.status_condition;
+            this.status_condition_selectlist = EnumHelper.SelectListFor(Texts.GetConditionEnum(this.status_condition));
+
+            this.price = string.IsNullOrEmpty(this.price) ? NOP.INGEN_PRIS.ToString() : this.price;
+            this.note = string.IsNullOrEmpty(this.note) ? Texts.GetNopValue(NOP.NO_NOTE.ToString()) : this.note;
+            this.description = string.IsNullOrEmpty(this.description) ? Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString()) : this.description;
+
+            if (this.tag_pocos == null || this.tag_pocos.Count == 0)
+            {
+                this.tag_pocos = null;
+                this.tag_pocos_nop = Texts.GetNopValue(NOP.NO_TAGS.ToString());
+            }
+        }
+
+
 
         public bool IsRelevant(product pro, collection col, bool counting, string b_name, RelevantHelper helper)
         {
@@ -122,8 +178,8 @@ namespace www.e_bazar.dk.Models.DTOs
             cat_second = is_pro ? (pro.category_second != null ? pro.category_second.name : null) : (col.category_second != null ? col.category_second.name : null);
 
             bool ok;
-            string desc = is_pro ?  (StringHelper.OnlyAlphanumeric(pro.description.ToLower().Trim(), false, false, "notag", Statics.Characters.Space(), out ok)) :
-                                    (StringHelper.OnlyAlphanumeric(col.description.ToLower().Trim(), false, false, "notag", Statics.Characters.Space(), out ok));
+            string desc = is_pro ?  (StringHelper.OnlyAlphanumeric(pro.description.ToLower().Trim(), false, false, "notag", CharacterHelper.Space(), out ok)) :
+                                    (StringHelper.OnlyAlphanumeric(col.description.ToLower().Trim(), false, false, "notag", CharacterHelper.Space(), out ok));
 
             bool relevantA = is_pro ? (pro.price == NOP.INGEN_PRIS.ToString() ?
                             pro.active && !string.IsNullOrEmpty(pro.price) && true :
@@ -246,6 +302,7 @@ namespace www.e_bazar.dk.Models.DTOs
             int fra, til, zip;
             //RelevantHelper helper = RelevantHelper.Create(false);
             helper.GetVals(out opt, out op1, out op2, out op3, out op4, out op5, out op6, out cats, out cat, out fra, out til, out zip);
+
             /*
              * HACK - just a precaution
              * */
@@ -311,9 +368,9 @@ namespace www.e_bazar.dk.Models.DTOs
             return relevantF;
         }
 
-        private bool Params(string pick, string type, List<param> l1, List<value> l2)
+        private bool Params(string chooser, string type, List<param> l1, List<value> l2)
         {
-            if (string.IsNullOrEmpty(pick))
+            if (string.IsNullOrEmpty(chooser))
                 throw new Exception("A-OK, Check.");
             
             if (string.IsNullOrEmpty(type))
@@ -333,7 +390,7 @@ namespace www.e_bazar.dk.Models.DTOs
             {
                 foreach (param pa in l1)
                 {
-                    if (pa.type == "S" && pa.name == pick)
+                    if (pa.type == "S" && pa.name == chooser)
                         return true;
                 }
             }
@@ -345,7 +402,7 @@ namespace www.e_bazar.dk.Models.DTOs
                     {
                         if (val.IsNull())
                             continue;
-                        if (val.param == pa && val.value1 == pick)
+                        if (val.param == pa && val.value1 == chooser)
                             return true;
                     }
                 }

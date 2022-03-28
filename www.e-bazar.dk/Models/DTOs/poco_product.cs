@@ -141,7 +141,7 @@ namespace www.e_bazar.dk.Models.DTOs
             //if (product.booth == null && withbooth)
             //    return null;
             pro_poco.ToPoco(product, null, "");
-            pro_poco.SetupToClient(product);
+            pro_poco.SetupToClient<poco_product>();
             return pro_poco;
 
         }
@@ -512,476 +512,74 @@ namespace www.e_bazar.dk.Models.DTOs
 
         }
 
-        //string[] opt = new string[6];
-        //private enum OTYPE { BASIC, TYPE2, TYPE3 }
-        //private string OPTION(string[] arr, int start, int len, OTYPE type)
-        //{
-        //    string res = "";
-        //    switch (type)
-        //    {
-        //        case OTYPE.BASIC:
-        //            foreach (string s in arr)
-        //                res += s != "" ? s.Trim().ToLower() + " " : "";
-        //            break;
-        //        case OTYPE.TYPE2:
-        //            if (len <= arr.Length && !string.IsNullOrEmpty(arr[start]))
-        //                res = arr[start].Trim().ToLower();
-        //            break;
-        //        case OTYPE.TYPE3:
-        //            if (len <= arr.Length && !string.IsNullOrEmpty(arr[start]) && !string.IsNullOrEmpty(arr[start + 1]))
-        //                res = arr[start].Trim().ToLower() + " " + arr[start + 1].Trim().ToLower();
-        //            break;
-        //        default:
-        //            break;
-        //    }
-        //    return res;
-        //}
-
-        //public void SetupRelevant()
-        //{
-        //    this.relevant_hits = new List<Hit>();
-        //    this.search = ThisSession.Search;
-        //    this.categorys = ThisSession.Category;
-        //    this.zip = ThisSession.Zip;
-        //    this.fra = ThisSession.Fra;
-        //    this.til = ThisSession.Til;
-        //    this.kun_med_fast = ThisSession.FastPris;
-
-        //    this.options = search.Trim().ToLower().Split(' ');
-        //    this.opt[0] = OPTION(options, -1, -1, OTYPE.BASIC);
-        //    this.opt[1] = OPTION(options, 0, 1, OTYPE.TYPE2);
-        //    this.opt[2] = OPTION(options, 1, 2, OTYPE.TYPE2);
-        //    this.opt[3] = OPTION(options, 2, 3, OTYPE.TYPE2);
-        //    this.opt[4] = OPTION(options, 0, 2, OTYPE.TYPE3);
-        //    this.opt[5] = OPTION(options, 1, 3, OTYPE.TYPE3);
-
-        //    this.cats = !string.IsNullOrEmpty(categorys) ? categorys.Split('-') : new string[] { "" };
-        //    cats = cats.Where(x => x != "").ToArray();
-        //    this.cat = cats.Count() > 0 ? cats[0] : "alle";
-        //}
-
-        //public bool IsRelevant(product pro, bool counting, string b_name, Helpers helper)
-        //{
-        //    if (pro == null)
-        //        throw new Exception("A-OK, Check.");
-
-        //    string[] opt = helper.opt;
-        //    string op1 = helper.opt[0], op2 = helper.opt[0], op3 = helper.opt[0], op4 = helper.opt[0], op5 = helper.opt[0], op6 = helper.opt[0];
-        //    string[] cats = helper.cats;
-        //    string cat = helper.cat;
-        //    int fra = helper.fra, til = helper.til, zip = helper.zip;
-            
-        //    cat_main = pro.category_main.name;
-        //    cat_second = pro.category_second != null ? pro.category_second.name : null;
-
-        //    bool ok;
-        //    string desc = StringHelper.OnlyAlphanumeric(pro.description.ToLower().Trim(), false, false, "notag", Statics.Characters.Space(), out ok);
-
-        //    bool relevantA = pro.price == NOP.INGEN_PRIS.ToString() ?
-        //                    pro.active && !string.IsNullOrEmpty(pro.price) && true :
-        //                    (pro.active && !string.IsNullOrEmpty(pro.price) && int.Parse(pro.price) >= fra && int.Parse(pro.price) <= til);
-
-        //    bool relevantB = (opt[0] == "") ?
-        //                    true :
-        //                    ((opt.Where(x => x != "" && pro.name.ToLower().Trim().Contains(x))).Count() > 0 && pro.active ||
-        //                    (pro.tag != null && opt.Where(x => pro.tag.Where(t => t.name == x).Count() > 0).Count() > 0 && pro.active) ||
-        //                    (opt.Where(x => x != "" && desc.Contains(x)).Count() > 0 && pro.active));
-
-        //    bool relevantC = (
-        //                    (cat == "alle") ?
-        //                    pro.active &&
-        //                    true :
-
-        //                    (!counting && cat != "alle" && cats.Count() == 1) ?
-        //                    pro.active &&
-        //                    cat == cat_main :
-
-        //                    (!counting && cat != "alle" && cats.Count() > 1) ?
-        //                    pro.active &&
-        //                    cat == cat_main &&
-        //                    (pro.category_second != null && cats.Contains(cat_second)) :
-
-        //                    (counting && cat != "alle") ?
-        //                    pro.active &&
-        //                    cat == cat_main :
-
-        //                    false)
-        //                    ;
-
-        //    bool relevantD = pro.booth != null && pro.booth.region != null ? (zip != 0 ? pro.booth.region.zip == zip : true) &&
-        //        Areas.IsRelevant(pro.booth.region.zip) : true;
-
-        //    bool relevantF = CheckParam(pro, helper);
-
-        //    this.relevant = relevantA && relevantB && relevantC && relevantD && relevantF;
-        //    if (this.relevant)
-        //        this.relevant_hits.Add(new Hit() { booth = b_name, product = pro.name });
-        //    return this.relevant;
-        //}
-
-        //public bool IsRelevant(product pro, string b_name, Helpers helper)
-        //{
-        //    bool relevant = CheckParam(pro, helper);
-        //    if (relevant)
-        //        this.relevant_hits.Add(new Hit() { booth = b_name, product = pro.name });
-        //    this.relevant = relevant;
-        //    return relevant;
-        //}
-
-        //public bool CheckParam(product pro, Helpers helper)
-        //{
-        //    if (pro.IsNull())
-        //        throw new Exception("A-OK, Check.");
-
-
-        //    string[] opt = helper.opt;
-        //    /*
-        //     * HACK - just a precaution
-        //     * */
-        //    EbazarDB _db = DAL.GetInstance().GetDB();
-        //    if (pro.product_param == null || !pro.product_param.Any())
-        //        pro.product_param = _db.product_param.Where(x => x.product_id == pro.Id).ToList();
-
-        //    bool relevantF = false;
-
-        //    if (ThisSession.Params.Count == 0)
-        //        relevantF = true;
-
-        //    List<param> l1 = null;
-        //    List<value> l2 = null;
-
-        //    if (!relevantF)
-        //    {
-        //        l1 = pro.product_param.Select(x => x.param).ToList();
-        //        l2 = pro.product_param.Select(x => x.value).ToList();
-
-        //        foreach (string s in opt)
-        //        {
-        //            if (s == "")
-        //                continue;
-        //            if (Params(s, "S", l1, l2) || Params(s, "MS", l1, l2) || Params(s, "M", l1, l2))
-        //                relevantF = true;
-        //        }
-        //    }
-
-        //    if (!relevantF)
-        //    {
-        //        foreach (poco_params pa in ThisSession.Params)
-        //        {
-        //            if (pa.type == "MS" || pa.type == "M")
-        //            {
-        //                foreach (poco_value val in pa.values_daos)
-        //                {
-        //                    if (Params(val.value, pa.type, l1, l2))
-        //                        relevantF = true;
-        //                }
-        //            }
-        //            else
-        //            {
-        //                if (Params(pa.name, pa.type, l1, l2))
-        //                    relevantF = true;
-        //            }
-        //        }
-        //    }
-
-        //    return relevantF;
-        //}
-
-        //private bool Params(string pick, string type, List<param> l1, List<value> l2)
-        //{
-        //    if (string.IsNullOrEmpty(pick))
-        //        throw new Exception("A-OK, Check.");
-        //    if (string.IsNullOrEmpty(type))
-        //        throw new Exception("A-OK, Check.");
-
-        //    if (type == "S")
-        //    {
-        //        foreach (param pa in l1)
-        //        {
-        //            if (pa.type == "S" && pa.name == pick)
-        //                return true;
-        //        }
-        //    }
-        //    else if (type == "MS" || type == "M")
-        //    {
-        //        foreach (param pa in l1)
-        //        {
-        //            foreach (value val in l2)
-        //            {
-        //                if (val.IsNull())
-        //                    continue;
-        //                if (val.param == pa && val.value1 == pick)
-        //                    return true;
-        //            }
-        //        }
-        //    }
-
-        //    return false;
-        //}
-
-        public void SetupToClient(product product)
-        {
-            EbazarDB _db = DAL.GetInstance().GetContext();
-
-            if (this.booth_poco != null)
-            {
-                if (product != null && product.category_main != null)
-                {
-                    poco_category cat_poco = new poco_category();
-                    List<poco_category> cats_top = cat_poco._GetAll(true, true);//.Where(x=>x.name != ".ingen").ToList();
-
-                    this.category_main_selectlist = new SelectList(cats_top, "category_id", "name", this.category_main_id);
-
-                    if (this.category_second_id == 0)
-                        this.category_second_selectlist = new SelectList(cats_top.OrderBy(x => x.priority).FirstOrDefault().children, "category_id", "name", this.category_second_id);
-                    else
-                        this.category_second_selectlist = new SelectList(cats_top.Where(x => x.category_id == this.category_main_id).FirstOrDefault().children, "category_id", "name", this.category_second_id);
-                }
-
-                List<folder> lista = new List<folder>() { new folder() { Id = -1, name = "ingen.." } };
-                lista = lista.Concat(_db.folder.Where(l => l.booth_id == this.booth_poco.booth_id).OrderBy(l => l.priority)).ToList();
-
-                if (product != null)
-                {
-                    folder tmpa = product.foldera;
-
-                    if (lista.Count() > 0 && tmpa != null)
-                        this.foldera_selectlist = new SelectList(lista, "Id", "name", tmpa.Id);
-                    else
-                        this.foldera_selectlist = new SelectList(lista, "Id", "name", -1);
-
-                    List<folder> listb = new List<folder>() { new folder() { Id = -1, name = "ingen.." } };
-                    if (tmpa != null)
-                    {
-                        listb = listb.Concat(_db.folder.Where(l => l.parent_id == tmpa.Id).OrderBy(l => l.priority)).ToList();
-                        //folder tmpb = _db.product.Where(p => p.Id == this.id).FirstOrDefault().folderb;
-                        folder tmpb = product.folderb;
-                        if (listb.Count() > 0 && tmpb != null)
-                            this.folderb_selectlist = new SelectList(listb, "Id", "name", tmpb.Id);
-                        else
-                            this.folderb_selectlist = new SelectList(listb, "Id", "name", -1);
-                    }
-                    else
-                        this.folderb_selectlist = new SelectList(listb, "Id", "name", -1);
-                }
-            }
-
-            this.status_stock = string.IsNullOrEmpty(this.status_stock) ? STOCK.PÅ_LAGER.ToString() : this.status_stock;
-            this.status_stock_selectlist = EnumHelper.SelectListFor(Texts.GetStockEnum(this.status_stock));
-
-            this.status_condition = string.IsNullOrEmpty(this.status_condition) ? CONDITION.VELHOLDT.ToString() : this.status_condition;
-            this.status_condition_selectlist = EnumHelper.SelectListFor(Texts.GetConditionEnum(this.status_condition));
-
-            this.price = string.IsNullOrEmpty(this.price) ? NOP.INGEN_PRIS.ToString() : this.price;
-            this.note = string.IsNullOrEmpty(this.note) ? Texts.GetNopValue(NOP.NO_NOTE.ToString()) : this.note;
-            this.description = string.IsNullOrEmpty(this.description) ? Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString()) : this.description;
-
-            if (this.tag_pocos == null || this.tag_pocos.Count == 0)
-            {
-                this.tag_pocos = null;
-                this.tag_pocos_nop = Texts.GetNopValue(NOP.NO_TAGS.ToString());
-            }
-        }
-
-        private tag Null(tag t)
-        {
-            if (t.collection != null)
-                t.collection = null;
-            if (t.product != null)
-                t.product = null;
-
-            return t;
-        }
-
-        protected person Null(person per)
-        {
-            if (per.booth != null)
-                per.booth = null;
-            if (per.boothrating != null)
-                per.boothrating = null;
-            if (per.comment != null)
-                per.comment = null;
-            if (per.conversation != null)
-                per.conversation = null;
-            if (per.favorites_collection != null)
-                per.favorites_collection = null;
-            if (per.favorites_product != null)
-                per.favorites_product = null;
-            if (per.following != null)
-                per.following = null;
-
-            return per;
-        }
-
-        protected List<category> Null(List<category> c)
-        {
-            List<category> list = new List<category>();
-            foreach (category cat in c)
-            {
-                list.Add(Null(cat));
-            }
-            return list;
-        }
-
-        protected category Null(category cat)
-        {
-            if (cat.booth != null)
-                cat.booth = null;
-            //if (cat.children != null)
-            //    cat.children = null;
-            if (cat.collection_main != null)
-                cat.collection_main = null;
-            if (cat.collection_second != null)
-                cat.collection_second = null;
-            //if (cat.param != null)
-            //    cat.param = null;
-            if (cat.parent != null)
-                cat.parent = null;
-            if (cat.product_main != null)
-                cat.product_main = null;
-            if (cat.product_second != null)
-                cat.product_second = null;
-
-            return cat;
-        }
-
-        protected booth Null(booth bth)
-        {
-            if (bth.boothrating != null)
-                bth.boothrating = null;
-            if (bth.category_main != null)
-                bth.category_main = Null(bth.category_main.ToList());
-            if (bth.collection != null)
-                bth.collection = null;
-            if (bth.conversation != null)
-                bth.conversation = null;
-            if (bth.foldera != null)
-                bth.foldera = null;
-            if (bth.followers != null)
-                bth.followers = null;
-            if (bth.person != null)
-                bth.person = Null(bth.person);// Null(b.person);
-            if (bth.product != null)
-                bth.product = null;
-            //if (bth.region != null)
-            //    bth.region = null;
-
-            return bth;
-        }
-
         public void ToPoco(product p, List<Hit> rel, string booth)
         {
-            if (p == null)
+            if (p.IsNull())
                 throw new Exception("A-OK, Check.");
+
+            //if (rel == null)
+            //    throw new Exception("A-OK, Check.");
+
+            //if (booth == null)
+            //    throw new Exception("A-OK, Check.");
 
             this.id = p.Id;
             this.booth_id = p.booth_id;
-
-            this.category_main_id = p.category_main_id;
-            this.category_second_id = p.category_second_id;
+            this.category_main_id = this.category_main_id != 0 ? this.category_main_id : p.category_main_id;
+            this.category_second_id = this.category_second_id != 0 ? this.category_second_id : p.category_second_id;
             this.collection_id = p.collection_id;
-
-            if (p.foldera != null)
-            {
-                poco_folder flda = new poco_folder();
-                this.foldera = flda.GetFolderAPOCO(p.foldera.Id, false, false);
-            }
-            else
-                this.foldera = new poco_folder() { name = "default" };
-
-            if (p.folderb != null)
-            {
-                poco_folder fldb = new poco_folder();
-                this.folderb = fldb.GetFolderBPOCO(p.folderb.Id);
-            }
-            else
-                this.folderb = new poco_folder() { name = "default" };
-
-            if (!string.IsNullOrEmpty(p.name))
-                this.name = p.name;
-            else
-                throw new Exception("A-OK, Handled.");
-
-            if (!string.IsNullOrEmpty(p.sysname))
-                this.sysname = p.sysname;
-            else
-                throw new Exception("A-OK, Handled.");
-
-            if (p.created_on != null)
-                this.created_on = p.created_on;
-            else
-                throw new Exception("A-OK, Handled.");
-
-            if (p.modified != null)
-                this.modified = p.modified;
-            else
-                throw new Exception("A-OK, Handled.");
-
-            if (!string.IsNullOrEmpty(p.price))
-                this.price = p.price;
-            else
-                throw new Exception("A-OK, Handled.");
-
-            if (!string.IsNullOrEmpty(p.status_stock))
-                this.status_stock = p.status_stock;
-            else
-                throw new Exception("A-OK, Handled.");
-
-            if (!string.IsNullOrEmpty(p.status_condition))
-                this.status_condition = p.status_condition;
-            else
-                throw new Exception("A-OK, Handled.");
-
             this.only_collection = p.only_collection;
             this.active = p.active;
 
-            if (p.no_of_units > 0)
-                this.no_of_units = p.no_of_units;
-            else
-                throw new Exception("A-OK, Handled.");
+            poco_folder flda = new poco_folder();
+            this.foldera = p.foldera != null ? flda.GetFolderAPOCO(p.foldera.Id, false, false) : new poco_folder() { name = "default" };
 
-            if (!string.IsNullOrEmpty(p.description))
-                this.description = p.description;
-            else
-                this.description = "";
+            poco_folder fldb = new poco_folder();
+            this.folderb = p.folderb != null ? fldb.GetFolderBPOCO(p.folderb.Id) : new poco_folder() { name = "default" };
 
-            if (!string.IsNullOrEmpty(p.note))
-                this.note = p.note;
-            else
-                this.note = "";
+            this.name = !p.name.IsNullOrEmpty() ? p.name : this.name;
+            this.sysname = !p.sysname.IsNullOrEmpty() ? p.sysname : this.sysname;
+            this.created_on = !p.created_on.IsNull() ? p.created_on : this.created_on;
+            this.modified = !p.modified.IsNull() ? p.modified : this.modified;
+            this.price = !p.price.IsNullOrEmpty() ? p.price : this.price;
+            this.status_stock = !p.status_stock.IsNullOrEmpty() ? p.status_stock : this.status_stock;
+            this.status_condition = !p.status_condition.IsNullOrEmpty() ? p.status_condition : this.status_condition;
+            this.no_of_units = p.no_of_units > 0 ? p.no_of_units : this.no_of_units;
+            this.description = !p.description.IsNullOrEmpty() ? p.description : "";
+            this.note = !p.note.IsNullOrEmpty() ? p.note : "";
 
-            if (p.booth != null/* && withbooth*/)
+            if (!p.booth.IsNull())
             {
                 this.booth_poco = new poco_booth();
-                this.booth_poco.ToPoco(Null(p.booth), null);
+                this.booth_poco.ToPoco(NullHelper.PNull(p.booth), null);
             }
 
-            if (p.image != null)
+            if (!p.image.IsNull())
             {
                 poco_productimage pi = new poco_productimage();
                 this.image_pocos = new List<IImage>();
                 this.image_pocos = pi.ToPocoList(p.image);
             }
 
-            if (p.tag != null && p.tag.Count() > 0)
+            if (!p.tag.IsNull() && p.tag.Count() > 0)
             {
                 foreach (tag t2 in p.tag)
-                    Null(t2);
+                    NullHelper.PNull(t2);
                 poco_tag t = new poco_tag();
                 this.tag_pocos = new List<poco_tag>();
                 this.tag_pocos = t.ToPocoList(p.tag);
             }
 
             ICollection<param> _params = null;
-            if (p.product_param != null && p.product_param.Count() > 0)
+            if (!p.product_param.IsNull() && p.product_param.Count() > 0)
                 _params = p.product_param.Select(x => x.param).ToList();//.GetTags(db);
-            if (_params != null && _params.Count() > 0)
+            if (!_params.IsNull() && _params.Count() > 0)
             {
                 List<param> ps = new List<param>();
                 foreach (param par in _params)
                 {
                     List<value> list = new List<value>();
-                    foreach (value v in p.product_param.Select(x => x.value).Where(Statics.IsNotNull))
+                    foreach (value v in p.product_param.Select(x => x.value).Where(x=>x.IsNotNull()))
                     {
                         if (v.param_id == par.Id)
                             list.Add(v);
@@ -994,25 +592,19 @@ namespace www.e_bazar.dk.Models.DTOs
                 this.param_daos = pa.ToPOCO_List(ps.ToList());
             }
 
-            if (p.collection != null)
+            if (!p.collection.IsNull())
             {
                 this.collection = new poco_collection();
                 this.collection.ToPoco(p.collection, null, "");
             }
-            //if (p.booth != null/* && withbooth*/)
-            //{
-            //    this.booth_poco = new poco_booth(null);
-            //    this.booth_poco.ToPoco(p.booth/*, withsalesman*/);
-            //}
-            if (p.conversation != null && p.conversation.Count() > 0/* && withconversations*/)
+            
+            if (!p.conversation.IsNull() && p.conversation.Count() > 0/* && withconversations*/)
             {
                 poco_conversation poco = new poco_conversation();
                 this.conversations = poco.ToPocoList(p.conversation);
             }
 
-            this.relevant = rel != null ? rel.Where(x => x.booth == booth && x.product == this.name).Count() > 0 : false;
-            //if (set_relevant)
-            //    this.IsRelevant(p, true, false);
+            this.relevant = !rel.IsNull() ? rel.Where(x => x.booth == booth && x.product == this.name).Count() > 0 : false;
         }
 
         public List<poco_product> ToPocoList(ICollection<product> products, List<Hit> rel, string booth)
@@ -1025,33 +617,33 @@ namespace www.e_bazar.dk.Models.DTOs
             {
                 poco_product poco = new poco_product(false);
                 poco.ToPoco(p, rel, booth);
-                poco.SetupToClient(p);
+                poco.SetupToClient<poco_product>();
                 res.Add(poco);
             }
             return res;
         }
 
-        public void ToProduct(bool new_product, ref product pro, EbazarDB _db = null)
+        public void ToProduct(bool new_product, ref product pro, EbazarDB _db)
         {
             if (_db == null)
-                _db = DAL.GetInstance().GetContext();
+                throw new Exception("A-OK, Handled.");
 
             DateTime now = DateTime.Now;
-
-
-            if (this.category_main_id != null)
+                        
             {
                 booth boo = _db.booth.Where(b => b.Id == this.booth_id).FirstOrDefault();
                 if (boo.category_main.Where(c => c.Id == this.category_main_id).Count() == 0)
                 {
-                    category new_cat = _db.category.Where(c => c.Id == this.category_main_id).FirstOrDefault();
+                    category new_cat = _db.category.Where(c => c.name != ".ingen" && c.is_parent && c.Id == this.category_main_id).FirstOrDefault();
+                    if (new_cat.IsNull())
+                        throw new Exception("A-OK, Handled."); 
                     boo.category_main.Add(new_cat);
                 }
                 int? old_cat_id = pro.category_main_id != this.category_main_id ? (int?)pro.category_main_id : null;
                 int? old_cat_sec_id = pro.category_second_id != this.category_second_id ? (int?)pro.category_second_id : null;
                 if (pro.category_main_id == 0)//opret
                 {
-                    category main = _db.category.Include("children").Where(c => c.Id == this.category_main_id && c.is_parent).FirstOrDefault();
+                    category main = _db.category.Include("children").Where(c => c.name != ".ingen" && c.is_parent).FirstOrDefault();
                     category sec = main.children.OrderBy(x => x.priority).FirstOrDefault();
 
                     pro.category_main_id = main.Id;
@@ -1087,72 +679,22 @@ namespace www.e_bazar.dk.Models.DTOs
                     pro.category_second_id = this.category_second_id;
                 }
             }
-            else
-                throw new Exception("A-OK, Handled.");
 
-            //pro.category_second_id = this.category_second_id;
-
-            if (this.foldera != null)
-                pro.foldera = _db.folder.Where(l => l.Id == this.foldera.id).FirstOrDefault();
-
-
-            if (this.folderb != null)
-                pro.folderb = _db.folder.Where(l => l.Id == this.folderb.id).FirstOrDefault();
-
-            if (!string.IsNullOrEmpty(this.name))
-                pro.name = this.name;
-            else
-                throw new Exception("A-OK, Handled.");
-
-            if (!string.IsNullOrEmpty(this.sysname))
-                pro.sysname = this.sysname;
-            else
-                throw new Exception("A-OK, Handled.");
-
-            if (!new_product && this.created_on != null)
-                pro.created_on = this.created_on;
-            else
-                pro.created_on = now;
-
+            pro.foldera = !this.foldera.IsNull() ? _db.folder.Where(l => l.Id == this.foldera.id).FirstOrDefault() : pro.foldera;
+            pro.folderb = !this.folderb.IsNull() ? _db.folder.Where(l => l.Id == this.folderb.id).FirstOrDefault() : pro.folderb;
+            pro.active = this.active;
+            pro.name = !this.name.IsNullOrEmpty() ? this.name : pro.name;
+            pro.sysname = !this.sysname.IsNullOrEmpty() ? this.sysname : pro.sysname;
+            pro.created_on = !new_product && !this.created_on.IsNull() ? this.created_on : now;
             pro.modified = now;
-
-            if (!string.IsNullOrEmpty(this.price.ToString()))
-                pro.price = this.price;
-            else
-                throw new Exception("A-OK, Handled.");
-
-            //if (!string.IsNullOrEmpty(this.status_delivery))
-            //    p.status_delivery = this.status_delivery;
-            //else
-            //    throw new Exception();
-
-            if (!string.IsNullOrEmpty(this.status_stock))
-                pro.status_stock = this.status_stock;
-            else
-                throw new Exception("A-OK, Handled.");
-
-            if (!string.IsNullOrEmpty(this.status_condition))
-                pro.status_condition = this.status_condition;
-            else
-                throw new Exception("A-OK, Handled.");
+            pro.price = !this.price.IsNullOrEmpty() ? this.price : pro.price;
+            pro.status_stock = !this.status_stock.IsNullOrEmpty() ? this.status_stock : pro.status_stock;
+            pro.status_condition = !this.status_condition.IsNullOrEmpty() ? this.status_condition : pro.status_condition;
+            pro.description = !this.description.IsNullOrEmpty() ? this.description : "";
+            pro.note = !this.note.IsNullOrEmpty() ? this.note : "";
 
             pro.only_collection = this.only_collection;
-            pro.active = this.active;
-
-            if (this.no_of_units > 0)
-                pro.no_of_units = this.no_of_units;
-            else
-                throw new Exception("A-OK, Handled.");
-
-            if (!string.IsNullOrEmpty(this.description))
-                pro.description = this.description;
-            else
-                pro.description = "";
-
-            if (!string.IsNullOrEmpty(this.note))
-                pro.note = this.note;
-            else
-                pro.note = "";
+            pro.no_of_units = this.no_of_units > 0 ? this.no_of_units : pro.no_of_units;
 
             if (this.booth_poco != null)
             {

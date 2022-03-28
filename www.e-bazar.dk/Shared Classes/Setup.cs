@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using www.e_bazar.dk.Extensions;
 using www.e_bazar.dk.Models;
 using www.e_bazar.dk.Models.DataAccess;
 using www.e_bazar.dk.Models.DTOs;
@@ -20,21 +21,21 @@ namespace www.e_bazar.dk.SharedClasses
         public static Dictionary<string, ERROR_MESSAGE> SetupSalesmanProfileFromClient(ref dto_userprofile model)
         {
             Dictionary<string, ERROR_MESSAGE> err = new Dictionary<string, ERROR_MESSAGE>();
-            model.salesman_poco.firstname = Check.ProfileFirstname(model.salesman_poco.firstname, ref err);
-            model.salesman_poco.lastname = Check.ProfileLastname(model.salesman_poco.lastname, ref err);
-            model.salesman_poco.phonenumber = Check.ProfilePhonenumber(model.salesman_poco.phonenumber, ref err);
-            model.salesman_poco.email = Check.ProfileEmail(model.salesman_poco.email, ref err);
-            model.salesman_poco.description = Check.ProfileDescription(model.salesman_poco.description);
+            model.salesman_poco.firstname = CheckHelper.ProfileFirstname(model.salesman_poco.firstname, ref err);
+            model.salesman_poco.lastname = CheckHelper.ProfileLastname(model.salesman_poco.lastname, ref err);
+            model.salesman_poco.phonenumber = CheckHelper.ProfilePhonenumber(model.salesman_poco.phonenumber, ref err);
+            model.salesman_poco.email = CheckHelper.ProfileEmail(model.salesman_poco.email, ref err);
+            model.salesman_poco.description = CheckHelper.ProfileDescription(model.salesman_poco.description);
 
             return err;
         }
         public static Dictionary<string, ERROR_MESSAGE> SetupCustomerProfileFromClient(ref dto_userprofile model)
         {
             Dictionary<string, ERROR_MESSAGE> err = new Dictionary<string, ERROR_MESSAGE>();
-            model.customer_poco.firstname = Check.ProfileFirstname(model.customer_poco.firstname, ref err);
-            model.customer_poco.lastname = Check.ProfileLastname(model.customer_poco.lastname, ref err);
+            model.customer_poco.firstname = CheckHelper.ProfileFirstname(model.customer_poco.firstname, ref err);
+            model.customer_poco.lastname = CheckHelper.ProfileLastname(model.customer_poco.lastname, ref err);
             //model.customer_poco.phonenumber = Check.ProfilePhonenumber(model.customer_poco.phonenumber, ref err);
-            model.customer_poco.email = Check.ProfileEmail(model.customer_poco.email, ref err);
+            model.customer_poco.email = CheckHelper.ProfileEmail(model.customer_poco.email, ref err);
             return err;
         }
 
@@ -77,11 +78,11 @@ namespace www.e_bazar.dk.SharedClasses
             //}
 
 
-            model.name = Check.BoothName(model.name, ref err);
-            model.description = Check.BoothDescription(model.description, ref err);
+            model.name = CheckHelper.BoothName(model.name, ref err);
+            model.description = CheckHelper.BoothDescription(model.description, ref err);
             //Check.FullAddress(model.address_poco, ref err);
-            Check.PartAddress(model, ref err);
-            Check.FullAddress(model, ref err);
+            CheckHelper.PartAddress(model, ref err);
+            CheckHelper.FullAddress(model, ref err);
             //Check.Tags(model, ref err);
 
             return err;
@@ -132,11 +133,11 @@ namespace www.e_bazar.dk.SharedClasses
                 model.category_second_id = sec.Id;
             }
             
-            model.price = Check.ProductPrice(model.price, ref err);
-            model.name = Check.ProductName(model.name, ref err);
+            model.price = CheckHelper.ProductPrice(model.price, ref err);
+            model.name = CheckHelper.ProductName(model.name, ref err);
             //model.note = Check.ProductNote(model.note, ref err);
             //model.description = Check.ProductDescription(model.description, ref err);
-            model.no_of_units = Check.ProductNoOfUnits("" + model.no_of_units, ref err);
+            model.no_of_units = CheckHelper.ProductNoOfUnits("" + model.no_of_units, ref err);
             return err;
         }
 
@@ -187,9 +188,9 @@ namespace www.e_bazar.dk.SharedClasses
                 model.category_second_id = sec.Id;
             }
 
-            model.price = Check.CollectionPrice(model.price, ref err);
+            model.price = CheckHelper.CollectionPrice(model.price, ref err);
             //model.category = Check.CollectionCategory(model.category, ref err);
-            model.name = Check.CollectionName(model.name, ref err);
+            model.name = CheckHelper.CollectionName(model.name, ref err);
             //model.note = Check.CollectionNote(model.note, ref err);
             //model.description = Check.CollectionDescription(model.description, ref err);
             return err;
@@ -197,25 +198,25 @@ namespace www.e_bazar.dk.SharedClasses
         public static Dictionary<string, SYSTEM_MESSAGE> SetupRegisterFromClient(bool success)
         {
             Dictionary<string, SYSTEM_MESSAGE> err = new Dictionary<string, SYSTEM_MESSAGE>();
-            Check.Register(success, ref err);
+            CheckHelper.Register(success, ref err);
             return err;
         }
         public static Dictionary<string, SYSTEM_MESSAGE> CheckCookieLogin(bool success)
         {
             Dictionary<string, SYSTEM_MESSAGE> err = new Dictionary<string, SYSTEM_MESSAGE>();
-            Check.CookieLogin(success, ref err);
+            CheckHelper.CookieLogin(success, ref err);
             return err;
         }
         public static Dictionary<string, SYSTEM_MESSAGE> SetupCreateLevel(bool success)
         {
             Dictionary<string, SYSTEM_MESSAGE> err = new Dictionary<string, SYSTEM_MESSAGE>();
-            Check.CreateLevel(success, ref err);
+            CheckHelper.CreateLevel(success, ref err);
             return err;
         }
         public static Dictionary<string, SYSTEM_MESSAGE> Feedback(dto_email mail)
         {
             Dictionary<string, SYSTEM_MESSAGE> err = new Dictionary<string, SYSTEM_MESSAGE>();
-            Check.CheckFeedback(mail, ref err);
+            CheckHelper.CheckFeedback(mail, ref err);
             return err;
         }
 
