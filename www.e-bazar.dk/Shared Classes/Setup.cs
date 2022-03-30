@@ -58,26 +58,16 @@ namespace www.e_bazar.dk.SharedClasses
                 model = null;
                 return err;
             }
+
             if (string.IsNullOrEmpty(model.salesman_id))
                 model.salesman_id = userid;
             
             if (model.product_pocos == null)
                 model.product_pocos = dal.GetProductPOCOs(model.booth_id, true, false, false, false, false, false, true);
-            //if (model.product_pocos == null)
-            //{
-            //    model = null;
-            //    return err;
-            //}
-
+            
             if (model.collection_pocos == null)
                 model.collection_pocos = dal.GetCollectionPOCOs(model.booth_id, true, false, false, false);
-            //if (model.collection_pocos == null)
-            //{
-            //    model = null;
-            //    return err;
-            //}
-
-
+            
             model.name = CheckHelper.BoothName(model.name, ref err);
             model.description = CheckHelper.BoothDescription(model.description, ref err);
             //Check.FullAddress(model.address_poco, ref err);
@@ -103,6 +93,7 @@ namespace www.e_bazar.dk.SharedClasses
             
             model.status_condition = status_condition_select;
             model.status_stock = status_stock_select;
+            
             using (EbazarDB db = new EbazarDB())
             {
                 category main;
@@ -153,7 +144,7 @@ namespace www.e_bazar.dk.SharedClasses
         public static Dictionary<string, ERROR_MESSAGE> SetupCollectionFromClient(ref poco_collection model, int? booth_id, string status_condition_select, string status_stock_select, DAL dal)
         {
             Dictionary<string, ERROR_MESSAGE> err = new Dictionary<string, ERROR_MESSAGE>();
-            model.booth_poco = /*model.booth_poco == null ? */dal.GetBoothPOCO(booth_id, "", "", true, false, false, true, false, false, true)/* : model.booth_poco*/;
+            model.booth_poco = dal.GetBoothPOCO(booth_id, "", "", true, false, false, true, false, false, true)/* : model.booth_poco*/;
             
             model.status_condition = status_condition_select;
             model.status_stock = status_stock_select;

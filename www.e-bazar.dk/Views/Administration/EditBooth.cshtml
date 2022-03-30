@@ -42,12 +42,22 @@
                 </div>
                 @using (Html.BeginRouteForm("EditBooth2", FormMethod.Post, @Model))
                 {
+                    //List<poco_product> ok = new List<poco_product>();
+                    //List<poco_collection> ja = new List<poco_collection>();
+                    //List<IBoothItem> list = Model.booth_poco.GetRelevantItems(-1, -1);
+                    //foreach (IBoothItem i in list)
+                    //{
+                    //    if (typeof(poco_product) == i.GetType()) { ok.Add((poco_product)i); }
+                    //    else { ja.Add((poco_collection)i); }
+                    //}
                     @Html.AntiForgeryToken()
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                     @Html.HiddenFor(model => model.booth_poco.booth_id, new { @class = "adm_hidden_edit_boothid" })
                     @Html.HiddenFor(model => model.booth_poco.sysname)
                     @Html.HiddenFor(model => model.booth_poco.frontimage)
                     @Html.HiddenFor(model => model.booth_poco.country)
+                    @*@Html.HiddenFor(model => model.booth_poco.product_pocos, new { @Value = ok })
+                    @Html.HiddenFor(model => model.booth_poco.collection_pocos, new { @Value = ja })*@
                     <input type="hidden" value="@ViewBag.Tab" class="input_tab" />
                     <ul class="nav nav-tabs white_bdr darkgrey_bg">
                         <li><a class="black active" href="#home" data-toggle="tab">Stamdata</a></li>
@@ -216,33 +226,33 @@
                                     </div>
                                 </div>
                                 @*<div class="form-group">
-                                        <div class="col-xs-12">
-                                            <div xclass="col-xs-12 xpanel xpanel-default">
-                                                <div xclass="col-xs-12">
-                                                    @{
-                                                        if (Model.booth_poco.category_main != null && Model.booth_poco.category_main.Count > 0)
-                                                        {
-                                                            <span class="adm_span_edit_results">
-                                                                @foreach (poco_category c in Model.booth_poco.category_main)
-                                                                {
-                                                                    <input type="button" onclick="removeCategory('@c.category_id')" value="@c.name (X)" class="adm_input_tag_@c.category_id btn btn-default darkgrey_bdr" />
-                                                                }
-                                                            </span>
-                                                            <hr />
-                                                        }
-                                                        else
-                                                        {
-                                                            <span class="adm_span_edit_results">
-                                                            </span>
-                                                            <hr />
-                                                        }
-                                                        <span class="adm_div_suggestions">
-                                                        </span><br />
+                            <div class="col-xs-12">
+                                <div xclass="col-xs-12 xpanel xpanel-default">
+                                    <div xclass="col-xs-12">
+                                        @{
+                                            if (Model.booth_poco.category_main != null && Model.booth_poco.category_main.Count > 0)
+                                            {
+                                                <span class="adm_span_edit_results">
+                                                    @foreach (poco_category c in Model.booth_poco.category_main)
+                                                    {
+                                                        <input type="button" onclick="removeCategory('@c.category_id')" value="@c.name (X)" class="adm_input_tag_@c.category_id btn btn-default darkgrey_bdr" />
                                                     }
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>*@
+                                                </span>
+                                                <hr />
+                                            }
+                                            else
+                                            {
+                                                <span class="adm_span_edit_results">
+                                                </span>
+                                                <hr />
+                                            }
+                                            <span class="adm_div_suggestions">
+                                            </span><br />
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>*@
                             </div>
                         </div>
                         <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="categorys">

@@ -103,7 +103,7 @@ namespace www.e_bazar.dk.Extensions
             return per;
         }
 
-        public static List<product> BNull(List<product> _p)
+        public static List<product> BNull(List<product> _p, bool withcats)
         {
             foreach (product p in _p)
             {
@@ -116,9 +116,9 @@ namespace www.e_bazar.dk.Extensions
                 if (p.folderb != null)
                     p.folderb = null;
                 if (p.category_main != null)
-                    p.category_main = null;
+                    p.category_main = withcats ? p.category_main : null;
                 if (p.category_second != null)
-                    p.category_second = null;
+                    p.category_second = withcats ? p.category_second : null;
                 if (p.collection != null)
                     p.collection = null;
                 if (p.conversation != null)
@@ -134,7 +134,7 @@ namespace www.e_bazar.dk.Extensions
             return _p;
         }
 
-        public static List<collection> BNull(List<collection> _p)
+        public static List<collection> BNull(List<collection> _p, bool withcats)
         {
             foreach (collection p in _p)
             {
@@ -147,9 +147,9 @@ namespace www.e_bazar.dk.Extensions
                 if (p.folderb != null)
                     p.folderb = null;
                 if (p.category_main != null)
-                    p.category_main = null;
+                    p.category_main = withcats ? p.category_main : null;
                 if (p.category_second != null)
-                    p.category_second = null;
+                    p.category_second = withcats ? p.category_second : null;
                 if (p.product != null)
                     p.product = null;
                 if (p.conversation != null)
@@ -285,6 +285,82 @@ namespace www.e_bazar.dk.Extensions
             //    bth.region = null;
 
             return bth;
+        }
+
+        public static List<product> PNull(List<product> _p, bool withbooth, bool withcollection, bool withcats, bool withtags, bool withconversation, bool withfolders)
+        {
+            foreach (product p in _p)
+            {
+                PNull(p, withbooth, withcollection, withcats, withtags, withconversation, withfolders);
+            }
+
+            return _p;
+        }
+
+        public static product PNull(product _p, bool withbooth, bool withcollection, bool withcats, bool withtags, bool withconversation, bool withfolders)
+        {
+            if (_p.booth != null)
+                _p.booth = withbooth ? _p.booth : null;
+            if (_p.tag != null)
+                _p.tag = withtags ? _p.tag : null;
+            if (_p.foldera != null)
+                _p.foldera = withfolders ? _p.foldera : null;
+            if (_p.folderb != null)
+                _p.folderb = withfolders ? _p.folderb : null;
+            if (_p.category_main != null)
+                _p.category_main = withcats ? _p.category_main : null;
+            if (_p.category_second != null)
+                _p.category_second = withcats ? _p.category_second : null;
+            if (_p.collection != null)
+                _p.collection = withcollection ? _p.collection : null;
+            if (_p.conversation != null)
+                _p.conversation = withconversation ? _p.conversation : null;
+            if (_p.favorites != null)
+                _p.favorites = null;
+            if (_p.image != null)
+                _p.image = _p.image.OrderBy(i => i.created_on).ToList();
+            if (_p.product_param != null)
+                _p.product_param = null;
+            
+            return _p;
+        }
+
+        public static List<collection> PNull(List<collection> _p, bool withbooth, bool withcats, bool withtags, bool withconversation, bool withfolders, bool withproducts)
+        {
+            foreach (collection p in _p)
+            {
+                PNull(p, withbooth, withcats, withtags, withconversation, withfolders, withproducts);
+            }
+
+            return _p;
+        }
+
+        public static collection PNull(collection _p, bool withbooth, bool withcats, bool withtags, bool withconversation, bool withfolders, bool withproducts)
+        {
+            if (_p.booth != null)
+                _p.booth = withbooth ? _p.booth : null;
+            if (_p.tag != null)
+                _p.tag = withtags ? _p.tag : null;
+            if (_p.foldera != null)
+                _p.foldera = withfolders ? _p.foldera : null;
+            if (_p.folderb != null)
+                _p.folderb = withfolders ? _p.folderb : null;
+            if (_p.category_main != null)
+                _p.category_main = withcats ? _p.category_main : null;
+            if (_p.category_second != null)
+                _p.category_second = withcats ? _p.category_second : null;
+            if (_p.product != null)
+                _p.product = withproducts ? PNull(_p.product.ToList(), false, false, false, false, false, false) : null;
+            if (_p.conversation != null)
+                _p.conversation = withconversation ? _p.conversation : null;
+            if (_p.favorites != null)
+                _p.favorites = null;
+            if (_p.image != null)
+                _p.image = _p.image.OrderBy(i => i.created_on).ToList();
+            if (_p.collection_param != null)
+                _p.collection_param = null;
+
+            return _p;
         }
     }
 }

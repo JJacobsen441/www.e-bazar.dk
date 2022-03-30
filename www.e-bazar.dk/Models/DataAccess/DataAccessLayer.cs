@@ -15,44 +15,29 @@ namespace www.e_bazar.dk.Models.DataAccess
     public class DAL
     {
         private List<EbazarDB> _dbs = null;
-        
-        //private static EbazarDB db;
+
         public EbazarDB GetContext()
         {
+            
             if (_dbs == null)
                 _dbs = new List<EbazarDB>();
             EbazarDB _db = new EbazarDB();
+
+            
+            /*try
+            {
+                EbazarDB db = new EbazarDB();
+                foreach (category cat in db.category)
+                    _db.Entry(cat).Reload();
+            }
+            catch (Exception e)
+            {
+                ;
+            }/**/
+
             _dbs.Add(_db);
             return _db;
-
-
-            /*if (TestDB(0) != "o" && TestDB(0) != "r")
-                return _dbs[0];
-            else if (TestDB(1) != "o" && TestDB(1) != "r")
-                return _dbs[1];
-            else if (TestDB(2) != "o" && TestDB(2) != "r")
-                return _dbs[2];
-            else if (TestDB(3) != "o" && TestDB(3) != "r")
-                return _dbs[3];
-            else
-                throw new Exception();*/
         }
-                
-        /*private string TestDB(int c)
-        {
-            try
-            {
-                if (_dbs[c].Database.Connection.State == ConnectionState.Executing || _dbs[c].Database.Connection.State == ConnectionState.Fetching)
-                    return "r";
-                if(_dbs[c].Database.Connection.State == ConnectionState.Open)
-                    return "o";
-                return "c";
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }*/
 
         private DAL()
         {
@@ -71,6 +56,7 @@ namespace www.e_bazar.dk.Models.DataAccess
         {
             if (_dbs == null)
                 return;
+
             foreach (EbazarDB d in _dbs)
             {
                 try
@@ -232,21 +218,21 @@ namespace www.e_bazar.dk.Models.DataAccess
             return booth_poco.GetBoothsByPersonPOCO(salesman_id);
         }
 
-        public poco_booth GetBoothPOCOByProductId(long product_id)
-        {
-            poco_booth booth_poco = new poco_booth();
-            poco_booth booth = booth_poco.GetBoothPOCOByProductId(product_id);
+        //public poco_booth GetBoothPOCOByProductId(long product_id)
+        //{
+        //    poco_booth booth_poco = new poco_booth();
+        //    poco_booth booth = booth_poco.GetBoothPOCOByProductId(product_id);
 
-            return booth;
-        }
+        //    return booth;
+        //}
 
-        public poco_booth GetBoothPOCOByCollectionId(long collection_id, bool withperson)
-        {
-            poco_booth booth_poco = new poco_booth();
-            poco_booth booth = booth_poco.GetBoothPOCOByCollectionId(collection_id, withperson);
+        //public poco_booth _GetBoothPOCOByCollectionId(long collection_id, bool withperson)
+        //{
+        //    poco_booth booth_poco = new poco_booth();
+        //    poco_booth booth = booth_poco.GetBoothPOCOByCollectionId(collection_id, withperson);
 
-            return booth;
-        }
+        //    return booth;
+        //}
 
         public poco_product GetProductPOCO(long product_id, bool withbooth, bool withproducts, bool withcollection, bool withconversation, bool withtags)
         {

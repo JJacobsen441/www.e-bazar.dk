@@ -3,8 +3,8 @@
 
 <div class="remove_desk_block ">
     @{
-        string dcata_sel = ViewBag.a_sel;
-        string dcatb_sel = ViewBag.b_sel;
+        string dcata_sel = ViewBag.CatA;
+        string dcatb_sel = ViewBag.CatB;
         
         Dictionary<string, Dictionary<string, List<poco_params>>> dcat_a = ViewBag.Subs as Dictionary<string, Dictionary<string, List<poco_params>>>;
         foreach (KeyValuePair<string, Dictionary<string, List<poco_params>>> da in dcat_a)

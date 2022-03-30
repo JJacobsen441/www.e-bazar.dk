@@ -596,7 +596,7 @@ namespace www.e_bazar.dk.Controllers
                 
                 poco_booth booth_poco = model.booth_poco;
                 poco_person salesman_poco = current_user;
-                Dictionary<string, ERROR_MESSAGE> err = Setup.SetupBoothFromClient(ref booth_poco, CurrentUser.GetInstance().CurrentUserID, DAL.GetInstance(/*true*/));
+                Dictionary<string, ERROR_MESSAGE> err = Setup.SetupBoothFromClient(ref booth_poco, CurrentUser.GetInstance().CurrentUserID, DAL.GetInstance());
                 
                 Dictionary<string, string> dirs = Setup.SetupBoothDirs(ref booth_poco, salesman_poco.sysname);
 
@@ -670,46 +670,27 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                //if (ThisSession.IsMobile == "none")
-                //    return View("IsMobile");
-
                 SetupCurrentUser();
                 CurrentUser user = CurrentUser.GetInstance();
                 poco_person current_user = user.GetCurrentUser(false, true, true);
                 if (current_user == null)
                     throw new Exception("A-OK, handled.");
-                //ViewBag.CurrentUser = current_user;
-
+                
                 if (!user.OwnsBooth(booth_id))
                     throw new Exception("A-OK, handled.");
 
                 Dictionary<string, string> dirs;
                 string path;
                 poco_booth booth_poco = DAL.GetInstance(/*true*/).GetBoothPOCO(booth_id, "", "", true, true, true, false, false, true, true);//////////////husk conversations og categories
-                //if (booth_poco == null)
-                //    return _NotFound();
+                
                 foreach (poco_product product_poco in booth_poco.product_pocos)
                 {
-                    /*dirs = new Dictionary<string, string>();
-                    dirs["identity_id"] = CurrentUser.GetInstance().GetCurrentUser(true, false, false, false).sysname;
-                    dirs["booth_sysname"] = booth_poco.sysname;
-                    dirs["product_sysname"] = product_poco.sysname;
-                    path = Paths.GetPath(PATH.PRODUCT_DIRECTORY_NAME, dirs, true);
-                    Paths.ClearFolder(path);*/
-
-                    DAL.GetInstance(/*true*/).DeleteProduct(product_poco.id);
+                    DAL.GetInstance().DeleteProduct(product_poco.id);
                 }
 
                 foreach (poco_collection collection_poco in booth_poco.collection_pocos)
                 {
-                    /*dirs = new Dictionary<string, string>();
-                    dirs["identity_id"] = CurrentUser.GetInstance().GetCurrentUser(true, false, false, false).sysname;
-                    dirs["booth_sysname"] = booth_poco.sysname;
-                    dirs["collection_sysname"] = collection_poco.sysname;
-                    path = Paths.GetPath(PATH.COLLECTION_DIRECTORY_NAME, dirs, true);
-                    Paths.ClearFolder(path);*/
-
-                    DAL.GetInstance(/*true*/).DeleteCollection((int)collection_poco.id);
+                    DAL.GetInstance().DeleteCollection((int)collection_poco.id);
                 }
                 dirs = new Dictionary<string, string>();
                 dirs["identity_id"] = current_user.sysname;
@@ -717,7 +698,7 @@ namespace www.e_bazar.dk.Controllers
                 path = Paths.GetPath(PATH.BOOTH_DIRECTORY_NAME, dirs, true);
                 Paths.ClearFolder(path, true, true);
 
-                DAL.GetInstance(/*true*/).DeleteBooth(booth_id);
+                DAL.GetInstance().DeleteBooth(booth_id);
 
                 return RedirectToRoute("UserProfile");
             }
@@ -840,23 +821,18 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                //if (ThisSession.IsMobile == "none")
-                //    return View("IsMobile");
-
                 SetupCurrentUser();
                 CurrentUser user = CurrentUser.GetInstance();
                 poco_person current_user = user.GetCurrentUser(false, true, true);
                 if (current_user == null)
                     throw new Exception("A-OK, handled.");
-                //ViewBag.CurrentUser = current_user;
-
+                
                 poco_person salesman_poco = current_user;
                 string status_condition_select = Request != null ? Request.Form["status_condition_select"].ToString() : "TEST_PRODUCT";
-                string status_stock_select = "PÅ_LAGER";// Request != null ? Request.Form["status_stock_select"].ToString() : "TEST_PRODUCT";
+                string status_stock_select = "PÅ_LAGER";
                 
-                Dictionary<string, ERROR_MESSAGE> err = Setup.SetupProductFromClient(ref model, model.booth_id, status_condition_select, status_stock_select, DAL.GetInstance(/*true*/));
-                //if (model == null)
-                //    return _NotFound();
+                Dictionary<string, ERROR_MESSAGE> err = Setup.SetupProductFromClient(ref model, model.booth_id, status_condition_select, status_stock_select, DAL.GetInstance());
+                
                 Dictionary<string, string> dirs = Setup.SetupProductDirs(model, salesman_poco.sysname);
 
                 if (CheckHelper.ErrorProduct.HasError(err))
@@ -884,7 +860,7 @@ namespace www.e_bazar.dk.Controllers
                 {
                     model.sysname = dirs["product_sysname"];
                     List<string> uploaded_fnames = Paths.GetFileNames(PATH.PRODUCT_DIRECTORY_TMP, dirs, false);
-                    long product_id = DAL.GetInstance(/*true*/).SaveProduct(model, uploaded_fnames.Where(f => f.Substring(0, 2) != "t_").ToList());
+                    long product_id = DAL.GetInstance().SaveProduct(model, uploaded_fnames.Where(f => f.Substring(0, 2) != "t_").ToList());
                     model.id = product_id;//for test
 
                     string tmp_path = Paths.GetPath(PATH.PRODUCT_DIRECTORY_TMP, dirs, true);
@@ -899,10 +875,9 @@ namespace www.e_bazar.dk.Controllers
                             file = uploaded_files[1];
                             if (file != null)
                                 Paths.MoveFile(tmp_path, file, Paths.GetPath(PATH.PRODUCT_DIRECTORY_NAME, dirs, true), file, true, false, true, false);
-                        }
-                        //Paths.MoveFile("t_" + file, Paths.GetPath(PATH.PROFILE_DIRECTORY_NAME, dirs, true));
+                        }                        
                     }
-                    //this._SaveTag(model.booth_poco.tag_pocos.Where(t=> t.name == product_category_select).FirstOrDefault().name, model.id.ToString(), "primary_booth", "product");
+                    
                     return RedirectToRoute("EditProduct1", new { product_id = product_id });
                 }
             }
@@ -1000,7 +975,7 @@ namespace www.e_bazar.dk.Controllers
                 
                 poco_person salesman_poco = current_user;
                 string status_condition_select = Request != null ? Request.Form["status_condition_select"].ToString() : "TEST_PRODUCT";
-                string status_stock_select = "PÅ_LAGER";// Request != null ? Request.Form["status_stock_select"].ToString() : "TEST_PRODUCT";
+                string status_stock_select = "PÅ_LAGER";
                 
                 Dictionary<string, ERROR_MESSAGE> err = Setup.SetupProductFromClient(ref model, model.booth_id, status_condition_select, status_stock_select, DAL.GetInstance(/*true*/));
                 
@@ -1030,7 +1005,7 @@ namespace www.e_bazar.dk.Controllers
                 else
                 {
                     List<string> uploaded_fnames = Paths.GetFileNames(PATH.PRODUCT_DIRECTORY_TMP, dirs, false);
-                    DAL.GetInstance(/*true*/).UpdateProduct(model, uploaded_fnames.Where(f => f.Substring(0, 2) != "t_" && f.Substring(0, 2) != "s_").ToList());
+                    DAL.GetInstance().UpdateProduct(model, uploaded_fnames.Where(f => f.Substring(0, 2) != "t_" && f.Substring(0, 2) != "s_").ToList());
 
                     string tmp_path = Paths.GetPath(PATH.PRODUCT_DIRECTORY_TMP, dirs, true);
                     List<string> uploaded_files = Paths.GetFileNames(PATH.PRODUCT_DIRECTORY_TMP, dirs, false);
@@ -1085,7 +1060,7 @@ namespace www.e_bazar.dk.Controllers
                 if (!user.OwnsProduct(product_id))
                     throw new Exception("A-OK, handled.");
 
-                poco_product product_poco = DAL.GetInstance(/*true*/).GetProductPOCO(product_id, true, false, false, false, false);
+                poco_product product_poco = DAL.GetInstance().GetProductPOCO(product_id, true, false, false, false, false);
                 
                 Dictionary<string, string> dirs = new Dictionary<string, string>();
                 dirs["identity_id"] = current_user.sysname;
@@ -1094,7 +1069,7 @@ namespace www.e_bazar.dk.Controllers
                 string path = Paths.GetPath(PATH.PRODUCT_DIRECTORY_NAME, dirs, true);
                 Paths.ClearFolder(path, true, true);
 
-                DAL.GetInstance(/*true*/).DeleteProduct(product_id);
+                DAL.GetInstance().DeleteProduct(product_id);
 
                 return RedirectToRoute("EditBooth1", new { booth_id = product_poco.booth_poco.booth_id });
             }
@@ -1226,9 +1201,9 @@ namespace www.e_bazar.dk.Controllers
                 
                 poco_person salesman_poco = current_user;
                 string status_condition_select = Request != null ? Request.Form["status_condition_select"].ToString() : "TEST_COLLECTION";
-                string status_stock_select = "PÅ_LAGER";//Request != null ? Request.Form["status_stock_select"].ToString() : "TEST_COLLECTION";
+                string status_stock_select = "PÅ_LAGER";
                 
-                Dictionary<string, ERROR_MESSAGE> err = Setup.SetupCollectionFromClient(ref model, model.booth_id, status_condition_select, status_stock_select, DAL.GetInstance(/*true*/));
+                Dictionary<string, ERROR_MESSAGE> err = Setup.SetupCollectionFromClient(ref model, model.booth_id, status_condition_select, status_stock_select, DAL.GetInstance());
                 
                 Dictionary<string, string> dirs = Setup.SetupCollectionDirs(model, salesman_poco.sysname);
 
@@ -1255,7 +1230,7 @@ namespace www.e_bazar.dk.Controllers
                 {
                     model.sysname = dirs["collection_sysname"];
                     List<string> uploaded_fnames = Paths.GetFileNames(PATH.COLLECTION_DIRECTORY_TMP, dirs, false);
-                    int collection_id = DAL.GetInstance(/*true*/).SaveCollection(model, uploaded_fnames.Where(f => f.Substring(0, 2) != "t_").ToList());
+                    int collection_id = DAL.GetInstance().SaveCollection(model, uploaded_fnames.Where(f => f.Substring(0, 2) != "t_").ToList());
                     model.id = collection_id;//for test
 
                     string tmp_path = Paths.GetPath(PATH.COLLECTION_DIRECTORY_TMP, dirs, true);
@@ -1362,19 +1337,15 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                //if (ThisSession.IsMobile == "none")
-                //    return View("IsMobile");
-
                 SetupCurrentUser();
                 CurrentUser user = CurrentUser.GetInstance();
                 poco_person current_user = user.GetCurrentUser(false, true, true);
                 if (current_user == null)
                     throw new Exception("A-OK, handled.");
-                //ViewBag.CurrentUser = current_user;
 
                 poco_person salesman_poco = current_user;
                 string status_condition_select = Request != null ? Request.Form["status_condition_select"].ToString() : "TEST_COLLECTION";
-                string status_stock_select = "PÅ_LAGER";// Request != null ? Request.Form["status_stock_select"].ToString() : "TEST_COLLECTION";
+                string status_stock_select = "PÅ_LAGER";
                 
                 Dictionary<string, ERROR_MESSAGE> err = Setup.SetupCollectionFromClient(ref model, model.booth_id, status_condition_select, status_stock_select, DAL.GetInstance(/*true*/));
                 
@@ -1402,7 +1373,7 @@ namespace www.e_bazar.dk.Controllers
                 else
                 {
                     List<string> uploaded_fnames = Paths.GetFileNames(PATH.COLLECTION_DIRECTORY_TMP, dirs, false);
-                    DAL.GetInstance(/*true*/).UpdateCollection(model, uploaded_fnames.Where(f => f.Substring(0, 2) != "t_" && f.Substring(0, 2) != "s_").ToList());
+                    DAL.GetInstance().UpdateCollection(model, uploaded_fnames.Where(f => f.Substring(0, 2) != "t_" && f.Substring(0, 2) != "s_").ToList());
 
                     string tmp_path = Paths.GetPath(PATH.COLLECTION_DIRECTORY_TMP, dirs, true);
                     List<string> uploaded_files = Paths.GetFileNames(PATH.COLLECTION_DIRECTORY_TMP, dirs, false);
@@ -1449,23 +1420,18 @@ namespace www.e_bazar.dk.Controllers
             {
                 if (!access.Queue())
                     throw new Exception();
-
-                //if (ThisSession.IsMobile == "none")
-                //    return View("IsMobile");
-
+                                
                 SetupCurrentUser();
                 CurrentUser user = CurrentUser.GetInstance();
                 poco_person current_user = user.GetCurrentUser(false, true, true);
                 if (current_user == null)
                     throw new Exception("A-OK, handled.");
-                //ViewBag.CurrentUser = current_user;
-
+                
                 if (!user.OwnsCollection(collection_id))
                     throw new Exception("A-OK, handled.");
 
-                poco_collection collection_poco = DAL.GetInstance(/*true*/).GetCollectionPOCO(collection_id, false, true, false, false, false);
-                //if (collection_poco == null)
-                //    return HttpNotFound();
+                poco_collection collection_poco = DAL.GetInstance().GetCollectionPOCO(collection_id, false, true, false, false, false);
+                
                 Dictionary<string, string> dirs = new Dictionary<string, string>();
                 dirs["identity_id"] = current_user.sysname;
                 dirs["booth_sysname"] = collection_poco.booth_poco.sysname;
@@ -1473,7 +1439,7 @@ namespace www.e_bazar.dk.Controllers
                 string path = Paths.GetPath(PATH.COLLECTION_DIRECTORY_NAME, dirs, true);
                 Paths.ClearFolder(path, true, true);
 
-                DAL.GetInstance(/*true*/).DeleteCollection(collection_id);
+                DAL.GetInstance().DeleteCollection(collection_id);
 
                 return RedirectToAction("EditBooth", new { booth_id = collection_poco.booth_poco.booth_id });
             }

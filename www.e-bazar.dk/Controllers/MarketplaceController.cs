@@ -253,6 +253,7 @@ namespace www.e_bazar.dk.Controllers
         {
             try
             {
+                
                 //return View("Marketplace", Default());
                 if (!access.Queue())
                     throw new Exception();
@@ -333,7 +334,8 @@ namespace www.e_bazar.dk.Controllers
                 poco_person current_user = user.GetCurrentUser(false, true, true);
                 ViewBag.CurrentUser = current_user;
                 ViewBag.AreasChecked = Security.ListToString(Areas.selected, '-');
-                
+                ViewBag.CatA = c_search.IsNullOrEmpty() || c_search == "alle" || c_search.Split('-')[0].IsNullOrEmpty() ? "" : c_search.Split('-')[0];
+                ViewBag.CatB = c_search.IsNullOrEmpty() || c_search == "alle" || c_search.Split('-')[1].IsNullOrEmpty() ? "" : c_search.Split('-')[1];
 
                 dto_marketplace marketplace = new dto_marketplace(booth_list, count, num_per_page, booth_newest, Areas.selected, cats, c_search, zip, fra, til, kun_med_fast, stats_res, s != "");
 
@@ -433,7 +435,7 @@ namespace www.e_bazar.dk.Controllers
                 CurrentUser user = CurrentUser.GetInstance();
                 poco_person current_user = user.GetCurrentUser(false, true, true);
 
-                poco_booth booth_poco = DAL.GetInstance(/*true*/).GetBoothPOCO(id, a_sub, b_sub, false, true, true, false, false, false, false);
+                poco_booth booth_poco = DAL.GetInstance().GetBoothPOCO(id, a_sub, b_sub, false, true, true, false, false, false, false);
                 
                 ViewBag.Booth = booth_poco;
                 ViewBag.Address = booth_poco.fulladdress ? booth_poco.street_address.ToLower() + ", " +
@@ -446,14 +448,14 @@ namespace www.e_bazar.dk.Controllers
                 ViewBag.CurrentUser = current_user;
                 ViewBag.Full = booth_poco.fulladdress ? "true" : "false";
 
-                List<poco_booth> other_booths = DAL.GetInstance(/*true*/).GetBoothsByPersonPOCOs(booth_poco.salesman_id);
+                List<poco_booth> other_booths = DAL.GetInstance().GetBoothsByPersonPOCOs(booth_poco.salesman_id);
                 other_booths = other_booths.Randomize<poco_booth>().Skip(0).Take(3).ToList();
 
                 int count;
-                List<poco_booth> chance = DAL.GetInstance(/*true*/).GetBoothPOCOs(-1, -1, out count);
+                List<poco_booth> chance = DAL.GetInstance().GetBoothPOCOs(-1, -1, out count);
                 chance = chance.Randomize<poco_booth>().Skip(0).Take(5).ToList();
                 
-                List<poco_folder> folder_pocos = DAL.GetInstance(/*true*/).GetFolderTree(booth_poco.booth_id, false);
+                List<poco_folder> folder_pocos = DAL.GetInstance().GetFolderTree(booth_poco.booth_id, false);
                 string folders_selected = ThisSession.Catalog as string;
                 dto_folders folders_dto = new dto_folders(folder_pocos, folders_selected != null ? folders_selected : "");
                 
@@ -466,7 +468,7 @@ namespace www.e_bazar.dk.Controllers
                 short rating = br != null ? (short)br.rating : (short)-1;
                 bool is_owner = current_user != null ? booth_poco.salesman_poco.person_id == current_user.person_id : false;
 
-                dto_booth dto = new dto_booth(booth_poco, folders_dto, cats, other_booths, chance, null, is_owner, rating/*, s, c, zip, fra, til, kun_med_fast*/);
+                dto_booth dto = new dto_booth(booth_poco, folders_dto, cats, other_booths, chance, null, is_owner, rating);
                 return View(dto);
             }
             catch (Exception e)
@@ -521,9 +523,9 @@ namespace www.e_bazar.dk.Controllers
                 
                 SetupCurrentUser();
 
-                poco_product product_poco = DAL.GetInstance(/*true*/).GetProductPOCO(id, true, true, true, false, true);
+                poco_product product_poco = DAL.GetInstance().GetProductPOCO(id, true, true, true, false, true);
                 
-                List<IBoothItem> other = DAL.GetInstance(/*true*/).GetItemPOCOs((int)product_poco.booth_id);
+                List<IBoothItem> other = DAL.GetInstance().GetItemPOCOs((int)product_poco.booth_id);
                 other = other.Randomize<IBoothItem>().Skip(0).Take(4).ToList();
 
                 CurrentUser user = CurrentUser.GetInstance();
