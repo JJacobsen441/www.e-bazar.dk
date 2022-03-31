@@ -133,28 +133,32 @@ namespace www.e_bazar.dk.Controllers
                     {
                         if (pwd == "asDf1234")
                         {
-                            int status;
-                            switch (cmd)
+                            using (EbazarDB _db = new EbazarDB())
                             {
-                                case "categorys":
-                                    Admin.Commands.Categorys(bool.Parse(bool1), bool.Parse(bool2), DAL.GetInstance(/*true*/).GetContext());
-                                    status = (int)HttpStatusCode.OK;
-                                    break;
-                                case "deleteuser":
-                                    status = (int)HttpStatusCode.NotFound;
-                                    if (Admin.Commands.DeleteUser("test@e-bazar.dk", UserManager, DAL.GetInstance(/*true*/).GetContext()))
+
+                                int status;
+                                switch (cmd)
+                                {
+                                    case "categorys":
+                                        Admin.Commands.Categorys(bool.Parse(bool1), bool.Parse(bool2), _db);
                                         status = (int)HttpStatusCode.OK;
-                                    break;
-                                default:
-                                    status = (int)HttpStatusCode.NotFound;
-                                    break;
+                                        break;
+                                    case "deleteuser":
+                                        status = (int)HttpStatusCode.NotFound;
+                                        if (Admin.Commands.DeleteUser("test@e-bazar.dk", UserManager, _db))
+                                            status = (int)HttpStatusCode.OK;
+                                        break;
+                                    default:
+                                        status = (int)HttpStatusCode.NotFound;
+                                        break;
+                                }
+
+                                subject = "Admin(is me?)";
+                                body = "IP: " + ip;
+                                Admin.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
+
+                                return View("AdminPost", status);
                             }
-
-                            subject = "Admin(is me?)";
-                            body = "IP: " + ip;
-                            Admin.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
-
-                            return View("AdminPost", status);
                         }
                     }
                 }
@@ -169,7 +173,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -227,7 +235,7 @@ namespace www.e_bazar.dk.Controllers
             int num_per_page = 6;
             int count = 0;
             List<poco_booth> booth_list = new List<poco_booth>();
-            List<poco_booth> booth_newest = DAL.GetInstance(/*true*/).GetNewestBoothPOCOs(0, 5);
+            List<poco_booth> booth_newest = DAL.GetInstance().GetNewestBoothPOCOs(0, 5);
             
             SetupCurrentUser();
             CurrentUser user = CurrentUser.GetInstance();
@@ -239,7 +247,7 @@ namespace www.e_bazar.dk.Controllers
 
             Dictionary<string, Dictionary<string, List<poco_params>>> param_a = Categorys.s_Params();
             ViewBag.Subs = param_a;
-            ViewBag.Param = ""; //(string)Request.Query["p"];
+            ViewBag.Param = ""; 
 
             pag = new Paginator(count, num_per_page);
             pag.GotoPage(page);
@@ -317,15 +325,15 @@ namespace www.e_bazar.dk.Controllers
                 
                 int num_per_page = 18;
                 int count;
-                List<poco_booth> booth_list = DAL.GetInstance(/*true*/).GetBoothPOCOs(num_per_page * (page - 1), num_per_page, out count);
+                List<poco_booth> booth_list = DAL.GetInstance().GetBoothPOCOs(num_per_page * (page - 1), num_per_page, out count);
                 
-                List<poco_booth> booth_newest = DAL.GetInstance(/*true*/).GetNewestBoothPOCOs(0, 5);
+                List<poco_booth> booth_newest = DAL.GetInstance().GetNewestBoothPOCOs(0, 5);
                 
                 poco_category cat_poco = new poco_category();
                 List<poco_category> cats = cat_poco._GetAll(true);
                 Dictionary<string, Dictionary<string, List<poco_params>>> param_a = Categorys.s_Params();
                 ViewBag.Subs = param_a;
-                ViewBag.Param = p; //(string)Request.Query["p"];
+                ViewBag.Param = p; 
 
                 pag = new Paginator(count, num_per_page);
                 pag.GotoPage(page);
@@ -349,7 +357,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -403,7 +415,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -479,7 +495,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -532,7 +552,7 @@ namespace www.e_bazar.dk.Controllers
                 poco_person current_user = user.GetCurrentUser(false, true, true);
                 ViewBag.CurrentUser = current_user;
 
-                dto_product dto;// = new dto_product(product_poco, other, current_user != null ? product_poco.booth_poco.salesman_poco.person_id == current_user.person_id : false);
+                dto_product dto;
                 if (current_user != null)
                     dto = new dto_product(product_poco, other, product_poco.booth_poco.salesman_poco.person_id == current_user.person_id);
                 else
@@ -548,7 +568,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -573,9 +597,9 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
 
-                poco_collection collection_poco = DAL.GetInstance(/*true*/).GetCollectionPOCO(id, true, true, false, true, true);
+                poco_collection collection_poco = DAL.GetInstance().GetCollectionPOCO(id, true, true, false, true, true);
                 
-                List<IBoothItem> other = DAL.GetInstance(/*true*/).GetItemPOCOs((int)collection_poco.booth_id);
+                List<IBoothItem> other = DAL.GetInstance().GetItemPOCOs((int)collection_poco.booth_id);
                 other = other.Randomize<IBoothItem>().Skip(0).Take(4).ToList();
 
                 CurrentUser user = CurrentUser.GetInstance();
@@ -598,7 +622,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -618,12 +646,12 @@ namespace www.e_bazar.dk.Controllers
             if (current_user == null)
                 throw new Exception("A-OK, Check.");
             poco_salesman salesman_dao = new poco_salesman();
-            poco_booth shop_dao = new poco_booth(/*db, */);
+            poco_booth shop_dao = new poco_booth();
             poco_product product_dao = new poco_product();
             poco_collection collection_dao = new poco_collection();
             if (typeEnum == TYPE.PRODUCT)
             {
-                product_dao = DAL.GetInstance(/*true*/).GetProductPOCO((long)id, true, false, false, false, false);
+                product_dao = DAL.GetInstance().GetProductPOCO((long)id, true, false, false, false, false);
                 collection_dao = null;
                 shop_dao = null;
 
@@ -632,7 +660,7 @@ namespace www.e_bazar.dk.Controllers
             else if (typeEnum == TYPE.COLLECTION)
             {
                 product_dao = null;
-                collection_dao = DAL.GetInstance(/*true*/).GetCollectionPOCO((int)id, false, true, false, true, false);
+                collection_dao = DAL.GetInstance().GetCollectionPOCO((int)id, false, true, false, true, false);
                 shop_dao = null;
 
                 salesman_dao = collection_dao.booth_poco.salesman_poco;
@@ -641,7 +669,7 @@ namespace www.e_bazar.dk.Controllers
             {
                 product_dao = null;
                 collection_dao = null;
-                shop_dao = DAL.GetInstance(/*true*/).GetBoothPOCO((int)id, "", "", true, false, false, false, false, false, false);
+                shop_dao = DAL.GetInstance().GetBoothPOCO((int)id, "", "", true, false, false, false, false, false, false);
 
                 salesman_dao = shop_dao.salesman_poco;
             }
@@ -649,7 +677,7 @@ namespace www.e_bazar.dk.Controllers
             dto_message message_dto = new dto_message();
             message_dto.type = typeEnum;
             message_dto.id = (long)id;
-            message_dto.conversation = DAL.GetInstance(/*true*/).GetConversation((long)id, conn_owner_id != salesman_dao.person_id ? conn_owner_id : "", typeEnum);
+            message_dto.conversation = DAL.GetInstance().GetConversation((long)id, conn_owner_id != salesman_dao.person_id ? conn_owner_id : "", typeEnum);
 
             message_dto.conversation.product_poco = type == TYPE.PRODUCT ? product_dao : null;
             message_dto.conversation.collection_poco = type == TYPE.COLLECTION ? collection_dao : null;
@@ -704,7 +732,7 @@ namespace www.e_bazar.dk.Controllers
                 }
                 if (e_type == TYPE.BOOTH)
                 {
-                    if (user.OwnsBooth((int)id) /*|| user.IsEmployee((long)id, -1, TYPE.SHOP)*/)
+                    if (user.OwnsBooth((int)id))
                         return RedirectToRoute("UserProfile");
                 }
 
@@ -724,7 +752,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -772,7 +804,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -782,51 +818,6 @@ namespace www.e_bazar.dk.Controllers
                 }
             }
         }
-
-        /* MessagePost er indgang fra adminstration */
-        /*[HttpGet]
-        public ActionResult MessageB(long id, string owner, string type)
-        {
-            try
-            {
-                access.Queue();
-
-                SetupCurrentUser();
-                CurrentUser user = CurrentUser.GetInstance();
-                poco_person current_user = user.GetCurrentUser(false, true, true);
-                if (current_user == null)
-                    throw new Exception("A-OK, Check.");
-                //if (current_user.test == "TEST")
-                //    return RedirectToRoute("UserProfile");
-
-                ViewBag.CurrentUser = current_user;//ikke brugt
-                ViewBag.User = user;
-                //ViewBag.Session = session;
-
-                dto_message dto;
-                dto = MessageView(mess.id, mess.conn_owner_id, mess.type);
-                if (dto == null)
-                    return new HttpNotFoundResult();
-                return View("MessageView", dto);
-            }
-            catch (Exception e)
-            {
-                Statics.Log(err.HandleError(ERROR.MESSAGE, e));
-                TempData["err_msg"] = err.HandleError(ERROR.MESSAGE, e);
-                TempData["ErrorMessage"] = "";
-                return ErrorPage();
-            }
-            finally
-            {
-                try { db?.Dispose(); access.UnQueue(); }
-                catch (Exception e)
-                {
-                    string subject = "Fejl i finally!";
-                    string body = "";
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
-                }
-            }
-        }*/
 
         [HttpPost]
         public ActionResult Message(dto_message mess)//Save
@@ -894,7 +885,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -930,7 +925,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -966,7 +965,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -1002,7 +1005,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -1036,7 +1043,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -1056,7 +1067,7 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
 
-                DAL.GetInstance(/*true*/).RemoveFavorite(product_id, collection_id);
+                DAL.GetInstance().RemoveFavorite(product_id, collection_id);
                 if (product_id != -1)
                     return RedirectToRoute("Product", new { id = product_id });
                 else
@@ -1070,7 +1081,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -1090,7 +1105,7 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
 
-                DAL.GetInstance(/*true*/).AddFollowing(booth_id);
+                DAL.GetInstance().AddFollowing(booth_id);
                 return RedirectToRoute("Booth", new { id = booth_id });
             }
             catch (Exception e)
@@ -1101,7 +1116,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -1121,7 +1140,7 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
 
-                DAL.GetInstance(/*true*/).RemoveFollowing(booth_id);
+                DAL.GetInstance().RemoveFollowing(booth_id);
                 return RedirectToRoute("Booth", new { id = booth_id });
             }
             catch (Exception e)
@@ -1132,7 +1151,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -1158,7 +1181,7 @@ namespace www.e_bazar.dk.Controllers
                     ok = int.TryParse(booth_id, out b);
                 if (ok)
                 {
-                    ok = DAL.GetInstance(/*true*/).AddRating(int.Parse(booth_id), person_id, short.Parse(rating));
+                    ok = DAL.GetInstance().AddRating(int.Parse(booth_id), person_id, short.Parse(rating));
                     return Json(new { success = ok, rating = rating });
                 }
                 else
@@ -1172,7 +1195,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -1181,40 +1208,7 @@ namespace www.e_bazar.dk.Controllers
                     Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
-        }
-
-        /*[HttpPost]
-        [AllowAnonymous]
-        public JsonResult IsMobile(int width)
-        {
-            //SetupCurrentUser();
-
-            try
-            {
-                access.Queue();
-
-                //if(!ThisSession.IsMobile)
-                ThisSession.IsMobile = width < 768 ? "true" : "false";
-                string res = ThisSession.IsMobile == "true" ? "mobile" : "not mobile";
-                return Json(new { success = true, mobile = res });
-            }
-            catch (Exception e)
-            {
-                string err_msg = err.HandleError(ERROR.ISMOBILE, e);
-                TempData["err_msg"] = err_msg;
-                return AjaxErrorReturn("err");
-            }
-            finally
-            {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
-                catch (Exception e)
-                {
-                    string subject = "Fejl i finally!";
-                    string body = "";
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
-                }
-            }
-        }*/
+        }        
 
         [HttpPost]
         [AllowAnonymous]
@@ -1238,7 +1232,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();

@@ -13,8 +13,6 @@ namespace www.e_bazar.dk.Interfaces
 {
     public interface IImage
     {
-        //EbazarDB db = new EbazarDB();
-
         long id { get; set; }
 
         string name { get; set; }
@@ -23,9 +21,8 @@ namespace www.e_bazar.dk.Interfaces
 
         long? _id { get; set; }
 
-        List<IImage> GetImagePOCOs(long collection_id);
         void SaveImages(long collection_id, List<string> fnames);
-        void DeleteImages(long collection_id);
+        //void DeleteImages(long collection_id);
         
     }
 }

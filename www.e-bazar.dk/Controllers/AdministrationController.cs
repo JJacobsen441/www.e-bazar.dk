@@ -74,20 +74,22 @@ namespace www.e_bazar.dk.Controllers
         
         private T SetupUserProfile<T>(string userid, ref dto_userprofile userprofile, string role_name) where T: poco_person, new()
         {
-            T person_poco = (T)DAL.GetInstance(/*true*/).GetPersonPOCO<T>(userid, true, true, true);
+            T person_poco = (T)DAL.GetInstance().GetPersonPOCO<T>(userid, true, true, true);
             if (person_poco == null)
                 throw new Exception("A-OK, handled.");
             
             bool is_salesman = typeof(poco_salesman) == typeof(T);
-            List<poco_conversation> lista = DAL.GetInstance(/*true*/).GetConversationsPerson(userid, is_salesman, true);
+            List<poco_conversation> lista = DAL.GetInstance().GetConversationsPerson(userid, is_salesman, true);
             if (lista == null)
                 return null;
             
             List<poco_conversation> own = lista.Where(c => c.person_id == userid).ToList();
-            own = own.OrderBy(c => c.comment_pocos.OrderBy(com => com.created_on).FirstOrDefault().created_on).ToList();
+            own = own.Where(c=>c.comment_pocos.Count() > 0).OrderBy(c => c.comment_pocos.OrderBy(com => com.created_on).FirstOrDefault().created_on).ToList();
+            
             List<poco_conversation> items = lista.Where(c => c.product_poco != null && c.person_id != userid).ToList();
             items = items.Concat(lista.Where(c => c.collection_poco != null && c.person_id != userid)).ToList();
             items = items.OrderBy(c => c.comment_pocos.OrderBy(com => com.created_on).FirstOrDefault().created_on).ToList();
+            
             List<poco_conversation> booths = lista.Where(c => c.booth_poco != null && c.person_id != userid).ToList();
             booths = booths.OrderBy(c => c.comment_pocos.OrderBy(com => com.created_on).FirstOrDefault().created_on).ToList();
             dto_conversations conversations = new dto_conversations(own, booths, items, is_salesman);
@@ -102,7 +104,7 @@ namespace www.e_bazar.dk.Controllers
                 userprofile.customer_poco = null;
                 userprofile.salesmen = null;
                 userprofile.customers = null;
-                userprofile.booth_pocos = DAL.GetInstance(/*true*/).GetBoothPOCOs(userid, false);
+                userprofile.booth_pocos = DAL.GetInstance().GetBoothPOCOs(userid, false);
                 userprofile.follower_news = follower_news;
                 userprofile.conversations_dto = conversations;
             }
@@ -186,7 +188,10 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { //DAL.GetInstance().Dispose();
+                  access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -258,7 +263,10 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { //DAL.GetInstance().Dispose();
+                  access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -328,7 +336,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -407,7 +419,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -493,7 +509,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -547,16 +567,14 @@ namespace www.e_bazar.dk.Controllers
                     ThisSession.Json_Messages = null;
                 }
 
-                //int id = model == null ? booth_id : model.booth_id; //true: der er ikke errors, false: der er errors
-
                 poco_booth booth_poco = new poco_booth();
-                booth_poco = DAL.GetInstance(/*true*/).GetBoothPOCO(booth_id, "", "", true, true, true, true, false, false, true);
+                booth_poco = DAL.GetInstance().GetBoothPOCO(booth_id, "", "", true, true, true, true, false, false, true);
                 
-                List<poco_folder> folder_pocos = DAL.GetInstance(/*true*/).GetFolderTree(booth_id, false);
+                List<poco_folder> folder_pocos = DAL.GetInstance().GetFolderTree(booth_id, false);
                 dto_folders folders_dto = new dto_folders(folder_pocos, "");
                 poco_category cat_poco = new poco_category();
                 List<poco_category> cats = cat_poco._GetAll(true);
-                List<poco_booth> booth_pocos = DAL.GetInstance(/*true*/).GetBoothPOCOs(CurrentUser.GetInstance().CurrentUserID, false);
+                List<poco_booth> booth_pocos = DAL.GetInstance().GetBoothPOCOs(CurrentUser.GetInstance().CurrentUserID, false);
                 
                 return View("EditBooth", new dto_booth(booth_poco, folders_dto, cats, null, null, booth_pocos, false, -1/*dont care*/));
 
@@ -569,7 +587,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -652,7 +674,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -710,7 +736,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -741,57 +771,61 @@ namespace www.e_bazar.dk.Controllers
                 if (!user.OwnsBooth(booth_id))
                     throw new Exception("A-OK, handled.");
 
-                EbazarDB _db = DAL.GetInstance().GetContext();
-                poco_product model = TempData["datacontainer"] as poco_product;
-                if (model == null)//ny
+                //EbazarDB _db = DAL.GetInstance().GetContext();
+                using (EbazarDB _db = new EbazarDB())
                 {
-                    poco_product product_poco = new poco_product(false);
-                    poco_booth booth_poco = new poco_booth();
-                    booth b = booth_poco.GetBooth(booth_id, "", "", true, true, true, true, false, false, true);
-                    
-                    booth_poco.ToPoco(b, null);
 
-                    product_poco.booth_poco = booth_poco;
-                    product_poco.category_main_id = _db.category.Where(x => x.name != ".ingen" && x.is_parent && x.priority == 1).FirstOrDefault().Id;
-
-                    product_poco.ToPoco(new product(), new List<poco_booth.Hit>(), "");
-                    product_poco.SetupToClient<poco_product>();
-                    
-                    ViewBag.ProductCategoryMain = product_poco.category_main_selectlist;
-                    ViewBag.ProductCategorySecond = product_poco.category_second_selectlist;
-                    ViewBag.StatusStock = product_poco.status_stock_selectlist;
-                    ViewBag.StatusCondition = product_poco.status_condition_selectlist;
-
-                    if (ThisSession.Json_Errors != null)
+                    poco_product model = TempData["datacontainer"] as poco_product;
+                    if (model == null)//ny
                     {
-                        ViewBag.JSON_ERRORS = "";
-                        string s = JsonConvert.SerializeObject(ThisSession.Json_Errors);
-                        if (!string.IsNullOrEmpty(s) && s != "{}")
-                            ViewBag.JSON_ERRORS = s;
-                        ThisSession.Json_Errors = null;
+                        poco_product product_poco = new poco_product(false);
+                        poco_booth booth_poco = new poco_booth();
+                        booth b = booth_poco.GetBooth(booth_id, "", "", true, true, true, true, false, false, true);
+                    
+                        booth_poco.ToPoco(b, null);
+
+                        product_poco.booth_poco = booth_poco;
+                        product_poco.category_main_id = _db.category.Where(x => x.name != ".ingen" && x.is_parent && x.priority == 1).FirstOrDefault().Id;
+
+                        product_poco.ToPoco(new product(), new List<poco_booth.Hit>(), "");
+                        product_poco.SetupToClient<poco_product>();
+                    
+                        ViewBag.ProductCategoryMain = product_poco.category_main_selectlist;
+                        ViewBag.ProductCategorySecond = product_poco.category_second_selectlist;
+                        ViewBag.StatusStock = product_poco.status_stock_selectlist;
+                        ViewBag.StatusCondition = product_poco.status_condition_selectlist;
+
+                        if (ThisSession.Json_Errors != null)
+                        {
+                            ViewBag.JSON_ERRORS = "";
+                            string s = JsonConvert.SerializeObject(ThisSession.Json_Errors);
+                            if (!string.IsNullOrEmpty(s) && s != "{}")
+                                ViewBag.JSON_ERRORS = s;
+                            ThisSession.Json_Errors = null;
+                        }
+
+                        return View("CreateProduct", product_poco);
                     }
-
-                    return View("CreateProduct", product_poco);
-                }
-                else//der er errors
-                {
-                    model.booth_poco = DAL.GetInstance(/*true*/).GetBoothPOCO(booth_id, "", "", true, false, false, false, false, false, true);
-                    //if (model.booth_poco == null)
-                    //    return _NotFound();
-                    model.SetupToClient<poco_product>();
-                    ViewBag.StatusCondition = model.status_condition_selectlist;
-                    ViewBag.StatusStock = model.status_stock_selectlist;
-                    ViewBag.ProductCategoryMain = model.category_main_selectlist;
-
-                    if (ThisSession.Json_Errors != null)
+                    else//der er errors
                     {
-                        ViewBag.JSON_ERRORS = "";
-                        string s = JsonConvert.SerializeObject(ThisSession.Json_Errors);
-                        if (!string.IsNullOrEmpty(s) && s != "{}")
-                            ViewBag.JSON_ERRORS = s;
-                        ThisSession.Json_Errors = null;
+                        model.booth_poco = DAL.GetInstance(/*true*/).GetBoothPOCO(booth_id, "", "", true, false, false, false, false, false, true);
+                        //if (model.booth_poco == null)
+                        //    return _NotFound();
+                        model.SetupToClient<poco_product>();
+                        ViewBag.StatusCondition = model.status_condition_selectlist;
+                        ViewBag.StatusStock = model.status_stock_selectlist;
+                        ViewBag.ProductCategoryMain = model.category_main_selectlist;
+
+                        if (ThisSession.Json_Errors != null)
+                        {
+                            ViewBag.JSON_ERRORS = "";
+                            string s = JsonConvert.SerializeObject(ThisSession.Json_Errors);
+                            if (!string.IsNullOrEmpty(s) && s != "{}")
+                                ViewBag.JSON_ERRORS = s;
+                            ThisSession.Json_Errors = null;
+                        }
+                        return View("CreateProduct", model);
                     }
-                    return View("CreateProduct", model);
                 }
             }
             catch (Exception e)
@@ -802,7 +836,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -889,7 +927,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -948,7 +990,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose(); 
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -1033,7 +1079,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -1081,7 +1131,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -1109,61 +1163,65 @@ namespace www.e_bazar.dk.Controllers
                 if (!user.OwnsBooth(booth_id))
                     throw new Exception("A-OK, handled.");
 
-                EbazarDB _db = DAL.GetInstance().GetContext();
-                poco_collection model = TempData["datacontainer"] as poco_collection;
-                if (model == null)//ny
+                //EbazarDB _db = DAL.GetInstance().GetContext();
+                using (EbazarDB _db = new EbazarDB())
                 {
-                    poco_collection collection_poco = new poco_collection();
-                    poco_booth booth_poco = new poco_booth();
-                    booth b = booth_poco.GetBooth(booth_id, "", "", true, true, true, true, false, false, true);
 
-                    booth_poco.ToPoco(b, null);
-
-                    collection_poco.booth_poco = booth_poco;
-                    collection_poco.category_main_id = _db.category.Where(x => x.name != ".ingen" && x.is_parent && x.priority == 1).FirstOrDefault().Id;
-
-                    collection_poco.ToPoco(new collection(), new List<poco_booth.Hit>(), "");
-                    collection_poco.SetupToClient<poco_product>();
-
-                    ViewBag.StatusCondition = collection_poco.status_condition_selectlist;
-                    ViewBag.StatusStock = collection_poco.status_stock_selectlist;
-                    ViewBag.CollectionCategoryMain = collection_poco.category_main_selectlist;
-                    ViewBag.CollectionCategorySecond = collection_poco.category_second_selectlist;
-
-                    if (ThisSession.Json_Errors != null)
+                    poco_collection model = TempData["datacontainer"] as poco_collection;
+                    if (model == null)//ny
                     {
-                        ViewBag.JSON_ERRORS = "";
-                        string s = JsonConvert.SerializeObject(ThisSession.Json_Errors);
-                        if (!string.IsNullOrEmpty(s) && s != "{}")
-                            ViewBag.JSON_ERRORS = s;
-                        ThisSession.Json_Errors = null;
+                        poco_collection collection_poco = new poco_collection();
+                        poco_booth booth_poco = new poco_booth();
+                        booth b = booth_poco.GetBooth(booth_id, "", "", true, true, true, true, false, false, true);
+
+                        booth_poco.ToPoco(b, null);
+
+                        collection_poco.booth_poco = booth_poco;
+                        collection_poco.category_main_id = _db.category.Where(x => x.name != ".ingen" && x.is_parent && x.priority == 1).FirstOrDefault().Id;
+
+                        collection_poco.ToPoco(new collection(), new List<poco_booth.Hit>(), "");
+                        collection_poco.SetupToClient<poco_product>();
+
+                        ViewBag.StatusCondition = collection_poco.status_condition_selectlist;
+                        ViewBag.StatusStock = collection_poco.status_stock_selectlist;
+                        ViewBag.CollectionCategoryMain = collection_poco.category_main_selectlist;
+                        ViewBag.CollectionCategorySecond = collection_poco.category_second_selectlist;
+
+                        if (ThisSession.Json_Errors != null)
+                        {
+                            ViewBag.JSON_ERRORS = "";
+                            string s = JsonConvert.SerializeObject(ThisSession.Json_Errors);
+                            if (!string.IsNullOrEmpty(s) && s != "{}")
+                                ViewBag.JSON_ERRORS = s;
+                            ThisSession.Json_Errors = null;
+                        }
+
+                        return View("CreateCollection", collection_poco);
                     }
-
-                    return View("CreateCollection", collection_poco);
-                }
-                else//der er errors
-                {
-                    poco_product product_poco = new poco_product(false);
-                    model.booth_poco = DAL.GetInstance(/*true*/).GetBoothPOCO(booth_id, "", "", true, false, false, true, false, false, true);
-                    
-                    model.product_pocos = product_poco.GetProductPOCOsByCollectionId((int)model.id, false, false);
-                    
-                    model.SetupToClient<poco_collection>();
-                    ViewBag.StatusCondition = model.status_condition_selectlist;
-                    ViewBag.StatusStock = model.status_stock_selectlist;
-                    ViewBag.CollectionCategoryMain = model.category_main_selectlist;
-                    ViewBag.CollectionCategorySecond = model.category_second_selectlist;
-
-                    if (ThisSession.Json_Errors != null)
+                    else//der er errors
                     {
-                        ViewBag.JSON_ERRORS = "";
-                        string s = JsonConvert.SerializeObject(ThisSession.Json_Errors);
-                        if (!string.IsNullOrEmpty(s) && s != "{}")
-                            ViewBag.JSON_ERRORS = s;
-                        ThisSession.Json_Errors = null;
-                    }
+                        poco_product product_poco = new poco_product(false);
+                        model.booth_poco = DAL.GetInstance(/*true*/).GetBoothPOCO(booth_id, "", "", true, false, false, true, false, false, true);
+                    
+                        model.product_pocos = product_poco.GetProductPOCOsByCollectionId((int)model.id, false, false);
+                    
+                        model.SetupToClient<poco_collection>();
+                        ViewBag.StatusCondition = model.status_condition_selectlist;
+                        ViewBag.StatusStock = model.status_stock_selectlist;
+                        ViewBag.CollectionCategoryMain = model.category_main_selectlist;
+                        ViewBag.CollectionCategorySecond = model.category_second_selectlist;
 
-                    return View("CreateCollection", model);
+                        if (ThisSession.Json_Errors != null)
+                        {
+                            ViewBag.JSON_ERRORS = "";
+                            string s = JsonConvert.SerializeObject(ThisSession.Json_Errors);
+                            if (!string.IsNullOrEmpty(s) && s != "{}")
+                                ViewBag.JSON_ERRORS = s;
+                            ThisSession.Json_Errors = null;
+                        }
+
+                        return View("CreateCollection", model);
+                    }
                 }
             }
             catch (Exception e)
@@ -1174,7 +1232,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -1259,7 +1321,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -1318,7 +1384,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -1403,7 +1473,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -1451,7 +1525,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -1486,7 +1564,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -1521,7 +1603,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -1570,7 +1656,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -1734,7 +1824,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -1773,7 +1867,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -1832,7 +1930,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -1877,7 +1979,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -1943,7 +2049,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -2003,7 +2113,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -2046,7 +2160,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -2086,7 +2204,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -2116,7 +2238,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -2150,7 +2276,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -2184,7 +2314,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -2234,7 +2368,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -2271,7 +2409,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -2308,7 +2450,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -2348,7 +2494,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -2394,7 +2544,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -2431,7 +2585,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -2462,7 +2620,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -2498,7 +2660,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -2535,7 +2701,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();
@@ -2593,7 +2763,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();

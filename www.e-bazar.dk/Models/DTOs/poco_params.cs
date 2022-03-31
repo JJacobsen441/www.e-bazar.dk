@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using www.e_bazar.dk.Models.DataAccess;
 using www.e_bazar.dk.SharedClasses;
 
 namespace www.e_bazar.dk.Models.DTOs
@@ -31,69 +30,67 @@ namespace www.e_bazar.dk.Models.DTOs
 
         public bool SaveParam(long _id, int param_id, int val_id, TYPE type)
         {
-            //int _id = int.Parse(id);
-            EbazarDB _db = DAL.GetInstance().GetContext();
-
-            param param = _db.param.Where(t => t.Id == param_id).Select(t => t).Include("value1").FirstOrDefault();
-            if (param == null)
-                return false;
-
-            product product = null;
-            collection collection = null;
-            if (type == TYPE.PRODUCT)
+            using (EbazarDB _db = new EbazarDB())
             {
-                product = _db.product
-                    //.Include("product_param")//.ThenInclude(x => x.Param)
-                    //.Include("value")//.ThenInclude(x => x.Value)
-                    .Where(p => p.Id == _id).Select(p => p).FirstOrDefault();
 
-                if (product == null)
+
+                param param = _db.param.Where(t => t.Id == param_id).Select(t => t).Include("value1").FirstOrDefault();
+                if (param == null)
                     return false;
 
-                if (product.product_param.Select(x=>x.param).Contains(param) && param.type == "S")
-                    return true;
+                product product = null;
+                collection collection = null;
+                if (type == TYPE.PRODUCT)
+                {
+                    product = _db.product
+                        .Where(p => p.Id == _id).Select(p => p).FirstOrDefault();
 
-                if (product.product_param.Select(x => x.param).Contains(param) && param.type == "MS" && param.value.Count() > 0)
-                    return false;
+                    if (product == null)
+                        return false;
 
-                List<value> chosen = product.product_param.Where(x => x.param_id == param_id && x.value_id == val_id).Select(x => x.value).ToList();
-                if (product.product_param.Select(x => x.param).Contains(param) && param.type == "M" && chosen.Count() > 0)//skulle jo ikke ske
-                    return true;
+                    if (product.product_param.Select(x=>x.param).Contains(param) && param.type == "S")
+                        return true;
 
-                int? v = val_id;
-                if (v == -1)
-                    v = null;
+                    if (product.product_param.Select(x => x.param).Contains(param) && param.type == "MS" && param.value.Count() > 0)
+                        return false;
 
-                product.product_param.Add(new product_param { product_id = product.Id, param_id = param_id, value_id = v });
+                    List<value> chosen = product.product_param.Where(x => x.param_id == param_id && x.value_id == val_id).Select(x => x.value).ToList();
+                    if (product.product_param.Select(x => x.param).Contains(param) && param.type == "M" && chosen.Count() > 0)//skulle jo ikke ske
+                        return true;
+
+                    int? v = val_id;
+                    if (v == -1)
+                        v = null;
+
+                    product.product_param.Add(new product_param { product_id = product.Id, param_id = param_id, value_id = v });
+                }
+                else if (type == TYPE.COLLECTION)
+                {
+                    collection = _db.collection
+                        .Where(c => c.Id == _id).Select(c => c).FirstOrDefault();
+                    if (collection == null)
+                        return false;
+
+                    if (collection.collection_param.Select(x => x.param).Contains(param) && param.type == "S")
+                        return true;
+
+                    if (collection.collection_param.Select(x => x.param).Contains(param) && param.type == "MS" && param.value1.Count() > 0)
+                        return false;
+
+                    List<value> chosen = collection.collection_param.Where(x => x.param_id == param_id && x.value_id == val_id).Select(x => x.value).ToList();
+                    if (collection.collection_param.Select(x => x.param).Contains(param) && param.type == "M" && chosen.Count() > 0)//skulle jo ikke ske
+                        return true;
+
+                    int? v = val_id;
+                    if (v == -1)
+                        v = null;
+                    collection.collection_param.Add(new collection_param { collection_id = collection.Id, param_id = param_id, value_id = v });
+                }
+
+                _db.SaveChanges();
+                _db.Dispose();
+                return true;
             }
-            else if (type == TYPE.COLLECTION)
-            {
-                collection = _db.collection
-                    //.Include("collection_param")//.ThenInclude(x => x.Param)
-                    //.Include("value")//.ThenInclude(x => x.Value)
-                    .Where(c => c.Id == _id).Select(c => c).FirstOrDefault();
-                if (collection == null)
-                    return false;
-
-                if (collection.collection_param.Select(x => x.param).Contains(param) && param.type == "S")
-                    return true;
-
-                if (collection.collection_param.Select(x => x.param).Contains(param) && param.type == "MS" && param.value1.Count() > 0)
-                    return false;
-
-                List<value> chosen = collection.collection_param.Where(x => x.param_id == param_id && x.value_id == val_id).Select(x => x.value).ToList();
-                if (collection.collection_param.Select(x => x.param).Contains(param) && param.type == "M" && chosen.Count() > 0)//skulle jo ikke ske
-                    return true;
-
-                int? v = val_id;
-                if (v == -1)
-                    v = null;
-                collection.collection_param.Add(new collection_param { collection_id = collection.Id, param_id = param_id, value_id = v });
-            }
-
-            _db.SaveChanges();
-            _db.Dispose();
-            return true;
         }
 
         public List<poco_params> ToPOCO_List(List<param> param)
@@ -110,6 +107,7 @@ namespace www.e_bazar.dk.Models.DTOs
             }
             return list.OrderBy(x => x.prio).ToList();
         }
+
         public void ToPOCO(param par)
         {
             if (par == null)
@@ -120,8 +118,6 @@ namespace www.e_bazar.dk.Models.DTOs
             this.type = par.type;
             this.value = par.value;
             this.prio = par.prio;
-            //this.product_id = par.ProductId;
-            //this.collection_id = par.CollectionId;
             this.category_id = par.category_id;
 
             poco_category cat_dao = new poco_category();
@@ -132,18 +128,9 @@ namespace www.e_bazar.dk.Models.DTOs
             if (par.category != null)
             {
                 this.category_dao = new poco_category();
-                this.category_dao.ToPOCO(par.category/*, -1*/, false, false);
+                this.category_dao.ToPOCO(par.category, false, false);
             }
-            //if (par.Collection != null)
-            //{
-            //    this.collection_dao = new dao_collection(db, httpcon);
-            //    this.collection_dao.ToDAO(par.Collection, false);
-            //}
-            //if (par.Product != null)
-            //{
-            //    this.product_dao = new dao_product(db, httpcon);
-            //    this.product_dao.ToDAO(par.Product, false);
-            //}
+
             if (par.value1 != null)
             {
                 this.values_daos = new List<poco_value>();

@@ -230,7 +230,6 @@
     <Compile Include="Models\EbazarDB.cs" />
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Shared Classes\Paginator.cs" />
-    <Compile Include="Extensions\Tuple.cs" />
     <Compile Include="Models\folder.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -273,7 +272,6 @@
     <Compile Include="Models\DTOs\poco_product.cs" />
     <Compile Include="Models\DTOs\poco_productimage.cs" />
     <Compile Include="Models\DTOs\poco_salesman.cs" />
-    <Compile Include="Models\DTOs\poco_story.cs" />
     <Compile Include="Models\DTOs\poco_tag.cs" />
     <Compile Include="Models\Identity\AccountViewModels.cs" />
     <Compile Include="Models\Identity\IdentityModels.cs" />

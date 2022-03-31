@@ -31,8 +31,7 @@ namespace www.e_bazar.dk.Models.DTOs
             this.booths_newest = booth_newest;
             this.number_booths = number_booths;
             this.number_booths_page = number_booths_page;
-            this.random_story = random_story;
-            //this.current_user = current_user;
+            
             this.fromsearch = fromsearch;
             
             this.z = "" + z;
@@ -76,11 +75,8 @@ namespace www.e_bazar.dk.Models.DTOs
 
         public List<poco_booth> booths_list { get; set; }
         public List<poco_booth> booths_newest { get; set; }
-        public poco_story random_story { get; set; }
-        //public poco_person current_user { get; set; }
         public Stats stats { get; set; }
-        //public List<object> areas { get; set; }
-
+        
         public string s { get; set; }
         public string c { get; set; }
         public string z { get; set; }

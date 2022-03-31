@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using PostgreSQL.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using www.e_bazar.dk.Extensions;
@@ -60,7 +59,7 @@ namespace www.e_bazar.dk.Controllers
             if (Statics.IsDebug)
                 return;
             if (CheckHelper.Generel.IsAdmin(stats.ip))
-                return;// msg = "Der har været en besøgende! - Admin" + ip_str + " [" + stats.users_per_day + "]";
+                return;
             else
                 msg = "Der har været en besøgende! - URL" + ip_str + " [" + stats.users_per_day + "]";
 
@@ -104,7 +103,7 @@ namespace www.e_bazar.dk.Controllers
                 
                 SendNotifications(stats_res);
 
-                List<poco_booth> booth_newest = DAL.GetInstance(/*true*/).GetNewestBoothPOCOs(0, 5);
+                List<poco_booth> booth_newest = DAL.GetInstance().GetNewestBoothPOCOs(0, 5);
                 ViewBag.Newest= booth_newest;
 
                 CurrentUser user = CurrentUser.GetInstance();
@@ -121,7 +120,11 @@ namespace www.e_bazar.dk.Controllers
             }
             finally
             {
-                try { DAL.GetInstance().Dispose(); access.UnQueue(); }
+                try 
+                { 
+                    //DAL.GetInstance().Dispose();
+                    access.UnQueue(); 
+                }
                 catch (Exception e)
                 {
                     ErrorHandler err = new ErrorHandler();

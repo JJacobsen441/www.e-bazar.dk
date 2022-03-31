@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Data.Entity;
+using System.Linq;
 using www.e_bazar.dk.Extensions;
 using www.e_bazar.dk.Interfaces;
-using www.e_bazar.dk.Models.DataAccess;
 using www.e_bazar.dk.SharedClasses;
-//using static www.e_bazar.dk.SharedClasses.Statics;
 
 namespace www.e_bazar.dk.Models.DTOs
 {
@@ -101,73 +99,79 @@ namespace www.e_bazar.dk.Models.DTOs
 
             string _default = withdefault ? "withdefault" : ".ingen";
 
-            EbazarDB _db = DAL.GetInstance().GetContext();
-            
-            _db.Configuration.ProxyCreationEnabled = false;
-            _db.Configuration.LazyLoadingEnabled = false;
-
-            /*
-             * en extension method til at combine includes, kunne være smart
-             * */
-
-            IQueryable<booth> _b = _db.booth
-                            .Include("region")
-                            .Include("category_main")
-                            .Include("person")
-                            .Include("product")
-                            .Include("product.foldera")
-                            .Include("product.folderb")
-                            .Include("product.tag")
-                            .Include("product.category_main")
-                            .Include("product.category_second")
-                            .Include("product.image")
-                            .Include("collection")
-                            .Include("collection.foldera")
-                            .Include("collection.folderb")
-                            .Include("collection.tag")
-                            .Include("collection.category_main")
-                            .Include("collection.category_second")
-                            .Include("collection.image")
-                            .Include("conversation")
-                            .Include("foldera")
-                            .Where(x => x.Id == booth_id);
-
-            booth b = _b.AsEnumerable().FirstOrDefault();
-            
-            if (b.IsNull())
-                throw new Exception("A-OK, Handled.");
-            else
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
             {
-                /*if (b.product.IsNull()) ;
-                if (b.collection.IsNull()) ;
-                if (b.category_main.IsNull()) ;
-                if (b.region.IsNull()) ;
-                if (b.boothrating.IsNull()) ;
-                if (b.person.IsNull()) ;
-                if (b.conversation.IsNull()) ;
-                if (b.foldera.IsNull()) ;
-                if (b.followers.IsNull()) ;/**/
+                /*
+                 * I know virtual should be removed from model entitys, to make it eager load
+                 * */
 
-                b.product = withproducts ? NullHelper.BNull(b.product.Where(z => z.booth_id == booth_id && ((z.active || select_inactive) && (!z.only_collection || overrideonlycollection) &&
-                                ((la_search == "" && lb_search == "") ||
-                                 (z.foldera != null && la_search != "" && z.foldera.name == la_search && lb_search == "" && z.folderb == null) ||
-                                 (z.folderb != null && lb_search != "" && z.folderb.name == lb_search) ||
-                                 (z.foldera != null && la_search != "" && z.foldera.name == la_search && lb_search == "")))).ToList(), true) : null;
-                b.collection = withcollections ? NullHelper.BNull(b.collection.Where(z => z.booth_id == booth_id && ((z.active || select_inactive) &&
-                                 ((la_search == "" && lb_search == "") ||
-                                  (z.foldera != null && la_search != "" && z.foldera.name == la_search && lb_search == "" && z.folderb == null) ||
-                                  (z.folderb != null && lb_search != "" && z.folderb.name == lb_search) ||
-                                  (z.foldera != null && la_search != "" && z.foldera.name == la_search && lb_search == "")))).ToList(), true) : null;
-                b.category_main = NullHelper.BNull(b.category_main.Where(z => z.name != _default).OrderBy(c => c.priority).ToList());
-                b.boothrating = NullHelper.BNull(b.boothrating.ToList());
-                b.conversation = withconversations ? b.conversation : null;
-                b.foldera = withlevela ? b.foldera : null;
-                b.followers = null;
-                b.region = NullHelper.BNull(b.region);
-                b.person = NullHelper.BNull(b.person);
-                //var __e = System.Data.Entity.Core.Objects.ObjectContext.GetObjectType(b.region.GetType());
+                _db.Configuration.ProxyCreationEnabled = false;
+                _db.Configuration.LazyLoadingEnabled = false;
+
+                /*
+                 * en extension method til at combine includes, kunne være smart
+                 * */
+
+                IQueryable<booth> _b = _db.booth
+                                .Include("region")
+                                .Include("category_main")
+                                .Include("person")
+                                .Include("product")
+                                .Include("product.foldera")
+                                .Include("product.folderb")
+                                .Include("product.tag")
+                                .Include("product.category_main")
+                                .Include("product.category_second")
+                                .Include("product.image")
+                                .Include("collection")
+                                .Include("collection.foldera")
+                                .Include("collection.folderb")
+                                .Include("collection.tag")
+                                .Include("collection.category_main")
+                                .Include("collection.category_second")
+                                .Include("collection.image")
+                                .Include("conversation")
+                                .Include("foldera")
+                                .Where(x => x.Id == booth_id);
+
+                booth b = _b.AsEnumerable().FirstOrDefault();
+            
+                if (b.IsNull())
+                    throw new Exception("A-OK, Handled.");
+                else
+                {
+                    /*if (b.product.IsNull()) ;
+                    if (b.collection.IsNull()) ;
+                    if (b.category_main.IsNull()) ;
+                    if (b.region.IsNull()) ;
+                    if (b.boothrating.IsNull()) ;
+                    if (b.person.IsNull()) ;
+                    if (b.conversation.IsNull()) ;
+                    if (b.foldera.IsNull()) ;
+                    if (b.followers.IsNull()) ;/**/
+
+                    b.product = withproducts ? NullHelper.BthNull(b.product.Where(z => z.booth_id == booth_id && ((z.active || select_inactive) && (!z.only_collection || overrideonlycollection) &&
+                                    ((la_search == "" && lb_search == "") ||
+                                     (z.foldera != null && la_search != "" && z.foldera.name == la_search && lb_search == "" && z.folderb == null) ||
+                                     (z.folderb != null && lb_search != "" && z.folderb.name == lb_search) ||
+                                     (z.foldera != null && la_search != "" && z.foldera.name == la_search && lb_search == "")))).ToList(), true) : null;
+                    b.collection = withcollections ? NullHelper.BthNull(b.collection.Where(z => z.booth_id == booth_id && ((z.active || select_inactive) &&
+                                     ((la_search == "" && lb_search == "") ||
+                                      (z.foldera != null && la_search != "" && z.foldera.name == la_search && lb_search == "" && z.folderb == null) ||
+                                      (z.folderb != null && lb_search != "" && z.folderb.name == lb_search) ||
+                                      (z.foldera != null && la_search != "" && z.foldera.name == la_search && lb_search == "")))).ToList(), true) : null;
+                    b.category_main = NullHelper.BthNull(b.category_main.Where(z => z.name != _default).OrderBy(c => c.priority).ToList());
+                    b.boothrating = NullHelper.BthNull(b.boothrating.ToList());
+                    b.conversation = withconversations ? b.conversation : null;
+                    b.foldera = withlevela ? b.foldera : null;
+                    b.followers = null;
+                    b.region = NullHelper.BthNull(b.region);
+                    b.person = NullHelper.BthNull(b.person);
+                    //var __e = System.Data.Entity.Core.Objects.ObjectContext.GetObjectType(b.region.GetType());
                 
-                return b;
+                    return b;
+                }
             }
         }
 
@@ -202,213 +206,64 @@ namespace www.e_bazar.dk.Models.DTOs
 
         }
 
-        //public booth GetBoothByProductId(long product_id)
-        //{
-        //    EbazarDB _db = DAL.GetInstance().GetContext();
-        //    poco_salesman salesman_poco = new poco_salesman();
-        //    poco_category cat_poco = new poco_category();
-        //    booth booth = (from b in _db.booth
-        //                   .Include("category_main")
-        //                   .Include("region")
-        //                       //join s in db.salesman on b.salesman_id equals s.salesman_id
-        //                   where b.product.Contains(_db.product.Where(p => p.Id == product_id).FirstOrDefault())
-        //                   //where b.Id == booth_id
-        //                   select new
-        //                   {
-        //                       Id = b.Id,
-        //                       name = b.name,
-        //                       sysname = b.sysname,
-        //                       created_on = b.created_on,
-        //                       modified = b.modified,
-        //                       description = b.description,
-        //                       frontimage = b.frontimage,
-        //                       numberofratings = b.boothrating.ToList().Count(),
-        //                       boothrating = b.boothrating.ToList(),
-
-        //                       person_id = b.person_id,
-        //                       //person = b.person,//sm_poco.GetPersonPOCO<poco_salesman>(b.salesman_id, false, false, false),
-        //                       //product_dtos = pr_dto.GetProductDTOs(b.booth_id),
-        //                       //tag_pocos = pt_poco.GetBoothTagPOCOs(b.booth_id),
-        //                       street_address = b.street_address,
-        //                       country = b.country,
-        //                       fulladdress = b.fulladdress,
-        //                       region_id = b.region_id,
-        //                       region = b.region,//,
-        //                       //category_main = b.category_main.ToList()//cat_poco.GetAllBooth(b.booth_id, false)
-        //                       //category_main = cat_poco.GetAllBoothParent(b, true)
-        //                       category_main = b.category_main
-        //                   }).AsEnumerable()/**/
-        //                   //select b).AsEnumerable()
-        //                   .Select(b => new booth
-        //                   {
-        //                       Id = b.Id,
-        //                       name = b.name,
-        //                       sysname = b.sysname,
-        //                       created_on = b.created_on,
-        //                       modified = b.modified,
-        //                       description = b.description,
-        //                       frontimage = b.frontimage,
-        //                       numberofratings = b.boothrating.ToList().Count(),
-        //                       boothrating = b.boothrating.ToList(),
-
-        //                       person_id = b.person_id,
-        //                       person = salesman_poco.GetPerson(b.person_id, "Salesman", false, false, false),
-        //                       //product_dtos = pr_dto.GetProductDTOs(b.booth_id),
-        //                       //tag_pocos = pt_poco.GetBoothTagPOCOs(b.booth_id),
-        //                       street_address = b.street_address,
-        //                       country = b.country,
-        //                       fulladdress = b.fulladdress,
-        //                       region_id = b.region_id,
-        //                       region = b.region,
-        //                       //category_main = b.category_main.ToList()
-        //                       category_main = cat_poco.GetAllBoothParent(new booth() { category_main = b.category_main }, true)//; //b.category_main
-        //                   }).FirstOrDefault();
-
-        //    //booth_poco.SetupBoothToClient(db);
-        //    if (booth == null)
-        //        throw new Exception("A-OK, Handled.");
-        //    //booth.category_main = cat_poco.GetAllBoothParent(booth, true);
-        //    return booth;
-        //}
-        //public poco_booth GetBoothPOCOByProductId(long product_id)
-        //{
-        //    poco_booth booth_poco = new poco_booth();
-        //    booth booth = GetBoothByProductId(product_id);
-
-        //    booth_poco.ToPoco(booth, null);
-        //    //booth_poco.SetupBoothToClient(db);
-        //    return booth_poco;
-
-        //}
-
-        //public booth GetBoothByCollectionId(long collection_id, bool withsalesman)
-        //{
-        //    /*EbazarDB _db = DAL.GetInstance().GetContext();
-        //    poco_product pr_poco = new poco_product(false);
-        //    poco_salesman s_poco = new poco_salesman();
-        //    poco_category cat_poco = new poco_category();
-        //    booth booth = (from b in _db.booth
-        //                   .Include("category_main")
-        //                   .Include("region")
-        //                       //.Include("products")
-        //                       //join s in db.salesman on b.salesman_id equals s.salesman_id
-        //                   where b.collection.Contains(_db.collection.Where(c => c.Id == collection_id).FirstOrDefault())
-        //                   //where b.Id == booth_id
-        //                   select new
-        //                   {
-        //                       Id = b.Id,
-        //                       name = b.name,
-        //                       sysname = b.sysname,
-        //                       created_on = b.created_on,
-        //                       modified = b.modified,
-        //                       description = b.description,
-        //                       frontimage = b.frontimage,
-        //                       boothrating = b.boothrating,
-
-        //                       //person_id = b.person_id,
-        //                       person_id = b.person_id,
-        //                       //person = b.person,//sm_poco.GetPersonPOCO<poco_salesman>(b.salesman_id, false, false, false),
-        //                       //product = pr_poco.GetProducts(b.Id, "", "", false, false, false),
-        //                       //tag_pocos = pt_poco.GetBoothTagPOCOs(b.booth_id),
-        //                       street_address = b.street_address,
-        //                       country = b.country,
-        //                       fulladdress = b.fulladdress,
-        //                       region_id = b.region_id,
-        //                       region = b.region,
-        //                       //category_main = b.category_main.ToList()//Where(c=>c.Id == b.Id).ToList(),//cat_poco.GetAllBooth(b.Id, false)
-        //                       //category_main = cat_poco.GetAllBoothParent(b, true)
-        //                       category_main = b.category_main
-        //                   })
-        //                  .AsEnumerable()                          
-        //                  .Select(b => new booth
-        //                  {
-        //                      Id = b.Id,
-        //                      name = b.name,
-        //                      sysname = b.sysname,
-        //                      created_on = b.created_on,
-        //                      description = b.description,
-        //                      frontimage = b.frontimage,
-        //                      boothrating = b.boothrating,
-        //                      //person_id = b.person_id,
-        //                      person_id = b.person_id,
-        //                      person = withsalesman ? s_poco.GetPerson(b.person_id, "Salesman", false, false, false) : null,
-        //                      product = pr_poco.GetProducts(b.Id, "", "", true, false, true, false, false, false),
-        //                      //tag_pocos = pt_poco.GetBoothTagPOCOs(b.booth_id),
-        //                      street_address = b.street_address,
-        //                      country = b.country,
-        //                      fulladdress = b.fulladdress,
-        //                      region_id = b.region_id,
-        //                      region = b.region,
-        //                      category_main = cat_poco.GetAllBoothParent(new booth() { category_main = b.category_main }, true)//b.category_main
-        //                  }).FirstOrDefault();/**/
-
-        //    if (_b.IsNull())
-        //        throw new Exception("A-OK, Handled.");
-                
-        //    return _b;
-        //}
-
-        //public poco_booth _GetBoothPOCOByCollectionId(long collection_id, bool withsalesman)
-        //{
-        //    poco_booth booth_poco = new poco_booth();
-        //    booth booth = GetBoothByCollectionId(collection_id, withsalesman);
-
-        //    booth_poco.ToPoco(booth, null);
-        //    return booth_poco;
-        //}
-
         public List<booth> GetNewestBooths(int skip, int take)
         {
-            EbazarDB _db = DAL.GetInstance().GetContext();
-
-            _db.Configuration.ProxyCreationEnabled = false;
-            _db.Configuration.LazyLoadingEnabled = false;
-
-            IQueryable<booth> _b = _db.booth
-                                        .Include("region")
-                                        .Include("boothrating")
-                                        .Include("person")
-                                        .Where(x=>x.product.Where(p => p.active).Count() > 0 || x.collection.Where(c => c.active).Count() > 0)
-                                        .GroupBy(x => x.Id).Select(g => g.FirstOrDefault())
-                                        .Include("region")
-                                        .Include("boothrating")
-                                        .Include("person")
-                                        .OrderByDescending(b => b.created_on).Skip(skip).Take(take);
-
-            IEnumerable<booth> booths = _b.AsEnumerable().ToList();
-
-            if (booths.IsNull())
-                throw new Exception("A-OK, Handled.");
-            
-            if (booths.Any())
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
             {
-                foreach (booth b in booths)
+                /*
+                 * I know virtual should be removed from model entitys, to make it eager load
+                 * */
+
+                _db.Configuration.ProxyCreationEnabled = false;
+                _db.Configuration.LazyLoadingEnabled = false;
+
+                IQueryable<booth> _b = _db.booth
+                                            .Include("region")
+                                            .Include("boothrating")
+                                            .Include("person")
+                                            .Where(x=>x.product.Where(p => p.active).Count() > 0 || x.collection.Where(c => c.active).Count() > 0)
+                                            .GroupBy(x => x.Id).Select(g => g.FirstOrDefault())
+                                            .Include("region")
+                                            .Include("boothrating")
+                                            .Include("person")
+                                            .OrderByDescending(b => b.created_on).Skip(skip).Take(take);
+
+                IEnumerable<booth> booths = _b.AsEnumerable().ToList();
+
+                if (booths.IsNull())
+                    throw new Exception("A-OK, Handled.");
+            
+                if (booths.Any())
                 {
-                    /*if (b.product.IsNull()) ;
-                    if (b.collection.IsNull()) ;
-                    if (b.category_main.IsNull()) ;
-                    if (b.region.IsNull()) ;
-                    if (b.boothrating.IsNull()) ;
-                    if (b.person.IsNull()) ;
-                    if (b.conversation.IsNull()) ;
-                    if (b.foldera.IsNull()) ;
-                    if (b.followers.IsNull()) ;/**/
+                    foreach (booth b in booths)
+                    {
+                        /*if (b.product.IsNull()) ;
+                        if (b.collection.IsNull()) ;
+                        if (b.category_main.IsNull()) ;
+                        if (b.region.IsNull()) ;
+                        if (b.boothrating.IsNull()) ;
+                        if (b.person.IsNull()) ;
+                        if (b.conversation.IsNull()) ;
+                        if (b.foldera.IsNull()) ;
+                        if (b.followers.IsNull()) ;/**/
 
-                    b.product = null;
-                    b.collection = null;
-                    b.category_main = null;
-                    b.boothrating = NullHelper.BNull(b.boothrating.ToList());
-                    b.conversation = null;
-                    b.foldera = null;
-                    b.followers = null;
-                    b.region = NullHelper.BNull(b.region);
-                    b.person = NullHelper.BNull(b.person);
-                    //var __e = System.Data.Entity.Core.Objects.ObjectContext.GetObjectType(b.region.GetType());
+                        b.product = null;
+                        b.collection = null;
+                        b.category_main = null;
+                        b.boothrating = NullHelper.BthNull(b.boothrating.ToList());
+                        b.conversation = null;
+                        b.foldera = null;
+                        b.followers = null;
+                        b.region = NullHelper.BthNull(b.region);
+                        b.person = NullHelper.BthNull(b.person);
+                        //var __e = System.Data.Entity.Core.Objects.ObjectContext.GetObjectType(b.region.GetType());
+                    }
+
+                    return booths.ToList();
                 }
-
-                return booths.ToList();
+                return new List<booth>();
             }
-            return new List<booth>();
         }
         public List<poco_booth> GetNewestBoothPOCOs(int skip, int take)
         {
@@ -425,56 +280,62 @@ namespace www.e_bazar.dk.Models.DTOs
             if (string.IsNullOrEmpty(salesman_id))
                 throw new Exception("A-OK, Check");
 
-            EbazarDB _db = DAL.GetInstance().GetContext();
-
-            _db.Configuration.ProxyCreationEnabled = false;
-            _db.Configuration.LazyLoadingEnabled = false;
-
-            IQueryable<booth> _b = _db.booth
-                                            .Include("person")
-                                            .Include("boothrating")
-                                            .Include("region")
-                                            .Where(x => x.person.Id == salesman_id)
-                                            .GroupBy(x => x.Id).Select(g => g.FirstOrDefault())
-                                            .Include("person")
-                                            .Include("boothrating")
-                                            .Include("region")
-                                            .OrderByDescending(b => b.created_on);
-
-            IEnumerable<booth> booths = _b.AsEnumerable().ToList();
-
-            if (booths.IsNull())
-                throw new Exception("A-OK, Handled.");
-            
-            if (booths.Any())
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
             {
-                foreach (booth b in booths)
+                /*
+                 * I know virtual should be removed from model entitys, to make it eager load
+                 * */
+
+                _db.Configuration.ProxyCreationEnabled = false;
+                _db.Configuration.LazyLoadingEnabled = false;
+
+                IQueryable<booth> _b = _db.booth
+                                                .Include("person")
+                                                .Include("boothrating")
+                                                .Include("region")
+                                                .Where(x => x.person.Id == salesman_id)
+                                                .GroupBy(x => x.Id).Select(g => g.FirstOrDefault())
+                                                .Include("person")
+                                                .Include("boothrating")
+                                                .Include("region")
+                                                .OrderByDescending(b => b.created_on);
+
+                IEnumerable<booth> booths = _b.AsEnumerable().ToList();
+
+                if (booths.IsNull())
+                    throw new Exception("A-OK, Handled.");
+            
+                if (booths.Any())
                 {
-                    /*if (b.product.IsNull()) ;
-                    if (b.collection.IsNull()) ;
-                    if (b.category_main.IsNull()) ;
-                    if (b.region.IsNull()) ;
-                    if (b.boothrating.IsNull()) ;
-                    if (b.person.IsNull()) ;
-                    if (b.conversation.IsNull()) ;
-                    if (b.foldera.IsNull()) ;
-                    if (b.followers.IsNull()) ;/**/
+                    foreach (booth b in booths)
+                    {
+                        /*if (b.product.IsNull()) ;
+                        if (b.collection.IsNull()) ;
+                        if (b.category_main.IsNull()) ;
+                        if (b.region.IsNull()) ;
+                        if (b.boothrating.IsNull()) ;
+                        if (b.person.IsNull()) ;
+                        if (b.conversation.IsNull()) ;
+                        if (b.foldera.IsNull()) ;
+                        if (b.followers.IsNull()) ;/**/
 
-                    b.product = null;
-                    b.collection = null;
-                    b.category_main = null;
-                    b.boothrating = NullHelper.BNull(b.boothrating.ToList());
-                    b.conversation = null;
-                    b.foldera = null;
-                    b.followers = null;
-                    b.region = NullHelper.BNull(b.region);
-                    b.person = NullHelper.BNull(b.person);
-                    //var __e = System.Data.Entity.Core.Objects.ObjectContext.GetObjectType(b.region.GetType());
+                        b.product = null;
+                        b.collection = null;
+                        b.category_main = null;
+                        b.boothrating = NullHelper.BthNull(b.boothrating.ToList());
+                        b.conversation = null;
+                        b.foldera = null;
+                        b.followers = null;
+                        b.region = NullHelper.BthNull(b.region);
+                        b.person = NullHelper.BthNull(b.person);
+                        //var __e = System.Data.Entity.Core.Objects.ObjectContext.GetObjectType(b.region.GetType());
+                    }
+
+                    return booths.ToList();
                 }
-
-                return booths.ToList();
+                return new List<booth>();
             }
-            return new List<booth>();
         }
 
         public List<poco_booth> GetBoothsByPersonPOCO(string person_id)
@@ -520,51 +381,57 @@ namespace www.e_bazar.dk.Models.DTOs
             if (string.IsNullOrEmpty(salesman_id))
                 throw new Exception("A-OK, Check");
 
-            EbazarDB _db = DAL.GetInstance().GetContext();
-
-            _db.Configuration.ProxyCreationEnabled = false;
-            _db.Configuration.LazyLoadingEnabled = false;
-
-            IQueryable<booth> _b = _db.booth
-                                        .Include("person")
-                                        .Include("boothrating")
-                                        .Include("region")
-                                        .Where(x => x.person_id == salesman_id);
-
-            IEnumerable<booth> booths = _b.AsEnumerable().ToList();
-
-            if (booths == null)
-                throw new Exception("A-OK, Handled.");
-
-            if (booths.Any())
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
             {
-                foreach (booth b in booths)
+                /*
+                 * I know virtual should be removed from model entitys, to make it eager load
+                 * */
+
+                _db.Configuration.ProxyCreationEnabled = false;
+                _db.Configuration.LazyLoadingEnabled = false;
+
+                IQueryable<booth> _b = _db.booth
+                                            .Include("person")
+                                            .Include("boothrating")
+                                            .Include("region")
+                                            .Where(x => x.person_id == salesman_id);
+
+                IEnumerable<booth> booths = _b.AsEnumerable().ToList();
+
+                if (booths == null)
+                    throw new Exception("A-OK, Handled.");
+
+                if (booths.Any())
                 {
-                    /*if (b.product.IsNull()) ;
-                    if (b.collection.IsNull()) ;
-                    if (b.category_main.IsNull()) ;
-                    if (b.region.IsNull()) ;
-                    if (b.boothrating.IsNull()) ;
-                    if (b.person.IsNull()) ;
-                    if (b.conversation.IsNull()) ;
-                    if (b.foldera.IsNull()) ;
-                    if (b.followers.IsNull()) ;/**/
+                    foreach (booth b in booths)
+                    {
+                        /*if (b.product.IsNull()) ;
+                        if (b.collection.IsNull()) ;
+                        if (b.category_main.IsNull()) ;
+                        if (b.region.IsNull()) ;
+                        if (b.boothrating.IsNull()) ;
+                        if (b.person.IsNull()) ;
+                        if (b.conversation.IsNull()) ;
+                        if (b.foldera.IsNull()) ;
+                        if (b.followers.IsNull()) ;/**/
 
-                    b.product = null;
-                    b.collection = null;
-                    b.category_main = null;
-                    b.boothrating = NullHelper.BNull(b.boothrating.ToList());
-                    b.conversation = null;
-                    b.foldera = null;
-                    b.followers = null;
-                    b.region = NullHelper.BNull(b.region);
-                    b.person = withsalesman ? NullHelper.BNull(b.person) : null;
-                    //var __e = System.Data.Entity.Core.Objects.ObjectContext.GetObjectType(b.region.GetType());
+                        b.product = null;
+                        b.collection = null;
+                        b.category_main = null;
+                        b.boothrating = NullHelper.BthNull(b.boothrating.ToList());
+                        b.conversation = null;
+                        b.foldera = null;
+                        b.followers = null;
+                        b.region = NullHelper.BthNull(b.region);
+                        b.person = withsalesman ? NullHelper.BthNull(b.person) : null;
+                        //var __e = System.Data.Entity.Core.Objects.ObjectContext.GetObjectType(b.region.GetType());
+                    }
+
+                    return booths.ToList();
                 }
-
-                return booths.ToList();
+                return new List<booth>();
             }
-            return new List<booth>();
         }
 
         public List<poco_booth> GetBoothPOCOs(string salesman_id, bool withsalesman)
@@ -629,44 +496,52 @@ namespace www.e_bazar.dk.Models.DTOs
 
         public bool RemoveTag(long tag_id)
         {
-            EbazarDB _db = DAL.GetInstance().GetContext();
-            tag tag = _db.tag.Where(t => t.Id == tag_id && t.form == "booth").Select(t => t).FirstOrDefault();
-            if (tag != null)
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
             {
-                booth booth = _db.booth.Where(b => b.Id == this.booth_id).Select(b => b).FirstOrDefault();
-                foreach (product pro in booth.product)
-                {
-                    if (pro.tag.Contains(tag))
-                        return false;
-                }
-                foreach (collection col in booth.collection)
-                {
-                    if (col.tag.Contains(tag))
-                        return false;
-                }
-                //if (booth != null)
-                //    booth.tag.Remove(tag);
 
-                if ((tag.collection.Count + tag.product.Count) < 1/* && tag.booth.Count <= 1*/)
-                    _db.tag.Remove(tag);
-                _db.SaveChanges();
+                tag tag = _db.tag.Where(t => t.Id == tag_id && t.form == "booth").Select(t => t).FirstOrDefault();
+                if (tag != null)
+                {
+                    booth booth = _db.booth.Where(b => b.Id == this.booth_id).Select(b => b).FirstOrDefault();
+                    foreach (product pro in booth.product)
+                    {
+                        if (pro.tag.Contains(tag))
+                            return false;
+                    }
+                    foreach (collection col in booth.collection)
+                    {
+                        if (col.tag.Contains(tag))
+                            return false;
+                    }
+                    //if (booth != null)
+                    //    booth.tag.Remove(tag);
+
+                    if ((tag.collection.Count + tag.product.Count) < 1/* && tag.booth.Count <= 1*/)
+                        _db.tag.Remove(tag);
+                    _db.SaveChanges();
+                }
+                else
+                    throw new Exception("A-OK, handled.");
+                return true;
             }
-            else
-                throw new Exception("A-OK, handled.");
-            return true;
         }
 
         public void RemoveImage() { RemoveBoothImage(); }
         private void RemoveBoothImage()
         {
-            EbazarDB _db = DAL.GetInstance().GetContext();
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
+            {
 
-            booth booth = _db.booth.Where(b => b.Id == this.booth_id).Select(t => t).FirstOrDefault();
-            if (booth == null)
-                throw new Exception("A-OK, handled.");
 
-            booth.frontimage = null;
-            _db.SaveChanges();
+                booth booth = _db.booth.Where(b => b.Id == this.booth_id).Select(t => t).FirstOrDefault();
+                if (booth == null)
+                    throw new Exception("A-OK, handled.");
+
+                booth.frontimage = null;
+                _db.SaveChanges();
+            }
 
         }
 
@@ -679,7 +554,8 @@ namespace www.e_bazar.dk.Models.DTOs
             rel_hits = new List<Hit>();
             //using (EbazarDB _db = new EbazarDB())
             //DAL.GetInstance().Dispose();
-            EbazarDB _db = DAL.GetInstance().GetContext();
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
             {
                 poco_salesman s_poco = new poco_salesman();
                 poco_product pr_poco = new poco_product(false);
@@ -762,6 +638,9 @@ namespace www.e_bazar.dk.Models.DTOs
                                 (cat != "alle" && option1 != "") ? cat_selected : false)) &&
 
                                 //start product IsRelevant
+                                /*
+                                 * I omit p.price_int because I havent updated the databese yet. And in the DB they are stored as strings
+                                 * */
                                 (b.product.Where(p => (
                                     p != null && p.name != "" && p.active && p.booth != null && p.booth.region != null &&
 
@@ -799,11 +678,14 @@ namespace www.e_bazar.dk.Models.DTOs
                                 (cat != "alle" && option1 != "") ? cat_selected : false)) &&
 
                                 //start product IsRelevant
+                                /*
+                                 * I omit p.joinedprice_int because I havent updated the databese yet. And in the DB they are stored as strings
+                                 * */
                                 (b.collection.Where(p => (
                                     p != null && p.name != "" && p.active && p.booth != null && p.booth.region != null &&
 
                                     (((p.joinedprice == NOP.INGEN_PRIS.ToString()) && (p.active && p.joinedprice != null && p.joinedprice != "")) ||
-                                    ((p.joinedprice != NOP.INGEN_PRIS.ToString()) && (p.active && p.joinedprice != null && p.joinedprice != "" /*&& p.price_int >= fra &&*//* p.price_int <= til*/))) &&
+                                    ((p.joinedprice != NOP.INGEN_PRIS.ToString()) && (p.active && p.joinedprice != null && p.joinedprice != "" /*&& p.joinedprice_int >= fra &&*//* p.joinedprice_int <= til*/))) &&
 
                                     (cat == "alle" && p.active) ||
                                     (cat != "alle" && cats.Count() == 1 && p.active && cat == p.category_main.name) ||
@@ -835,6 +717,35 @@ namespace www.e_bazar.dk.Models.DTOs
 
                 ;
 
+                /*
+                    * HACK - just a precaution
+                    * */
+
+                foreach (booth b in booths)
+                {
+                    if (b.product.IsNull()) ;
+                    if (b.collection.IsNull()) ;
+                    if (b.category_main.IsNull()) ;
+                    if (b.region.IsNull()) ;
+                    if (b.boothrating.IsNull()) ;
+                    if (b.person.IsNull()) ;
+                    if (b.conversation.IsNull()) ;
+                    if (b.foldera.IsNull()) ;
+                    if (b.followers.IsNull()) ;
+
+                    b.product = NullHelper.BthNull(b.product.ToList(), false);
+                    b.collection = NullHelper.BthNull(b.collection.ToList(), false);
+                    b.category_main = NullHelper.BthNull(b.category_main.ToList());
+                    b.boothrating = NullHelper.BthNull(b.boothrating.ToList());
+                    b.conversation = NullHelper.BthNull(b.conversation.ToList());
+                    b.foldera = NullHelper.BthNull(b.foldera.ToList());
+                    b.followers = NullHelper.BthNull(b.followers.ToList());
+
+                    //var __e = System.Data.Entity.Core.Objects.ObjectContext.GetObjectType(b.region.GetType());
+                    b.region = NullHelper.BthNull(b.region);
+                    b.person = NullHelper.BthNull(b.person);
+                }
+
                 booths = booths.Where(x =>
                 x.product.Where(z => pro_relevant.IsRelevant(z, null, x.name, is_param, helper)).Count() > 0 ||
                 x.collection.Where(z => col_relevant.IsRelevant(null, z, x.name, is_param, helper)).Count() > 0
@@ -855,35 +766,7 @@ namespace www.e_bazar.dk.Models.DTOs
 
                     rel_hits = rel_hits.Concat(pro_relevant.relevant_hits).ToList();
                     rel_hits = rel_hits.Concat(col_relevant.relevant_hits).ToList();
-
-                    /*
-                    * HACK - just a precaution
-                    * */
-                
-                    foreach (booth b in booths)
-                    {
-                        if (b.product.IsNull());
-                        if (b.collection.IsNull());
-                        if (b.category_main.IsNull());
-                        if (b.region.IsNull());
-                        if (b.boothrating.IsNull());
-                        if (b.person.IsNull());
-                        if (b.conversation.IsNull());
-                        if (b.foldera.IsNull()) ;
-                        if (b.followers.IsNull()) ;
-
-                        b.product = NullHelper.BNull(b.product.ToList(), false);
-                        b.collection = NullHelper.BNull(b.collection.ToList(), false);
-                        b.category_main = NullHelper.BNull(b.category_main.ToList());
-                        b.boothrating = NullHelper.BNull(b.boothrating.ToList());
-                        b.conversation = NullHelper.BNull(b.conversation.ToList());
-                        b.foldera = NullHelper.BNull(b.foldera.ToList());
-                        b.followers = NullHelper.BNull(b.followers.ToList());
-
-                        //var __e = System.Data.Entity.Core.Objects.ObjectContext.GetObjectType(b.region.GetType());
-                        b.region = NullHelper.BNull(b.region);
-                        b.person = NullHelper.BNull(b.person);
-                    }
+                                        
                     return booths.ToList();
                 }
                 return new List<booth>();
@@ -960,31 +843,35 @@ namespace www.e_bazar.dk.Models.DTOs
 
         public void setupaddress(booth b)
         {
-            EbazarDB _db = DAL.GetInstance().GetContext();
-
-            if (b == null)
-                throw new Exception("A-OK, Check");
-
-            this.street_address = !string.IsNullOrEmpty(b.street_address) ? b.street_address : "";
-
-            if (b.region == null)
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
             {
-                this.region_poco = (from r in _db.region
-                                    where r.zip == 0000 && r.town == "default"
-                                    select new poco_region { Id = r.Id, zip = r.zip, town = r.town }).FirstOrDefault();
-            }
-            else
-            {
-                this.region_poco = new poco_region();
-                this.region_poco.ToPOCO(b.region);
-            }
 
-            this.country = !string.IsNullOrEmpty(b.country) ? b.country : "Danmark";
-            this.fulladdress = b.fulladdress;
-            this.region_id = this.region_poco.Id;
+
+                if (b == null)
+                    throw new Exception("A-OK, Check");
+
+                this.street_address = !string.IsNullOrEmpty(b.street_address) ? b.street_address : "";
+
+                if (b.region == null)
+                {
+                    this.region_poco = (from r in _db.region
+                                        where r.zip == 0000 && r.town == "default"
+                                        select new poco_region { Id = r.Id, zip = r.zip, town = r.town }).FirstOrDefault();
+                }
+                else
+                {
+                    this.region_poco = new poco_region();
+                    this.region_poco.ToPOCO(b.region);
+                }
+
+                this.country = !string.IsNullOrEmpty(b.country) ? b.country : "Danmark";
+                this.fulladdress = b.fulladdress;
+                this.region_id = this.region_poco.Id;
+            }
         }
         
-        public List<booth> _ToBoothList(List<poco_booth> booth_pocos)
+        public List<booth> ToBoothList(List<poco_booth> booth_pocos, EbazarDB _db)
         {
             if (booth_pocos == null)
                 throw new Exception("A-OK, Check.");
@@ -992,18 +879,22 @@ namespace www.e_bazar.dk.Models.DTOs
             List<booth> list = new List<booth>();
             foreach (poco_booth b in booth_pocos)
             {
-                booth booth = this.ToBooth(false);
-                list.Add(booth);
+                //using (EbazarDB _db = new EbazarDB())
+                {
+
+                    booth booth = this.ToBooth(false, _db);
+                    list.Add(booth);
+                }
             }
             return list;
         }
 
-        public booth ToBooth(bool new_booth, EbazarDB _db = null)
+        public booth ToBooth(bool new_booth, EbazarDB _db)
         {
             //DAL.GetInstance().DB = new EbazarDB();
 
-            if (_db == null)
-                _db = DAL.GetInstance().GetContext();
+            //if (_db == null)
+            //    _db = DAL.GetInstance().GetContext();
 
             booth result = new booth();
             if (!new_booth)
@@ -1093,7 +984,7 @@ namespace www.e_bazar.dk.Models.DTOs
                 //this.salesman_poco.ToPoco<poco_salesman>(Null(b.person));
                 //string name = b.person.firstname;
                 person per = b.person;
-                this.salesman_poco.ToPoco<poco_salesman>(NullHelper.BNull(per));
+                this.salesman_poco.ToPoco<poco_salesman>(NullHelper.BthNull(per));
             }
 
             setupaddress(b);
@@ -1104,10 +995,10 @@ namespace www.e_bazar.dk.Models.DTOs
             poco_folder fld_poco = new poco_folder();
             poco_category cat_poco = new poco_category();
 
-            this.product_pocos = b.product.IsNotNull() ? pro_poco.ToPocoList(NullHelper.BNull(b.product.ToList(), false), rel, b.name) : new List<poco_product>();
-            this.collection_pocos = b.collection.IsNotNull() ? col_poco.ToPocoList(NullHelper.BNull(b.collection.ToList(), false), rel, b.name) : new List<poco_collection>();
-            this.foldera_pocos = b.foldera.IsNotNull() ? fld_poco.ToPocoList(NullHelper.BNull(b.foldera.ToList())) : new List<poco_folder>();
-            this.category_main = b.category_main.IsNotNull() ? cat_poco.ToPocoList(NullHelper.BNull(b.category_main.Where(x=>x.name != ".ingen").ToList()), false/*used to be true*/, false) : new List<poco_category>();
+            this.product_pocos = b.product.IsNotNull() ? pro_poco.ToPocoList(NullHelper.BthNull(b.product.ToList(), false), rel, b.name) : new List<poco_product>();
+            this.collection_pocos = b.collection.IsNotNull() ? col_poco.ToPocoList(NullHelper.BthNull(b.collection.ToList(), false), rel, b.name) : new List<poco_collection>();
+            this.foldera_pocos = b.foldera.IsNotNull() ? fld_poco.ToPocoList(NullHelper.BthNull(b.foldera.ToList())) : new List<poco_folder>();
+            this.category_main = b.category_main.IsNotNull() ? cat_poco.ToPocoList(NullHelper.BthNull(b.category_main.Where(x=>x.name != ".ingen").ToList()), false/*used to be true*/, false) : new List<poco_category>();
             this.hits_items = rel.IsNotNull() ? rel.Where(x => x.booth == this.name).Count() : this.hits_items;
         }
     }

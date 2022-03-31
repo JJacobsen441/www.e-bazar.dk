@@ -219,16 +219,20 @@ namespace www.e_bazar.dk.SharedClasses
             else
                 this.SetUsersPerDay(ip, path/*, 1*/, out first, out users_per_day, out max_users_per_month);
 
-            EbazarDB _db = DAL.GetInstance(/*true*/).GetContext();
-            //this.stats.ok = ok;
-            this.stats.ip = ip;
-            this.stats.first = first;
-            this.stats.users_per_day = users_per_day;
-            this.stats.max_users_per_month = max_users_per_month;
-            this.stats.booths_count = _db.booth.Where(b => b.product.Where(p => p.active).Count() > 0 || b.collection.Where(co => co.active).Count() > 0).Count();
-            this.stats.items_count = _db.product.Where(p => p.active).Count() + _db.collection.Where(co => co.active).Count();
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
+            {
 
-            return stats;
+                //this.stats.ok = ok;
+                this.stats.ip = ip;
+                this.stats.first = first;
+                this.stats.users_per_day = users_per_day;
+                this.stats.max_users_per_month = max_users_per_month;
+                this.stats.booths_count = _db.booth.Where(b => b.product.Where(p => p.active).Count() > 0 || b.collection.Where(co => co.active).Count() > 0).Count();
+                this.stats.items_count = _db.product.Where(p => p.active).Count() + _db.collection.Where(co => co.active).Count();
+
+                return stats;
+            }
         }
     }
 }

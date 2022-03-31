@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using www.e_bazar.dk.Extensions;
-using www.e_bazar.dk.Models.DataAccess;
 using www.e_bazar.dk.SharedClasses;
 
 namespace www.e_bazar.dk.Models.DTOs
@@ -32,125 +31,39 @@ namespace www.e_bazar.dk.Models.DTOs
         {
             db?.Dispose();
         }*/
-
-
-        private List<poco_tag> Convert(List<tag> tags)
-        {
-            if (tags == null)
-                throw new Exception("A-OK, Check");
-
-            List<poco_tag> list=new List<poco_tag>();
-            foreach (tag t in tags)
-                list.Add(new poco_tag { tag_id = t.Id, name=t.name, form=t.form });
-            return list;
-        }
-
-        public List<tag> GetProductTags(long product_id)
-        {
-            EbazarDB _db = DAL.GetInstance().GetContext();
-
-            product pro = (from p in _db.product
-                              where p.Id == product_id
-                              select p).FirstOrDefault();
-            if (pro == null)
-                return new List<tag>();
-            
-            List<tag> tags = (from t in pro.tag
-                                  select new tag
-                                  {
-                                      Id = t.Id,
-                                      name = t.name,
-                                      form = t.form
-                                  }).ToList();
-            if (tags == null)
-                return new List<tag>();
-            return tags;
-        }
-        public List<tag> GetCollectionTags(long collection_id)
-        {
-            EbazarDB _db = DAL.GetInstance().GetContext();
-
-            collection col = (from c in _db.collection
-                           where c.Id == collection_id
-                           select c).FirstOrDefault();
-            if (col == null)
-                return new List<tag>();
-            
-            List<tag> tags = (from t in col.tag
-                                  select new tag
-                                  {
-                                      Id = t.Id,
-                                      name = t.name,
-                                      form = t.form
-                                  }).ToList();
-            if (tags == null)
-                return new List<tag>();
-            return tags;
-        }
-        public List<poco_tag> GetProductTagPOCOs(long product_id)
-        {
-            List<tag> tags = GetProductTags(product_id);
-            return this.ToPocoList(tags);
-        }
-        public List<poco_tag> GetCollectionTagPOCOs(long collection_id)
-        {
-            List<tag> tags = GetCollectionTags(collection_id);
-            return this.ToPocoList(tags);
-        }
         
-        public tag GetTag(long tag_id)
-        {
-            EbazarDB _db = DAL.GetInstance().GetContext();
-
-            tag tag = (from t in _db.tag
-                             where t.Id == tag_id
-                             select new tag 
-                             { 
-                                 Id = t.Id, 
-                                 name = t.name, 
-                                 form = t.form 
-                             }).FirstOrDefault();
-            if (tag == null)
-                throw new Exception("A-OK, handled.");
-            return tag;
-        }
-        public poco_tag GetTagPOCO(long tag_id)
-        {
-            poco_tag poco = new poco_tag();
-            tag t = GetTag(tag_id);
-            poco.ToPoco(t);
-            return poco;
-            
-        }
-
         public List<tag> GetTagsStartsWith(string contains)
         {
             if (string.IsNullOrEmpty(contains))
                 throw new Exception("A-OK, Check");
 
-            EbazarDB _db = DAL.GetInstance().GetContext();
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
+            {
 
-            List<tag> tags = new List<tag>();
-            tags = (from t in _db.tag
-                     where t.name.StartsWith(contains)
-                    select new
-                    {
-                        Id = t.Id,
-                        name = t.name,
-                        form = t.form
-                        //product = t.product,
-                        //collection = t.collection
-                    }).AsEnumerable()
-                    .Select(t => new tag
-                    {
-                        Id = t.Id,
-                        name = t.name,
-                        form = t.form
-                    }).ToList();
 
-            if (tags == null)
-                return new List<tag>();
-            return tags;
+                List<tag> tags = new List<tag>();
+                tags = (from t in _db.tag
+                         where t.name.StartsWith(contains)
+                        select new
+                        {
+                            Id = t.Id,
+                            name = t.name,
+                            form = t.form
+                            //product = t.product,
+                            //collection = t.collection
+                        }).AsEnumerable()
+                        .Select(t => new tag
+                        {
+                            Id = t.Id,
+                            name = t.name,
+                            form = t.form
+                        }).ToList();
+
+                if (tags == null)
+                    return new List<tag>();
+                return tags;
+            }
         }
 
         public List<poco_tag> Get5TagPOCOs(string contains)
@@ -171,8 +84,11 @@ namespace www.e_bazar.dk.Models.DTOs
                 return MESSAGE_TAG.EMPTYNAME;
 
 
-            EbazarDB _db = DAL.GetInstance().GetContext();
-            form = "primary";
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
+            {
+
+                form = "primary";
                 bool add_to_tags = false;
                 tag tag = _db.tag.Where(t => t.name == tag_name).Select(t => t).FirstOrDefault();
                 if (tag == null)
@@ -200,10 +116,11 @@ namespace www.e_bazar.dk.Models.DTOs
                     collection.tag.Add(tag);
                 }
                 if (add_to_tags)
-                _db.tag.Add(tag);
-            _db.SaveChanges();
+                    _db.tag.Add(tag);
+                _db.SaveChanges();
                 return MESSAGE_TAG.OK;
 
+            }
         }
 
         private product Null(product p)
@@ -230,6 +147,7 @@ namespace www.e_bazar.dk.Models.DTOs
                 p.product_param = null;
             return p;
         }
+
         private collection Null(collection c)
         {
             if (c.booth != null)
@@ -269,6 +187,7 @@ namespace www.e_bazar.dk.Models.DTOs
             }
             return res;
         }
+
         public void ToPoco(tag tag)
         {
             if (tag == null)
@@ -282,9 +201,6 @@ namespace www.e_bazar.dk.Models.DTOs
                 this.name = tag.name;
                 this.form = tag.form;
 
-                //_db.Configuration.ProxyCreationEnabled = true;
-                //_db.Configuration.LazyLoadingEnabled = true;
-                //_db.Configuration.LazyLoadingEnabled = false;
                 IQueryable<tag> _t = _db.tag
                     .Include("product")
                     .Include("collection")
@@ -303,7 +219,6 @@ namespace www.e_bazar.dk.Models.DTOs
                     foreach (product pro in tag.product)
                     {
                         poco_product poco = new poco_product(false);
-                        //poco.ToPoco(Null(pro), false);
                         poco.ToPoco(pro, null, "");
                         this.product.Add(poco);
                     }
@@ -314,7 +229,6 @@ namespace www.e_bazar.dk.Models.DTOs
                     foreach (collection col in tag.collection)
                     {
                         poco_collection poco = new poco_collection();
-                        //poco.ToPoco(Null(col), false);
                         poco.ToPoco(col, null, "");
                         this.collection.Add(poco);
                     }

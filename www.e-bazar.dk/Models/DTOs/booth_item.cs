@@ -6,7 +6,6 @@ using System.Linq;
 using System.Web.Mvc;
 using www.e_bazar.dk.Extensions;
 using www.e_bazar.dk.Interfaces;
-using www.e_bazar.dk.Models.DataAccess;
 using www.e_bazar.dk.SharedClasses;
 using static www.e_bazar.dk.Models.DTOs.poco_booth;
 
@@ -98,55 +97,59 @@ namespace www.e_bazar.dk.Models.DTOs
 
         public void SetupToClient<T>() where T : booth_item
         {
-            
-            EbazarDB _db = DAL.GetInstance().GetContext();
 
-            if (!this.IsNull() && !this.booth_poco.IsNull())
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
             {
-                if (!this.category_main_id.IsNull())
+
+
+                if (!this.IsNull() && !this.booth_poco.IsNull())
                 {
-                    poco_category cat_poco = new poco_category();
-                    List<poco_category> cats_top = cat_poco._GetAll(true, true);
+                    if (!this.category_main_id.IsNull())
+                    {
+                        poco_category cat_poco = new poco_category();
+                        List<poco_category> cats_top = cat_poco._GetAll(true, true);
 
-                    this.category_main_selectlist = new SelectList(cats_top, "category_id", "name", this.category_main_id);
+                        this.category_main_selectlist = new SelectList(cats_top, "category_id", "name", this.category_main_id);
 
-                    this.category_second_selectlist = this.category_second_id == 0 ?
-                        new SelectList(cats_top.OrderBy(x => x.priority).FirstOrDefault().children, "category_id", "name", this.category_second_id) :
-                        new SelectList(cats_top.Where(x => x.category_id == this.category_main_id).FirstOrDefault().children, "category_id", "name", this.category_second_id);
+                        this.category_second_selectlist = this.category_second_id == 0 ?
+                            new SelectList(cats_top.OrderBy(x => x.priority).FirstOrDefault().children, "category_id", "name", this.category_second_id) :
+                            new SelectList(cats_top.Where(x => x.category_id == this.category_main_id).FirstOrDefault().children, "category_id", "name", this.category_second_id);
+                    }
+
+                    poco_folder tmpa = this.foldera;
+                    poco_folder tmpb = this.folderb;
+
+                    List<folder> lista = new List<folder>() { new folder() { Id = -1, name = "ingen.." } };
+                    lista = lista.Concat(_db.folder.Where(l => l.booth_id == this.booth_poco.booth_id).OrderBy(l => l.priority)).ToList();
+
+                    List<folder> listb = new List<folder>() { new folder() { Id = -1, name = "ingen.." } };
+                    listb = !tmpa.IsNull() ? listb.Concat(_db.folder.Where(l => l.parent_id == tmpa.id).OrderBy(l => l.priority)).ToList() : listb;
+
+                    this.foldera_selectlist = !tmpa.IsNull() && lista.Count() > 0 ?
+                        new SelectList(lista, "Id", "name", tmpa.id) :
+                        new SelectList(lista, "Id", "name", -1);
+
+                    this.folderb_selectlist = !tmpa.IsNull() && !tmpb.IsNull() && listb.Count() > 0 ?
+                        new SelectList(listb, "Id", "name", tmpb.id) :
+                        new SelectList(listb, "Id", "name", -1);
                 }
 
-                poco_folder tmpa = this.foldera;
-                poco_folder tmpb = this.folderb;
+                this.status_stock = string.IsNullOrEmpty(this.status_stock) ? STOCK.PÅ_LAGER.ToString() : this.status_stock;
+                this.status_stock_selectlist = EnumHelper.SelectListFor(Texts.GetStockEnum(this.status_stock));
 
-                List<folder> lista = new List<folder>() { new folder() { Id = -1, name = "ingen.." } };
-                lista = lista.Concat(_db.folder.Where(l => l.booth_id == this.booth_poco.booth_id).OrderBy(l => l.priority)).ToList();
+                this.status_condition = string.IsNullOrEmpty(this.status_condition) ? CONDITION.VELHOLDT.ToString() : this.status_condition;
+                this.status_condition_selectlist = EnumHelper.SelectListFor(Texts.GetConditionEnum(this.status_condition));
 
-                List<folder> listb = new List<folder>() { new folder() { Id = -1, name = "ingen.." } };
-                listb = !tmpa.IsNull() ? listb.Concat(_db.folder.Where(l => l.parent_id == tmpa.id).OrderBy(l => l.priority)).ToList() : listb;
+                this.price = string.IsNullOrEmpty(this.price) ? NOP.INGEN_PRIS.ToString() : this.price;
+                this.note = string.IsNullOrEmpty(this.note) ? Texts.GetNopValue(NOP.NO_NOTE.ToString()) : this.note;
+                this.description = string.IsNullOrEmpty(this.description) ? Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString()) : this.description;
 
-                this.foldera_selectlist = !tmpa.IsNull() && lista.Count() > 0 ?
-                    new SelectList(lista, "Id", "name", tmpa.id) :
-                    new SelectList(lista, "Id", "name", -1);
-
-                this.folderb_selectlist = !tmpa.IsNull() && !tmpb.IsNull() && listb.Count() > 0 ?
-                    new SelectList(listb, "Id", "name", tmpb.id) :
-                    new SelectList(listb, "Id", "name", -1);
-            }
-
-            this.status_stock = string.IsNullOrEmpty(this.status_stock) ? STOCK.PÅ_LAGER.ToString() : this.status_stock;
-            this.status_stock_selectlist = EnumHelper.SelectListFor(Texts.GetStockEnum(this.status_stock));
-
-            this.status_condition = string.IsNullOrEmpty(this.status_condition) ? CONDITION.VELHOLDT.ToString() : this.status_condition;
-            this.status_condition_selectlist = EnumHelper.SelectListFor(Texts.GetConditionEnum(this.status_condition));
-
-            this.price = string.IsNullOrEmpty(this.price) ? NOP.INGEN_PRIS.ToString() : this.price;
-            this.note = string.IsNullOrEmpty(this.note) ? Texts.GetNopValue(NOP.NO_NOTE.ToString()) : this.note;
-            this.description = string.IsNullOrEmpty(this.description) ? Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString()) : this.description;
-
-            if (this.tag_pocos == null || this.tag_pocos.Count == 0)
-            {
-                this.tag_pocos = null;
-                this.tag_pocos_nop = Texts.GetNopValue(NOP.NO_TAGS.ToString());
+                if (this.tag_pocos == null || this.tag_pocos.Count == 0)
+                {
+                    this.tag_pocos = null;
+                    this.tag_pocos_nop = Texts.GetNopValue(NOP.NO_TAGS.ToString());
+                }
             }
         }
 
@@ -306,66 +309,70 @@ namespace www.e_bazar.dk.Models.DTOs
             /*
              * HACK - just a precaution
              * */
-            EbazarDB _db = DAL.GetInstance().GetContext();
-            if (is_pro && (pro.product_param == null || !pro.product_param.Any()))
-                pro.product_param = _db.product_param.Where(x => x.product_id == pro.Id).ToList();
-
-            if (!is_pro && (col.collection_param == null || !col.collection_param.Any()))
-                col.collection_param = _db.collection_param.Where(x => x.collection_id == col.Id).ToList();
-
-            bool relevantF = false;
-
-            if (ThisSession.Params.Count == 0)
-                relevantF = is_param ? false : true;
-
-            List<param> l1 = null;
-            List<value> l2 = null;
-
-            /*
-             * denne del af algoritmen kører de valgte params og values igennem
-             * da der kan være valgt mange values + produktet kan have mange values, er der tale om en mange til mange søgning
-             * M: mange values
-             * MS: mange values, kun en kan vælges
-             * S: ingen values, kun param
-             * */
-
-            //her tjekkes for params der passer overens med en text fra søgeboxen
-            if (!relevantF || is_param)
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
             {
-                l1 = is_pro ? (pro.product_param.Select(x => x.param).ToList()) : (col.collection_param.Select(x => x.param).ToList());
-                l2 = is_pro ? (pro.product_param.Select(x => x.value).ToList()) : (col.collection_param.Select(x => x.value).ToList());
 
-                foreach (string s in opt)
-                {
-                    if (s == "")
-                        continue;
-                    if (Params(s, "S", l1, l2) || Params(s, "MS", l1, l2) || Params(s, "M", l1, l2))
-                        relevantF = true;
-                }
-            }
+                if (is_pro && (pro.product_param == null || !pro.product_param.Any()))
+                    pro.product_param = _db.product_param.Where(x => x.product_id == pro.Id).ToList();
 
-            //her tjekkes for params der kommer fra param chooseren
-            if (!relevantF)
-            {
-                foreach (poco_params pa in ThisSession.Params)
+                if (!is_pro && (col.collection_param == null || !col.collection_param.Any()))
+                    col.collection_param = _db.collection_param.Where(x => x.collection_id == col.Id).ToList();
+
+                bool relevantF = false;
+
+                if (ThisSession.Params.Count == 0)
+                    relevantF = is_param ? false : true;
+
+                List<param> l1 = null;
+                List<value> l2 = null;
+
+                /*
+                 * denne del af algoritmen kører de valgte params og values igennem
+                 * da der kan være valgt mange values + produktet kan have mange values, er der tale om en mange til mange søgning
+                 * M: mange values
+                 * MS: mange values, kun en kan vælges
+                 * S: ingen values, kun param
+                 * */
+
+                //her tjekkes for params der passer overens med en text fra søgeboxen
+                if (!relevantF || is_param)
                 {
-                    if (pa.type == "MS" || pa.type == "M")
+                    l1 = is_pro ? (pro.product_param.Select(x => x.param).ToList()) : (col.collection_param.Select(x => x.param).ToList());
+                    l2 = is_pro ? (pro.product_param.Select(x => x.value).ToList()) : (col.collection_param.Select(x => x.value).ToList());
+
+                    foreach (string s in opt)
                     {
-                        foreach (poco_value val in pa.values_daos)
-                        {
-                            if (Params(val.value, pa.type, l1, l2))
-                                relevantF = true;
-                        }
-                    }
-                    else
-                    {
-                        if (Params(pa.name, pa.type, l1, l2))
+                        if (s == "")
+                            continue;
+                        if (Params(s, "S", l1, l2) || Params(s, "MS", l1, l2) || Params(s, "M", l1, l2))
                             relevantF = true;
                     }
                 }
-            }
 
-            return relevantF;
+                //her tjekkes for params der kommer fra param chooseren
+                if (!relevantF)
+                {
+                    foreach (poco_params pa in ThisSession.Params)
+                    {
+                        if (pa.type == "MS" || pa.type == "M")
+                        {
+                            foreach (poco_value val in pa.values_daos)
+                            {
+                                if (Params(val.value, pa.type, l1, l2))
+                                    relevantF = true;
+                            }
+                        }
+                        else
+                        {
+                            if (Params(pa.name, pa.type, l1, l2))
+                                relevantF = true;
+                        }
+                    }
+                }
+
+                return relevantF;
+            }
         }
 
         private bool Params(string chooser, string type, List<param> l1, List<value> l2)

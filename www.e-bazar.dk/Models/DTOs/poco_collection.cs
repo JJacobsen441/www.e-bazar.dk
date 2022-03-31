@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using www.e_bazar.dk.Extensions;
 using www.e_bazar.dk.Interfaces;
-using www.e_bazar.dk.Models.DataAccess;
 using www.e_bazar.dk.SharedClasses;
 using static www.e_bazar.dk.Models.DTOs.poco_booth;
 //using static www.e_bazar.dk.SharedClasses.Statics;
@@ -24,16 +23,20 @@ namespace www.e_bazar.dk.Models.DTOs
 
         private List<collection_param> IncludeParam(long col_id)
         {
-            EbazarDB _db = DAL.GetInstance().GetContext();
-            
-            List<collection_param> pars = _db.collection_param
-                .Include("param")
-                .Include("value")
-                .Where(x => x.collection_id != null && x.collection_id == col_id)
-                .ToList();
-            if (pars == null)
-                throw new Exception("A-OK, Handled.");
-            return pars;
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
+            {
+
+
+                List<collection_param> pars = _db.collection_param
+                    .Include("param")
+                    .Include("value")
+                    .Where(x => x.collection_id != null && x.collection_id == col_id)
+                    .ToList();
+                if (pars == null)
+                    throw new Exception("A-OK, Handled.");
+                return pars;
+            }
         }
 
         public collection GetCollection(long? collection_id, bool withproducts, bool withbooth, bool withconvesations, bool withboothsalesman, bool withtags)
@@ -41,33 +44,40 @@ namespace www.e_bazar.dk.Models.DTOs
             if (collection_id.IsNull())
                 return null;
 
-            EbazarDB _db = DAL.GetInstance().GetContext();
-
-            _db.Configuration.ProxyCreationEnabled = false;
-            _db.Configuration.LazyLoadingEnabled = false;
-
-            IQueryable<collection> _c = _db.collection
-                                            .Include("booth")
-                                            .Include("booth.person")
-                                            .Include("booth.category_main")
-                                            .Include("category_main")
-                                            .Include("category_second")
-                                            .Include("foldera")
-                                            .Include("folderb")
-                                            .Include("image")
-                                            .Include("tag")
-                                            .Where(x=> x.Id == collection_id);
-
-            collection c = _c.AsEnumerable().FirstOrDefault();
-                        
-            if (c.IsNull())
-                throw new Exception("A-OK, Handled.");
-            else
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
             {
-                NullHelper.PNull(c, withbooth, true, withtags, withconvesations, true, withproducts);
-                c.collection_param = IncludeParam(c.Id);
+                /*
+                 * I know virtual should be removed from model entitys, to make it eager load
+                 * */
+
+                _db.Configuration.ProxyCreationEnabled = false;
+                _db.Configuration.LazyLoadingEnabled = false;
+
+                IQueryable<collection> _c = _db.collection
+                                                .Include("booth")
+                                                .Include("booth.person")
+                                                .Include("booth.category_main")
+                                                .Include("booth.region")
+                                                .Include("category_main")
+                                                .Include("category_second")
+                                                .Include("foldera")
+                                                .Include("folderb")
+                                                .Include("image")
+                                                .Include("tag")
+                                                .Where(x=> x.Id == collection_id);
+
+                collection c = _c.AsEnumerable().FirstOrDefault();
+                        
+                if (c.IsNull())
+                    throw new Exception("A-OK, Handled.");
+                else
+                {
+                    NullHelper.ProNull(c, withbooth, true, withtags, withconvesations, true, withproducts);
+                    c.collection_param = IncludeParam(c.Id);
+                }
+                return c;
             }
-            return c;
         }
 
         public poco_collection GetCollectionPOCO(long? collection_id, bool withproducts, bool withbooth, bool convesations, bool withboothsalesman, bool withtags)
@@ -86,38 +96,44 @@ namespace www.e_bazar.dk.Models.DTOs
             la_search = la_search == null ? "" : la_search;
             lb_search = lb_search == null ? "" : lb_search;
 
-            EbazarDB _db = DAL.GetInstance().GetContext();
-
-            _db.Configuration.ProxyCreationEnabled = false;
-            _db.Configuration.LazyLoadingEnabled = false;
-
-            IQueryable<collection> _c = _db.collection
-                                                .Include("booth")
-                                                .Include("booth.person")
-                                                .Include("category_main")
-                                                .Include("category_second")
-                                                .Include("foldera")
-                                                .Include("folderb")
-                                                .Include("image")
-                                                .Include("tag")
-                                                .Where(x=> x.booth_id == booth_id && (x.active || select_inactive) &&
-                                                  ((la_search == "" && lb_search == "") ||
-                                                  (la_search != "" && x.foldera.name == la_search && lb_search == "" && x.folderb == null) ||
-                                                  (lb_search != "" && x.folderb.name == lb_search) ||
-                                                  (la_search != "" && x.foldera.name == la_search && lb_search == "")));
-
-            IEnumerable<collection> c = _c.AsEnumerable().ToList();
-            
-            if (c.IsNull())
-                throw new Exception("A-OK, Handled.");
-
-            if (c.Any())
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
             {
-                NullHelper.PNull(c.ToList(), withbooth, true, withtags, false, true, false);
-                return c.ToList();
-            }
+                /*
+                 * I know virtual should be removed from model entitys, to make it eager load
+                 * */
 
-            return new List<collection>();
+                _db.Configuration.ProxyCreationEnabled = false;
+                _db.Configuration.LazyLoadingEnabled = false;
+
+                IQueryable<collection> _c = _db.collection
+                                                    .Include("booth")
+                                                    .Include("booth.person")
+                                                    .Include("category_main")
+                                                    .Include("category_second")
+                                                    .Include("foldera")
+                                                    .Include("folderb")
+                                                    .Include("image")
+                                                    .Include("tag")
+                                                    .Where(x=> x.booth_id == booth_id && (x.active || select_inactive) &&
+                                                      ((la_search == "" && lb_search == "") ||
+                                                      (la_search != "" && x.foldera.name == la_search && lb_search == "" && x.folderb == null) ||
+                                                      (lb_search != "" && x.folderb.name == lb_search) ||
+                                                      (la_search != "" && x.foldera.name == la_search && lb_search == "")));
+
+                IEnumerable<collection> c = _c.AsEnumerable().ToList();
+            
+                if (c.IsNull())
+                    throw new Exception("A-OK, Handled.");
+
+                if (c.Any())
+                {
+                    NullHelper.ProNull(c.ToList(), withbooth, true, withtags, false, true, false);
+                    return c.ToList();
+                }
+
+                return new List<collection>();
+            }
         }
 
         public List<poco_collection> GetCollectionPOCOs(int booth_id, string lev_a_search, string lev_b_search, bool select_inactive, bool withbooth, bool withtags, bool withfoldera)
@@ -130,32 +146,40 @@ namespace www.e_bazar.dk.Models.DTOs
         public override long Save() { return SaveCollection(); }
         private long SaveCollection()
         {
-            EbazarDB _db1 = DAL.GetInstance().GetContext();
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
+            {
 
-            collection c = new collection();
-            this.ToCollection(true, ref c, _db1);
-            c = _db1.collection.Add(c);
-            _db1.SaveChanges();
 
-            //EbazarDB _db2 = DAL.GetInstance().GetContext();
-            //FixCats(_db2, c, true);
-            //_db2.SaveChanges();
+                collection c = new collection();
+                this.ToCollection(true, ref c, _db);
+                c = _db.collection.Add(c);
+                _db.SaveChanges();
 
-            return c.Id;
+                //EbazarDB _db2 = DAL.GetInstance().GetContext();
+                //FixCats(_db2, c, true);
+                //_db2.SaveChanges();
+
+                return c.Id;
+            }
         }
 
         public override void Update() { UpdateCollection(); }
         private void UpdateCollection()
         {
-            EbazarDB _db = DAL.GetInstance().GetContext();
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
+            {
 
-            collection collection = _db.collection.Where(c => c.Id == (int)this.id).FirstOrDefault();
-            if (collection == null)
-                throw new Exception("A-OK, Check.");
-            this.ToCollection(false, ref collection, _db);
 
-            _db.SaveChanges();
-            _db.Dispose();
+                collection collection = _db.collection.Where(c => c.Id == (int)this.id).FirstOrDefault();
+                if (collection == null)
+                    throw new Exception("A-OK, Check.");
+                this.ToCollection(false, ref collection, _db);
+
+                _db.SaveChanges();
+                _db.Dispose();
+            }
         }
 
         public override void Delete(long id, EbazarDB _db) { DeleteCollection(id, _db); }
@@ -234,92 +258,104 @@ namespace www.e_bazar.dk.Models.DTOs
 
         public override bool RemoveTag(long tag_id, bool is_updating)
         {
-            EbazarDB _db = DAL.GetInstance().GetContext();
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
+            {
 
-            bool ok = false;
 
-            collection collection = _db.collection.Where(p => p.Id == (int)this.id).Select(p => p).FirstOrDefault();
-            if (collection == null)
-                throw new Exception("A-OK, Handled.");
-            tag tag = collection.tag.Where(t => t.Id == tag_id).Select(t => t).FirstOrDefault();
-            if (tag != null)
-                ok = collection.tag.Remove(tag);
-            else
-                ok = false;
+                bool ok = false;
 
-            if (ok && (/*tag.booth.Count + */tag.product.Count) < 1 && tag.collection.Count <= 1)
-                _db.tag.Remove(tag);
-            _db.SaveChanges();
+                collection collection = _db.collection.Where(p => p.Id == (int)this.id).Select(p => p).FirstOrDefault();
+                if (collection == null)
+                    throw new Exception("A-OK, Handled.");
+                tag tag = collection.tag.Where(t => t.Id == tag_id).Select(t => t).FirstOrDefault();
+                if (tag != null)
+                    ok = collection.tag.Remove(tag);
+                else
+                    ok = false;
 
-            return ok;
+                if (ok && (/*tag.booth.Count + */tag.product.Count) < 1 && tag.collection.Count <= 1)
+                    _db.tag.Remove(tag);
+                _db.SaveChanges();
+
+                return ok;
+            }
         }
 
         public bool RemoveParam(int param_id)
         {
-            EbazarDB _db = DAL.GetInstance().GetContext();
-
-            collection collection = _db.collection.Where(p => p.Id == this.id).Select(p => p).FirstOrDefault();
-            if (collection == null)
-                return false;
-
-            collection_param pp = collection.collection_param.Where(ppa => ppa.param_id == param_id).FirstOrDefault();
-            if (pp != null)
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
             {
-                param param = _db.param
-                    //.Include("product_param")
-                    //.Include("collection_param")
-                    .Where(t => t.Id == param_id).Select(t => t).FirstOrDefault();
-                if (param != null)
-                {
-                    collection.collection_param.Remove(pp);
-                    param.collection_param.Remove(pp);
-                    _db.collection_param.Remove(pp);
 
+
+                collection collection = _db.collection.Where(p => p.Id == this.id).Select(p => p).FirstOrDefault();
+                if (collection == null)
+                    return false;
+
+                collection_param pp = collection.collection_param.Where(ppa => ppa.param_id == param_id).FirstOrDefault();
+                if (pp != null)
+                {
+                    param param = _db.param
+                        //.Include("product_param")
+                        //.Include("collection_param")
+                        .Where(t => t.Id == param_id).Select(t => t).FirstOrDefault();
+                    if (param != null)
+                    {
+                        collection.collection_param.Remove(pp);
+                        param.collection_param.Remove(pp);
+                        _db.collection_param.Remove(pp);
+
+                    }
+                    _db.SaveChanges();
                 }
-                _db.SaveChanges();
+                return true;
             }
-            return true;
 
         }
 
         public void SetFolder(int fld_id, long collection_id, TYPE type)
         {
-            EbazarDB _db = DAL.GetInstance().GetContext();
-
-            collection collection = _db.collection.Where(p => p.Id == collection_id).FirstOrDefault();
-            if (collection == null)
-                throw new Exception("A-OK, Handled.");
-
-            if (fld_id == -1)
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
             {
-                if (type == TYPE.FOLDER_A)
+
+
+                collection collection = _db.collection.Where(p => p.Id == collection_id).FirstOrDefault();
+                if (collection == null)
+                    throw new Exception("A-OK, Handled.");
+
+                if (fld_id == -1)
                 {
-                    collection.foldera = null;
-                    collection.folderb = null;
-                }
-                else
-                    collection.folderb = null;
-            }
-            else
-            {
-                if (type == TYPE.FOLDER_A)
-                {
-                    collection.foldera = _db.folder.Where(l => l.Id == fld_id).FirstOrDefault();
-                    if (collection.folderb != null)
+                    if (type == TYPE.FOLDER_A)
                     {
-                        folder fldb = _db.folder.Where(l => l.Id == collection.folderb.Id).FirstOrDefault();
-                        if (fldb != null)
-                        {
-                            if (fldb.collection != null)
-                                fldb.collection.Remove(collection);
-                        }
+                        collection.foldera = null;
                         collection.folderb = null;
                     }
+                    else
+                        collection.folderb = null;
                 }
                 else
-                    collection.folderb = _db.folder.Where(l => l.Id == fld_id).FirstOrDefault();
+                {
+                    if (type == TYPE.FOLDER_A)
+                    {
+                        collection.foldera = _db.folder.Where(l => l.Id == fld_id).FirstOrDefault();
+                        if (collection.folderb != null)
+                        {
+                            folder fldb = _db.folder.Where(l => l.Id == collection.folderb.Id).FirstOrDefault();
+                            if (fldb != null)
+                            {
+                                if (fldb.collection != null)
+                                    fldb.collection.Remove(collection);
+                            }
+                            collection.folderb = null;
+                        }
+                    }
+                    else
+                        collection.folderb = _db.folder.Where(l => l.Id == fld_id).FirstOrDefault();
+                }
+                _db.SaveChanges();
             }
-            _db.SaveChanges();
         }
 
         public override void RemoveImage(string image_name) { RemoveCollectionImage(image_name); }
@@ -328,45 +364,57 @@ namespace www.e_bazar.dk.Models.DTOs
             if (string.IsNullOrEmpty(image_name))
                 throw new Exception("A-OK, Check.");
 
-            EbazarDB _db = DAL.GetInstance().GetContext();
-
-            image collectionimage = _db.image.Where(i => i.name == image_name && i.collection_id == (int)this.id).Select(t => t).FirstOrDefault();
-            if (collectionimage == null)
-                throw new Exception("A-OK, Handled.");
-
-            collection collection = _db.collection.Where(p => p.Id == (int)this.id).Select(p => p).FirstOrDefault();
-            if (collection != null)
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
             {
-                collection.image.Remove(collectionimage);
-                _db.image.Remove(collectionimage);
-                _db.SaveChanges();
-                _db.Dispose();
+
+
+                image collectionimage = _db.image.Where(i => i.name == image_name && i.collection_id == (int)this.id).Select(t => t).FirstOrDefault();
+                if (collectionimage == null)
+                    throw new Exception("A-OK, Handled.");
+
+                collection collection = _db.collection.Where(p => p.Id == (int)this.id).Select(p => p).FirstOrDefault();
+                if (collection != null)
+                {
+                    collection.image.Remove(collectionimage);
+                    _db.image.Remove(collectionimage);
+                    _db.SaveChanges();
+                    _db.Dispose();
+                }
+                else
+                    throw new Exception("A-OK, Handled.");
             }
-            else
-                throw new Exception("A-OK, Handled.");
         }
 
         public void AddProduct(long product_id)
         {
-            EbazarDB _db = DAL.GetInstance().GetContext();
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
+            {
 
-            product pro = _db.product.Where(p => p.Id == product_id).FirstOrDefault();
-            if (pro == null)
-                throw new Exception("A-OK, Handled.");
-            collection collection = _db.collection.Where(c => c.Id == (int)this.id).FirstOrDefault();
-            collection.product.Add(pro);
+
+                product pro = _db.product.Where(p => p.Id == product_id).FirstOrDefault();
+                if (pro == null)
+                    throw new Exception("A-OK, Handled.");
+                collection collection = _db.collection.Where(c => c.Id == (int)this.id).FirstOrDefault();
+                collection.product.Add(pro);
+            }
         }
 
         public void RemoveProduct(long product_id)
         {
-            EbazarDB _db = DAL.GetInstance().GetContext();
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
+            {
 
-            product pro = _db.product.Where(p => p.Id == product_id).FirstOrDefault();
-            if (pro == null)
-                throw new Exception("A-OK, Handled.");
 
-            collection collection = _db.collection.Where(c => c.Id == (int)this.id).FirstOrDefault();
-            collection.product.Remove(pro);
+                product pro = _db.product.Where(p => p.Id == product_id).FirstOrDefault();
+                if (pro == null)
+                    throw new Exception("A-OK, Handled.");
+
+                collection collection = _db.collection.Where(c => c.Id == (int)this.id).FirstOrDefault();
+                collection.product.Remove(pro);
+            }
         }
 
         public override poco_booth GetBoothPOCO()
@@ -415,7 +463,7 @@ namespace www.e_bazar.dk.Models.DTOs
             if (!c.booth.IsNull())
             {
                 this.booth_poco = new poco_booth();
-                this.booth_poco.ToPoco(NullHelper.PNull(c.booth), null);
+                this.booth_poco.ToPoco(NullHelper.ProNull(c.booth), null);
             }
             if (!c.image.IsNull())
             {
@@ -426,7 +474,7 @@ namespace www.e_bazar.dk.Models.DTOs
             if (!c.tag.IsNull() && c.tag.Count() > 0)
             {
                 foreach (tag t2 in c.tag)
-                    NullHelper.PNull(t2);
+                    NullHelper.ProNull(t2);
                 poco_tag t = new poco_tag();
                 this.tag_pocos = new List<poco_tag>();
                 this.tag_pocos = t.ToPocoList(c.tag.ToList());
@@ -501,8 +549,7 @@ namespace www.e_bazar.dk.Models.DTOs
 
             int? old_cat_id = col.category_main_id != this.category_main_id ? (int?)col.category_main_id : null;
             int? old_cat_sec_id = col.category_second_id != this.category_second_id ? (int?)col.category_second_id : null;
-            if (col.category_main_id == 0 || create)//opret
-            //if (create)//opret
+            if (col.category_main_id == 0 || create)//create
             {
                     category main = _db.category.Include("children").Where(c => c.name != ".ingen" && c.is_parent).FirstOrDefault();
                     category sec = main.children.OrderBy(x => x.priority).FirstOrDefault();
@@ -510,17 +557,9 @@ namespace www.e_bazar.dk.Models.DTOs
                     col.category_main_id = main.Id;
                     col.category_second_id = sec.Id;
 
-                //if(col.Id != 0)
-                {
-                    //if(!create)
-                    //main.collection_main.Add(col);
-                    //if(!create)
-                    //sec.collection_second.Add(col);
-                }
-
                     poco_category.update = true;
             }
-            else if (old_cat_id != null)//vi bytter
+            else if (old_cat_id != null)//new cat, changing
             {
                 ///JUST TEST///
                 collection a = _db.collection.Where(z => z.Id == this.id).FirstOrDefault();
@@ -529,11 +568,7 @@ namespace www.e_bazar.dk.Models.DTOs
                 ///JUST TEST///
 
                 category old_cat = _db.category.Where(cat => cat.Id == old_cat_id).FirstOrDefault();
-                //old_cat.collection_main.Remove(col);
-
-                //category old_cat_sec = _db.category.Where(cat => cat.Id == this.category_second_id).FirstOrDefault();
-                //old_cat_sec.collection_second.Remove(col);
-
+                
                 if (old_cat.product_main.Where(cat => cat.booth_id == boo.Id).Count() + old_cat.collection_main.Where(cat => cat.booth_id == boo.Id).Count() == 0)
                     boo.category_main.Remove(old_cat);
 
@@ -543,24 +578,16 @@ namespace www.e_bazar.dk.Models.DTOs
                 col.category_main_id = main.Id;
                 col.category_second_id = sec.Id;
 
-                //main.collection_main.Add(col);
-                //sec.collection_second.Add(col);
-
                 poco_category.update = true;
             }
-            else if (old_cat_sec_id != null)//cat 2 er blevet ændret
+            else if (old_cat_sec_id != null)//cat 2 changed
             {
-                //category old_cat_sec = _db.category.Where(c => c.Id == old_cat_sec_id).FirstOrDefault();
-                //old_cat_sec.collection_second.Remove(col);
-                //category new_cat_sec = _db.category.Where(c => c.Id == this.category_second_id).FirstOrDefault();
-                //new_cat_sec.collection_second.Add(col);
-
                 col.category_main_id = this.category_main_id;
                 col.category_second_id = this.category_second_id;
 
                 poco_category.update = true;
             }
-            else//der er ikke blevet ændret i kategorier
+            else//no changes
             {
                 col.category_main_id = this.category_main_id;
                 col.category_second_id = this.category_second_id;
@@ -574,8 +601,7 @@ namespace www.e_bazar.dk.Models.DTOs
 
             DateTime now = DateTime.Now;
 
-            //if (col.Id != 0)
-                FixCats(_db, col, false);
+            FixCats(_db, col, false);
 
             col.foldera = !this.foldera.IsNull() ? _db.folder.Where(l => l.Id == this.foldera.id).FirstOrDefault() : col.foldera;
             col.folderb = !this.folderb.IsNull() ? _db.folder.Where(l => l.Id == this.folderb.id).FirstOrDefault() : col.folderb;
