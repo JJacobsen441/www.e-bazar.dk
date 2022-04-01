@@ -717,35 +717,6 @@ namespace www.e_bazar.dk.Models.DTOs
 
                 ;
 
-                /*
-                    * HACK - just a precaution
-                    * */
-
-                foreach (booth b in booths)
-                {
-                    if (b.product.IsNull()) ;
-                    if (b.collection.IsNull()) ;
-                    if (b.category_main.IsNull()) ;
-                    if (b.region.IsNull()) ;
-                    if (b.boothrating.IsNull()) ;
-                    if (b.person.IsNull()) ;
-                    if (b.conversation.IsNull()) ;
-                    if (b.foldera.IsNull()) ;
-                    if (b.followers.IsNull()) ;
-
-                    b.product = NullHelper.BthNull(b.product.ToList(), false);
-                    b.collection = NullHelper.BthNull(b.collection.ToList(), false);
-                    b.category_main = NullHelper.BthNull(b.category_main.ToList());
-                    b.boothrating = NullHelper.BthNull(b.boothrating.ToList());
-                    b.conversation = NullHelper.BthNull(b.conversation.ToList());
-                    b.foldera = NullHelper.BthNull(b.foldera.ToList());
-                    b.followers = NullHelper.BthNull(b.followers.ToList());
-
-                    //var __e = System.Data.Entity.Core.Objects.ObjectContext.GetObjectType(b.region.GetType());
-                    b.region = NullHelper.BthNull(b.region);
-                    b.person = NullHelper.BthNull(b.person);
-                }
-
                 booths = booths.Where(x =>
                 x.product.Where(z => pro_relevant.IsRelevant(z, null, x.name, is_param, helper)).Count() > 0 ||
                 x.collection.Where(z => col_relevant.IsRelevant(null, z, x.name, is_param, helper)).Count() > 0
@@ -766,7 +737,36 @@ namespace www.e_bazar.dk.Models.DTOs
 
                     rel_hits = rel_hits.Concat(pro_relevant.relevant_hits).ToList();
                     rel_hits = rel_hits.Concat(col_relevant.relevant_hits).ToList();
-                                        
+
+                    /*
+                    * HACK - just a precaution
+                    * */
+
+                    foreach (booth b in booths)
+                    {
+                        if (b.product.IsNull()) ;
+                        if (b.collection.IsNull()) ;
+                        if (b.category_main.IsNull()) ;
+                        if (b.region.IsNull()) ;
+                        if (b.boothrating.IsNull()) ;
+                        if (b.person.IsNull()) ;
+                        if (b.conversation.IsNull()) ;
+                        if (b.foldera.IsNull()) ;
+                        if (b.followers.IsNull()) ;
+
+                        b.product = NullHelper.BthNull(b.product.ToList(), false);
+                        b.collection = NullHelper.BthNull(b.collection.ToList(), false);
+                        b.category_main = NullHelper.BthNull(b.category_main.ToList());
+                        b.boothrating = NullHelper.BthNull(b.boothrating.ToList());
+                        b.conversation = NullHelper.BthNull(b.conversation.ToList());
+                        b.foldera = NullHelper.BthNull(b.foldera.ToList());
+                        b.followers = NullHelper.BthNull(b.followers.ToList());
+
+                        //var __e = System.Data.Entity.Core.Objects.ObjectContext.GetObjectType(b.region.GetType());
+                        b.region = NullHelper.BthNull(b.region);
+                        b.person = NullHelper.BthNull(b.person);
+                    }
+
                     return booths.ToList();
                 }
                 return new List<booth>();
