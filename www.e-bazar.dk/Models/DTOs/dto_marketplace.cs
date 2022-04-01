@@ -8,15 +8,6 @@ namespace www.e_bazar.dk.Models.DTOs
     {
         public string isset_top { get; set; }
         public string isset_bottom { get; set; }
-        //public string isset_str {
-        //    get
-        //    {
-        //        string s = "";
-        //        foreach (string i in isset)
-        //            s += i + "-";
-        //        return s;//.Replace("æ", "ae").Replace("ø", "oe").Replace("å", "aa");
-        //    }
-        //}
         public List<poco_category> cats { get; set; }
     }
     public class dto_marketplace
@@ -36,7 +27,6 @@ namespace www.e_bazar.dk.Models.DTOs
             
             this.z = "" + z;
             this.area_selected = area_selected;
-            //this.area_checked = ListToString(area_selected, ';');
             this.f = "" + f;
             this.t = "" + t;
             this.g = g;
@@ -58,8 +48,6 @@ namespace www.e_bazar.dk.Models.DTOs
             if(set.Count() > 1)
                 isset_bottom = c_search.Replace("æ", "ae").Replace("ø", "oe").Replace("å", "aa").Replace(" ", "_").Split('-').Where(s => s != "").ToArray()[1];
 
-            //this.c = c;
-            //this.c = c.Replace("æ", "ae").Replace("ø", "oe").Replace("å", "aa");
             this.categories = new dto_categories() { isset_top = isset_top, isset_bottom = isset_bottom, cats = cats_list };
         }
         private string ListToString(List<string> list, char split)

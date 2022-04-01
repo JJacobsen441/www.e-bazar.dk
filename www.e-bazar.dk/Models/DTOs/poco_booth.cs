@@ -110,7 +110,7 @@ namespace www.e_bazar.dk.Models.DTOs
                 _db.Configuration.LazyLoadingEnabled = false;
 
                 /*
-                 * en extension method til at combine includes, kunne være smart
+                 * an extension method for combining includes, would be cool
                  * */
 
                 IQueryable<booth> _b = _db.booth
@@ -373,7 +373,7 @@ namespace www.e_bazar.dk.Models.DTOs
             if (list.Count > 0)
                 return list.FirstOrDefault();
             else
-                return new poco_product(false) { created_on = DateTime.MinValue };////////////////////////////er det den rigtige måde at gøre det på?
+                return new poco_product(false) { created_on = DateTime.MinValue };
         }
 
         public List<booth> GetBooths(string salesman_id, bool withsalesman)
