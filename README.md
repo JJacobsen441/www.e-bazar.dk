@@ -1,6 +1,6 @@
 # www.e-bazar.dk
 
-recent updates: 
+recent updates:\
 
 using Linq to entities and eager loading for EF queries
 
