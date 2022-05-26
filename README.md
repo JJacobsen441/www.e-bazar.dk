@@ -1,15 +1,15 @@
 # www.e-bazar.dk
 
-recent updates:
+recent updates:  
 
-using Linq to entities and eager loading for EF queries
+using Linq to entities and eager loading for EF queries  
 
-todo:
+todo:  
 
-return DTOs instead of Business Objects to front-end
+return DTOs instead of Business Objects to front-end  
 
-generel clean up in code
+generel clean up in code  
 
-generel null checks for parameters in functions
+generel null checks for parameters in functions  
 	
  
