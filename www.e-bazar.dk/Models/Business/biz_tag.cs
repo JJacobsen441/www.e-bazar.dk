@@ -9,28 +9,10 @@ namespace www.e_bazar.dk.Models.DTOs
 {
     public class biz_tag
     {
-        //private EbazarDB db;// = new EbazarDB();
-
-
-        /*public long tag_id { get; set; }
-        public string name { get; set; }
-        public string form { get; set; }
-        public int numberofhits { get; set; }
-        //public List<booth> booth { get; set; }
-        public List<biz_product> product { get; set; }
-        public List<biz_collection> collection { get; set; }*/
-
-        /*private biz_tag()
-        {
-        }*/
         public biz_tag()
         {
             //this.db = new EbazarDB();
         }
-        /*~biz_tag() 
-        {
-            db?.Dispose();
-        }*/
         
         public List<tag> GetTagsStartsWith(string contains)
         {

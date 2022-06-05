@@ -25,40 +25,6 @@ namespace www.e_bazar.dk.Models.DTOs
             this.UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(this.ApplicationDbContext));
         }        
 
-        /*public string person_id { get; set; }
-        
-        public bool iscreated = true;
-
-        [DisplayName("Fornavn")]
-        public string firstname { get; set; }
-        
-        [DisplayName("Efternavn")]
-        public string lastname { get; set; }
-        
-        [DisplayName("Oprettet")]
-        public DateTime created_on { get; set; }
-
-        
-
-        [DisplayName("Kontakt email")]
-        public string email { get; set; }
-        public bool request_email { get; set; }
-
-        [StringLength(128)]
-        public string sysname { get; set; }
-
-        [DisplayName("Profil Billed")]
-        public string profileimage { get; set; }
-        
-        public string nator { get; set; }
-        
-        
-        public virtual List<biz_product> favorites_product { get; set; }
-        public virtual List<biz_collection> favorites_collection { get; set; }
-        public virtual List<biz_booth> following { get; set; }
-        
-        public virtual List<boothrating> boothrating { get; set; }*/
-                
         public bool IsType<T>(Type t)
         {
             if(typeof(T) == t)

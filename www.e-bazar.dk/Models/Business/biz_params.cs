@@ -8,7 +8,6 @@ namespace www.e_bazar.dk.Models.DTOs
 {
     public class biz_params
     {
-        //private EbazarDB db;
         public int Id { get; set; }
         public string name { get; set; }
         public string type { get; set; }
@@ -20,14 +19,9 @@ namespace www.e_bazar.dk.Models.DTOs
         public List<biz_value> values_daos { get; set; }
 
         public biz_params()
-        {
-            //this.db = new EbazarDB();
+        {           
         }
-        /*~biz_params()
-        {
-            db?.Dispose();
-        }*/
-
+        
         public bool SaveParam(long _id, int param_id, int val_id, TYPE type)
         {
             using (EbazarDB _db = new EbazarDB())

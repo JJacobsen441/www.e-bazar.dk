@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using www.e_bazar.dk.Extensions;
-using www.e_bazar.dk.Interfaces;
 using www.e_bazar.dk.SharedClasses;
 using static www.e_bazar.dk.Models.DTOs.dto_booth;
 
@@ -13,13 +12,7 @@ namespace www.e_bazar.dk.Models.DTOs
         public biz_collection()
         {
         }
-                
         
-          
-        //public virtual List<biz_product> product_pocos { get; set; }
-
-        
-
         private List<collection_param> IncludeParam(long col_id)
         {
             //EbazarDB _db = DAL.GetInstance().GetContext();

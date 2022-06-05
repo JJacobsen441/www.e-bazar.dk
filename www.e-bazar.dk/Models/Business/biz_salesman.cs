@@ -8,17 +8,6 @@ namespace www.e_bazar.dk.Models.DTOs
 {
     public class biz_salesman : biz_person
     {
-        /*[DisplayName("Tlf. nr.")]
-        public int? phonenumber { get; set; }
-        public bool show_phone { get; set; }
-
-        [DisplayName("Tlf. Nr.")]
-        public string phonenumber_nop { get; set; }
-
-        [DisplayName("Beskrivelse")]
-        public virtual string description { get; set; }
-        public virtual List<biz_booth> booth_pocos { get; set; }*/
-
         public biz_salesman() : base()
         {
 

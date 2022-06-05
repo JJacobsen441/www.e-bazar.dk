@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using www.e_bazar.dk.Extensions;
 
@@ -8,35 +7,6 @@ namespace www.e_bazar.dk.Models.DTOs
 {
     public class biz_category
     {
-        /*//private EbazarDB db;
-        /*private biz_category()
-        {
-
-        }*
-        public biz_category()
-        {
-            //this.db = new EbazarDB();
-        }
-        /*~biz_category()
-        {
-            db?.Dispose();
-        }*
-
-        public int category_id { get; set; }
-        [Required]
-        [StringLength(50)]
-        public string name { get; set; }
-        public bool is_parent { get; set; }
-        public int priority { get; set; }
-        [StringLength(100)]
-        public string description { get; set; }
-        public int? parent_id { get; set; }
-        public int booths_with_category_count { get; set; }
-        public virtual List<biz_category> children { get; set; }
-        public virtual biz_category parent { get; set; }
-        public virtual List<biz_booth> booth { get; set; }
-        public virtual List<biz_params> params_dao { get; set; }*/
-
         public static bool update = true;
         static List<dto_category> nn = new List<dto_category>();
         static List<dto_category> nw = new List<dto_category>();

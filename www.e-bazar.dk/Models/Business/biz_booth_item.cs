@@ -10,84 +10,6 @@ namespace www.e_bazar.dk.Models.DTOs
 {
     public abstract class biz_booth_item// : IBoothItem
     {
-        /*public long id { get; set; }
-        public int category_second_id { get; set; }
-        public int category_main_id { get; set; }
-        public SelectList category_main_selectlist { get; set; }
-        public SelectList category_second_selectlist { get; set; }
-
-        public biz_folder foldera { get; set; }
-        public SelectList foldera_selectlist { get; set; }
-        public biz_folder folderb { get; set; }
-        public SelectList folderb_selectlist { get; set; }
-
-        [DisplayName("Parametre")]
-        public List<biz_params> param_daos { get; set; }
-        public DateTime modified { get; set; }
-        [Required]
-        [StringLength(50)]
-        [DisplayName("Vare")]
-        public string name { get; set; }
-        [Required]
-        [StringLength(100)]
-        public string sysname { get; set; }
-        [DisplayName("Oprettet")]
-        public DateTime created_on { get; set; }
-        [Required]
-        [StringLength(20)]
-        [DisplayName("Pris")]
-        public string price { get; set; }
-        public string status_stock { get; set; }
-        [DisplayName("Lagerbeholdning")]
-        public SelectList status_stock_selectlist { get; set; }
-        [StringLength(20)]
-        public string status_condition { get; set; }
-        [DisplayName("Stand")]
-        public SelectList status_condition_selectlist { get; set; }
-
-        [StringLength(500)]
-        [DisplayName("Beskrivelse")]
-        public string description { get; set; }
-        public string description_limit
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(description))
-                    return "";
-                int len = description.Length < 230 ? description.Length : 230;
-                return len < 230 ? description : (description.Substring(0, len) + "...");
-            }
-            set
-            {
-                description = value;
-            }
-        }
-        [StringLength(50)]
-        [DisplayName("Note")]
-        public string note { get; set; }
-        public bool active { get; set; }
-
-        public int? booth_id { get; set; }
-        public biz_booth booth_poco { get; set; }
-        [DisplayName("Billeder")]
-        public List<IImage> image_pocos { get; set; }
-        [DisplayName("Søgeord")]
-        public List<biz_tag> tag_pocos { get; set; }
-        [DisplayName("Søgeord")]
-        public string tag_pocos_nop { get; set; }
-        public List<biz_conversation> conversations { get; set; }
-
-
-        public bool relevant { get; set; }
-        public List<Hit> relevant_hits = new List<Hit>();
-
-        public string cat_main = "";
-        public string cat_second = "";*/
-
-        //public bool relevant { get; set; }
-
-        //public List<Hit> relevant_hits = new List<Hit>();
-
         public string cat_main = "";
 
         public string cat_second = "";
@@ -99,8 +21,6 @@ namespace www.e_bazar.dk.Models.DTOs
         public abstract bool RemoveParam<T>(T dto, int param_id) where T : dto_booth_item;
         public abstract void RemoveImage<T>(string image_name, T dto) where T : dto_booth_item;
         public abstract dto_booth GetBoothDTO<T>(T dto) where T : dto_booth_item;
-
-
 
         public T SetupToClient<T>(T dto) where T : dto_booth_item
         {

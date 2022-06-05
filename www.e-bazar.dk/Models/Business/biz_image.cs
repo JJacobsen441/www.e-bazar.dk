@@ -6,29 +6,6 @@ namespace www.e_bazar.dk.Models.DTOs
 {
     public class biz_image
     {
-        /*//private EbazarDB db;// = new EbazarDB();
-
-        /*private biz_collectionimage()
-        {
-
-        }*
-        public biz_collectionimage()
-        {
-            //this.db = new EbazarDB();
-        }
-        /*~biz_collectionimage()
-        {
-            db?.Dispose();
-        }*
-
-        public long id { get; set; }
-        
-        public string name { get; set; }
-
-        public DateTime created_on { get; set; }
-        
-        public long? _id { get; set; }*/
-
         public List<dto_image> ToDTOList(ICollection<image> images)
         {
             if (images == null)

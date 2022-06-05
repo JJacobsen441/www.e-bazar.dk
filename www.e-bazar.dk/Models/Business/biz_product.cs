@@ -20,16 +20,6 @@ namespace www.e_bazar.dk.Models.DTOs
 
         private bool withcollection;
         
-        
-        //[DisplayName("Antal enheder")]
-        //public int no_of_units { get; set; }
-        //public bool only_collection { get; set; }        
-        
-        //public long? collection_id { get; set; }
-        //public virtual biz_collection collection { get; set; }
-        
-
-
         private List<product_param> IncludeParam(long pr_id)
         {
             //EbazarDB _db = DAL.GetInstance().GetContext();

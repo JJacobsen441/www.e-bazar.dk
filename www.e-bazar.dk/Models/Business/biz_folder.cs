@@ -1,39 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace www.e_bazar.dk.Models.DTOs
 {
     public class biz_folder
     {
-        /*//private EbazarDB db;
-        /*private biz_folder()
-        {
-
-        }*
-        public biz_folder()
-        {
-            //this.db = new EbazarDB();
-        }
-        /*~biz_folder()
-        {
-            db?.Dispose();
-        }*
-
-        public long id { get; set; }
-        [Required]
-        [StringLength(50)]
-        public string name { get; set; }
-
-        public int? priority { get; set; }
-        public int? booth_id { get; set; }
-        public int? parent_id { get; set; }
-        public bool is_parent { get; set; }
-        public int count { get; set; }
-        public virtual biz_booth booth { get; set; }
-        public virtual List<biz_folder> children { get; set; }*/
-
         public folder GetFolderA(long fol_a_id, bool withbooth, bool withproducts)
         {
             //EbazarDB _db = DAL.GetInstance().GetContext();

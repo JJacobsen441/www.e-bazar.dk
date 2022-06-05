@@ -10,7 +10,6 @@ namespace www.e_bazar.dk.Models.DTOs
     {
         public biz_customer() : base()
         {
-
         }
 
         public override void SavePerson<T>(T dto)

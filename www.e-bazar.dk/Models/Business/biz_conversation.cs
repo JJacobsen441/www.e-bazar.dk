@@ -8,32 +8,10 @@ namespace www.e_bazar.dk.Models.DTOs
 {
     public class biz_conversation
     {
-        //private EbazarDB db;
-        //public long? conversation_id { get; set; }
-        //public DateTime created_on { get; set; }
-        //public DateTime modified { get; set; }
-
-        //public long? product_id { get; set; }
-        //public long? collection_id { get; set; }
-        //public int? booth_id { get; set; }
-        //public string person_id { get; set; }
-
-        //public virtual List<biz_comment> comment_pocos { get; set; }
-        //public virtual biz_product product_poco { get; set; }
-        //public virtual biz_collection collection_poco { get; set; }
-        //public virtual biz_booth booth_poco { get; set; }
-        
-
         public biz_conversation()
-        {
-            //db = new EbazarDB();
-            //conversation_id = null;
+        {            
         }
-        /*~biz_conversation()
-        {
-            db?.Dispose();
-        }*/
-
+        
         public dto_person GetPersonStart(dto_conversation dto)
         {
             return dto.comment_dtos.FirstOrDefault().dto_salesman != null ? 

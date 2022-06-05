@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using www.e_bazar.dk.Interfaces;
 using www.e_bazar.dk.SharedClasses;
 
 namespace www.e_bazar.dk.Models.DTOs
@@ -11,24 +10,19 @@ namespace www.e_bazar.dk.Models.DTOs
         {
 
         }
-        public col_userprofile(/*poco_administrator a_poco, */dto_salesman s_dto, dto_customer c_dto)
+        public col_userprofile(dto_salesman s_dto, dto_customer c_dto)
         {
-            //this.administrator_poco = a_poco;
             this.salesman_dto = s_dto;
-            this.customer_dto = c_dto;
-            //this.booth_pocos = booth_pocos;
+            this.customer_dto = c_dto;           
         }
 
-        //public poco_administrator administrator_poco { get; set; }
         public dto_salesman salesman_dto { get; set; }
         public dto_customer customer_dto { get; set; }
         public List<dto_salesman> salesmen { get; set; }
         public List<dto_customer> customers { get; set; }
         public List<dto_booth> booth_dtos { get; set; }
         public List<dto_booth_item> follower_news { get; set; }
-        public col_conversations conversations_dto { get; set; }
-        //public customer_dto customer_dto { get; set; }
-        //public string user_type { get; set; }
+        public col_conversations conversations_dto { get; set; }        
     }
 
     public class col_categories
