@@ -98,55 +98,55 @@ namespace www.e_bazar.dk.SharedClasses
             }
         }*/
 
-        public static List<poco_category> CatsParam
+        public static List<dto_category> CatsParam
         {
             get
             {
-                poco_category poco = new poco_category();
+                biz_category poco = new biz_category();
                 return poco._GetAll(false, false);
             }
             private set { }
         }
-        public static List<poco_category> CatsNoNo
+        public static List<dto_category> CatsNoNo
         {
             get
             {
-                poco_category poco = new poco_category();
+                biz_category poco = new biz_category();
                 return poco._GetAll(false, false);
             }
             private set { }
         }
-        public static List<poco_category> CatsYesNo
+        public static List<dto_category> CatsYesNo
         {
             get
             {
-                poco_category poco = new poco_category();
+                biz_category poco = new biz_category();
                 return poco._GetAll(true, false);
             }
             private set { }
         }
-        public static List<poco_category> CatsNoYes
+        public static List<dto_category> CatsNoYes
         {
             get
             {
-                poco_category poco = new poco_category();
+                biz_category poco = new biz_category();
                 return poco._GetAll(false, true);
             }
             private set { }
         }
-        public static List<poco_category> CatsYesYes
+        public static List<dto_category> CatsYesYes
         {
             get
             {
-                poco_category poco = new poco_category();
+                biz_category poco = new biz_category();
                 return poco._GetAll(true, true);
             }
             private set { }
         }
-        public static bool ListContains(List<poco_category> list, int id, out poco_category o) 
+        public static bool ListContains(List<dto_category> list, int id, out dto_category o) 
         {
             
-            foreach(poco_category cat in list)
+            foreach(dto_category cat in list)
             {
                 if (cat.category_id == id)
                 {
@@ -157,17 +157,17 @@ namespace www.e_bazar.dk.SharedClasses
             o = null;
             return false;
         }
-        public static Dictionary<string, Dictionary<string, List<poco_params>>> Par { get; set; }
-        /*public static List<poco_category> CatsTop { get; set; }
-        public static List<poco_category> CatsAll { get; set; }
-        public static Dictionary<string, Dictionary<string, List<poco_params>>> Par { get; set; }
+        public static Dictionary<string, Dictionary<string, List<dto_params>>> Par { get; set; }
+        /*public static List<biz_category> CatsTop { get; set; }
+        public static List<biz_category> CatsAll { get; set; }
+        public static Dictionary<string, Dictionary<string, List<biz_params>>> Par { get; set; }
 
 
-        public static List<poco_category> s_CategorysTop()
+        public static List<biz_category> s_CategorysTop()
         {
             try
             {
-                poco_category cat_poco = new poco_category(new EbazarDB());
+                biz_category cat_poco = new biz_category(new EbazarDB());
                 if (CatsTop == null)
                     CatsTop = cat_poco._GetAll(false);
                 return CatsTop;
@@ -178,11 +178,11 @@ namespace www.e_bazar.dk.SharedClasses
                 throw e;
             }
         }
-        public static List<poco_category> s_CategorysAll()
+        public static List<biz_category> s_CategorysAll()
         {
             try
             {
-                poco_category cat_poco = new poco_category(new EbazarDB());
+                biz_category cat_poco = new biz_category(new EbazarDB());
                 if (CatsAll == null)
                     CatsAll = cat_poco._GetAll(true);
                 return CatsAll;
@@ -193,40 +193,38 @@ namespace www.e_bazar.dk.SharedClasses
                 throw e;
             }
         }/**/
-        public static Dictionary<string, Dictionary<string, List<poco_params>>> s_Params()
+        public static Dictionary<string, Dictionary<string, List<dto_params>>> s_Params()
         {
             try
             {
-                //if (CatsYesNo == null)
-                //    CatsYesNo = s_CategorysAll();
                 if (Par == null)
                 {
-                    Par = new Dictionary<string, Dictionary<string, List<poco_params>>>();
-                    foreach (poco_category cat_a in CatsYesNo)
+                    Par = new Dictionary<string, Dictionary<string, List<dto_params>>>();
+                    foreach (dto_category cat_a in CatsYesNo)
                     {
-                        if (cat_a.params_dao == null)
+                        if (cat_a.params_dto == null)
                         {
                             Par = null;
                             throw new Exception("Param Cat A");
                         }
 
-                        List<poco_params> ps_a = new List<poco_params>();
-                        foreach (poco_params par in cat_a.params_dao)
+                        List<dto_params> ps_a = new List<dto_params>();
+                        foreach (dto_params par in cat_a.params_dto)
                             ps_a.Add(par);
 
-                        Dictionary<string, List<poco_params>> b = new Dictionary<string, List<poco_params>>();
-                        foreach (poco_category cat_b in cat_a.children)
+                        Dictionary<string, List<dto_params>> b = new Dictionary<string, List<dto_params>>();
+                        foreach (dto_category cat_b in cat_a.children)
                         {
-                            if (cat_b.params_dao == null)
+                            if (cat_b.params_dto == null)
                             {
                                 Par = null;
                                 throw new Exception("Param Cat B");
                             }
-                            List<poco_params> ps_b = new List<poco_params>();
-                            List<poco_params> ps_tmp = new List<poco_params>();
-                            foreach (poco_params par in cat_b.params_dao)
+                            List<dto_params> ps_b = new List<dto_params>();
+                            List<dto_params> ps_tmp = new List<dto_params>();
+                            foreach (dto_params par in cat_b.params_dto)
                                 ps_b.Add(par);
-                            /*ps_tmp = */ps_tmp.AddRange(ps_b)/*.ToList()*/;
+                            ps_tmp.AddRange(ps_b);
                             b.Add(cat_b.name, ps_tmp);
                         }
                         Par.Add(cat_a.name, b);
@@ -237,7 +235,7 @@ namespace www.e_bazar.dk.SharedClasses
             catch (Exception e)
             {
                 Par = null;
-                //CatsAll = null;
+                
                 throw e;
             }
         }

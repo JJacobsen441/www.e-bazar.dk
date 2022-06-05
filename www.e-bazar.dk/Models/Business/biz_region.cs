@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace www.e_bazar.dk.Models.DTOs
 {
-    public class poco_region
+    public class biz_region
     {
         public int Id { get; set; }
 
@@ -15,14 +15,16 @@ namespace www.e_bazar.dk.Models.DTOs
         [StringLength(20)]
         public string town { get; set; }
 
-        public void ToPOCO(region r)
+        public dto_region ToDTO(region r)
         {
             if (r == null)
                 throw new Exception("A-OK, Check");
 
-            this.zip = r.zip;
-            this.town = r.town;
-        }
+            dto_region dto = new dto_region();
+            dto.zip = r.zip;
+            dto.town = r.town;
 
+            return dto;
+        }
     }
 }

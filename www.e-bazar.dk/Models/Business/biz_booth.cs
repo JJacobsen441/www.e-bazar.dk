@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
 using www.e_bazar.dk.Extensions;
-using www.e_bazar.dk.Interfaces;
 using www.e_bazar.dk.SharedClasses;
+using static www.e_bazar.dk.Models.DTOs.dto_booth;
 
 namespace www.e_bazar.dk.Models.DTOs
 {
-    public class poco_booth
+    public class biz_booth
     {
-        public poco_booth()
+        public biz_booth()
         {
         }
         
-        public int booth_id { get; set; }
+        /*public int booth_id { get; set; }
         [DisplayName("Stand Navn")]
         [Required]
         [StringLength(50)]
@@ -58,10 +56,10 @@ namespace www.e_bazar.dk.Models.DTOs
         public string boothrating_nop { get; set; }
         [StringLength(128)]
         public string salesman_id { get; set; }
-        public poco_salesman salesman_poco { get; set; }
+        public biz_salesman salesman_poco { get; set; }
 
-        public List<poco_product> product_pocos { get; set; }
-        public List<poco_collection> collection_pocos { get; set; }
+        public List<biz_product> product_pocos { get; set; }
+        public List<biz_collection> collection_pocos { get; set; }
 
         [Required]
         [DisplayName("Gade navn")]
@@ -75,16 +73,16 @@ namespace www.e_bazar.dk.Models.DTOs
         public bool fulladdress { get; set; }
         public string fulladdress_str { get; set; }
         public int region_id { get; set; }
-        public virtual poco_region region_poco { get; set; }
-        public virtual List<poco_conversation> conversation_pocos { get; set; }
-        public virtual List<poco_folder> foldera_pocos { get; set; }
-        public virtual List<poco_category> category_main { get; set; }
+        public virtual biz_region region_poco { get; set; }
+        public virtual List<biz_conversation> conversation_pocos { get; set; }
+        public virtual List<biz_folder> foldera_pocos { get; set; }
+        public virtual List<biz_category> category_main { get; set; }
 
         public int hits_items { get; set; }
         public class Hit { public string booth; public string product; }
         private List<IBoothItem> items = new List<IBoothItem>();
 
-        public bool relevant { get; set; }
+        public bool relevant { get; set; }*/
 
         public booth GetBooth(int? booth_id, string la_search, string lb_search, bool select_inactive, bool withproducts, bool withcollections, bool overrideonlycollection, bool withlevela, bool withconversations, bool withdefault)
         {
@@ -175,34 +173,36 @@ namespace www.e_bazar.dk.Models.DTOs
             }
         }
 
-        public poco_booth GetBoothPOCO(int? booth_id, string lev_a_search, string lev_b_search, bool select_inactive, bool withproducts, bool withcollections, bool overrideonlecollection, bool withlevela, bool withconversations, bool withdefault)
+        public dto_booth GetBoothDTO(int? booth_id, string lev_a_search, string lev_b_search, bool select_inactive, bool withproducts, bool withcollections, bool overrideonlecollection, bool withlevela, bool withconversations, bool withdefault)
         {
-            poco_booth poco = new poco_booth();
+            dto_booth dto = new dto_booth();
             booth booth = GetBooth(booth_id, lev_a_search, lev_b_search, select_inactive, withproducts, withcollections, overrideonlecollection, withlevela, withconversations, withdefault);
 
-            RelevantHelper helper = RelevantHelper.Create(false);
-            
-            poco_product pro = new poco_product(false);
+            RelevantHelper helper = RelevantHelper.Create(true);
+
+            biz_product pro = new biz_product(false);
+            dto_product d_pro = new dto_product();
             if (booth.product != null)
             {
                 foreach (product p in booth.product)
-                    pro.IsRelevant(p, null, false, booth.name, helper);
+                    pro.IsRelevant(d_pro, p, null, false, booth.name, helper);
             }
 
-            poco_collection col = new poco_collection();
+            biz_collection col = new biz_collection();
+            dto_collection d_col = new dto_collection();
             if (booth.collection != null)
             {
                 foreach (collection c in booth.collection)
-                    col.IsRelevant(null, c, false, booth.name, helper);
+                    col.IsRelevant(d_col, null, c, false, booth.name, helper);
             }
 
 
             List<Hit> hits = new List<Hit>();
-            List<Hit> rel = hits.Concat(pro.relevant_hits).ToList();
-            rel = rel.Concat(col.relevant_hits).ToList();
+            List<Hit> rel = hits.Concat(d_pro.relevant_hits).ToList();
+            rel = rel.Concat(d_col.relevant_hits).ToList();
 
-            poco.ToPoco(booth, rel);
-            return poco;
+            dto = this.ToDTO(booth, rel);
+            return dto;
 
         }
 
@@ -265,14 +265,13 @@ namespace www.e_bazar.dk.Models.DTOs
                 return new List<booth>();
             }
         }
-        public List<poco_booth> GetNewestBoothPOCOs(int skip, int take)
+        public List<dto_booth> GetNewestBoothDTOs(int skip, int take)
         {
-            List<poco_booth> list = new List<poco_booth>();
+            List<dto_booth> list = new List<dto_booth>();
             List<booth> booths = GetNewestBooths(skip, take);
 
-            list = this.ToPocoList(booths, null);
+            list = this.ToDTOList(booths, null);
             return list;
-
         }
 
         public List<booth> GetBoothsByPerson(string salesman_id)
@@ -338,42 +337,42 @@ namespace www.e_bazar.dk.Models.DTOs
             }
         }
 
-        public List<poco_booth> GetBoothsByPersonPOCO(string person_id)
+        public List<dto_booth> GetBoothsByPersonDTO(string person_id)
         {
             List<booth> booths = GetBoothsByPerson(person_id);
-            List<poco_booth> list = this.ToPocoList(booths, null);
+            List<dto_booth> list = this.ToDTOList(booths, null);
             return list;
         }
 
-        public void SetItems(bool orderbyrelevance)
+        public void SetItems(dto_booth dto, bool orderbyrelevance)
         {
-            items = product_pocos != null ? items.Concat(product_pocos).ToList() : items;
-            items = collection_pocos != null ? items.Concat(collection_pocos).ToList() : items;
+            dto.items = dto.product_dtos != null ? dto.items.Concat(dto.product_dtos).ToList() : dto.items;
+            dto.items = dto.collection_dtos != null ? dto.items.Concat(dto.collection_dtos).ToList() : dto.items;
             if (orderbyrelevance)
             {
-                items = items.OrderByDescending(i => i.created_on).ToList();
-                items = items.OrderByDescending(i => i.relevant).ToList();
+                dto.items = dto.items.OrderByDescending(i => i.created_on).ToList();
+                dto.items = dto.items.OrderByDescending(i => i.relevant).ToList();
             }
         }
         
-        public List<IBoothItem> GetRelevantItems(int skip, int take)
+        public List<dto_booth_item> GetRelevantItems(dto_booth dto, int skip, int take)
         {
-            if (items.Count() == 0)
-                SetItems(true);
+            if (dto.items.Count() == 0)
+                SetItems(dto, true);
             if (take != -1)
-                return items.Skip(skip).Take(take).ToList();
-            return items.ToList();
+                return dto.items.Skip(skip).Take(take).ToList();
+            return dto.items.ToList();
         }
 
-        public IBoothItem GetNewestItem()
+        public dto_booth_item GetNewestItem(dto_booth dto)
         {
-            if (items.Count() == 0)
-                SetItems(true);
-            List<IBoothItem> list = items;
+            if (dto.items.Count() == 0)
+                SetItems(dto, true);
+            List<dto_booth_item> list = dto.items;
             if (list.Count > 0)
                 return list.FirstOrDefault();
             else
-                return new poco_product(false) { created_on = DateTime.MinValue };
+                return new dto_booth_item() { created_on = DateTime.MinValue };
         }
 
         public List<booth> GetBooths(string salesman_id, bool withsalesman)
@@ -434,10 +433,10 @@ namespace www.e_bazar.dk.Models.DTOs
             }
         }
 
-        public List<poco_booth> GetBoothPOCOs(string salesman_id, bool withsalesman)
+        public List<dto_booth> GetBoothDTOs(string salesman_id, bool withsalesman)
         {
             List<booth> booths = GetBooths(salesman_id, withsalesman);
-            List<poco_booth> list = this.ToPocoList(booths, null);
+            List<dto_booth> list = this.ToDTOList(booths, null);
             return list;
         }
 
@@ -463,15 +462,15 @@ namespace www.e_bazar.dk.Models.DTOs
                     _db.folder.Remove(a);
                 }
 
-                /*poco_product product_poco = new poco_product(false);//product/collection allerede fjernet i AdministrationCon?
+                /*biz_product product_poco = new biz_product(false);//product/collection allerede fjernet i AdministrationCon?
                 foreach (product p in result.product)
                     product_poco.Delete(p.Id, _db);
                 
-                poco_collection collection_poco = new poco_collection();
+                biz_collection collection_poco = new biz_collection();
                 foreach (collection c in result.collection)
                     collection_poco.Delete(c.Id, _db);*/
                 
-                poco_conversation con_poco = new poco_conversation();
+                biz_conversation con_poco = new biz_conversation();
                 foreach (conversation c in result.conversation.ToList())
                 {
                     foreach (comment com in c.comment.ToList())
@@ -492,63 +491,29 @@ namespace www.e_bazar.dk.Models.DTOs
 
                 _db.booth.Remove(result);
             }
-        }
+        }        
 
-        public bool RemoveTag(long tag_id)
-        {
-            //EbazarDB _db = DAL.GetInstance().GetContext();
-            using (EbazarDB _db = new EbazarDB())
-            {
-
-                tag tag = _db.tag.Where(t => t.Id == tag_id && t.form == "booth").Select(t => t).FirstOrDefault();
-                if (tag != null)
-                {
-                    booth booth = _db.booth.Where(b => b.Id == this.booth_id).Select(b => b).FirstOrDefault();
-                    foreach (product pro in booth.product)
-                    {
-                        if (pro.tag.Contains(tag))
-                            return false;
-                    }
-                    foreach (collection col in booth.collection)
-                    {
-                        if (col.tag.Contains(tag))
-                            return false;
-                    }
-                    //if (booth != null)
-                    //    booth.tag.Remove(tag);
-
-                    if ((tag.collection.Count + tag.product.Count) < 1/* && tag.booth.Count <= 1*/)
-                        _db.tag.Remove(tag);
-                    _db.SaveChanges();
-                }
-                else
-                    throw new Exception("A-OK, handled.");
-                return true;
-            }
-        }
-
-        public void RemoveImage() { RemoveBoothImage(); }
-        private void RemoveBoothImage()
+        public void RemoveImage(dto_booth dto) { RemoveBoothImage(dto); }
+        private void RemoveBoothImage(dto_booth dto)
         {
             //EbazarDB _db = DAL.GetInstance().GetContext();
             using (EbazarDB _db = new EbazarDB())
             {
 
 
-                booth booth = _db.booth.Where(b => b.Id == this.booth_id).Select(t => t).FirstOrDefault();
+                booth booth = _db.booth.Where(b => b.Id == dto.booth_id).Select(t => t).FirstOrDefault();
                 if (booth == null)
                     throw new Exception("A-OK, handled.");
 
                 booth.frontimage = null;
                 _db.SaveChanges();
             }
-
         }
 
         public List<booth> GetBooths(int skip, int take, out int count, out List<Hit> rel_hits)
         {
             /*
-             * when updating this function, remember to update poco_product.cs and poco_collection.cs -> IsRelevant
+             * when updating this function, remember to update biz_product.cs and biz_collection.cs -> IsRelevant
              * */
 
             rel_hits = new List<Hit>();
@@ -557,13 +522,11 @@ namespace www.e_bazar.dk.Models.DTOs
             //EbazarDB _db = DAL.GetInstance().GetContext();
             using (EbazarDB _db = new EbazarDB())
             {
-                poco_salesman s_poco = new poco_salesman();
-                poco_product pr_poco = new poco_product(false);
-                poco_collection col_poco = new poco_collection();
-                poco_category cat_poco = new poco_category();
-
-                poco_product pro_relevant = new poco_product(false);
-                poco_collection col_relevant = new poco_collection();
+                biz_salesman s_poco = new biz_salesman();
+                biz_product pr_poco = new biz_product(false);
+                biz_collection col_poco = new biz_collection();
+                biz_category cat_poco = new biz_category();
+                                
                 string[] opt, cats;
                 string op1, op2, op3, op4, op5, op6, cat;
                 int fra, til, zip;
@@ -717,9 +680,13 @@ namespace www.e_bazar.dk.Models.DTOs
 
                 ;
 
+                biz_product pro_relevant = new biz_product(false);
+                biz_collection col_relevant = new biz_collection();
+                dto_product d_pro_relevant = new dto_product();
+                dto_collection d_col_relevant = new dto_collection();
                 booths = booths.Where(x =>
-                x.product.Where(z => pro_relevant.IsRelevant(z, null, x.name, is_param, helper)).Count() > 0 ||
-                x.collection.Where(z => col_relevant.IsRelevant(null, z, x.name, is_param, helper)).Count() > 0
+                x.product.Where(z => pro_relevant.IsRelevant((dto_booth_item)null, z, null, x.name, is_param, helper)).Count() > 0 ||
+                x.collection.Where(z => col_relevant.IsRelevant((dto_booth_item)null, null, z, x.name, is_param, helper)).Count() > 0
                 ).ToList();
 
             
@@ -735,8 +702,18 @@ namespace www.e_bazar.dk.Models.DTOs
                     if (skip != -1)
                         booths = booths.Skip(skip).Take(take);
 
-                    rel_hits = rel_hits.Concat(pro_relevant.relevant_hits).ToList();
-                    rel_hits = rel_hits.Concat(col_relevant.relevant_hits).ToList();
+                    //setting IsRelevant
+                    foreach(booth __b in booths)
+                    {
+                        foreach (product pro in __b.product)
+                            pro_relevant.IsRelevant(d_pro_relevant, pro, null, false, __b.name, helper);
+                        foreach (collection col in __b.collection)
+                            pro_relevant.IsRelevant(d_col_relevant, null, col, false, __b.name, helper);
+                    }
+
+                    rel_hits = rel_hits.Concat(d_pro_relevant.relevant_hits).ToList();
+                    rel_hits = rel_hits.Concat(d_col_relevant.relevant_hits).ToList();
+
 
                     /*
                     * HACK - just a precaution
@@ -773,146 +750,79 @@ namespace www.e_bazar.dk.Models.DTOs
             }
         }
 
-        public List<poco_booth> GetBoothPOCOs(int skip, int take, out int count)
+        public List<dto_booth> GetBoothDTOs(int skip, int take, out int count)
         {
             List<Hit> rel;
-            List<poco_booth> list = new List<poco_booth>();
+            List<dto_booth> list = new List<dto_booth>();
             List<booth> booths = GetBooths(skip, take, out count, out rel);
 
-            list = this.ToPocoList(booths, rel);
+            list = this.ToDTOList(booths, rel);
             return list;
-        }
+        }        
 
-        /*public bool IsRelevantA(booth b, RelevantHelper helper)
-        {
-            if (b.IsNull())
-                throw new Exception("A-OK, Check");
-
-            if (helper.IsNull())
-                throw new Exception("A-OK, Check");
-
-            string[] opt, cats;
-            string op1, op2, op3, op4, op5, op6, cat;
-            int fra, til, zip;
-            //RelevantHelper helper = RelevantHelper._Create(false);
-            helper.GetVals(out opt, out op1, out op2, out op3, out op4, out op5, out op6, out cats, out cat, out fra, out til, out zip);
-
-            bool ok;
-            string desc = StringHelper.OnlyAlphanumeric(b.description.ToLower().Trim(), false, false, "notag", CharacterHelper.Space(), out ok);
-            this.relevant = (
-                            (opt[0] != "") ?
-                            (!string.IsNullOrEmpty(opt[0]) && (b.name.ToLower().Trim() == opt[0].ToLower().Trim())) ||
-                            (!string.IsNullOrEmpty(opt[0]) && (b.name.ToLower().Trim().Contains(opt[0].ToLower().Trim()))) ||
-                            (opt.Where(x => x != "" && desc.Contains(x)).Count() > 0) :
-
-                            false) &&
-                            ((b.product != null && b.product.Count() > 0) || (b.collection != null && b.collection.Count > 0)) &&
-                            ((zip == 0 ? true : b.region.zip == zip || Areas.IsRelevant(b.region.zip)));
-
-            return this.relevant;
-        }
-
-        public bool IsRelevantB(booth b, RelevantHelper helper)
-        {
-            if (b.IsNull())
-                throw new Exception("A-OK, Check");
-
-            if (helper.IsNull())
-                throw new Exception("A-OK, Check");
-
-            string[] opt, cats;
-            string op1, op2, op3, op4, op5, op6, cat;
-            int fra, til, zip;
-            //RelevantHelper helper = RelevantHelper._Create(false);
-            helper.GetVals(out opt, out op1, out op2, out op3, out op4, out op5, out op6, out cats, out cat, out fra, out til, out zip);
-
-            this.relevant = (cat == "alle" ?
-                            true :
-                            (cat != "alle" && (opt[0] == "" && opt[1] == "" && opt[2] == "") ?
-                            true :
-                            (cat != "alle" && (opt[0] != "" || opt[1] != "" || opt[2] != "")) ?
-                            (Categorys.CatsYesNo.Where(t => t.name == cat).Count() > 0) :
-
-                            false)) &&
-                            ((b.product != null && b.product.Count() > 0) || (b.collection != null && b.collection.Count > 0)) &&
-                            (zip != 0 ? b.region.zip == zip : true) &&
-                            www.e_bazar.dk.SharedClasses.Areas.IsRelevant(b.region.zip);
-
-            return this.relevant;
-        }/**/
-
-        public void setupaddress(booth b)
+        public void setupaddress(dto_booth dto, booth b)
         {
             //EbazarDB _db = DAL.GetInstance().GetContext();
             using (EbazarDB _db = new EbazarDB())
             {
-
-
                 if (b == null)
                     throw new Exception("A-OK, Check");
 
-                this.street_address = !string.IsNullOrEmpty(b.street_address) ? b.street_address : "";
+                dto.street_address = !string.IsNullOrEmpty(b.street_address) ? b.street_address : "";
 
                 if (b.region == null)
                 {
-                    this.region_poco = (from r in _db.region
+                    dto.region_dto = (from r in _db.region
                                         where r.zip == 0000 && r.town == "default"
-                                        select new poco_region { Id = r.Id, zip = r.zip, town = r.town }).FirstOrDefault();
+                                        select new dto_region { Id = r.Id, zip = r.zip, town = r.town }).FirstOrDefault();
                 }
                 else
                 {
-                    this.region_poco = new poco_region();
-                    this.region_poco.ToPOCO(b.region);
+                    biz_region biz = new biz_region();
+                    dto.region_dto = new dto_region();
+                    dto.region_dto = biz.ToDTO(b.region);
                 }
 
-                this.country = !string.IsNullOrEmpty(b.country) ? b.country : "Danmark";
-                this.fulladdress = b.fulladdress;
-                this.region_id = this.region_poco.Id;
+                dto.country = !string.IsNullOrEmpty(b.country) ? b.country : "Danmark";
+                dto.fulladdress = b.fulladdress;
+                dto.region_id = dto.region_dto.Id;
             }
         }
         
-        public List<booth> ToBoothList(List<poco_booth> booth_pocos, EbazarDB _db)
+        public List<booth> ToBoothList(List<dto_booth> booth_pocos, EbazarDB _db)
         {
             if (booth_pocos == null)
                 throw new Exception("A-OK, Check.");
 
             List<booth> list = new List<booth>();
-            foreach (poco_booth b in booth_pocos)
+            foreach (dto_booth b in booth_pocos)
             {
-                //using (EbazarDB _db = new EbazarDB())
-                {
-
-                    booth booth = this.ToBooth(false, _db);
-                    list.Add(booth);
-                }
+                booth booth = this.ToBooth(false, b, _db);
+                list.Add(booth);                
             }
             return list;
         }
 
-        public booth ToBooth(bool new_booth, EbazarDB _db)
+        public booth ToBooth(bool new_booth, dto_booth dto, EbazarDB _db)
         {
             //DAL.GetInstance().DB = new EbazarDB();
-
-            //if (_db == null)
-            //    _db = DAL.GetInstance().GetContext();
 
             booth result = new booth();
             if (!new_booth)
                 result = _db.booth
                     .Include(x => x.person)
-                    .FirstOrDefault(b => b.Id == this.booth_id);
+                    .FirstOrDefault(b => b.Id == dto.booth_id);
             if (result == null)
                 throw new Exception("A-OK, Handled.");
 
-            result.description = !string.IsNullOrEmpty(this.description) ? this.description : "";
-            result.frontimage = !string.IsNullOrEmpty(this.frontimage) ? this.frontimage : "";
-            result.name = !string.IsNullOrEmpty(this.name) ? this.name : "";
-            result.sysname = !string.IsNullOrEmpty(this.sysname) ? this.sysname : "";
+            result.description = !string.IsNullOrEmpty(dto.description) ? dto.description : "";
+            result.frontimage = !string.IsNullOrEmpty(dto.frontimage) ? dto.frontimage : "";
+            result.name = !string.IsNullOrEmpty(dto.name) ? dto.name : "";
+            result.sysname = !string.IsNullOrEmpty(dto.sysname) ? dto.sysname : "";
 
-            if (new_booth/*result.person == null*/)
+            if (new_booth)
             {
-                //result.person = _db.person.Where(s => s.Id == this.salesman_poco.person_id).FirstOrDefault();
-                result.person_id = this.salesman_poco.person_id;
+                result.person_id = dto.salesman_dto.person_id;
                 DateTime now = DateTime.Now;
                 result.created_on = now;
                 result.modified = now;
@@ -920,10 +830,10 @@ namespace www.e_bazar.dk.Models.DTOs
 
             result.searchable = true;
 
-            result.street_address = !string.IsNullOrEmpty(this.street_address) ? this.street_address : "";
-            result.country = !string.IsNullOrEmpty(this.country) ? this.country : "";
-            result.fulladdress = this.fulladdress_str == "Full" ? true : false;
-            region region = _db.region.FirstOrDefault(r => r.zip == this.region_poco.zip && r.town == this.region_poco.town);
+            result.street_address = !string.IsNullOrEmpty(dto.street_address) ? dto.street_address : "";
+            result.country = !string.IsNullOrEmpty(dto.country) ? dto.country : "";
+            result.fulladdress = dto.fulladdress_str == "Full" ? true : false;
+            region region = _db.region.FirstOrDefault(r => r.zip == dto.region_dto.zip && r.town == dto.region_dto.town);
             if (region == null)
                 throw new Exception("A-OK, Handled.");
             result.region_id = region.Id;
@@ -931,75 +841,78 @@ namespace www.e_bazar.dk.Models.DTOs
             return result;
         }        
 
-        public List<poco_booth> ToPocoList(ICollection<booth> booths, List<Hit> rel)
+        public List<dto_booth> ToDTOList(ICollection<booth> booths, List<Hit> rel)
         {
             if (booths == null)
                 throw new Exception("A-OK, Check");
 
-            List<poco_booth> list = new List<poco_booth>();
+            List<dto_booth> list = new List<dto_booth>();
             foreach (booth b in booths.ToList())
             {
-                poco_booth booth_poco = new poco_booth();
-                booth_poco.ToPoco(b, rel);
-                list.Add(booth_poco);
+                biz_booth biz = new biz_booth();
+                dto_booth booth_dto = new dto_booth();
+                booth_dto = biz.ToDTO(b, rel);
+                list.Add(booth_dto);
             }
             return list;
         }
 
-        public void ToPoco(booth b, List<Hit> rel)
+        public dto_booth ToDTO(booth b, List<Hit> rel)
         {
+            dto_booth dto = new dto_booth();
             if (b == null)
                 throw new Exception("A-OK, Check");
 
-            this.booth_id = b.Id;
-            this.created_on = b.created_on.IsNotNull() ? b.created_on : this.created_on;
-            this.modified = b.modified.IsNotNull() ? b.modified : this.modified;
-            
-            this.name = b.name.IsNotNull() ? b.name : "";
-            this.sysname = b.sysname.IsNotNull() ? b.sysname : "";
-            this.frontimage = b.frontimage.IsNotNull() ? b.frontimage : "";
+            dto.booth_id = b.Id;
+            dto.created_on = b.created_on.IsNotNull() ? b.created_on : dto.created_on;
+            dto.modified = b.modified.IsNotNull() ? b.modified : dto.modified;
 
-            this.description = !string.IsNullOrEmpty(b.description) ? b.description : Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+            dto.name = b.name.IsNotNull() ? b.name : "";
+            dto.sysname = b.sysname.IsNotNull() ? b.sysname : "";
+            dto.frontimage = b.frontimage.IsNotNull() ? b.frontimage : "";
+
+            dto.description = !string.IsNullOrEmpty(b.description) ? b.description : Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
 
             if (b.boothrating != null)
             {
-                this.numberofratings = (from r in b.boothrating
+                dto.numberofratings = (from r in b.boothrating
                                         select r).Count();
-                this.boothrating = (from r in b.boothrating
+                dto.boothrating = (from r in b.boothrating
                                     select (int?)r.rating).ToList().Average();
-                if (this.numberofratings == null)
-                    this.numberofratings = 0;
+                if (dto.numberofratings == null)
+                    dto.numberofratings = 0;
                 if (b.boothrating.Count() == 0)
                 {
-                    this.boothrating = 0.0;
-                    this.boothrating_nop = Texts.GetNopValue(NOP.NO_RATING.ToString());
+                    dto.boothrating = 0.0;
+                    dto.boothrating_nop = Texts.GetNopValue(NOP.NO_RATING.ToString());
                 }
             }
 
-            this.salesman_id = !b.person_id.IsNull() ? b.person_id : this.salesman_id;
+            dto.salesman_id = !b.person_id.IsNull() ? b.person_id : dto.salesman_id;
 
             if (b.person.IsNotNull())
             {
-                this.salesman_poco = new poco_salesman();
-                //this.salesman_poco.ToPoco<poco_salesman>(Null(b.person));
-                //string name = b.person.firstname;
+                biz_salesman biz = new biz_salesman();
+                
                 person per = b.person;
-                this.salesman_poco.ToPoco<poco_salesman>(NullHelper.BthNull(per));
+                dto.salesman_dto = biz.ToDTO<dto_salesman>(NullHelper.BthNull(per));
             }
 
-            setupaddress(b);
+            setupaddress(dto, b);
 
-            poco_product pro_poco = new poco_product(false);
-            poco_collection col_poco = new poco_collection();
+            biz_product pro_poco = new biz_product(false);
+            biz_collection col_poco = new biz_collection();
 
-            poco_folder fld_poco = new poco_folder();
-            poco_category cat_poco = new poco_category();
+            biz_folder fld_poco = new biz_folder();
+            biz_category cat_poco = new biz_category();
 
-            this.product_pocos = b.product.IsNotNull() ? pro_poco.ToPocoList(NullHelper.BthNull(b.product.ToList(), false), rel, b.name) : new List<poco_product>();
-            this.collection_pocos = b.collection.IsNotNull() ? col_poco.ToPocoList(NullHelper.BthNull(b.collection.ToList(), false), rel, b.name) : new List<poco_collection>();
-            this.foldera_pocos = b.foldera.IsNotNull() ? fld_poco.ToPocoList(NullHelper.BthNull(b.foldera.ToList())) : new List<poco_folder>();
-            this.category_main = b.category_main.IsNotNull() ? cat_poco.ToPocoList(NullHelper.BthNull(b.category_main.Where(x=>x.name != ".ingen").ToList()), false/*used to be true*/, false) : new List<poco_category>();
-            this.hits_items = rel.IsNotNull() ? rel.Where(x => x.booth == this.name).Count() : this.hits_items;
+            dto.product_dtos = b.product.IsNotNull() ? pro_poco.ToDTOList(NullHelper.BthNull(b.product.ToList(), false), rel, b.name) : new List<dto_product>();
+            dto.collection_dtos = b.collection.IsNotNull() ? col_poco.ToDTOList(NullHelper.BthNull(b.collection.ToList(), false), rel, b.name) : new List<dto_collection>();
+            dto.foldera_dtos = b.foldera.IsNotNull() ? fld_poco.ToDTOList(NullHelper.BthNull(b.foldera.ToList())) : new List<dto_folder>();
+            dto.category_main = b.category_main.IsNotNull() ? cat_poco.ToPocoList(NullHelper.BthNull(b.category_main/*.Where(x=>x.name != ".ingen")*/.ToList()), false/*used to be true*/, false) : new List<dto_category>();
+            dto.hits_items = rel.IsNotNull() ? rel.Where(x => x.booth == dto.name).Count() : dto.hits_items;
+
+            return dto;
         }
     }
 }

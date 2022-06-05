@@ -1,4 +1,4 @@
-﻿@model www.e_bazar.dk.Models.DTOs.poco_collection
+﻿@model www.e_bazar.dk.Models.DTOs.dto_collection
 @{
     ViewBag.Title = "Opret Sæt";
 }
@@ -12,10 +12,10 @@
             <div class="container">
                 <div class="col-xs-12" xstyle="padding-left:0px;">
                     <br />
-                    [@Model.booth_poco.name]
+                    [@Model.booth_dto.name]
                     <h2>Opret Sæt</h2>
                     <br />
-                    <input type="button" value="Tilbage til stand" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("EditBooth1", new { booth_id = Model.booth_poco.booth_id } )'" />
+                    <input type="button" value="Tilbage til stand" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("EditBooth1", new { booth_id = Model.booth_dto.booth_id } )'" />
                     <input type="submit" value="Gem" class="btn btn-default green_bg lightgreen_bdr white adm_button_form_submit" />
                 </div>
             </div>
@@ -24,9 +24,9 @@
                 <div class="white_bdr darkgrey_bg removeborder-bottom navigation-top navigation-right">
                     &nbsp;
                 </div>
-                @if (Model.image_pocos != null && Model.image_pocos.Count > 0)
+                @if (Model.image_dtos != null && Model.image_dtos.Count > 0)
                 {
-                    <input type="hidden" class="adm_hidden_no_collection_dtos" value="@Model.image_pocos.Count" />//måske unødvendig
+                    <input type="hidden" class="adm_hidden_no_collection_dtos" value="@Model.image_dtos.Count" />//måske unødvendig
                 }
 
                 @using (Html.BeginRouteForm("CreateCollection", FormMethod.Post, @Model))
@@ -54,16 +54,16 @@
                         <div class="col-xs-12">
                             @{
                                 <div>
-                                    @Html.LabelFor(model => model.image_pocos, htmlAttributes: new { @class = "control-label" })
+                                    @Html.LabelFor(model => model.image_dtos, htmlAttributes: new { @class = "control-label" })
                                 </div>
                                 int i = 0;
-                                if (Model.image_pocos != null && Model.image_pocos.Count > 0 && !string.IsNullOrEmpty(Model.image_pocos.FirstOrDefault().name))
+                                if (Model.image_dtos != null && Model.image_dtos.Count > 0 && !string.IsNullOrEmpty(Model.image_dtos.FirstOrDefault().name))
                                 {
-                                    foreach (poco_collectionimage img in Model.image_pocos)
+                                    foreach (biz_collectionimage img in Model.image_dtos)
                                     {
                                         <div class="container_overlay">
                                             @{
-                                                var image_path = "/_content/images/profiles/" + Model.booth_poco.salesman_poco.sysname + "/booths/" + Model.booth_poco.sysname + "/collections/" + Model.sysname + "/" + img.name;
+                                                var image_path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/collections/" + Model.sysname + "/" + img.name;
                                                 <input type="hidden" class="adm_hidden_images_imagename_@i" value="@img.name">
                                                 <img class="adm_img_collectionimage_@i adm_img_collectionimage" src="@image_path" alt="Sample Image" />
                                                 <div class="overlay">
@@ -87,14 +87,14 @@
                     <div class="form-group">
                         <div class="col-xs-12 adm_div_images_thumbnail">
                             @{
-                                if (Model.image_pocos != null && Model.image_pocos.Count > 0)
+                                if (Model.image_dtos != null && Model.image_dtos.Count > 0)
                                 {
                                     i = 0;
-                                    foreach (poco_collectionimage img in Model.image_pocos)
+                                    foreach (biz_collectionimage img in Model.image_dtos)
                                     {
                                         if (img != null)
                                         {
-                                            var image_path = "/_content/images/profiles/" + Model.booth_poco.salesman_poco.sysname + "/booths/" + Model.booth_poco.sysname + "/collections/" + Model.sysname + "/" + img.name;
+                                            var image_path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/collections/" + Model.sysname + "/" + img.name;
                                             <a href="#">
                                                 <input type="hidden" class="adm_hidden_images_thumbnail_@i" name="adm_hidden_images_thumbnail_@i" value="@img.name">
                                                 <img src="@image_path" alt="Sample Image" class="adm_img_images_thumbnail_@i mythumbnail" onclick="setFront(@i);">&nbsp;&nbsp;&nbsp;
@@ -198,10 +198,10 @@
             <div class="container">
                 <div class="col-xs-12" xstyle="padding-left:0px;">
                     <br />
-                    [@Model.booth_poco.name]
+                    [@Model.booth_dto.name]
                     <h2>Opret Sæt</h2>
                     <br />
-                    <input type="button" value="Tilbage til stand" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("EditBooth1", new { booth_id = Model.booth_poco.booth_id } )'" />
+                    <input type="button" value="Tilbage til stand" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("EditBooth1", new { booth_id = Model.booth_dto.booth_id } )'" />
                     <input type="submit" value="Gem" class="btn btn-default green_bg lightgreen_bdr white adm_button_form_submit" />
                 </div>
             </div>
@@ -210,9 +210,9 @@
                 <div class="white_bdr darkgrey_bg removeborder-bottom navigation-top navigation-right">
                     &nbsp;
                 </div>
-                @if (Model.image_pocos != null && Model.image_pocos.Count > 0)
+                @if (Model.image_dtos != null && Model.image_dtos.Count > 0)
                 {
-                    <input type="hidden" class="adm_hidden_no_collection_dtos" value="@Model.image_pocos.Count" />//måske unødvendig
+                    <input type="hidden" class="adm_hidden_no_collection_dtos" value="@Model.image_dtos.Count" />//måske unødvendig
                 }
 
                 @using (Html.BeginRouteForm("CreateCollection", FormMethod.Post, @Model))
@@ -240,16 +240,16 @@
                         <div class="col-xs-12">
                             @{
                                 <div>
-                                    @Html.LabelFor(model => model.image_pocos, htmlAttributes: new { @class = "control-label" })
+                                    @Html.LabelFor(model => model.image_dtos, htmlAttributes: new { @class = "control-label" })
                                 </div>
                                 int i = 0;
-                                if (Model.image_pocos != null && Model.image_pocos.Count > 0 && !string.IsNullOrEmpty(Model.image_pocos.FirstOrDefault().name))
+                                if (Model.image_dtos != null && Model.image_dtos.Count > 0 && !string.IsNullOrEmpty(Model.image_dtos.FirstOrDefault().name))
                                 {
-                                    foreach (poco_collectionimage img in Model.image_pocos)
+                                    foreach (biz_collectionimage img in Model.image_dtos)
                                     {
                                         <div class="container_overlay">
                                             @{
-                                                var image_path = "/_content/images/profiles/" + Model.booth_poco.salesman_poco.sysname + "/booths/" + Model.booth_poco.sysname + "/collections/" + Model.sysname + "/" + img.name;
+                                                var image_path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/collections/" + Model.sysname + "/" + img.name;
                                                 <input type="hidden" class="adm_hidden_images_imagename_@i" value="@img.name">
                                                 <img class="adm_img_collectionimage_@i adm_img_collectionimage" src="@image_path" alt="Sample Image" />
                                                 <div class="overlay">
@@ -273,14 +273,14 @@
                     <div class="form-group">
                         <div class="col-xs-12 adm_div_images_thumbnail">
                             @{
-                                if (Model.image_pocos != null && Model.image_pocos.Count > 0)
+                                if (Model.image_dtos != null && Model.image_dtos.Count > 0)
                                 {
                                     i = 0;
-                                    foreach (poco_collectionimage img in Model.image_pocos)
+                                    foreach (biz_collectionimage img in Model.image_dtos)
                                     {
                                         if (img != null)
                                         {
-                                            var image_path = "/_content/images/profiles/" + Model.booth_poco.salesman_poco.sysname + "/booths/" + Model.booth_poco.sysname + "/collections/" + Model.sysname + "/" + img.name;
+                                            var image_path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/collections/" + Model.sysname + "/" + img.name;
                                             <a href="#">
                                                 <input type="hidden" class="adm_hidden_images_thumbnail_@i" name="adm_hidden_images_thumbnail_@i" value="@img.name">
                                                 <img src="@image_path" alt="Sample Image" class="adm_img_images_thumbnail_@i mythumbnail" onclick="setFront(@i);">&nbsp;&nbsp;&nbsp;
@@ -387,10 +387,10 @@
             <div class="container">
                 <div class="col-sm-12" xstyle="padding-left:0px;">
                     <br />
-                    [@Model.booth_poco.name]
+                    [@Model.booth_dto.name]
                     <h2>Opret Sæt</h2>
                     <br />
-                    <input type="button" value="Tilbage til stand" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("EditBooth1", new { booth_id = Model.booth_poco.booth_id } )'" />
+                    <input type="button" value="Tilbage til stand" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("EditBooth1", new { booth_id = Model.booth_dto.booth_id } )'" />
                     <input type="submit" value="Gem" class="btn btn-default green_bg lightgreen_bdr white adm_button_form_submit" />
                 </div>
             </div>
@@ -399,9 +399,9 @@
                 <div class="white_bdr darkgrey_bg removeborder-bottom navigation-top navigation-right">
                     &nbsp;
                 </div>
-                @if (Model.image_pocos != null && Model.image_pocos.Count > 0)
+                @if (Model.image_dtos != null && Model.image_dtos.Count > 0)
                 {
-                    <input type="hidden" class="adm_hidden_no_collection_dtos" value="@Model.image_pocos.Count" />//måske unødvendig
+                    <input type="hidden" class="adm_hidden_no_collection_dtos" value="@Model.image_dtos.Count" />//måske unødvendig
                 }
 
                 @using (Html.BeginRouteForm("CreateCollection", FormMethod.Post, @Model))
@@ -429,16 +429,16 @@
                         <div class="col-sm-12">
                             @{
                                 <div>
-                                    @Html.LabelFor(model => model.image_pocos, htmlAttributes: new { @class = "control-label" })
+                                    @Html.LabelFor(model => model.image_dtos, htmlAttributes: new { @class = "control-label" })
                                 </div>
                                 int i = 0;
-                                if (Model.image_pocos != null && Model.image_pocos.Count > 0 && !string.IsNullOrEmpty(Model.image_pocos.FirstOrDefault().name))
+                                if (Model.image_dtos != null && Model.image_dtos.Count > 0 && !string.IsNullOrEmpty(Model.image_dtos.FirstOrDefault().name))
                                 {
-                                    foreach (poco_collectionimage img in Model.image_pocos)
+                                    foreach (biz_collectionimage img in Model.image_dtos)
                                     {
                                         <div class="container_overlay">
                                             @{
-                                                var image_path = "/_content/images/profiles/" + Model.booth_poco.salesman_poco.sysname + "/booths/" + Model.booth_poco.sysname + "/collections/" + Model.sysname + "/" + img.name;
+                                                var image_path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/collections/" + Model.sysname + "/" + img.name;
                                                 <input type="hidden" class="adm_hidden_images_imagename_@i" value="@img.name">
                                                 <img class="adm_img_collectionimage_@i adm_img_collectionimage" src="@image_path" alt="Sample Image" />
                                                 <div class="overlay">
@@ -462,14 +462,14 @@
                     <div class="form-group">
                         <div class="col-sm-12 adm_div_images_thumbnail">
                             @{
-                                if (Model.image_pocos != null && Model.image_pocos.Count > 0)
+                                if (Model.image_dtos != null && Model.image_dtos.Count > 0)
                                 {
                                     i = 0;
-                                    foreach (poco_collectionimage img in Model.image_pocos)
+                                    foreach (biz_collectionimage img in Model.image_dtos)
                                     {
                                         if (img != null)
                                         {
-                                            var image_path = "/_content/images/profiles/" + Model.booth_poco.salesman_poco.sysname + "/booths/" + Model.booth_poco.sysname + "/collections/" + Model.sysname + "/" + img.name;
+                                            var image_path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/collections/" + Model.sysname + "/" + img.name;
                                             <a href="#">
                                                 <input type="hidden" class="adm_hidden_images_thumbnail_@i" name="adm_hidden_images_thumbnail_@i" value="@img.name">
                                                 <img src="@image_path" alt="Sample Image" class="adm_img_images_thumbnail_@i mythumbnail" onclick="setFront(@i);">&nbsp;&nbsp;&nbsp;

@@ -2,17 +2,14 @@
 using PostgreSQL.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using www.e_bazar.dk.Extensions;
-using www.e_bazar.dk.Interfaces;
 using www.e_bazar.dk.Models.Identity;
 using www.e_bazar.dk.SharedClasses;
 
 namespace www.e_bazar.dk.Models.DTOs
 {
-    public abstract class poco_person
+    public abstract class biz_person
     {
         protected ApplicationDbContext ApplicationDbContext { get; set; }
 
@@ -21,14 +18,14 @@ namespace www.e_bazar.dk.Models.DTOs
         /// </summary>
         protected UserManager<ApplicationUser> UserManager { get; set; }
         
-        public poco_person()
+        public biz_person()
         {
             //this.db = new EbazarDB();
             this.ApplicationDbContext = new ApplicationDbContext();
             this.UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(this.ApplicationDbContext));
         }        
 
-        public string person_id { get; set; }
+        /*public string person_id { get; set; }
         
         public bool iscreated = true;
 
@@ -56,67 +53,69 @@ namespace www.e_bazar.dk.Models.DTOs
         public string nator { get; set; }
         
         
-        public virtual List<poco_product> favorites_product { get; set; }
-        public virtual List<poco_collection> favorites_collection { get; set; }
-        public virtual List<poco_booth> following { get; set; }
+        public virtual List<biz_product> favorites_product { get; set; }
+        public virtual List<biz_collection> favorites_collection { get; set; }
+        public virtual List<biz_booth> following { get; set; }
         
-        public virtual List<boothrating> boothrating { get; set; }
+        public virtual List<boothrating> boothrating { get; set; }*/
                 
-        public bool IsType<T>()
+        public bool IsType<T>(Type t)
         {
-            if(typeof(T) == this.GetType())
+            if(typeof(T) == t)
                 return true;
             return false;
         }
         
-        public abstract T GetPersonPOCO<T>(string person_id, string descriminator, bool withbooth, bool withfavorites, bool withfollowing) where T : poco_person, new();
-        public abstract void SavePerson<T>() where T : poco_person, new();
-        public abstract void UpdatePerson<T>() where T : poco_person, new();
-        public abstract void ToPoco<T>(person per) where T : poco_person, new();
+        //public abstract T GetPersonDTO<T>(string person_id/*, string descriminator*/, bool withbooth, bool withfavorites, bool withfollowing) where T : dto_person, new();
+        public abstract void SavePerson<T>(T dto) where T : dto_person, new();
+        public abstract void UpdatePerson<T>(T dto) where T : dto_person, new();
+        public abstract T ToDTO<T>(person per) where T : dto_person, new();
 
-        public class SampleObjectComparer : IComparer<IBoothItem>
+        public class SampleObjectComparer : IComparer<dto_booth_item>
         {
-            public int Compare(IBoothItem x, IBoothItem y)
+            public int Compare(dto_booth_item x, dto_booth_item y)
             {
                 return GetHashCode(x).CompareTo(GetHashCode(x));
             }
 
-            public bool Equals(IBoothItem x, IBoothItem y)
+            public bool Equals(dto_booth_item x, dto_booth_item y)
             {
-                return x.GetType() == typeof(poco_product) && y.GetType() == typeof(poco_product);
+                return x.GetType() == typeof(biz_product) && y.GetType() == typeof(biz_product);
             }
 
-            public int GetHashCode(IBoothItem x)
+            public int GetHashCode(dto_booth_item x)
             {
                 return x.GetType().GetHashCode();
             }
         }
 
-        public List<IBoothItem> _GetFavorites()
+        public List<dto_booth_item> _GetFavorites(dto_person dto)
         {
             var comparer = new SampleObjectComparer();
 
-            List<IBoothItem> items = new List<IBoothItem>();
+            List<dto_booth_item> items = new List<dto_booth_item>();
             
-            foreach (poco_product poco in favorites_product)
+            foreach (dto_product _dto in dto.favorites_product)
             {
-                poco_booth b = poco.booth_poco;
+                biz_product biz = new biz_product();
+                dto_booth b = _dto.booth_dto;
 
                 if (b == null)
-                    b = poco.GetBoothPOCO();
-                IBoothItem i = poco;
-                i.booth_poco = b;
+                    b = biz.GetBoothDTO<dto_product>(_dto);
+                dto_booth_item i = _dto;
+                i.booth_dto = b;
                 items.Add(i);
             }
 
-            foreach (poco_collection poco in favorites_collection)
+            foreach (dto_collection _dto in dto.favorites_collection)
             {
-                poco_booth b = poco.booth_poco;
+                biz_collection biz = new biz_collection();
+                dto_booth b = _dto.booth_dto;
 
                 if (b == null)
-                    b = poco.GetBoothPOCO();
-                IBoothItem i = poco;
-                i.booth_poco = b;
+                    b = biz.GetBoothDTO<dto_collection>(_dto);
+                dto_booth_item i = _dto;
+                i.booth_dto = b;
                 items.Add(i);
             }
             items = items.OrderBy(i => i.name).OrderBy(i => i, comparer).ToList();
@@ -135,7 +134,7 @@ namespace www.e_bazar.dk.Models.DTOs
             
             foreach (product pro in per.favorites_product)
             {
-                poco_category o;
+                dto_category o;
                 if (!pro.active)
                     continue;
                 else if
@@ -159,7 +158,7 @@ namespace www.e_bazar.dk.Models.DTOs
             
             foreach (collection col in per.favorites_collection)
             {
-                poco_category o;
+                dto_category o;
                 if (!col.active)
                     continue;
                 else if
@@ -187,12 +186,12 @@ namespace www.e_bazar.dk.Models.DTOs
             return fol;
         }
         
-        public void AddFavorite(long product_id, int collection_id)
+        public void AddFavorite(string per_id, long product_id, int collection_id)
         {
             //EbazarDB _db = DAL.GetInstance().GetContext();
             using (EbazarDB _db = new EbazarDB())
             {
-                person per = _db.person.Where(p => p.Id == this.person_id).FirstOrDefault();
+                person per = _db.person.Where(p => p.Id == per_id).FirstOrDefault();
                 if(per == null)
                     throw new Exception("A-OK, Handled.");
             
@@ -214,12 +213,12 @@ namespace www.e_bazar.dk.Models.DTOs
             }            
         }
 
-        public void RemoveFavorite(long product_id, int collection_id)
+        public void RemoveFavorite(string per_id, long product_id, int collection_id)
         {
             //EbazarDB _db = DAL.GetInstance().GetContext();
             using (EbazarDB _db = new EbazarDB())
             {
-                person per = _db.person.Where(p => p.Id == this.person_id).FirstOrDefault();
+                person per = _db.person.Where(p => p.Id == per_id).FirstOrDefault();
                 if(per == null)
                     throw new Exception("A-OK, Handled.");
         
@@ -241,12 +240,12 @@ namespace www.e_bazar.dk.Models.DTOs
             }
         }
 
-        public void AddFollowing(int booth_id)
+        public void AddFollowing(string per_id, int booth_id)
         {
             //EbazarDB _db = DAL.GetInstance().GetContext();
             using (EbazarDB _db = new EbazarDB())
             {
-                person per = _db.person.Where(p => p.Id == this.person_id).FirstOrDefault();
+                person per = _db.person.Where(p => p.Id == per_id).FirstOrDefault();
                 if(per == null)
                     throw new Exception("A-OK, Handled.");
         
@@ -260,12 +259,12 @@ namespace www.e_bazar.dk.Models.DTOs
             }        
         }
 
-        public void RemoveFollowing(int booth_id)
+        public void RemoveFollowing(string per_id, int booth_id)
         {
             //EbazarDB _db = DAL.GetInstance().GetContext();
             using (EbazarDB _db = new EbazarDB())
             {
-                person per = _db.person.Where(p => p.Id == this.person_id).FirstOrDefault();
+                person per = _db.person.Where(p => p.Id == per_id).FirstOrDefault();
                 if (per == null)
                     throw new Exception("A-OK, Handled.");
         
@@ -279,12 +278,12 @@ namespace www.e_bazar.dk.Models.DTOs
             }        
         }
 
-        public void RemoveImage()
+        public void RemoveImage<T>(T dto) where T : dto_person
         {
             //EbazarDB _db = DAL.GetInstance().GetContext();
             using (EbazarDB _db = new EbazarDB())
             {
-                person person = _db.person.Where(b => b.Id == this.person_id).Select(t => t).FirstOrDefault();
+                person person = _db.person.Where(b => b.Id == dto.person_id).Select(t => t).FirstOrDefault();
                 if (person == null)
                     throw new Exception("A-OK, Handled.");
             
@@ -293,7 +292,7 @@ namespace www.e_bazar.dk.Models.DTOs
             }
         }
 
-        public List<poco_booth> _GetFollowingPOCOs(string per_id)
+        public List<dto_booth> _GetFollowingDTOs(string per_id)
         {
             if (string.IsNullOrEmpty(per_id))
                 throw new Exception("A-OK, Check.");
@@ -309,16 +308,67 @@ namespace www.e_bazar.dk.Models.DTOs
             
                 List<booth> fol = GetFollowing(per);
                 
-                List<poco_booth> res = new List<poco_booth>();
+                List<dto_booth> res = new List<dto_booth>();
                 foreach (booth b in fol)
                 {
-                    poco_booth poco = new poco_booth();
+                    biz_booth biz = new biz_booth();
+                    dto_booth dto = new dto_booth();
                     b.person = null;
-                    poco.ToPoco(NullHelper.PerNull(b), null);
-                    res.Add(poco);
+                    dto = biz.ToDTO(NullHelper.PerNull(b), null);
+                    res.Add(dto);
                 }
                 return res;
             }
+        }
+
+        public person GetPerson(string person_id/*, string descriminator*/, bool withbooth, bool withfavorites, bool withfollowing)
+        {
+            if (person_id == null)// ikke IsNullOrEmpty da user id fra identity kan være tom streng ved UnAuthorized
+                throw new Exception("biz_salesman > GetPerson > person_id NULL [Check DB]");
+            if (person_id == "")
+                return null;
+            //if (descriminator != "Salesman")
+            //    return null;
+
+            //EbazarDB _db = DAL.GetInstance().GetContext();
+            using (EbazarDB _db = new EbazarDB())
+            {
+                /*
+                 * jeg ved at virtual burde fjenes fra model entiteterne
+                 * */
+
+                _db.Configuration.ProxyCreationEnabled = false;
+                _db.Configuration.LazyLoadingEnabled = false;
+
+                IQueryable<person> _p = _db.person
+                    .Include("favorites_product")
+                    .Include("favorites_collection")
+                    .Include("following")
+                    .Include("booth")
+                    .Include("boothrating")
+                    .Where(x => x.Id == person_id/* && x.descriminator == descriminator*/);
+
+                person p = _p.AsEnumerable().FirstOrDefault();
+
+                if (p == null)
+                    throw new Exception("A-OK, Handled.");
+
+                NullHelper.PerNull(p, withbooth/* && descriminator == "Salesman"*/, withfavorites, withfollowing);
+                if (withfollowing) NullHelper.PerNull(p.following.ToList());
+                if (withfavorites) NullHelper.PerNull(p.favorites_product.ToList(), true);
+                if (withfavorites) NullHelper.PerNull(p.favorites_collection.ToList(), true);
+
+                return p;
+            }
+        }
+
+        public T GetPersonDTO<T>(string person_id/*, string descriminator*/, bool withbooth, bool withfavorites, bool withfollowing) where T : dto_person, new()
+        {
+            T person = new T();
+            person pers = GetPerson(person_id/*, descriminator*/, withbooth, withfavorites, withfollowing);
+
+            person = this.ToDTO<T>(pers);
+            return person;
         }
     }
 }

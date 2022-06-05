@@ -19,6 +19,7 @@ namespace www.e_bazar.dk.SharedClasses
                 ThisSession.CurrentUserId = value;
             }
         }
+
         public string CurrentUserName
         {
             get
@@ -30,6 +31,7 @@ namespace www.e_bazar.dk.SharedClasses
                 ThisSession.CurrentUserName = value;
             }
         }
+
         public bool CurrentIsAuthenticated
         {
             get
@@ -41,6 +43,7 @@ namespace www.e_bazar.dk.SharedClasses
                 ThisSession.CurrentIsAuthenticated = value;
             }
         }
+
         public string CurrentType
         {
             get
@@ -56,6 +59,7 @@ namespace www.e_bazar.dk.SharedClasses
         private CurrentUser()
         {
         }
+
         public static CurrentUser GetInstance()
         {
             //DAL.GetInstance(true).GetDB();
@@ -63,21 +67,25 @@ namespace www.e_bazar.dk.SharedClasses
                 user = new CurrentUser();
             return user;
         }
-        public poco_person GetCurrentUser(bool withbooth, bool withfavorites, bool withfollowing)
-        {
-            poco_salesman salesman_poco = new poco_salesman();
-            poco_customer customer_poco = new poco_customer();
-            poco_person person_poco = salesman_poco.GetPersonPOCO<poco_salesman>(CurrentUserID, CurrentType, withbooth, withfavorites, withfollowing);
-            if (person_poco == null)
-                person_poco = customer_poco.GetPersonPOCO<poco_customer>(CurrentUserID, CurrentType, withbooth, withfavorites, withfollowing);
 
-            if (person_poco != null)
-                return person_poco;
-            return null;
+        public dto_person GetCurrentUser(bool withbooth, bool withfavorites, bool withfollowing)
+        {
+            if (CurrentUserID == "")
+                return null;
+
+            biz_salesman salesman_biz = new biz_salesman();
+            biz_customer customer_biz = new biz_customer();
+            dto_person person_dto = salesman_biz.GetPersonDTO<dto_salesman>(CurrentUserID, withbooth, withfavorites, withfollowing);
+            
+            if (person_dto.nator != CurrentType)
+                throw new Exception("A-OK, Handled.");
+
+            return person_dto;            
         }
+
         public bool OwnsBooth(int booth_id)
         {
-            poco_booth booth_poco = new poco_booth();
+            biz_booth booth_poco = new biz_booth();
             booth booth = booth_poco.GetBooth(booth_id, "", "", true, false, false, true, false, false, true);
             if (booth != null)
             {
@@ -87,9 +95,10 @@ namespace www.e_bazar.dk.SharedClasses
 
             return false;
         }
+
         public bool OwnsProduct(long product_id)
         {
-            poco_product product_poco = new poco_product(false);
+            biz_product product_poco = new biz_product(false);
             product product = product_poco.GetProduct(product_id, true, false, false, false);
             if (product != null)
             {
@@ -99,9 +108,10 @@ namespace www.e_bazar.dk.SharedClasses
 
             return false;
         }
+
         public bool OwnsCollection(int collection_id)
         {
-            poco_collection collection_poco = new poco_collection();
+            biz_collection collection_poco = new biz_collection();
             collection collection = collection_poco.GetCollection(collection_id, false, true, false, true, false);
             if (collection != null)
             {
@@ -111,10 +121,12 @@ namespace www.e_bazar.dk.SharedClasses
 
             return false;
         }
-        //public poco_person GetCurrentUserScrub() 
+
+        //public biz_person GetCurrentUserScrub() 
         //{
         //    return GetCurrentUser(true, false, false, false);        
         //}
+
         public void Login(string ID, string Name, bool Authenticated, string Type)
         {
             CurrentUserID = ID;
@@ -123,12 +135,24 @@ namespace www.e_bazar.dk.SharedClasses
             CurrentType = Type;
 
         }
-        public bool IsType<T>()
-        {
-            poco_person user = GetCurrentUser(false, false, false);
-            if(user != null)
-                return user.IsType<T>();
-            throw new Exception("A-OK, handled.");
-        }
+
+        //public bool IsType<T>()
+        //{
+        //    dto_person user = GetCurrentUser(false, false, false);
+        //    if(user != null)
+        //    {
+        //        if(user.GetType() == typeof(dto_salesman))
+        //        {
+        //            biz_salesman _s = new biz_salesman();
+        //            return _s.IsType<T>();
+        //        }
+        //        else
+        //        {
+        //            biz_customer _c = new biz_customer();
+        //            return _c.IsType<T>();
+        //        }
+        //    }
+        //    throw new Exception("A-OK, handled.");
+        //}
     }
 }

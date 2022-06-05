@@ -1,4 +1,4 @@
-﻿@model www.e_bazar.dk.Models.DTOs.dto_conversations
+﻿@model www.e_bazar.dk.Models.DTOs.col_conversations
 <div class="col-md-12">
     <div class="col-md-4">
         <h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Egne samtaler</h4>
@@ -7,14 +7,15 @@
             Model.own = Model.own.OrderByDescending(conn => conn.modified).ToList();
             <ul>
 
-                @foreach (poco_conversation conn in Model.own)
+                @foreach (dto_conversation conn in Model.own)
                 {
-                    string firstname = conn.GetPersonOther().firstname;
-                    string lastname = conn.GetPersonOther().lastname;
+                    biz_conversation biz = new biz_conversation();
+                    string firstname = biz.GetPersonOther(conn).firstname;
+                    string lastname = biz.GetPersonOther(conn).lastname;
                     long id = conn.product_id != null ? (int)conn.product_id : conn.collection_id != null ? (long)conn.collection_id : (long)conn.booth_id;
                     string type = conn.product_id != null ? "PRODUCT" : conn.collection_id != null ? "COLLECTION" : "BOOTH";
-                    string item = conn.product_poco != null ? conn.product_poco.name : conn.collection_poco != null ? conn.collection_poco.name : conn.booth_poco.name;
-                    bool viewed = conn.Viewed(false);
+                    string item = conn.product_dto != null ? conn.product_dto.name : conn.collection_dto != null ? conn.collection_dto.name : conn.booth_dto.name;
+                    bool viewed = biz.Viewed(conn, false);
                 <li>
                     @if (!viewed)
                     {<i class="fas fa-envelope realred"></i>}
@@ -28,7 +29,7 @@
                         @Html.Hidden("type", type);
                         <input type="submit" value="[&nbsp;@firstname @lastname&nbsp;]" class="myfade fakeLink" />
                     }*@
-                <a class="myfade" onclick="location.href = '@Url.RouteUrl("MessageB", new { id = id, owner = conn.GetPersonStart().person_id, type = type })'; return false;">[&nbsp;@firstname @lastname&nbsp;]</a> 
+                <a class="myfade" onclick="location.href = '@Url.RouteUrl("MessageB", new { id = id, owner = biz.GetPersonStart(conn).person_id, type = type })'; return false;">[&nbsp;@firstname @lastname&nbsp;]</a> 
                     <br /><br />
                 </li>
                 }
@@ -44,19 +45,20 @@
     @if (@Model.is_salesman)
     {
         <div class="col-md-4">
-            <h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Aktive samtaler(boder)</h4>
+            <h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Boder</h4>
             @if (Model.booths != null && Model.booths.Count > 0)
             {
                 Model.booths = Model.booths.OrderByDescending(conn => conn.modified).ToList();
             <ul>
-                @foreach (poco_conversation conn in Model.booths)
+                @foreach (dto_conversation conn in Model.booths)
                 {
-                    string firstname = conn.GetPersonStart().firstname;
-                    string lastname = conn.GetPersonStart().lastname;
+                    biz_conversation biz2 = new biz_conversation();
+                    string firstname = biz2.GetPersonStart(conn).firstname;
+                    string lastname = biz2.GetPersonStart(conn).lastname;
                     long id = (long)conn.booth_id;
                     string type = "BOOTH";
-                    string item = conn.booth_poco.name;
-                    bool viewed = conn.Viewed(true);
+                    string item = conn.booth_dto.name;
+                    bool viewed = biz2.Viewed(conn, true);
                 <li>
                     @if (!viewed)
                     {<i class="fas fa-envelope realred"></i>}
@@ -71,7 +73,7 @@
             @Html.Hidden("type", type);
             <input type="submit" value="[&nbsp;@firstname @lastname&nbsp;]" class="myfade fakeLink" />
         }*@
-                    <a class="myfade" onclick="location.href = '@Url.RouteUrl("MessageB", new { id = id, owner = conn.GetPersonStart().person_id, type = type })'; return false;">[&nbsp;@firstname @lastname&nbsp;]</a>
+                    <a class="myfade" onclick="location.href = '@Url.RouteUrl("MessageB", new { id = id, owner = biz2.GetPersonStart(conn).person_id, type = type })'; return false;">[&nbsp;@firstname @lastname&nbsp;]</a>
                     <a href="#" class="red " onclick="deleteConversation(this, @conn.conversation_id)">Fjern</a><br /><br />
                 </li>
                 }
@@ -87,19 +89,20 @@
             }
         </div>
         <div class="col-md-4">
-            <h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Aktive samtaler(produkter)</h4>
+            <h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Produkter</h4>
             @if (Model.items != null && Model.items.Count > 0)
             {
                 Model.items = Model.items.OrderByDescending(conn => conn.modified).ToList();
                 <ul>
-                    @foreach (poco_conversation conn in Model.items)
+                    @foreach (dto_conversation conn in Model.items)
                     {
-                        string firstname = conn.GetPersonStart().firstname;
-                        string lastname = conn.GetPersonStart().lastname;
+                        biz_conversation biz3 = new biz_conversation();
+                        string firstname = biz3.GetPersonStart(conn).firstname;
+                        string lastname = biz3.GetPersonStart(conn).lastname;
                         long id = conn.product_id != null ? (int)conn.product_id : (long)conn.collection_id;
                         string type = conn.product_id != null ? "PRODUCT" : "COLLECTION";
-                        string item = conn.product_poco != null ? conn.product_poco.name : conn.collection_poco.name;
-                        bool viewed = conn.Viewed(true);
+                        string item = conn.product_dto != null ? conn.product_dto.name : conn.collection_dto.name;
+                        bool viewed = biz3.Viewed(conn, true);
                     <li>
                         @if (!viewed)
                         {
@@ -116,7 +119,7 @@
             @Html.Hidden("type", type);
             <input type="submit" value="[&nbsp;@firstname @lastname&nbsp;]" class="myfade fakeLink" />
         }*@
-                        <a class="myfade" onclick="location.href = '@Url.RouteUrl("MessageB", new { id = id, owner = conn.GetPersonStart().person_id, type = type })'; return false;">[&nbsp;@firstname @lastname&nbsp;]</a>
+                        <a class="myfade" onclick="location.href = '@Url.RouteUrl("MessageB", new { id = id, owner = biz3.GetPersonStart(conn).person_id, type = type })'; return false;">[&nbsp;@firstname @lastname&nbsp;]</a>
                         <a href="#" class="red " onclick="deleteConversation(this, @conn.conversation_id)">Fjern</a><br /><br />
                     </li>
                     }

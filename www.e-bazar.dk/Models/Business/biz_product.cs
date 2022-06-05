@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using www.e_bazar.dk.Extensions;
-using www.e_bazar.dk.Interfaces;
 using www.e_bazar.dk.SharedClasses;
-using static www.e_bazar.dk.Models.DTOs.poco_booth;
+using static www.e_bazar.dk.Models.DTOs.dto_booth;
 
 namespace www.e_bazar.dk.Models.DTOs
 {
-    public class poco_product : booth_item, IBoothItem
+    public class biz_product : biz_booth_item//, IBoothItem
     {
-        public poco_product()
+        public biz_product()
         {
             withcollection = false;
         }
-        public poco_product(bool withcollection)
+        public biz_product(bool withcollection)
         {
             this.withcollection = withcollection;
         }        
@@ -23,12 +21,12 @@ namespace www.e_bazar.dk.Models.DTOs
         private bool withcollection;
         
         
-        [DisplayName("Antal enheder")]
-        public int no_of_units { get; set; }
-        public bool only_collection { get; set; }        
+        //[DisplayName("Antal enheder")]
+        //public int no_of_units { get; set; }
+        //public bool only_collection { get; set; }        
         
-        public long? collection_id { get; set; }
-        public virtual poco_collection collection { get; set; }
+        //public long? collection_id { get; set; }
+        //public virtual biz_collection collection { get; set; }
         
 
 
@@ -88,14 +86,15 @@ namespace www.e_bazar.dk.Models.DTOs
             }
         }
 
-        public poco_product GetProductPOCO(long product_id, bool withbooth, bool withproducts, bool withconversations, bool withtags)
+        public dto_product GetProductDTO(long product_id, bool withbooth, bool withproducts, bool withconversations, bool withtags)
         {
-            poco_product pro_poco = new poco_product(true);
+            biz_product biz = new biz_product(true);
+            dto_product dto = new dto_product();
             product product = GetProduct(product_id, withbooth, withproducts, withconversations, withtags);
 
-            pro_poco.ToPoco(product, null, "");
-            pro_poco.SetupToClient<poco_product>();
-            return pro_poco;
+            dto = biz.ToDTO(product, null, "");
+            dto = biz.SetupToClient<dto_product>(dto);
+            return dto;
 
         }
 
@@ -143,11 +142,11 @@ namespace www.e_bazar.dk.Models.DTOs
             }
         }
 
-        public List<poco_product> GetProductPOCOs(int booth_id, string lev_a_search, string lev_b_search, bool select_inactive, bool withbooth, bool overrideonlycollection, bool withtags, bool withfoldera, bool withdefault)
+        public List<dto_product> GetProductDTOs(int booth_id, string lev_a_search, string lev_b_search, bool select_inactive, bool withbooth, bool overrideonlycollection, bool withtags, bool withfoldera, bool withdefault)
         {
             List<product> products = GetProducts(booth_id, lev_a_search, lev_b_search, select_inactive, withbooth, overrideonlycollection, withtags, withfoldera, withdefault);
                         
-            return this.ToPocoList(products, null, "");
+            return this.ToDTOList(products, null, "");
         }
 
         public List<product> GetProductsByCollectionId(int collection_id, bool withbooth, bool withtags)
@@ -184,24 +183,24 @@ namespace www.e_bazar.dk.Models.DTOs
             }
         }
 
-        public List<poco_product> GetProductPOCOsByCollectionId(int collection_id, bool withbooth, bool withtags)
+        public List<dto_product> GetProductDTOsByCollectionId(int collection_id, bool withbooth, bool withtags)
         {
             List<product> products = GetProductsByCollectionId(collection_id, withbooth, withtags);
 
-            return this.ToPocoList(products, null, "");
+            return this.ToDTOList(products, null, "");
 
         }
 
-        public override long Save() { return SaveProduct(); }
-        private long SaveProduct()
+        public override long Save<T>(T dto) { return SaveProduct(dto); }
+        private long SaveProduct<T>(T dto)
         {
             //EbazarDB _db = DAL.GetInstance().GetContext();
             using (EbazarDB _db = new EbazarDB())
             {
 
-
+                dto_product _p = dto as dto_product;
                 product p = new product();
-                this.ToProduct(true, ref p, _db);
+                this.ToProduct(true, _p, ref p, _db);
                 _db.product.Add(p);
                 _db.SaveChanges();
 
@@ -214,18 +213,17 @@ namespace www.e_bazar.dk.Models.DTOs
             }
         }
 
-        public override void Update() { UpdateProduct(); }
-        private void UpdateProduct()
+        public override void Update<T>(T dto) { UpdateProduct(dto); }
+        private void UpdateProduct<T>(T dto)
         {
             //EbazarDB _db = DAL.GetInstance().GetContext();
             using (EbazarDB _db = new EbazarDB())
             {
-
-
-                product product = _db.product.Where(p => p.Id == this.id).FirstOrDefault();
+                dto_product _p = dto as dto_product;
+                product product = _db.product.Where(p => p.Id == _p.id).FirstOrDefault();
                 if (product == null)
                     throw new Exception("A-OK, Check.");
-                this.ToProduct(false, ref product, _db);
+                this.ToProduct(false, _p, ref product, _db);
 
                 _db.SaveChanges();
                 _db.Dispose();
@@ -300,7 +298,7 @@ namespace www.e_bazar.dk.Models.DTOs
             _db.product.Remove(p);
         }
 
-        public override bool RemoveTag(long tag_id, bool is_updating)
+        public override bool RemoveTag<T>(T dto, long tag_id, bool is_updating)
         {
             //EbazarDB _db = DAL.GetInstance().GetContext();
             using (EbazarDB _db = new EbazarDB())
@@ -309,7 +307,7 @@ namespace www.e_bazar.dk.Models.DTOs
 
                 bool ok = false;
 
-                product product = _db.product.Where(p => p.Id == this.id).Select(p => p).FirstOrDefault();
+                product product = _db.product.Where(p => p.Id == dto.id).Select(p => p).FirstOrDefault();
                 if (product == null)
                     throw new Exception("A-OK, Handled.");
 
@@ -327,14 +325,14 @@ namespace www.e_bazar.dk.Models.DTOs
             }
         }
 
-        public bool RemoveParam(int param_id)
+        public override bool RemoveParam<T>(T dto, int param_id)
         {
             //EbazarDB _db = DAL.GetInstance().GetContext();
             using (EbazarDB _db = new EbazarDB())
             {
 
 
-                product product = _db.product.Where(p => p.Id == this.id).Select(p => p).FirstOrDefault();
+                product product = _db.product.Where(p => p.Id == dto.id).Select(p => p).FirstOrDefault();
                 if (product == null)
                     return false;
 
@@ -399,22 +397,22 @@ namespace www.e_bazar.dk.Models.DTOs
             }
         }
 
-        public override void RemoveImage(string image_name) { RemoveProductImage(image_name); }
-        private void RemoveProductImage(string image_name)
+        public override void RemoveImage<T>(string image_name, T dto) { RemoveProductImage(image_name, dto); }
+        private void RemoveProductImage<T>(string image_name, T dto)
         {
             //EbazarDB _db = DAL.GetInstance().GetContext();
             using (EbazarDB _db = new EbazarDB())
             {
-
+                dto_product _p = dto as dto_product;
 
                 if (string.IsNullOrEmpty(image_name))
                     throw new Exception("A-OK, Check.");
 
-                image productimage = _db.image.Where(p => p.name == image_name && p.product_id == this.id).Select(t => t).FirstOrDefault();
+                image productimage = _db.image.Where(p => p.name == image_name && p.product_id == _p.id).Select(t => t).FirstOrDefault();
                 if (productimage == null)
                     throw new Exception("A-OK, Handled.");
 
-                product product = _db.product.Where(p => p.Id == this.id).Select(p => p).FirstOrDefault();
+                product product = _db.product.Where(p => p.Id == _p.id).Select(p => p).FirstOrDefault();
                 if (product == null)
                     throw new Exception("A-OK, Handled.");
 
@@ -425,17 +423,17 @@ namespace www.e_bazar.dk.Models.DTOs
             }
         }
 
-        public override poco_booth GetBoothPOCO()
+        public override dto_booth GetBoothDTO<T>(T dto)
         {
-            poco_booth booth_poco = new poco_booth();
-            booth boo = booth_poco.GetBooth(this.booth_id, "", "", false, false, false, false, false, false, false);
+            biz_booth biz = new biz_booth();
+            booth boo = biz.GetBooth(dto.booth_id, "", "", false, false, false, false, false, false, false);
 
-            booth_poco.ToPoco(boo, null);
-            return booth_poco;
+            dto_booth _dto = biz.ToDTO(boo, null);
+            return _dto;
 
         }
 
-        public void ToPoco(product p, List<Hit> rel, string booth)
+        public dto_product ToDTO(product p, List<Hit> rel, string booth)
         {
             if (p.IsNull())
                 throw new Exception("A-OK, Check.");
@@ -446,51 +444,53 @@ namespace www.e_bazar.dk.Models.DTOs
             //if (booth == null)
             //    throw new Exception("A-OK, Check.");
 
-            this.id = p.Id;
-            this.booth_id = p.booth_id;
-            this.category_main_id = this.category_main_id != 0 ? this.category_main_id : p.category_main_id;
-            this.category_second_id = this.category_second_id != 0 ? this.category_second_id : p.category_second_id;
-            this.collection_id = p.collection_id;
-            this.only_collection = p.only_collection;
-            this.active = p.active;
+            dto_product dto = new dto_product();
 
-            poco_folder flda = new poco_folder();
-            this.foldera = p.foldera != null ? flda.GetFolderAPOCO(p.foldera.Id, false, false) : new poco_folder() { name = "default" };
+            dto.id = p.Id;
+            dto.booth_id = p.booth_id;
+            dto.category_main_id = dto.category_main_id != 0 ? dto.category_main_id : p.category_main_id;
+            dto.category_second_id = dto.category_second_id != 0 ? dto.category_second_id : p.category_second_id;
+            dto.collection_id = p.collection_id;
+            dto.only_collection = p.only_collection;
+            dto.active = p.active;
 
-            poco_folder fldb = new poco_folder();
-            this.folderb = p.folderb != null ? fldb.GetFolderBPOCO(p.folderb.Id) : new poco_folder() { name = "default" };
+            biz_folder flda = new biz_folder();
+            dto.foldera = p.foldera != null ? flda.GetFolderADTO(p.foldera.Id, false, false) : new dto_folder() { name = "default" };
 
-            this.name = !p.name.IsNullOrEmpty() ? p.name : this.name;
-            this.sysname = !p.sysname.IsNullOrEmpty() ? p.sysname : this.sysname;
-            this.created_on = !p.created_on.IsNull() ? p.created_on : this.created_on;
-            this.modified = !p.modified.IsNull() ? p.modified : this.modified;
-            this.price = !p.price.IsNullOrEmpty() ? p.price : this.price;
-            this.status_stock = !p.status_stock.IsNullOrEmpty() ? p.status_stock : this.status_stock;
-            this.status_condition = !p.status_condition.IsNullOrEmpty() ? p.status_condition : this.status_condition;
-            this.no_of_units = p.no_of_units > 0 ? p.no_of_units : this.no_of_units;
-            this.description = !p.description.IsNullOrEmpty() ? p.description : "";
-            this.note = !p.note.IsNullOrEmpty() ? p.note : "";
+            biz_folder fldb = new biz_folder();
+            dto.folderb = p.folderb != null ? fldb.GetFolderBDTO(p.folderb.Id) : new dto_folder() { name = "default" };
+
+            dto.name = !p.name.IsNullOrEmpty() ? p.name : dto.name;
+            dto.sysname = !p.sysname.IsNullOrEmpty() ? p.sysname : dto.sysname;
+            dto.created_on = !p.created_on.IsNull() ? p.created_on : dto.created_on;
+            dto.modified = !p.modified.IsNull() ? p.modified : dto.modified;
+            dto.price = !p.price.IsNullOrEmpty() ? p.price : dto.price;
+            dto.status_stock = !p.status_stock.IsNullOrEmpty() ? p.status_stock : dto.status_stock;
+            dto.status_condition = !p.status_condition.IsNullOrEmpty() ? p.status_condition : dto.status_condition;
+            dto.no_of_units = p.no_of_units > 0 ? p.no_of_units : dto.no_of_units;
+            dto.description = !p.description.IsNullOrEmpty() ? p.description : "";
+            dto.note = !p.note.IsNullOrEmpty() ? p.note : "";
 
             if (!p.booth.IsNull())
             {
-                this.booth_poco = new poco_booth();
-                this.booth_poco.ToPoco(NullHelper.ProNull(p.booth), null);
+                biz_booth biz = new biz_booth();
+                dto.booth_dto = biz.ToDTO(NullHelper.ProNull(p.booth), null);
             }
 
             if (!p.image.IsNull())
             {
-                poco_productimage pi = new poco_productimage();
-                this.image_pocos = new List<IImage>();
-                this.image_pocos = pi.ToPocoList(p.image);
+                biz_image pi = new biz_image();
+                dto.image_dtos = new List<dto_image>();
+                dto.image_dtos = pi.ToDTOList(p.image);
             }
 
             if (!p.tag.IsNull() && p.tag.Count() > 0)
             {
                 foreach (tag t2 in p.tag)
                     NullHelper.ProNull(t2);
-                poco_tag t = new poco_tag();
-                this.tag_pocos = new List<poco_tag>();
-                this.tag_pocos = t.ToPocoList(p.tag);
+                biz_tag t = new biz_tag();
+                dto.tag_dtos = new List<dto_tag>();
+                dto.tag_dtos = t.ToDTOList(p.tag);
             }
 
             ICollection<param> _params = null;
@@ -510,128 +510,132 @@ namespace www.e_bazar.dk.Models.DTOs
                     param _par = new param() { Id = par.Id, name = par.name, category_id = par.category_id, type = par.type, prio = par.prio, value1 = list };
                     ps.Add(_par);
                 }
-                poco_params pa = new poco_params();
-                this.param_daos = new List<poco_params>();
-                this.param_daos = pa.ToPOCO_List(ps.ToList());
+                biz_params pa = new biz_params();
+                dto.param_dtos = new List<dto_params>();
+                dto.param_dtos = pa.ToDTO_List(ps.ToList());
             }
 
             if (!p.collection.IsNull())
             {
-                this.collection = new poco_collection();
-                this.collection.ToPoco(p.collection, null, "");
+                biz_collection biz = new biz_collection();
+                dto.collection = biz.ToDTO(p.collection, null, "");
             }
             
             if (!p.conversation.IsNull() && p.conversation.Count() > 0/* && withconversations*/)
             {
-                poco_conversation poco = new poco_conversation();
-                this.conversations = poco.ToPocoList(p.conversation);
+                biz_conversation biz = new biz_conversation();
+                dto.conversations = biz.ToDTOList(p.conversation);
             }
 
-            this.relevant = !rel.IsNull() ? rel.Where(x => x.booth == booth && x.product == this.name).Count() > 0 : false;
+            dto.relevant = !rel.IsNull() ? rel.Where(x => x.booth == booth && x.product == dto.name).Count() > 0 : false;
+
+            return dto;
         }
 
-        public List<poco_product> ToPocoList(ICollection<product> products, List<Hit> rel, string booth)
+        public List<dto_product> ToDTOList(ICollection<product> products, List<Hit> rel, string booth)
         {
             if (products == null)
                 throw new Exception("A-OK, Check.");
 
-            List<poco_product> res = new List<poco_product>();
+            List<dto_product> res = new List<dto_product>();
             foreach (product p in products.ToList())
             {
-                poco_product poco = new poco_product(false);
-                poco.ToPoco(p, rel, booth);
-                poco.SetupToClient<poco_product>();
-                res.Add(poco);
+                dto_product dto = new dto_product();
+                dto = this.ToDTO(p, rel, booth);
+                dto = this.SetupToClient<dto_product>(dto);
+                res.Add(dto);
             }
             return res;
         }
 
-        public void FixCats(EbazarDB _db, product pro, bool create)
+        public void FixCats(EbazarDB _db, product pro, dto_product dto, bool create)
         {
-            booth boo = _db.booth.Where(b => b.Id == this.booth_id).FirstOrDefault();
-            if (boo.category_main.Where(c => c.Id == this.category_main_id).Count() == 0)
-            {
-                category new_cat = _db.category.Where(c => c.name != ".ingen" && c.is_parent && c.Id == this.category_main_id).FirstOrDefault();
-                if (new_cat.IsNull())
-                    throw new Exception("A-OK, Handled.");
-                boo.category_main.Add(new_cat);
-            }
-            int? old_cat_id = pro.category_main_id != this.category_main_id ? (int?)pro.category_main_id : null;
-            int? old_cat_sec_id = pro.category_second_id != this.category_second_id ? (int?)pro.category_second_id : null;
+            booth bth = _db.booth.Where(b => b.Id == dto.booth_id).FirstOrDefault();
+            //if (boo.category_main.Where(c => c.Id == dto.category_main_id).Count() == 0)
+            //{
+            //    category new_cat = _db.category.Where(c => c.name != ".ingen" && c.is_parent && c.Id == dto.category_main_id).FirstOrDefault();
+            //    if (new_cat.IsNull())
+            //        throw new Exception("A-OK, Handled.");
+            //    boo.category_main.Add(new_cat);
+            //}
+            int? old_cat_id = pro.category_main_id != dto.category_main_id ? (int?)pro.category_main_id : null;
+            int? old_cat_sec_id = pro.category_second_id != dto.category_second_id ? (int?)pro.category_second_id : null;
             if (pro.category_main_id == 0 || create)//create
             {
-                    category main = _db.category.Include("children").Where(c => c.name != ".ingen" && c.is_parent).FirstOrDefault();
-                    category sec = main.children.OrderBy(x => x.priority).FirstOrDefault();
+                category main = _db.category.Include("children").Where(c => c.name != ".ingen" && c.is_parent).FirstOrDefault();
+                category sec = main.children.OrderBy(x => x.priority).FirstOrDefault();
                  
-                    pro.category_main_id = main.Id;
-                    pro.category_second_id = sec.Id;
+                pro.category_main_id = main.Id;
+                pro.category_second_id = sec.Id;
 
-                    poco_category.update = true;
+                biz_category.update = true;
+
+                bth.category_main.Add(main);
             }
             else if (old_cat_id != null)//new cat, changing
             {
                 ///JUST TEST///
-                product a = _db.product.Where(z => z.Id == this.id).FirstOrDefault();
+                product a = _db.product.Where(z => z.Id == dto.id).FirstOrDefault();
                 List<category> list_main = _db.category.Where(x => x.product_main.Where(z => z.Id == a.Id).Count() > 0).ToList();
                 List<category> list_sec = _db.category.Where(x => x.product_second.Where(z => z.Id == a.Id).Count() > 0).ToList();
                 ///JUST TEST///
 
                 category old_cat = _db.category.Where(c => c.Id == old_cat_id).FirstOrDefault();
                 
-                if (old_cat.product_main.Where(c => c.booth_id == boo.Id).Count() + old_cat.collection_main.Where(c => c.booth_id == boo.Id).Count() == 0)
-                    boo.category_main.Remove(old_cat);
+                if (old_cat.product_main.Where(c => c.booth_id == bth.Id).Count() + old_cat.collection_main.Where(c => c.booth_id == bth.Id).Count() == 0)
+                    bth.category_main.Remove(old_cat);
 
-                category main = _db.category.Where(c => c.Id == this.category_main_id).FirstOrDefault();
+                category main = _db.category.Where(c => c.Id == dto.category_main_id).FirstOrDefault();
                 category sec = main.children.OrderBy(c => c.priority).ElementAt(main.children.Count() - 1);
 
                 pro.category_main_id = main.Id;
                 pro.category_second_id = sec.Id;
+                bth.category_main.Add(main);
 
-                poco_category.update = true;
+                biz_category.update = true;
             }
             else if (old_cat_sec_id != null)//cat 2 changed
             {
-                pro.category_main_id = this.category_main_id;
-                pro.category_second_id = this.category_second_id;
+                pro.category_main_id = dto.category_main_id;
+                pro.category_second_id = dto.category_second_id;
 
-                poco_category.update = true;
+                biz_category.update = true;
             }
             else//no changes
             {
-                pro.category_main_id = this.category_main_id;
-                pro.category_second_id = this.category_second_id;
-            }
-            
+                pro.category_main_id = dto.category_main_id;
+                pro.category_second_id = dto.category_second_id;
+            }            
         }
 
-        public void ToProduct(bool new_product, ref product pro, EbazarDB _db)
+        public void ToProduct(bool new_product, dto_product dto, ref product pro, EbazarDB _db)
         {
             if (_db == null)
                 throw new Exception("A-OK, Handled.");
 
             DateTime now = DateTime.Now;
 
-            FixCats(_db, pro, false);
+            FixCats(_db, pro, dto, false);
 
-            pro.foldera = !this.foldera.IsNull() ? _db.folder.Where(l => l.Id == this.foldera.id).FirstOrDefault() : pro.foldera;
-            pro.folderb = !this.folderb.IsNull() ? _db.folder.Where(l => l.Id == this.folderb.id).FirstOrDefault() : pro.folderb;
-            pro.active = this.active;
-            pro.name = !this.name.IsNullOrEmpty() ? this.name : pro.name;
-            pro.sysname = !this.sysname.IsNullOrEmpty() ? this.sysname : pro.sysname;
-            pro.created_on = !new_product && !this.created_on.IsNull() ? this.created_on : now;
+            pro.foldera = !dto.foldera.IsNull() ? _db.folder.Where(l => l.Id == dto.foldera.id).FirstOrDefault() : pro.foldera;
+            pro.folderb = !dto.folderb.IsNull() ? _db.folder.Where(l => l.Id == dto.folderb.id).FirstOrDefault() : pro.folderb;
+            pro.active = dto.active;
+            pro.name = !dto.name.IsNullOrEmpty() ? dto.name : pro.name;
+            pro.sysname = !dto.sysname.IsNullOrEmpty() ? dto.sysname : pro.sysname;
+            pro.created_on = !new_product && !dto.created_on.IsNull() ? dto.created_on : now;
             pro.modified = now;
-            pro.price = !this.price.IsNullOrEmpty() ? this.price : pro.price;
-            pro.status_stock = !this.status_stock.IsNullOrEmpty() ? this.status_stock : pro.status_stock;
-            pro.status_condition = !this.status_condition.IsNullOrEmpty() ? this.status_condition : pro.status_condition;
-            pro.description = !this.description.IsNullOrEmpty() ? this.description : "";
-            pro.note = !this.note.IsNullOrEmpty() ? this.note : "";
+            pro.price = !dto.price.IsNullOrEmpty() ? dto.price : pro.price;
+            pro.status_stock = !dto.status_stock.IsNullOrEmpty() ? dto.status_stock : pro.status_stock;
+            pro.status_condition = !dto.status_condition.IsNullOrEmpty() ? dto.status_condition : pro.status_condition;
+            pro.description = !dto.description.IsNullOrEmpty() ? dto.description : "";
+            pro.note = !dto.note.IsNullOrEmpty() ? dto.note : "";
 
-            pro.only_collection = this.only_collection;
-            pro.no_of_units = this.no_of_units > 0 ? this.no_of_units : pro.no_of_units;
+            pro.only_collection = dto.only_collection;
+            pro.no_of_units = dto.no_of_units > 0 ? dto.no_of_units : pro.no_of_units;
 
-            if (this.booth_poco != null)
+            if (dto.booth_dto != null)
             {
-                pro.booth = _db.booth.Where(b => b.Id == this.booth_poco.booth_id).FirstOrDefault();
+                pro.booth = _db.booth.Where(b => b.Id == dto.booth_dto.booth_id).FirstOrDefault();
                 if (new_product)
                     pro.booth.modified = now;
             }

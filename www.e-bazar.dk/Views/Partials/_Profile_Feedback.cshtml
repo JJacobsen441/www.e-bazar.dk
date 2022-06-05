@@ -1,4 +1,4 @@
-﻿@model www.e_bazar.dk.Models.DTOs.dto_email
+﻿@model www.e_bazar.dk.Models.DTOs.col_email
 
 @{
     ViewBag.Title = "Feedback";
@@ -37,7 +37,7 @@
 
             <div class="col-md-12 removepaddingsides">
                 @{
-                    poco_person pers = CurrentUser.GetInstance().GetCurrentUser(false, false, false);
+                    dto_person pers = CurrentUser.GetInstance().GetCurrentUser(false, false, false);
                     string placeholder = "Udfyld venligst.";
                 }
                 <span class="bold">Til: </span>&nbsp;admin@e-bazar.dk<br />

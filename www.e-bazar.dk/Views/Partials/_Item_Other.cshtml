@@ -1,12 +1,12 @@
-﻿@model www.e_bazar.dk.Interfaces.IBoothItem
+﻿@model www.e_bazar.dk.Models.DTOs.dto_booth_item
 @{
     string s = ViewContext.Controller.ViewBag.Search as string;
     string c = ViewContext.Controller.ViewBag.Cat as string;
 }
 <div class="col-md-6 lightgrey_bg removepaddingsides">
     @{ 
-        string type = Model.GetType() == typeof(poco_product) ? "product" : "collection";
-        string type_name = Model.GetType() == typeof(poco_product) ? "Product" : "Collection";
+        string type = Model.GetType() == typeof(dto_product) ? "product" : "collection";
+        string type_name = Model.GetType() == typeof(dto_product) ? "Product" : "Collection";
     }
     <div class="lightgrey_bg">
         <br />
@@ -23,8 +23,8 @@
 
         <div class="">
             @{
-                var thumb_path = Model.image_pocos.Count() > 0 && !string.IsNullOrEmpty(Model.image_pocos.FirstOrDefault().name) ? @"/_content/images/profiles/" + Model.booth_poco.salesman_poco.sysname + "/booths/" + Model.booth_poco.sysname + "/" + type + "s/" +Model.sysname + "/t_" + Model.image_pocos.FirstOrDefault().name : "/_content/images/site/icons/armchair2_bw.png";
-                var image_path = Model.image_pocos.Count() > 0 && !string.IsNullOrEmpty(Model.image_pocos.FirstOrDefault().name) ? @"/_content/images/profiles/" + Model.booth_poco.salesman_poco.sysname + "/booths/" + Model.booth_poco.sysname + "/" + type + "s/" +Model.sysname + "/" + Model.image_pocos.FirstOrDefault().name : "/_content/images/site/icons/armchair2_bw.png";
+                var thumb_path = Model.image_dtos.Count() > 0 && !string.IsNullOrEmpty(Model.image_dtos.FirstOrDefault().name) ? @"/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/" + type + "s/" +Model.sysname + "/t_" + Model.image_dtos.FirstOrDefault().name : "/_content/images/site/icons/armchair2_bw.png";
+                var image_path = Model.image_dtos.Count() > 0 && !string.IsNullOrEmpty(Model.image_dtos.FirstOrDefault().name) ? @"/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/" + type + "s/" +Model.sysname + "/" + Model.image_dtos.FirstOrDefault().name : "/_content/images/site/icons/armchair2_bw.png";
                 
                 string[] classes = { "pr_productimage_other", "lightgrey_bg", "myfade", "loadlater" };
                 

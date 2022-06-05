@@ -6,55 +6,59 @@ using www.e_bazar.dk.SharedClasses;
 
 namespace www.e_bazar.dk.Models.DTOs
 {
-    public class poco_conversation
+    public class biz_conversation
     {
         //private EbazarDB db;
-        public long? conversation_id { get; set; }
-        public DateTime created_on { get; set; }
-        public DateTime modified { get; set; }
+        //public long? conversation_id { get; set; }
+        //public DateTime created_on { get; set; }
+        //public DateTime modified { get; set; }
 
-        public long? product_id { get; set; }
-        public long? collection_id { get; set; }
-        public int? booth_id { get; set; }
-        public string person_id { get; set; }
+        //public long? product_id { get; set; }
+        //public long? collection_id { get; set; }
+        //public int? booth_id { get; set; }
+        //public string person_id { get; set; }
 
-        public virtual List<poco_comment> comment_pocos { get; set; }
-        public virtual poco_product product_poco { get; set; }
-        public virtual poco_collection collection_poco { get; set; }
-        public virtual poco_booth booth_poco { get; set; }
+        //public virtual List<biz_comment> comment_pocos { get; set; }
+        //public virtual biz_product product_poco { get; set; }
+        //public virtual biz_collection collection_poco { get; set; }
+        //public virtual biz_booth booth_poco { get; set; }
         
 
-        public poco_conversation()
+        public biz_conversation()
         {
             //db = new EbazarDB();
-            conversation_id = null;
+            //conversation_id = null;
         }
-        /*~poco_conversation()
+        /*~biz_conversation()
         {
             db?.Dispose();
         }*/
 
-        public poco_person GetPersonStart()
+        public dto_person GetPersonStart(dto_conversation dto)
         {
-            return comment_pocos.FirstOrDefault().poco_salesman != null ? (poco_person)comment_pocos.FirstOrDefault().poco_salesman : (poco_person)comment_pocos.FirstOrDefault().poco_customer;
+            return dto.comment_dtos.FirstOrDefault().dto_salesman != null ? 
+                (dto_person)dto.comment_dtos.FirstOrDefault().dto_salesman : 
+                (dto_person)dto.comment_dtos.FirstOrDefault().dto_customer;
         }
 
-        public poco_person GetPersonOther()
+        public dto_person GetPersonOther(dto_conversation dto)
         {
-            poco_person other = null;            
-            poco_salesman salesman_poco =   product_poco != null ? product_poco.booth_poco.salesman_poco : 
-                                            collection_poco != null ? collection_poco.booth_poco.salesman_poco :
-                                            booth_poco.salesman_poco;
-            if (comment_pocos != null && CurrentUser.GetInstance().CurrentUserID == salesman_poco.person_id)
-                return GetPersonStart();//vil altid være den første
+            if (dto.comment_dtos.Count() == 0)
+                return null;
+
+            dto_salesman salesman_poco = dto.product_dto != null ? dto.product_dto.booth_dto.salesman_dto :
+                                            dto.collection_dto != null ? dto.collection_dto.booth_dto.salesman_dto :
+                                            dto.booth_dto.salesman_dto;
+            if (CurrentUser.GetInstance().CurrentUserID == salesman_poco.person_id)
+                return GetPersonStart(dto);//vil altid være den første
             else
                 return salesman_poco;
         }
 
-        public bool Viewed(bool is_product_owner)
+        public bool Viewed(dto_conversation dto, bool is_product_owner)
         {
             bool viewed = true;
-            foreach(poco_comment com in comment_pocos)
+            foreach(dto_comment com in dto.comment_dtos)
             {
                 if (!com.product_viewed_owner && is_product_owner)
                     viewed = false;
@@ -64,11 +68,11 @@ namespace www.e_bazar.dk.Models.DTOs
             return viewed;
         }
 
-        public void SetViewed(bool is_owner)
+        public void SetViewed(dto_conversation dto, bool is_owner)
         {
             using (EbazarDB db = new EbazarDB())
             {
-                conversation conn = db.conversation.Where(c => c.Id == this.conversation_id).FirstOrDefault();
+                conversation conn = db.conversation.Where(c => c.Id == dto.conversation_id).FirstOrDefault();
                 if (conn == null)
                     return;
                 if (conn.comment == null)
@@ -94,7 +98,7 @@ namespace www.e_bazar.dk.Models.DTOs
                 _db.Configuration.ProxyCreationEnabled = false;
                 _db.Configuration.LazyLoadingEnabled = false;
 
-                poco_salesman person_poco = new poco_salesman();
+                biz_salesman person_poco = new biz_salesman();
                 bool is_salesman = person_poco.IsSalesman(person_id, CurrentUser.GetInstance().CurrentType);
 
                 IQueryable<conversation> _c = _db.conversation
@@ -103,6 +107,7 @@ namespace www.e_bazar.dk.Models.DTOs
                                                         .Include("product")
                                                         .Include("collection")
                                                         .Include("booth")
+                                                        .Include("booth.person")
                                                         .Where(x=> x.product_id == product_id && (x.person_id == person_id || is_salesman) ||
                                           x.collection_id == collection_id && (x.person_id == person_id || is_salesman) ||
                                           x.booth_id == booth_id && (x.person_id == person_id || is_salesman));
@@ -120,15 +125,16 @@ namespace www.e_bazar.dk.Models.DTOs
             }
         }
 
-        public poco_conversation GetConversationPOCO(long product_id, int collection_id, int booth_id, string person_id, TYPE type)
+        public dto_conversation GetConversationDTO(long product_id, int collection_id, int booth_id, string person_id, TYPE type)
         {
-            poco_conversation con_poco = new poco_conversation();
+            biz_conversation biz = new biz_conversation();
+            dto_conversation dto = new dto_conversation();
             conversation con = GetConversation(product_id, collection_id, booth_id, person_id, type);
             if (con == null)
-                return new poco_conversation();
+                return new dto_conversation();
                 
-            con_poco.ToPoco(con);
-            return con_poco;            
+            dto = biz.ToDTO(con);
+            return dto;            
         }        
         
         public List<conversation> GetConversationsPerson(string person_id, bool is_salesman, bool withboothsalesman)
@@ -148,6 +154,7 @@ namespace www.e_bazar.dk.Models.DTOs
                                         .Include("product")
                                         .Include("collection")
                                         .Include("booth")
+                                        .Include("booth.person")
                                         .Where(x=>(x.person_id == person_id) ||
                                       (x.booth != null && x.booth.person_id == person_id && is_salesman) ||
                                       (x.collection != null && x.collection.booth.person_id == person_id && is_salesman) ||
@@ -170,12 +177,12 @@ namespace www.e_bazar.dk.Models.DTOs
             }
         }
 
-        public List<poco_conversation> GetConversationsPersonPOCO(string person_id, bool is_salesman, bool withboothsalesman)
+        public List<dto_conversation> GetConversationsPersonDTO(string person_id, bool is_salesman, bool withboothsalesman)
         {
-            List<poco_conversation> list = new List<poco_conversation>();
+            List<dto_conversation> list = new List<dto_conversation>();
             List<conversation> cons = GetConversationsPerson(person_id, is_salesman, withboothsalesman);
             
-            list = this.ToPocoList(cons);
+            list = this.ToDTOList(cons);
             return list;            
         }
 
@@ -246,7 +253,7 @@ namespace www.e_bazar.dk.Models.DTOs
                     con = _db.conversation.Add(con);
                 _db.SaveChanges();
 
-                    poco_comment poco_com = new poco_comment();
+                    biz_comment poco_com = new biz_comment();
                     comment com = poco_com.CreateComment(con, person_id, message);
 
                 _db.comment.Add(com);
@@ -256,51 +263,65 @@ namespace www.e_bazar.dk.Models.DTOs
                 return con.person_id;            
             }
         }
-        public List<poco_conversation> ToPocoList(ICollection<conversation> cons)
+
+        public List<dto_conversation> ToDTOList(ICollection<conversation> cons)
         {
             if (cons == null)
                 throw new Exception("A-OK, Check");
 
-            List<poco_conversation> list = new List<poco_conversation>();
+            List<dto_conversation> list = new List<dto_conversation>();
             foreach (conversation c in cons.ToList())
             {
-                poco_conversation con_poco = new poco_conversation();
-                con_poco.ToPoco(c);
-                list.Add(con_poco);
+                biz_conversation biz = new biz_conversation();
+                dto_conversation _dto = biz.ToDTO(c);
+                list.Add(_dto);
             }
             return list;
         }
 
-        public void ToPoco(conversation con)
+        public dto_conversation ToDTO(conversation con)
         {
             if (con == null)
                 throw new Exception("A-OK, Check");
 
-            poco_comment com_poco = new poco_comment();
-            this.conversation_id = con.Id;
-            this.created_on = con.created_on;
-            this.modified = con.modified;
-            this.product_id = con.product_id;
-            this.collection_id = con.collection_id;
-            this.booth_id = con.booth_id;
-            this.person_id = con.person_id;
+            dto_conversation dto = new dto_conversation();
+
+            biz_comment com_biz = new biz_comment();
+            dto.conversation_id = con.Id;
+            dto.created_on = con.created_on;
+            dto.modified = con.modified;
+            dto.product_id = con.product_id;
+            dto.collection_id = con.collection_id;
+            dto.booth_id = con.booth_id;
+            dto.person_id = con.person_id;
+            
             if(con.comment != null)
-                this.comment_pocos = com_poco.ToPocoList(con.comment.ToList());
+                dto.comment_dtos = com_biz.ToDTOList(con.comment.ToList());
+
             if (con.product != null)
             {
-                this.product_poco = new poco_product(false);
-                this.product_poco.ToPoco(NullHelper.ConNull(con.product), null, "");
+                biz_product biz = new biz_product();
+                dto.product_dto = new dto_product();
+                dto.product_dto = biz.ToDTO(NullHelper.ConNull(con.product), null, "");
             }
+            
             if (con.collection != null)
             {
-                this.collection_poco = new poco_collection();
-                this.collection_poco.ToPoco(NullHelper.ConNull(con.collection), null, "");
+                biz_collection biz = new biz_collection();
+                dto.collection_dto = new dto_collection();
+                dto.collection_dto = biz.ToDTO(NullHelper.ConNull(con.collection), null, "");
             }
+            
             if (con.booth != null)
             {
-                this.booth_poco = new poco_booth();
-                this.booth_poco.ToPoco(NullHelper.ConNull(con.booth), null);
-            }            
+                biz_booth biz = new biz_booth();
+                dto.booth_dto = new dto_booth();
+                dto.booth_dto = biz.ToDTO(NullHelper.ConNull(con.booth), null);
+            }
+            
+            //dto.other = this.GetPersonOther(dto);
+            
+            return dto;
         }
     }
 }

@@ -244,9 +244,9 @@ namespace www.e_bazar.dk.SharedClasses
             return result;
         }
 
-        /*public static StatusNext GetDeliveryNext(DELIVERY current, poco_person person_poco)
+        /*public static StatusNext GetDeliveryNext(DELIVERY current, biz_person person_poco)
         {
-            bool is_salesman = person_poco is poco_person;
+            bool is_salesman = person_poco is biz_person;
             StatusNext n = new StatusNext();
             switch (current)
             {

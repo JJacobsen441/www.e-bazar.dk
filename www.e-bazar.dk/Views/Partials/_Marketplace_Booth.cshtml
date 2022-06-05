@@ -1,4 +1,4 @@
-﻿@model www.e_bazar.dk.Models.DTOs.poco_booth
+﻿@model www.e_bazar.dk.Models.DTOs.dto_booth
 
 <div class="remove_desk_block booth-item">
 
@@ -14,7 +14,7 @@
     <div class="b-item l-mp-showcase1 @css">
         <div class="col-xs-12">
             @{
-                string navn = Model.salesman_poco.firstname != "" ? Model.salesman_poco.firstname + " siger velkommen!" : "Velkommen til!";
+                string navn = Model.salesman_dto.firstname != "" ? Model.salesman_dto.firstname + " siger velkommen!" : "Velkommen til!";
             }
             oprettet: <span class="z-color-green">@Model.created_on.ToString("dd/MM/yyyy")</span><br />
             <span class="z-color-black-1">@Html.DisplayFor(modelItem => navn)</span><br />
@@ -26,7 +26,7 @@
             <br />
             <div class="col-xs-12 l-mp-showcase3">
                 @{
-                    var image_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_poco.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+                    var image_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
 
                     string[] classes = { "l-mp-showcase4", "z-background-color-lightgrey", "myfade", "loadlater" };
                     object route = new { id = @Model.booth_id };
@@ -40,20 +40,23 @@
                     <i class="far fa-images"></i>
                     <span>&nbsp;"Må jeg præsentere!"</span>
                     <span class="l-mp-showcase5 z-align-left z-mp-content-tooltip">
-                        @foreach (IBoothItem item in Model.GetRelevantItems(0, 5))
-                        {
-                            if (item.relevant)
+                        @{
+                            biz_booth biz = new biz_booth();
+                            foreach (dto_booth_item item in biz.GetRelevantItems(Model, 0, 5))
                             {
-                                string type = item.GetType() == typeof(poco_product) ? "product" : "collection";
-                                var image_path_showcase = item.image_pocos.Count() > 0 ? @"/_content/images/profiles/" + Model.salesman_poco.sysname + "/booths/" + Model.sysname + "/" + type + "s/" + item.sysname + "/" + item.image_pocos.FirstOrDefault().name : "/_content/images/site/icons/armchair2_bw.png";
+                                if (item.relevant)
+                                {
+                                    string type = item.GetType() == typeof(biz_product) ? "product" : "collection";
+                                    var image_path_showcase = item.image_dtos.Count() > 0 ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + type + "s/" + item.sysname + "/" + item.image_dtos.FirstOrDefault().name : "/_content/images/site/icons/armchair2_bw.png";
 
-                                string[] classes_showcase = { "l-mp-showcase6", "", "xz-background-color-lightgrey", "z-z-index-low", "afterlater" };
-                                object route_showcase = new { id = @Model.booth_id };
-                                string styleb = "";
-                                string altb = "";
-                                @Html.RouteImage("", route_showcase, image_path_showcase, null, altb, classes_showcase, null, styleb, null)
+                                    string[] classes_showcase = { "l-mp-showcase6", "", "xz-background-color-lightgrey", "z-z-index-low", "afterlater" };
+                                    object route_showcase = new { id = @Model.booth_id };
+                                    string styleb = "";
+                                    string altb = "";
+                                    @Html.RouteImage("", route_showcase, image_path_showcase, null, altb, classes_showcase, null, styleb, null)
+                                }
                             }
-                        }
+                            }
                         <br /><br />
                         <a href="/#" class="z-color-white-1 bold tooltip2-close">skjul</a>
                     </span>
@@ -63,15 +66,19 @@
                 <i class="far fa-file-alt"></i>
                 <span>&nbsp;Om Standen</span>
                 <span class="l-mp-showcase7 z-mp-content-tooltip xz-background-color-darkgrey xz-border-black xz-color-black-1 z-padding-all-15 z-align-left">
-                    @foreach (IBoothItem item in Model.GetRelevantItems(0, 5))
-                    {
-                        if (item.relevant)
+
+                    @{
+                        biz_booth biz2 = new biz_booth();
+                        foreach (dto_booth_item item in biz2.GetRelevantItems(Model, 0, 5))
                         {
-                            string name = "[" + item.name + "]";
+                            if (item.relevant)
+                            {
+                                string name = "[" + item.name + "]";
                             @Html.DisplayFor(m => name) <br />
+                                }
+                            }
                         }
-                    }
-                    --------------------------------<br />
+                        --------------------------------<br />
                     @Html.DisplayWithBreaksFor(Model.description_limit)
                     <br /><br />
                     <a href="/#" class="z-color-white-1 bold tooltip2-close">skjul</a>
@@ -138,6 +145,10 @@
                         areas = areas.Replace("æ", "ae").Replace("ø", "oe").Replace("å", "aa").Replace(" ", "").ToLower();
                         foreach (var cat in Model.category_main)
                         {
+                            if (cat.name == ".ingen")
+                            {
+                                continue;
+                            }
                             string name = "[" + cat.name + "]";
                             @Html.RouteLink(name, "Marketplace", new { area = areas, c = Security.EncodeCats_MD5(true, cat.name) }, new { @class = "green myfade" })
                         }
@@ -215,7 +226,7 @@ else
         <div class="b-item l-mp-showcase1 @css">
             <div class="col-xs-12">
                 @{
-                    string navn = Model.salesman_poco.firstname != "" ? Model.salesman_poco.firstname + " siger velkommen!" : "Velkommen til!";
+                    string navn = Model.salesman_dto.firstname != "" ? Model.salesman_dto.firstname + " siger velkommen!" : "Velkommen til!";
                 }
                 oprettet: <span class="z-color-green">@Model.created_on.ToString("dd/MM/yyyy")</span><br />
                 <span class="z-color-black-1">@Html.DisplayFor(modelItem => navn)</span><br />
@@ -227,7 +238,7 @@ else
                 <br />
                 <div class="col-xs-12 l-mp-showcase3">
                     @{
-                        var image_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_poco.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+                        var image_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
 
                         string[] classes = { "l-mp-showcase4", "z-background-color-lightgrey", "myfade", "loadlater" };
                         object route = new { id = @Model.booth_id };
@@ -241,20 +252,23 @@ else
                         <i class="far fa-images"></i>
                         <span>&nbsp;"Må jeg præsentere!"</span>
                         <span class="l-mp-showcase5 z-align-left z-mp-content-tooltip">
-                            @foreach (IBoothItem item in Model.GetRelevantItems(0, 5))
-                            {
-                                if (item.relevant)
+                            @{
+                                biz_booth biz3 = new biz_booth();
+                                foreach (dto_booth_item item in biz3.GetRelevantItems(Model, 0, 5))
                                 {
-                                    string type = item.GetType() == typeof(poco_product) ? "product" : "collection";
-                                    var image_path_showcase = item.image_pocos.Count() > 0 ? @"/_content/images/profiles/" + Model.salesman_poco.sysname + "/booths/" + Model.sysname + "/" + type + "s/" + item.sysname + "/" + item.image_pocos.FirstOrDefault().name : "/_content/images/site/icons/armchair2_bw.png";
+                                    if (item.relevant)
+                                    {
+                                        string type = item.GetType() == typeof(biz_product) ? "product" : "collection";
+                                        var image_path_showcase = item.image_dtos.Count() > 0 ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + type + "s/" + item.sysname + "/" + item.image_dtos.FirstOrDefault().name : "/_content/images/site/icons/armchair2_bw.png";
 
-                                    string[] classes_showcase = { "l-mp-showcase6", "", "xz-background-color-lightgrey", "z-z-index-low", "afterlater" };
-                                    object route_showcase = new { id = @Model.booth_id };
-                                    string styleb = "";
-                                    string altb = "";
-                                    @Html.RouteImage("", route_showcase, image_path_showcase, null, altb, classes_showcase, null, styleb, null)
+                                        string[] classes_showcase = { "l-mp-showcase6", "", "xz-background-color-lightgrey", "z-z-index-low", "afterlater" };
+                                        object route_showcase = new { id = @Model.booth_id };
+                                        string styleb = "";
+                                        string altb = "";
+                                        @Html.RouteImage("", route_showcase, image_path_showcase, null, altb, classes_showcase, null, styleb, null)
+                                        }
                                 }
-                            }
+                                }
                             <br /><br />
                             <a href="/#" class="z-color-white-1 bold tooltip2-close">skjul</a>
                         </span>
@@ -264,15 +278,18 @@ else
                         <i class="far fa-file-alt"></i>
                         <span>&nbsp;Om Standen</span>
                         <span class="l-mp-showcase7 z-mp-content-tooltip xz-background-color-darkgrey xz-border-black xz-color-black-1 z-padding-all-15 z-align-left">
-                            @foreach (IBoothItem item in Model.GetRelevantItems(0, 5))
-                            {
-                                if (item.relevant)
+                            @{
+                                biz_booth biz4 = new biz_booth();
+                                foreach (dto_booth_item item in biz4.GetRelevantItems(Model, 0, 5))
                                 {
-                                    string name = "[" + item.name + "]";
-                                    @Html.DisplayFor(m => name) <br />
+                                    if (item.relevant)
+                                    {
+                                        string name = "[" + item.name + "]";
+                                        @Html.DisplayFor(m => name) <br />
+                                        }
                                 }
-                            }
-                            --------------------------------<br />
+                                }
+                                --------------------------------<br />
                             @Html.DisplayWithBreaksFor(Model.description_limit)
                             <br /><br />
                             <a href="/#" class="z-color-white-1 bold tooltip3-close">skjul</a>
@@ -338,6 +355,10 @@ else
                             areas = areas.Replace("æ", "ae").Replace("ø", "oe").Replace("å", "aa").Replace(" ", "").ToLower();
                             foreach (var cat in Model.category_main)
                             {
+                                if (cat.name == ".ingen") 
+                                {
+                                    continue;
+                                }
                                 string name = "[" + cat.name + "]";
                                 @Html.RouteLink(name, "Marketplace", new { area = areas, c = Security.EncodeCats_MD5(true, cat.name) }, new { @class = "green myfade" })
                             }
@@ -414,7 +435,7 @@ else
         <div class="col-xs-12 l-mp-showcase1 @css">
             <div class="col-xs-12">
                 @{
-                    string navn = Model.salesman_poco.firstname != "" ? Model.salesman_poco.firstname + " siger velkommen!" : "Velkommen til!";
+                    string navn = Model.salesman_dto.firstname != "" ? Model.salesman_dto.firstname + " siger velkommen!" : "Velkommen til!";
                 }
                 oprettet: <span class="z-color-green">@Model.created_on.ToString("dd/MM/yyyy")</span><br />
                 <span class="z-color-black-1">@Html.DisplayFor(modelItem => navn)</span><br />
@@ -426,7 +447,7 @@ else
                 <br />
                 <div class="col-xs-12 l-mp-showcase3">
                     @{
-                        var image_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_poco.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+                        var image_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
 
                         string[] classes = { "l-mp-showcase4", "z-background-color-lightgrey", "myfade", "loadlater" };
                         object route = new { id = @Model.booth_id };
@@ -440,20 +461,23 @@ else
                     <i class="far fa-images"></i>
                     <span>&nbsp;"Må jeg præsentere!"</span>
                     <span class="l-mp-showcase5 z-align-left z-mp-content-tooltip">
-                        @foreach (IBoothItem item in Model.GetRelevantItems(0, 5))
-                        {
-                            if (item.relevant)
+                        @{
+                            biz_booth biz5 = new biz_booth();
+                            foreach (dto_booth_item item in biz5.GetRelevantItems(Model, 0, 5))
                             {
-                                string type = item.GetType() == typeof(poco_product) ? "product" : "collection";
-                                var image_path_showcase = item.image_pocos.Count() > 0 ? @"/_content/images/profiles/" + Model.salesman_poco.sysname + "/booths/" + Model.sysname + "/" + type + "s/" + item.sysname + "/" + item.image_pocos.FirstOrDefault().name : "/_content/images/site/icons/armchair2_bw.png";
+                                if (item.relevant)
+                                {
+                                    string type = item.GetType() == typeof(biz_product) ? "product" : "collection";
+                                    var image_path_showcase = item.image_dtos.Count() > 0 ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + type + "s/" + item.sysname + "/" + item.image_dtos.FirstOrDefault().name : "/_content/images/site/icons/armchair2_bw.png";
 
-                                string[] classes_showcase = { "l-mp-showcase6", "", "xz-background-color-lightgrey", "z-z-index-low", "afterlater" };
-                                object route_showcase = new { id = @Model.booth_id };
-                                string styleb = "";
-                                string altb = "";
-                                @Html.RouteImage("", route_showcase, image_path_showcase, null, altb, classes_showcase, null, styleb, null)
+                                    string[] classes_showcase = { "l-mp-showcase6", "", "xz-background-color-lightgrey", "z-z-index-low", "afterlater" };
+                                    object route_showcase = new { id = @Model.booth_id };
+                                    string styleb = "";
+                                    string altb = "";
+                                    @Html.RouteImage("", route_showcase, image_path_showcase, null, altb, classes_showcase, null, styleb, null)
+                                    }
                             }
-                        }
+                            }
                         <br /><br />
                         <a href="/#" class="z-color-white-1 bold tooltip2-close">skjul</a>
                     </span>
@@ -463,15 +487,18 @@ else
                     <i class="far fa-file-alt"></i>
                     <span>&nbsp;Om Standen</span>
                     <span class="l-mp-showcase7 z-mp-content-tooltip xz-background-color-darkgrey xz-border-black xz-color-black-1 z-padding-all-15 z-align-left">
-                        @foreach (IBoothItem item in Model.GetRelevantItems(0, 5))
-                        {
-                            if (item.relevant)
+                        @{
+                            biz_booth biz6 = new biz_booth();
+                            foreach (dto_booth_item item in biz6.GetRelevantItems(Model, 0, 5))
                             {
-                                string name = "[" + item.name + "]";
-                                @Html.DisplayFor(m => name) <br />
+                                if (item.relevant)
+                                {
+                                    string name = "[" + item.name + "]";
+                                    @Html.DisplayFor(m => name) <br />
+                                    }
                             }
-                        }
-                        --------------------------------<br />
+                            }
+                            --------------------------------<br />
                         @Html.DisplayWithBreaksFor(Model.description_limit)
                         <br /><br />
                         <a href="/#" class="z-color-white-1 bold tooltip3-close">skjul</a>
@@ -534,6 +561,10 @@ else
                             areas = areas.Replace("æ", "ae").Replace("ø", "oe").Replace("å", "aa").Replace(" ", "").ToLower();
                             foreach (var cat in Model.category_main)
                             {
+                                if (cat.name == ".ingen")
+                                {
+                                    continue;
+                                }
                                 string name = "[" + cat.name + "]";
                                 @Html.RouteLink(name, "Marketplace", new { area = areas, c = Security.EncodeCats_MD5(true, cat.name) }, new { @class = "green myfade" })
                             }

@@ -1,5 +1,5 @@
 ﻿<!--- Sidemenu -->
-@model dto_folders
+@model col_folders
 <fieldset class="z-background-color-darkgrey z-padding-all-15 z-border-bottom-left-radius-10 z-border-top-left-radius-10">
     <legend class="z-bold z-font-text z-background-color-lightgrey z-padding-all-15 z-width-auto">Katalog</legend>
     <div class="">
@@ -7,9 +7,9 @@
         <br />
         <ul class="z-list-style-none">
             <li>
-                @Html.RouteLink("Alle", "SelectCatelog", new { id = @Model.flda_pocos[0].booth_id }, new { @class = "custom-control-label z-bold z-black-link myfade" })
+                @Html.RouteLink("Alle", "SelectCatelog", new { id = @Model.flda_dtos[0].booth_id }, new { @class = "custom-control-label z-bold z-black-link myfade" })
             </li>
-            @foreach (poco_folder flda in @Model.flda_pocos)
+            @foreach (dto_folder flda in @Model.flda_dtos)
             {
                 <li>
                     @{
@@ -24,13 +24,13 @@
                         {
                             <i class="far fa-square z-color-lightgreen"></i>
                         }
-                        @Html.RouteLink(flda.name, "SelectCatelog", new { id = @Model.flda_pocos[0].booth_id, a_sub = flda.name.Replace(" ", "_"), catelog = flda.name.Replace(" ", "_") }, new { @class = "custom-control-label z-bold z-black-link myfade" })
+                        @Html.RouteLink(flda.name, "SelectCatelog", new { id = @Model.flda_dtos[0].booth_id, a_sub = flda.name.Replace(" ", "_"), catelog = flda.name.Replace(" ", "_") }, new { @class = "custom-control-label z-bold z-black-link myfade" })
                         if (flda.children.Count() > 0)
                         {
                             string style = @Model.selected.Contains(flda.name.Replace(" ", "_")) ? "z-display-block  z-list-style-none" : "z-display-none z-list-style-none";
                             <ul class="@style">
 
-                                @foreach (poco_folder fldb in flda.children)
+                                @foreach (dto_folder fldb in flda.children)
                                 {
                                     bool check = isset && Model.selected.Contains(fldb.name);
                                     object routes = check ? new {

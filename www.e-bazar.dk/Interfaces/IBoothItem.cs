@@ -6,9 +6,9 @@ using www.e_bazar.dk.Models.DTOs;
 
 namespace www.e_bazar.dk.Interfaces
 {
-    public interface IBoothItem 
+    /*public interface IBoothItem 
     {
-        long id { get; set; }
+        /*long id { get; set; }
         int category_second_id { get; set; }
         int category_main_id { get; set; }
         SelectList category_main_selectlist { get; set; }
@@ -31,21 +31,21 @@ namespace www.e_bazar.dk.Interfaces
         bool active { get; set; }
 
         int? booth_id { get; set; }
-        poco_booth booth_poco { get; set; }
+        biz_booth booth_poco { get; set; }
 
         List<IImage> image_pocos { get; set; }
-        List<poco_tag> tag_pocos { get; set; }
+        List<biz_tag> tag_pocos { get; set; }
         string tag_pocos_nop { get; set; }
-        List<poco_conversation> conversations { get; set; }
+        List<biz_conversation> conversations { get; set; }
 
+
+        bool relevant { get; set; }*
         long Save();
         void Update();
         void Delete(long id, EbazarDB db);
         bool RemoveTag(long tag_id, bool is_up_dating);
         void RemoveImage(string image_name);
-        poco_booth GetBoothPOCO();
-
-        bool relevant { get; set; }
+        biz_booth GetBoothPOCO();
         
-    }
+    }*/
 }

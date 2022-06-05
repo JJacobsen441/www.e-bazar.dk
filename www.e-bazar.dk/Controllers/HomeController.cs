@@ -103,11 +103,11 @@ namespace www.e_bazar.dk.Controllers
                 
                 SendNotifications(stats_res);
 
-                List<poco_booth> booth_newest = DAL.GetInstance().GetNewestBoothPOCOs(0, 5);
+                List<dto_booth> booth_newest = DAL.GetInstance().GetNewestBoothDTOs(0, 5);
                 ViewBag.Newest= booth_newest;
 
                 CurrentUser user = CurrentUser.GetInstance();
-                poco_person current_user = user.GetCurrentUser(false, true, true);
+                dto_person current_user = user.GetCurrentUser(false, true, true);
                 ViewBag.CurrentUser = current_user;
                 
                 return View("Index");

@@ -34,14 +34,14 @@ namespace UnitTestEbazarDK
         string salesman_name = "e-bernies@hotmail.com";
         string customer_name = "joakimjacobsen_441@hotmail.com";
 
-        poco_salesman salesman_poco;// = new poco_salesman();
-        poco_customer customer_poco;// = new poco_customer();
-        poco_booth booth_poco;// = new poco_booth();
-        poco_product product_poco;// = new poco_product();
+        biz_salesman salesman_poco;// = new biz_salesman();
+        biz_customer customer_poco;// = new biz_customer();
+        biz_booth booth_poco;// = new biz_booth();
+        biz_product product_poco;// = new biz_product();
         
-        private poco_salesman SetupSalesman()
+        private biz_salesman SetupSalesman()
         {
-            salesman_poco = new poco_salesman();
+            salesman_poco = new biz_salesman();
             salesman_poco.created_on = DateTime.Now;
             salesman_poco.descriminator = "Salesman";
             salesman_poco.description = "TEST";
@@ -55,9 +55,9 @@ namespace UnitTestEbazarDK
             return salesman_poco;
         }
 
-        private poco_customer SetupCustomer()
+        private biz_customer SetupCustomer()
         {
-            customer_poco = new poco_customer();
+            customer_poco = new biz_customer();
             customer_poco.created_on = DateTime.Now;
             customer_poco.descriminator = "Salesman";
             
@@ -71,31 +71,31 @@ namespace UnitTestEbazarDK
             return customer_poco;
         }
 
-        private poco_booth SetupBoothPoco(int booth_id, bool withsysname)
+        private biz_booth SetupBoothPoco(int booth_id, bool withsysname)
         {
-            poco_salesman salesman_poco = new poco_salesman();
-            poco_booth booth_poco = new poco_booth();
+            biz_salesman salesman_poco = new biz_salesman();
+            biz_booth booth_poco = new biz_booth();
             if (booth_id != -1)
                 booth_poco.booth_id = booth_id;
-            booth_poco.salesman_poco = salesman_poco.GetPersonPOCO<poco_salesman>(CurrentUser.GetInstance().UserID, false, true, false);
+            booth_poco.salesman_poco = salesman_poco.GetPersonPOCO<biz_salesman>(CurrentUser.GetInstance().UserID, false, true, false);
             booth_poco.salesman_id = CurrentUser.GetInstance().UserID;
             booth_poco.fulladdress = false;
             booth_poco.fulladdress_str = "Part";
             booth_poco.name = "TEST_BOOTH";
             if (withsysname)
                 booth_poco.sysname = "TEST_{1234}";
-            booth_poco.region_poco = new poco_region();
+            booth_poco.region_poco = new biz_region();
             booth_poco.region_poco.town = "søborg";
             booth_poco.region_poco.zip = 2860;
-            //booth_poco.tag_pocos.Add(new poco_tag(new EbazarDB()) { name = "testproduct", form = "booth" });
-            //booth_poco.tag_pocos.Add(new poco_tag(new EbazarDB()) { name = "testcollection", form = "booth" });
+            //booth_poco.tag_pocos.Add(new biz_tag(new EbazarDB()) { name = "testproduct", form = "booth" });
+            //booth_poco.tag_pocos.Add(new biz_tag(new EbazarDB()) { name = "testcollection", form = "booth" });
 
             return booth_poco;
         }
 
-        private poco_product SetupProductPoco(poco_booth booth_poco, long product_id/*, long tag_id*/, bool withsysname)
+        private biz_product SetupProductPoco(biz_booth booth_poco, long product_id/*, long tag_id*/, bool withsysname)
         {
-            poco_product product_poco = new poco_product(null, false);
+            biz_product product_poco = new biz_product(null, false);
             if (product_id != -1)
                 product_poco.id = product_id;
             product_poco.booth_poco = booth_poco;
@@ -119,11 +119,11 @@ namespace UnitTestEbazarDK
             if (withpersons)
             {
                 salesman_poco = SetupSalesman();
-                dal.SavePerson<poco_salesman>(salesman_poco);
+                dal.SavePerson<biz_salesman>(salesman_poco);
                 //dto_userprofile salesman_dto = new dto_userprofile(null, salesman_poco, null);
                 //adm.SalesmanProfile(salesman_dto);
                 customer_poco = SetupCustomer();
-                dal.SavePerson<poco_customer>(customer_poco);
+                dal.SavePerson<biz_customer>(customer_poco);
                 //dto_userprofile customer_dto = new dto_userprofile(null, null, customer_poco);
                 //adm.CustomerProfile(customer_dto);
             }
@@ -133,7 +133,7 @@ namespace UnitTestEbazarDK
             long id = adm.GetDataAccessLayer().GetTagIdByName_FORTEST("testproduct");
             product_poco= SetupProductPoco(booth_poco/*, -1*/, id, false);
             adm.CreateProduct(product_poco);
-            //poco_product product_poco = new poco_product();
+            //biz_product product_poco = new biz_product();
             //product_poco = dal.GetProductPOCO(product_poco.id, false, false, false);
         }
 
@@ -172,20 +172,20 @@ namespace UnitTestEbazarDK
             CurrentUser.GetInstance().Login("abc", "TESTER", true);
             Setup(false);
 
-            /*poco_booth booth = SetupBoothPoco(-1, false);
+            /*biz_booth booth = SetupBoothPoco(-1, false);
             adm.CreateBooth(booth);
             adm.SaveTag(booth.booth_id + "", "testproduct", "booth", "booth");
             long id = adm.GetDataAccessLayer().GetTagIdByName_FORTEST("testproduct");
-            poco_product poco = SetupProductPoco(booth, id, false);
+            biz_product poco = SetupProductPoco(booth, id, false);
             adm.CreateProduct(poco);
-            poco_product product_poco = new poco_product();
+            biz_product product_poco = new biz_product();
             product_poco = dal.GetProductPOCO(poco.id, false, false, false);*/
 
-            poco_person current_user = CurrentUser.GetInstance().GetCurrentUser(true, false, true);
-            //poco_salesman salesman_poco = new poco_salesman();
+            biz_person current_user = CurrentUser.GetInstance().GetCurrentUser(true, false, true);
+            //biz_salesman salesman_poco = new biz_salesman();
             salesman_poco = product_poco.booth_poco.salesman_poco;
                         
-            dto_message mess = new dto_message();
+            col_message mess = new col_message();
             mess.type = TYPE.PRODUCT;
             mess.id = product_poco.id;
             mess.conversation = dal.GetConversation(product_poco.id, current_user != null ? current_user.person_id : "", TYPE.PRODUCT);
@@ -232,30 +232,30 @@ namespace UnitTestEbazarDK
         string customer_name = "joakimjacobsen_441@hotmail.com";
 
 
-        private poco_booth SetupBoothPoco(int booth_id, bool withsysname)
+        private biz_booth SetupBoothPoco(int booth_id, bool withsysname)
         {
-            poco_salesman salesman_poco = new poco_salesman();
-            poco_booth booth_poco = new poco_booth();
+            biz_salesman salesman_poco = new biz_salesman();
+            biz_booth booth_poco = new biz_booth();
             if(booth_id != -1)
                 booth_poco.booth_id = booth_id;
-            booth_poco.salesman_poco = salesman_poco.GetPersonPOCO<poco_salesman>(CurrentUser.GetInstance().UserID, false, true, false);
+            booth_poco.salesman_poco = salesman_poco.GetPersonPOCO<biz_salesman>(CurrentUser.GetInstance().UserID, false, true, false);
             booth_poco.salesman_id = CurrentUser.GetInstance().UserID;
             booth_poco.fulladdress = false;
             booth_poco.fulladdress_str = "Part";
             booth_poco.name = "TEST_BOOTH";
             if(withsysname)
                 booth_poco.sysname = "TEST_{1234}";
-            booth_poco.region_poco = new poco_region();
+            booth_poco.region_poco = new biz_region();
             booth_poco.region_poco.town = "søborg";
             booth_poco.region_poco.zip = 2860;
-            //booth_poco.tag_pocos.Add(new poco_tag(new EbazarDB()) { name = "testproduct", form = "booth" });
-            //booth_poco.tag_pocos.Add(new poco_tag(new EbazarDB()) { name = "testcollection", form = "booth" });
+            //booth_poco.tag_pocos.Add(new biz_tag(new EbazarDB()) { name = "testproduct", form = "booth" });
+            //booth_poco.tag_pocos.Add(new biz_tag(new EbazarDB()) { name = "testcollection", form = "booth" });
 
             return booth_poco;
         }
-        private poco_product SetupProductPoco(poco_booth booth_poco, long product_id, bool withsysname)
+        private biz_product SetupProductPoco(biz_booth booth_poco, long product_id, bool withsysname)
         {
-            poco_product product_poco = new poco_product(null, false);
+            biz_product product_poco = new biz_product(null, false);
             if (product_id != -1)
                 product_poco.id = product_id;
             product_poco.booth_poco = booth_poco;
@@ -274,9 +274,9 @@ namespace UnitTestEbazarDK
             product_poco.tag_pocos = null;
             return product_poco;
         }
-        private poco_collection SetupCollectionPoco(poco_booth booth_poco, int collection_id, bool withsysname)
+        private biz_collection SetupCollectionPoco(biz_booth booth_poco, int collection_id, bool withsysname)
         {
-            poco_collection collection_poco = new poco_collection(null);
+            biz_collection collection_poco = new biz_collection(null);
             if (collection_id != -1)
                 collection_poco.id = collection_id;
             collection_poco.booth_poco = booth_poco;
@@ -338,9 +338,9 @@ namespace UnitTestEbazarDK
             adm = new AdministrationController();
 
             CurrentUser.GetInstance().Login(salesman_id, salesman_name, true);
-            List<poco_booth> booth_pocos = new List<poco_booth>();
-            dto_userprofile profile = new dto_userprofile();
-            poco_salesman salesman_poco = (poco_salesman)adm.GetDataAccessLayer().GetPersonPOCO<poco_salesman>(CurrentUser.GetInstance().UserID, false, false, true);
+            List<biz_booth> booth_pocos = new List<biz_booth>();
+            col_userprofile profile = new col_userprofile();
+            biz_salesman salesman_poco = (biz_salesman)adm.GetDataAccessLayer().GetPersonPOCO<biz_salesman>(CurrentUser.GetInstance().UserID, false, false, true);
             profile.salesman_poco = salesman_poco;
             booth_pocos = adm.GetDataAccessLayer().GetBoothPOCOs(salesman_id, false);
             ActionResult ar8 = adm.SalesmanProfile(profile);
@@ -353,9 +353,9 @@ namespace UnitTestEbazarDK
             adm = new AdministrationController();
 
             CurrentUser.GetInstance().Login(customer_id, customer_name, true);
-            List<poco_booth> booth_pocos = new List<poco_booth>();
-            dto_userprofile profile = new dto_userprofile();
-            poco_customer customer_poco = (poco_customer)adm.GetDataAccessLayer().GetPersonPOCO<poco_customer>(CurrentUser.GetInstance().UserID, false, false, true);
+            List<biz_booth> booth_pocos = new List<biz_booth>();
+            col_userprofile profile = new col_userprofile();
+            biz_customer customer_poco = (biz_customer)adm.GetDataAccessLayer().GetPersonPOCO<biz_customer>(CurrentUser.GetInstance().UserID, false, false, true);
             profile.customer_poco = customer_poco;
 
             booth_pocos = adm.GetDataAccessLayer().GetBoothPOCOs(salesman_id, false);
@@ -373,7 +373,7 @@ namespace UnitTestEbazarDK
             ActionResult ar8 = adm.CreateBooth();
             ar8.AssertViewWasReturned("CreateBooth", "TEST_BOOTH");
 
-            poco_booth booth_poco = this.SetupBoothPoco(-1, false);
+            biz_booth booth_poco = this.SetupBoothPoco(-1, false);
             RedirectToRouteResult ar9 = adm.CreateBooth(booth_poco) as ActionResult as RedirectToRouteResult;
             Assert.AreEqual("EditBooth", ar9.RouteValues["action"].ToString());
 
@@ -383,8 +383,8 @@ namespace UnitTestEbazarDK
 
             booth_poco = this.SetupBoothPoco(booth_poco.booth_id, false);
             booth_poco.name = "TEST_BOOTH2";
-            dto_folders cat = new dto_folders(null, "");
-            dto_booth dto = new dto_booth(booth_poco, cat, null, null, null, null, false, -1);/////////////////////////////////ved ikke om parametrene passer
+            col_folders cat = new col_folders(null, "");
+            col_booth dto = new col_booth(booth_poco, cat, null, null, null, null, false, -1);/////////////////////////////////ved ikke om parametrene passer
             RedirectToRouteResult ar11 = adm.EditBooth(dto) as ActionResult as RedirectToRouteResult;
             Assert.AreEqual("EditBooth", ar11.RouteValues["action"].ToString());
 
@@ -410,7 +410,7 @@ namespace UnitTestEbazarDK
             ActionResult ar8 = adm.CreateBooth();
             ar8.AssertViewWasReturned("CreateBooth", "TEST_BOOTH");
 
-            poco_booth booth_poco = this.SetupBoothPoco(-1, false);
+            biz_booth booth_poco = this.SetupBoothPoco(-1, false);
             booth_poco.name = "";
             RedirectToRouteResult ar9 = adm.CreateBooth(booth_poco) as ActionResult as RedirectToRouteResult;
             Assert.AreEqual("CreateBooth", ar9.RouteValues["action"].ToString());
@@ -425,7 +425,7 @@ namespace UnitTestEbazarDK
             ActionResult ar8 = adm.CreateBooth();
             ar8.AssertViewWasReturned("CreateBooth", "TEST_BOOTH");
 
-            poco_booth booth_poco = this.SetupBoothPoco(-1, false);
+            biz_booth booth_poco = this.SetupBoothPoco(-1, false);
             RedirectToRouteResult ar10 = adm.CreateBooth(booth_poco) as ActionResult as RedirectToRouteResult;
             Assert.AreEqual("EditBooth", ar10.RouteValues["action"].ToString());
 
@@ -435,8 +435,8 @@ namespace UnitTestEbazarDK
 
             booth_poco = this.SetupBoothPoco(booth_poco.booth_id, false);
             booth_poco.name = "";
-            dto_folders cat = new dto_folders(null, "");
-            dto_booth dto = new dto_booth(booth_poco, cat, null, null, null, null, false, -1);/////////////////////////////////ved ikke om parametrene passer
+            col_folders cat = new col_folders(null, "");
+            col_booth dto = new col_booth(booth_poco, cat, null, null, null, null, false, -1);/////////////////////////////////ved ikke om parametrene passer
             RedirectToRouteResult ar11 = adm.EditBooth(dto) as ActionResult as RedirectToRouteResult;
             Assert.AreEqual("EditBooth", ar11.RouteValues["action"].ToString());
 
@@ -450,13 +450,13 @@ namespace UnitTestEbazarDK
             adm = new AdministrationController();
 
             CurrentUser.GetInstance().Login(salesman_id, salesman_name, true);
-            poco_booth booth_poco = this.SetupBoothPoco(-1, false);
+            biz_booth booth_poco = this.SetupBoothPoco(-1, false);
             adm.CreateBooth(booth_poco);
             //adm.SaveTag(booth_poco.booth_id + "", "TEST_PRODUCT", "booth");//ved ikke om parametrene passer
 
             booth_poco = this.SetupBoothPoco(booth_poco.booth_id, true);
             //adm.SaveTag(booth_poco.booth_id + "", "TEST_PRODUCT", "booth", "booth");//ved ikke om parametrene passer
-            poco_product product_poco = new poco_product(null, false);
+            biz_product product_poco = new biz_product(null, false);
             product_poco.booth_poco = booth_poco;
             ActionResult ar9 = adm.CreateProduct(booth_poco.booth_id);
             ar9.AssertViewWasReturned("CreateProduct", "TEST");
@@ -490,18 +490,18 @@ namespace UnitTestEbazarDK
             adm = new AdministrationController();
 
             CurrentUser.GetInstance().Login(salesman_id, salesman_name, true);
-            poco_booth booth_poco = this.SetupBoothPoco(-1, false);
+            biz_booth booth_poco = this.SetupBoothPoco(-1, false);
             adm.CreateBooth(booth_poco);
             //adm.SaveTag(booth_poco.booth_id + "", "TEST_PRODUCT", "booth");//ved ikke om parametrene passer
 
             /*booth_poco = this.SetupBoothPoco(booth_poco.booth_id, true);
-            poco_product product_poco = new poco_product();
+            biz_product product_poco = new biz_product();
             product_poco.booth_poco = booth_poco;
             ActionResult ar9 = adm.CreateProduct(booth_poco.booth_id);
             ar9.AssertViewWasReturned("CreateProduct", "TEST");*/
 
             booth_poco = this.SetupBoothPoco(booth_poco.booth_id, true);
-            poco_product product_poco = this.SetupProductPoco(booth_poco, -1, false);
+            biz_product product_poco = this.SetupProductPoco(booth_poco, -1, false);
             product_poco.name = "";
             RedirectToRouteResult ar10 = adm.CreateProduct(product_poco) as ActionResult as RedirectToRouteResult;
             Assert.AreEqual("CreateProduct", ar10.RouteValues["action"].ToString());
@@ -516,12 +516,12 @@ namespace UnitTestEbazarDK
             adm = new AdministrationController();
 
             CurrentUser.GetInstance().Login(salesman_id, salesman_name, true);
-            poco_booth booth_poco = this.SetupBoothPoco(-1, false);
+            biz_booth booth_poco = this.SetupBoothPoco(-1, false);
             adm.CreateBooth(booth_poco);
             //adm.SaveTag(booth_poco.booth_id + "", "TEST_PRODUCT", "booth");//ved ikke om parametrene passer
 
             booth_poco = this.SetupBoothPoco(booth_poco.booth_id, true);
-            poco_product product_poco = this.SetupProductPoco(booth_poco, -1, false);
+            biz_product product_poco = this.SetupProductPoco(booth_poco, -1, false);
             RedirectToRouteResult ar10 = adm.CreateProduct(product_poco) as ActionResult as RedirectToRouteResult;
             Assert.AreEqual("EditProduct", ar10.RouteValues["action"].ToString());
 
@@ -541,12 +541,12 @@ namespace UnitTestEbazarDK
             adm = new AdministrationController();
 
             CurrentUser.GetInstance().Login(salesman_id, salesman_name, true);
-            poco_booth booth_poco = this.SetupBoothPoco(-1, false);
+            biz_booth booth_poco = this.SetupBoothPoco(-1, false);
             adm.CreateBooth(booth_poco);
             //adm.SaveTag(booth_poco.booth_id + "", "TEST_PRODUCT", "booth");//ved ikke om parametrene passer
 
             booth_poco = this.SetupBoothPoco(booth_poco.booth_id, true);
-            poco_product product_poco = this.SetupProductPoco(booth_poco, -1, false);
+            biz_product product_poco = this.SetupProductPoco(booth_poco, -1, false);
             RedirectToRouteResult ar10 = adm.CreateProduct(product_poco) as ActionResult as RedirectToRouteResult;
             Assert.AreEqual("EditProduct", ar10.RouteValues["action"].ToString());
 
@@ -565,12 +565,12 @@ namespace UnitTestEbazarDK
             adm = new AdministrationController();
 
             CurrentUser.GetInstance().Login(salesman_id, salesman_name, true);
-            poco_booth booth_poco = this.SetupBoothPoco(-1, false);
+            biz_booth booth_poco = this.SetupBoothPoco(-1, false);
             adm.CreateBooth(booth_poco);
             //adm.SaveTag(booth_poco.booth_id + "", "TEST_COLLECTION", "booth");//ved ikke om parametrene passer
 
             booth_poco = this.SetupBoothPoco(booth_poco.booth_id, true);
-            poco_collection collection_poco = new poco_collection(null);
+            biz_collection collection_poco = new biz_collection(null);
             collection_poco.booth_poco = booth_poco;
             ActionResult ar9 = adm.CreateCollection(booth_poco.booth_id);
             ar9.AssertViewWasReturned("CreateCollection", "TEST");
@@ -589,7 +589,7 @@ namespace UnitTestEbazarDK
             booth_poco = this.SetupBoothPoco(booth_poco.booth_id, true);
             //adm.SaveTag(booth_poco.booth_id + "", "TEST_PRODUCT", "booth");//ved ikke om parametrene passer
             collection_poco = this.SetupCollectionPoco(booth_poco, (int)collection_poco.id, true);
-            poco_product product_poco = this.SetupProductPoco(booth_poco, -1, false);
+            biz_product product_poco = this.SetupProductPoco(booth_poco, -1, false);
             adm.CreateProduct(product_poco);
             RedirectToRouteResult ar12 = adm.AddProductToCollection((int)collection_poco.id, product_poco.id) as ActionResult as RedirectToRouteResult;
             Assert.AreEqual("EditCollection", ar12.RouteValues["action"].ToString());
@@ -614,12 +614,12 @@ namespace UnitTestEbazarDK
             adm = new AdministrationController();
 
             CurrentUser.GetInstance().Login(salesman_id, salesman_name, true);
-            poco_booth booth_poco = this.SetupBoothPoco(-1, false);
+            biz_booth booth_poco = this.SetupBoothPoco(-1, false);
             adm.CreateBooth(booth_poco);
             //adm.SaveTag(booth_poco.booth_id + "", "TEST_COLLECTION", "booth");//ved ikke om parametrene passer
 
             booth_poco = this.SetupBoothPoco(booth_poco.booth_id, true);
-            poco_collection collection_poco = this.SetupCollectionPoco(booth_poco, -1, false);
+            biz_collection collection_poco = this.SetupCollectionPoco(booth_poco, -1, false);
             collection_poco.name = "";
             RedirectToRouteResult ar10 = adm.CreateCollection(collection_poco) as ActionResult as RedirectToRouteResult;
             Assert.AreEqual("CreateCollection", ar10.RouteValues["action"].ToString());
@@ -634,13 +634,13 @@ namespace UnitTestEbazarDK
             adm = new AdministrationController();
 
             CurrentUser.GetInstance().Login(salesman_id, salesman_name, true);
-            poco_booth booth_poco = this.SetupBoothPoco(-1, false);
+            biz_booth booth_poco = this.SetupBoothPoco(-1, false);
             adm.CreateBooth(booth_poco);
             //adm.SaveTag(booth_poco.booth_id + "", "TEST_COLLECTION", "booth");//ved ikke om parametrene passer
 
             booth_poco = this.SetupBoothPoco(booth_poco.booth_id, true);
             //adm.SaveBoothTag("testcollection", booth_poco.booth_id + "");
-            poco_collection collection_poco = this.SetupCollectionPoco(booth_poco, -1, false);
+            biz_collection collection_poco = this.SetupCollectionPoco(booth_poco, -1, false);
             RedirectToRouteResult ar10 = adm.CreateCollection(collection_poco) as ActionResult as RedirectToRouteResult;
             Assert.AreEqual("EditCollection", ar10.RouteValues["action"].ToString());
 
@@ -660,19 +660,19 @@ namespace UnitTestEbazarDK
             adm = new AdministrationController();
 
             CurrentUser.GetInstance().Login(salesman_id, salesman_name, true);
-            poco_booth booth_poco = this.SetupBoothPoco(-1, false);
+            biz_booth booth_poco = this.SetupBoothPoco(-1, false);
             adm.CreateBooth(booth_poco);
             //adm.SaveTag(booth_poco.booth_id + "", "TEST_COLLECTION", "booth");//ved ikke om parametrene passer
 
             booth_poco = this.SetupBoothPoco(booth_poco.booth_id, true);
-            poco_collection collection_poco = this.SetupCollectionPoco(booth_poco, -1, false);
+            biz_collection collection_poco = this.SetupCollectionPoco(booth_poco, -1, false);
             RedirectToRouteResult ar10 = adm.CreateCollection(collection_poco) as ActionResult as RedirectToRouteResult;
             Assert.AreEqual("EditCollection", ar10.RouteValues["action"].ToString());
 
             booth_poco = this.SetupBoothPoco(booth_poco.booth_id, true);
             //adm.SaveTag(booth_poco.booth_id + "", "TEST_PRODUCT", "booth");//ved ikke om parametrene passer
             collection_poco = this.SetupCollectionPoco(booth_poco, (int)collection_poco.id, true);
-            poco_product product_poco = this.SetupProductPoco(booth_poco, -1, false);
+            biz_product product_poco = this.SetupProductPoco(booth_poco, -1, false);
             adm.CreateProduct(product_poco);
             RedirectToRouteResult ar12 = adm.AddProductToCollection((int)collection_poco.id, product_poco.id) as ActionResult as RedirectToRouteResult;
             Assert.AreEqual("EditCollection", ar12.RouteValues["action"].ToString());
@@ -692,7 +692,7 @@ namespace UnitTestEbazarDK
             adm = new AdministrationController();
 
             CurrentUser.GetInstance().Login(salesman_id, salesman_name, true);
-            poco_booth booth_poco = this.SetupBoothPoco(-1, false);
+            biz_booth booth_poco = this.SetupBoothPoco(-1, false);
             adm.CreateBooth(booth_poco);
             adm = new AdministrationController();
             //adm.SaveTag(booth_poco.booth_id + "", "TEST_PRODUCT", "booth");//ved ikke om parametrene passer

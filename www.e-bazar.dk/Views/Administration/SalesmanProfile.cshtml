@@ -1,4 +1,4 @@
-﻿@model www.e_bazar.dk.Models.DTOs.dto_userprofile
+﻿@model www.e_bazar.dk.Models.DTOs.col_userprofile
 
 @{
     ViewBag.Title = "Administrer Profil";
@@ -24,23 +24,24 @@
                 </div>
                 @{
                     bool dviewed = true;
-                    foreach (poco_conversation conn in Model.conversations_dto.booths)
+                    biz_conversation biz = new biz_conversation();
+                    foreach (dto_conversation conn in Model.conversations_dto.booths)
                     {
-                        if (!conn.Viewed(true))
+                        if (!biz.Viewed(conn, true))
                         {
                             dviewed = false;
                         }
                     }
-                    foreach (poco_conversation conn in Model.conversations_dto.items)
+                    foreach (dto_conversation conn in Model.conversations_dto.items)
                     {
-                        if (!conn.Viewed(true))
+                        if (!biz.Viewed(conn, true))
                         {
                             dviewed = false;
                         }
                     }
-                    foreach (poco_conversation conn in Model.conversations_dto.own)
+                    foreach (dto_conversation conn in Model.conversations_dto.own)
                     {
-                        if (!conn.Viewed(false))
+                        if (!biz.Viewed(conn, false))
                         {
                             dviewed = false;
                         }
@@ -64,22 +65,22 @@
                             {
                                 @Html.AntiForgeryToken()
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                                @Html.HiddenFor(model => model.salesman_poco.person_id, new { @class = "adm_hidden_profileid" });
-                                @Html.HiddenFor(model => model.salesman_poco.profileimage, new { @class = "adm_hidden_profileimage" });
-                                @Html.HiddenFor(model => model.salesman_poco.sysname);
-                                @Html.HiddenFor(model => model.salesman_poco.email);
+                                @Html.HiddenFor(model => model.salesman_dto.person_id, new { @class = "adm_hidden_profileid" });
+                                @Html.HiddenFor(model => model.salesman_dto.profileimage, new { @class = "adm_hidden_profileimage" });
+                                @Html.HiddenFor(model => model.salesman_dto.sysname);
+                                @Html.HiddenFor(model => model.salesman_dto.email);
                                 <div class="col-xs-4 form-horizontal">
                                     <div class="form-group">
                                         <div class="col-xs-12">
-                                            @Html.LabelFor(model => model.salesman_poco.profileimage, htmlAttributes: new { @class = "control-label" })
+                                            @Html.LabelFor(model => model.salesman_dto.profileimage, htmlAttributes: new { @class = "control-label" })
                                         </div>
                                         <div class="col-xs-12">
                                             <div class="container_overlay">
-                                                @if (!string.IsNullOrEmpty(Model.salesman_poco.profileimage))
+                                                @if (!string.IsNullOrEmpty(Model.salesman_dto.profileimage))
                                                 {
-                                                    var image_path = "/_content/images/profiles/" + Model.salesman_poco.sysname + "/profile/" + Model.salesman_poco.profileimage;
+                                                    var image_path = "/_content/images/profiles/" + Model.salesman_dto.sysname + "/profile/" + Model.salesman_dto.profileimage;
                                                     <img class="adm_img_profileimage" src="@image_path" style="background-color:#EEEEEE" alt="Sample Image" />
-                                                    <input type="hidden" class="adm_hidden_images_imagename" value="@Model.salesman_poco.profileimage">
+                                                    <input type="hidden" class="adm_hidden_images_imagename" value="@Model.salesman_dto.profileimage">
                                                     <div class="overlay">
                                                         <a href="#" class="icon" title="User Profile">
                                                             <i class="fa fa-window-close fa-2x myfade" onclick="removeImage();"></i>
@@ -104,45 +105,45 @@
                                 <div class="col-xs-4 form-horizontal">
                                     <div class="form-group">
                                         <div class="col-xs-12">
-                                            @Html.LabelFor(model => model.salesman_poco.firstname, htmlAttributes: new { @class = "control-label" })
+                                            @Html.LabelFor(model => model.salesman_dto.firstname, htmlAttributes: new { @class = "control-label" })
                                         </div>
                                         <div class="col-xs-12">
                                             @{
-                                                string css = Model.salesman_poco.firstname == "" ? " realred_bdr" : "";
+                                                string css = Model.salesman_dto.firstname == "" ? " realred_bdr" : "";
                                                 string placeholder = "..hvis ikke udfyldt, vil email blive brugt på siden";
                                             }
-                                            @Html.EditorFor(model => model.salesman_poco.firstname, new { htmlAttributes = new { @class = "adm_input_firstname form-control darkgrey_bdr adm_control" + css, placeholder = placeholder } })
-                                            @Html.ValidationMessageFor(model => model.salesman_poco.firstname, "", new { @class = "text-danger" })
+                                            @Html.EditorFor(model => model.salesman_dto.firstname, new { htmlAttributes = new { @class = "adm_input_firstname form-control darkgrey_bdr adm_control" + css, placeholder = placeholder } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.firstname, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="col-xs-12">
-                                            @Html.LabelFor(model => model.salesman_poco.lastname, htmlAttributes: new { @class = "control-label" })
+                                            @Html.LabelFor(model => model.salesman_dto.lastname, htmlAttributes: new { @class = "control-label" })
                                         </div>
                                         <div class="col-xs-12">
                                             @{
-                                                css = Model.salesman_poco.lastname == "" ? " realred_bdr" : "";
+                                                css = Model.salesman_dto.lastname == "" ? " realred_bdr" : "";
                                             }
-                                            @Html.EditorFor(model => model.salesman_poco.lastname, new { htmlAttributes = new { @class = "adm_input_lastname form-control darkgrey_bdr adm_control" + css } })
-                                            @Html.ValidationMessageFor(model => model.salesman_poco.lastname, "", new { @class = "text-danger" })
+                                            @Html.EditorFor(model => model.salesman_dto.lastname, new { htmlAttributes = new { @class = "adm_input_lastname form-control darkgrey_bdr adm_control" + css } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.lastname, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="col-xs-12">
-                                            @Html.LabelFor(model => model.salesman_poco.phonenumber, htmlAttributes: new { @class = "control-label" })
+                                            @Html.LabelFor(model => model.salesman_dto.phonenumber, htmlAttributes: new { @class = "control-label" })
                                         </div>
                                         <div class="col-xs-8">
                                             @{
-                                                css = Model.salesman_poco.phonenumber == null ? " realred_bdr" : "";
+                                                css = Model.salesman_dto.phonenumber == null ? " realred_bdr" : "";
                                             }
-                                            @Html.EditorFor(model => model.salesman_poco.phonenumber, new { htmlAttributes = new { @class = "adm_input_phone form-control darkgrey_bdr adm_control" + css } })
-                                            @Html.ValidationMessageFor(model => model.salesman_poco.phonenumber, "", new { @class = "text-danger" })
+                                            @Html.EditorFor(model => model.salesman_dto.phonenumber, new { htmlAttributes = new { @class = "adm_input_phone form-control darkgrey_bdr adm_control" + css } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.phonenumber, "", new { @class = "text-danger" })
                                         </div>
                                         <div class="col-xs-4" style="padding-top:5px; height:30px;">
                                             <table>
                                                 <tr>
                                                     <td valign="top">
-                                                        @Html.CheckBoxFor(model => model.salesman_poco.show_phone, new { @class = "adm_input_show_phone darkgrey_bdr" })
+                                                        @Html.CheckBoxFor(model => model.salesman_dto.show_phone, new { @class = "adm_input_show_phone darkgrey_bdr" })
                                                     </td>
                                                     <td>
                                                         Vis Nr.
@@ -153,16 +154,16 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="col-xs-8">
-                                            @Html.LabelFor(model => model.salesman_poco.email, htmlAttributes: new { @class = "control-label" })
+                                            @Html.LabelFor(model => model.salesman_dto.email, htmlAttributes: new { @class = "control-label" })
                                             @{
-                                                css = Model.salesman_poco.email == "" ? " realred_bdr" : "";
+                                                css = Model.salesman_dto.email == "" ? " realred_bdr" : "";
                                             }
                                         </div>
                                         <div class="col-xs-4" style="padding-top:5px; height:30px;">
                                             <table>
                                                 <tr>
                                                     <td valign="top">
-                                                        @Html.CheckBoxFor(model => model.salesman_poco.request_email, new { @class = "adm_input_request_email black_bdr" })
+                                                        @Html.CheckBoxFor(model => model.salesman_dto.request_email, new { @class = "adm_input_request_email black_bdr" })
                                                     </td>
                                                     <td>
                                                         Tillad E-mail.
@@ -171,14 +172,14 @@
                                             </table>
                                         </div>
                                         <div class="col-xs-8">
-                                            @Html.DisplayFor(model => model.salesman_poco.email, new { htmlAttributes = new { @class = "adm_input_email form-control adm_control darkgrey_bdr " + css } })
-                                            @Html.ValidationMessageFor(model => model.salesman_poco.email, "", new { @class = "text-danger" })
+                                            @Html.DisplayFor(model => model.salesman_dto.email, new { htmlAttributes = new { @class = "adm_input_email form-control adm_control darkgrey_bdr " + css } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.email, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                 </div>
 
                                 string dplaceholder_desk = "";
-                                if (string.IsNullOrEmpty(Model.salesman_poco.description))
+                                if (string.IsNullOrEmpty(Model.salesman_dto.description))
                                 {
                                     dplaceholder_desk = Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
                                 }
@@ -187,12 +188,12 @@
                                 <div class="col-xs-4 form-horizontal adm_div_group3">
                                     <div class="form-group">
                                         <div class="col-xs-12">
-                                            @Html.LabelFor(model => model.salesman_poco.description, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                            @Html.LabelFor(model => model.salesman_dto.description, htmlAttributes: new { @class = "control-label xcol-xs-2" })
                                             <span class="desc_msg"></span>
                                         </div>
                                         <div class="col-xs-12">
-                                            @Html.TextAreaFor(model => Model.salesman_poco.description, new { @placeholder = @dplaceholder_desk, @class = "adm_input_description form-control adm_control darkgrey_bdr", rows = "16" })
-                                            @Html.ValidationMessageFor(model => model.salesman_poco.description, "", new { @class = "text-danger" })
+                                            @Html.TextAreaFor(model => Model.salesman_dto.description, new { @placeholder = @dplaceholder_desk, @class = "adm_input_description form-control adm_control darkgrey_bdr", rows = "16" })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.description, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                 </div>
@@ -208,7 +209,7 @@
                             @Html.Partial("~/Views/Partials/_Profile_Following.cshtml", @Model)
                         </div>
                         <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="feedback">
-                            @Html.Partial("~/Views/Partials/_Profile_Feedback.cshtml", new dto_email())
+                            @Html.Partial("~/Views/Partials/_Profile_Feedback.cshtml", new col_email())
                         </div>
                     </div>
                 }
@@ -219,27 +220,27 @@
                     <table class="table">
                         <tr class="adm_th_products" style="background-color: #FFFFFF;">
                             <th style="width:10%;" class="adm_th_booths_image">
-                                @Html.DisplayNameFor(model => model.booth_pocos.FirstOrDefault().frontimage)
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().frontimage)
                             </th>
                             <th style="width:15%;" class="adm_th_booths_name">
-                                @Html.DisplayNameFor(model => model.booth_pocos.FirstOrDefault().name)
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().name)
                             </th>
                             <th style="width:15%;" class="adm_th_booths_createdon">
-                                @Html.DisplayNameFor(model => model.booth_pocos.FirstOrDefault().created_on)
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().created_on)
                             </th>
                             <th style="width:50%;" class="adm_th_booths_description">
-                                @Html.DisplayNameFor(model => model.booth_pocos.FirstOrDefault().description)
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().description)
                             </th>
                             <th style="width:10%;"></th>
                         </tr>
-                        @foreach (var item in Model.booth_pocos)
+                        @foreach (var item in Model.booth_dtos)
                         {
                             <tr>
                                 <td class="adm_td_booths_image">
                                     @if (!string.IsNullOrEmpty(item.frontimage))
                                     {
-                                        string thumb = "/_content/images/profiles/" + Model.salesman_poco.sysname + "/booths/" + item.sysname + "/t_" + item.frontimage;
-                                        string path = "/_content/images/profiles/" + Model.salesman_poco.sysname + "/booths/" + item.sysname + "/" + item.frontimage;
+                                        string thumb = "/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + item.sysname + "/t_" + item.frontimage;
+                                        string path = "/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + item.sysname + "/" + item.frontimage;
                                         @*@Html.ActionImage("EditBooth", "Administration", new { booth_id = item.booth_id }, path, "Sample Image", new string[] { "adm_img_booths_boothimage" })*@
                                         <a href="@Url.RouteUrl("EditBooth1", new { booth_id=@item.booth_id})">
                                             <img alt="Sample Image" class="adm_img_booths_boothimage loadlater" src="@thumb" data-src="@path">
@@ -341,23 +342,24 @@
                 </div>
                 @{
                     bool tviewed = true;
-                    foreach (poco_conversation conn in Model.conversations_dto.booths)
+                    biz_conversation biz2 = new biz_conversation();
+                    foreach (dto_conversation conn in Model.conversations_dto.booths)
                     {
-                        if (!conn.Viewed(true))
+                        if (!biz2.Viewed(conn, true))
                         {
                             tviewed = false;
                         }
                     }
-                    foreach (poco_conversation conn in Model.conversations_dto.items)
+                    foreach (dto_conversation conn in Model.conversations_dto.items)
                     {
-                        if (!conn.Viewed(true))
+                        if (!biz2.Viewed(conn, true))
                         {
                             tviewed = false;
                         }
                     }
-                    foreach (poco_conversation conn in Model.conversations_dto.own)
+                    foreach (dto_conversation conn in Model.conversations_dto.own)
                     {
-                        if (!conn.Viewed(false))
+                        if (!biz2.Viewed(conn, false))
                         {
                             tviewed = false;
                         }
@@ -381,22 +383,22 @@
                             {
                                 @Html.AntiForgeryToken()
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                                @Html.HiddenFor(model => model.salesman_poco.person_id, new { @class = "adm_hidden_profileid" });
-                                @Html.HiddenFor(model => model.salesman_poco.profileimage, new { @class = "adm_hidden_profileimage" });
-                                @Html.HiddenFor(model => model.salesman_poco.sysname);
-                                @Html.HiddenFor(model => model.salesman_poco.email);
+                                @Html.HiddenFor(model => model.salesman_dto.person_id, new { @class = "adm_hidden_profileid" });
+                                @Html.HiddenFor(model => model.salesman_dto.profileimage, new { @class = "adm_hidden_profileimage" });
+                                @Html.HiddenFor(model => model.salesman_dto.sysname);
+                                @Html.HiddenFor(model => model.salesman_dto.email);
                                 <div class="col-xs-4 form-horizontal">
                                     <div class="form-group">
                                         <div class="col-xs-12">
-                                            @Html.LabelFor(model => model.salesman_poco.profileimage, htmlAttributes: new { @class = "control-label" })
+                                            @Html.LabelFor(model => model.salesman_dto.profileimage, htmlAttributes: new { @class = "control-label" })
                                         </div>
                                         <div class="col-xs-12">
                                             <div class="container_overlay">
-                                                @if (!string.IsNullOrEmpty(Model.salesman_poco.profileimage))
+                                                @if (!string.IsNullOrEmpty(Model.salesman_dto.profileimage))
                                                 {
-                                                    var image_path = "/_content/images/profiles/" + Model.salesman_poco.sysname + "/profile/" + Model.salesman_poco.profileimage;
+                                                    var image_path = "/_content/images/profiles/" + Model.salesman_dto.sysname + "/profile/" + Model.salesman_dto.profileimage;
                                                     <img class="adm_img_profileimage" src="@image_path" style="background-color:#EEEEEE" alt="Sample Image" />
-                                                    <input type="hidden" class="adm_hidden_images_imagename" value="@Model.salesman_poco.profileimage">
+                                                    <input type="hidden" class="adm_hidden_images_imagename" value="@Model.salesman_dto.profileimage">
                                                     <div class="overlay">
                                                         <a href="#" class="icon" title="User Profile">
                                                             <i class="fa fa-window-close fa-2x myfade" onclick="removeImage();"></i>
@@ -421,45 +423,45 @@
                                 <div class="col-xs-4 form-horizontal">
                                     <div class="form-group">
                                         <div class="col-xs-12">
-                                            @Html.LabelFor(model => model.salesman_poco.firstname, htmlAttributes: new { @class = "control-label" })
+                                            @Html.LabelFor(model => model.salesman_dto.firstname, htmlAttributes: new { @class = "control-label" })
                                         </div>
                                         <div class="col-xs-12">
                                             @{
-                                                string css = Model.salesman_poco.firstname == "" ? " realred_bdr" : "";
+                                                string css = Model.salesman_dto.firstname == "" ? " realred_bdr" : "";
                                                 string placeholder = "..hvis ikke udfyldt, vil email blive brugt på siden";
                                             }
-                                            @Html.EditorFor(model => model.salesman_poco.firstname, new { htmlAttributes = new { @class = "adm_input_firstname form-control darkgrey_bdr adm_control" + css, placeholder = placeholder } })
-                                            @Html.ValidationMessageFor(model => model.salesman_poco.firstname, "", new { @class = "text-danger" })
+                                            @Html.EditorFor(model => model.salesman_dto.firstname, new { htmlAttributes = new { @class = "adm_input_firstname form-control darkgrey_bdr adm_control" + css, placeholder = placeholder } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.firstname, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="col-xs-12">
-                                            @Html.LabelFor(model => model.salesman_poco.lastname, htmlAttributes: new { @class = "control-label" })
+                                            @Html.LabelFor(model => model.salesman_dto.lastname, htmlAttributes: new { @class = "control-label" })
                                         </div>
                                         <div class="col-xs-12">
                                             @{
-                                                css = Model.salesman_poco.lastname == "" ? " realred_bdr" : "";
+                                                css = Model.salesman_dto.lastname == "" ? " realred_bdr" : "";
                                             }
-                                            @Html.EditorFor(model => model.salesman_poco.lastname, new { htmlAttributes = new { @class = "adm_input_lastname form-control darkgrey_bdr adm_control" + css } })
-                                            @Html.ValidationMessageFor(model => model.salesman_poco.lastname, "", new { @class = "text-danger" })
+                                            @Html.EditorFor(model => model.salesman_dto.lastname, new { htmlAttributes = new { @class = "adm_input_lastname form-control darkgrey_bdr adm_control" + css } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.lastname, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="col-xs-12">
-                                            @Html.LabelFor(model => model.salesman_poco.phonenumber, htmlAttributes: new { @class = "control-label" })
+                                            @Html.LabelFor(model => model.salesman_dto.phonenumber, htmlAttributes: new { @class = "control-label" })
                                         </div>
                                         <div class="col-xs-8">
                                             @{
-                                                css = Model.salesman_poco.phonenumber == null ? " realred_bdr" : "";
+                                                css = Model.salesman_dto.phonenumber == null ? " realred_bdr" : "";
                                             }
-                                            @Html.EditorFor(model => model.salesman_poco.phonenumber, new { htmlAttributes = new { @class = "adm_input_phone form-control darkgrey_bdr adm_control" + css } })
-                                            @Html.ValidationMessageFor(model => model.salesman_poco.phonenumber, "", new { @class = "text-danger" })
+                                            @Html.EditorFor(model => model.salesman_dto.phonenumber, new { htmlAttributes = new { @class = "adm_input_phone form-control darkgrey_bdr adm_control" + css } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.phonenumber, "", new { @class = "text-danger" })
                                         </div>
                                         <div class="col-xs-4" style="padding-top:5px; height:30px;">
                                             <table>
                                                 <tr>
                                                     <td valign="top">
-                                                        @Html.CheckBoxFor(model => model.salesman_poco.show_phone, new { @class = "adm_input_show_phone darkgrey_bdr" })
+                                                        @Html.CheckBoxFor(model => model.salesman_dto.show_phone, new { @class = "adm_input_show_phone darkgrey_bdr" })
                                                     </td>
                                                     <td>
                                                         Vis.
@@ -470,16 +472,16 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="col-xs-8">
-                                            @Html.LabelFor(model => model.salesman_poco.email, htmlAttributes: new { @class = "control-label" })
+                                            @Html.LabelFor(model => model.salesman_dto.email, htmlAttributes: new { @class = "control-label" })
                                             @{
-                                                css = Model.salesman_poco.email == "" ? " realred_bdr" : "";
+                                                css = Model.salesman_dto.email == "" ? " realred_bdr" : "";
                                             }
                                         </div>
                                         <div class="col-xs-4" style="padding-top:5px; height:30px;">
                                             <table>
                                                 <tr>
                                                     <td valign="top">
-                                                        @Html.CheckBoxFor(model => model.salesman_poco.request_email, new { @class = "adm_input_request_email black_bdr" })
+                                                        @Html.CheckBoxFor(model => model.salesman_dto.request_email, new { @class = "adm_input_request_email black_bdr" })
                                                     </td>
                                                     <td>
                                                         Tillad.
@@ -488,14 +490,14 @@
                                             </table>
                                         </div>
                                         <div class="col-xs-8">
-                                            @Html.DisplayFor(model => model.salesman_poco.email, new { htmlAttributes = new { @class = "adm_input_email form-control adm_control darkgrey_bdr " + css } })
-                                            @Html.ValidationMessageFor(model => model.salesman_poco.email, "", new { @class = "text-danger" })
+                                            @Html.DisplayFor(model => model.salesman_dto.email, new { htmlAttributes = new { @class = "adm_input_email form-control adm_control darkgrey_bdr " + css } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.email, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                 </div>
 
                                 string tplaceholder_desk = "";
-                                if (string.IsNullOrEmpty(Model.salesman_poco.description))
+                                if (string.IsNullOrEmpty(Model.salesman_dto.description))
                                 {
                                     tplaceholder_desk = Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
                                 }
@@ -504,12 +506,12 @@
                                 <div class="col-xs-4 form-horizontal adm_div_group3">
                                     <div class="form-group">
                                         <div class="col-xs-12">
-                                            @Html.LabelFor(model => model.salesman_poco.description, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                            @Html.LabelFor(model => model.salesman_dto.description, htmlAttributes: new { @class = "control-label xcol-xs-2" })
                                             <span class="desc_msg"></span>
                                         </div>
                                         <div class="col-xs-12">
-                                            @Html.TextAreaFor(model => Model.salesman_poco.description, new { @placeholder = @tplaceholder_desk, @class = "adm_input_description form-control adm_control darkgrey_bdr", rows = "16" })
-                                            @Html.ValidationMessageFor(model => model.salesman_poco.description, "", new { @class = "text-danger" })
+                                            @Html.TextAreaFor(model => Model.salesman_dto.description, new { @placeholder = @tplaceholder_desk, @class = "adm_input_description form-control adm_control darkgrey_bdr", rows = "16" })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.description, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                 </div>
@@ -525,7 +527,7 @@
                             @Html.Partial("~/Views/Partials/_Profile_Following.cshtml", @Model)
                         </div>
                         <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="feedback">
-                            @Html.Partial("~/Views/Partials/_Profile_Feedback.cshtml", new dto_email())
+                            @Html.Partial("~/Views/Partials/_Profile_Feedback.cshtml", new col_email())
                         </div>
                     </div>
                 }
@@ -536,27 +538,27 @@
                     <table class="table">
                         <tr class="adm_th_products" style="background-color: #FFFFFF;">
                             <th style="width:10%;" class="adm_th_booths_image">
-                                @Html.DisplayNameFor(model => model.booth_pocos.FirstOrDefault().frontimage)
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().frontimage)
                             </th>
                             <th style="width:15%;" class="adm_th_booths_name">
-                                @Html.DisplayNameFor(model => model.booth_pocos.FirstOrDefault().name)
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().name)
                             </th>
                             <th style="width:15%;" class="adm_th_booths_createdon">
-                                @Html.DisplayNameFor(model => model.booth_pocos.FirstOrDefault().created_on)
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().created_on)
                             </th>
                             <th style="width:50%;" class="adm_th_booths_description">
-                                @Html.DisplayNameFor(model => model.booth_pocos.FirstOrDefault().description)
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().description)
                             </th>
                             <th style="width:10%;"></th>
                         </tr>
-                        @foreach (var item in Model.booth_pocos)
+                        @foreach (var item in Model.booth_dtos)
                         {
                             <tr>
                                 <td class="adm_td_booths_image">
                                     @if (!string.IsNullOrEmpty(item.frontimage))
                                     {
-                                        string thumb = "/_content/images/profiles/" + Model.salesman_poco.sysname + "/booths/" + item.sysname + "/t_" + item.frontimage;
-                                        string path = "/_content/images/profiles/" + Model.salesman_poco.sysname + "/booths/" + item.sysname + "/" + item.frontimage;
+                                        string thumb = "/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + item.sysname + "/t_" + item.frontimage;
+                                        string path = "/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + item.sysname + "/" + item.frontimage;
                                         @*@Html.ActionImage("EditBooth", "Administration", new { booth_id = item.booth_id }, path, "Sample Image", new string[] { "adm_img_booths_boothimage" })*@
                                         <a href="@Url.RouteUrl("EditBooth1", new { booth_id=@item.booth_id})">
                                             <img alt="Sample Image" class="adm_img_booths_boothimage loadlater" src="@thumb" data-src="@path">
@@ -661,23 +663,24 @@
                 </div>
                 @{
                     bool mviewed = true;
-                    foreach (poco_conversation conn in Model.conversations_dto.booths)
+                    biz_conversation biz3 = new biz_conversation();
+                    foreach (dto_conversation conn in Model.conversations_dto.booths)
                     {
-                        if (!conn.Viewed(true))
+                        if (!biz3.Viewed(conn, true))
                         {
                             mviewed = false;
                         }
                     }
-                    foreach (poco_conversation conn in Model.conversations_dto.items)
+                    foreach (dto_conversation conn in Model.conversations_dto.items)
                     {
-                        if (!conn.Viewed(true))
+                        if (!biz.Viewed(conn, true))
                         {
                             mviewed = false;
                         }
                     }
-                    foreach (poco_conversation conn in Model.conversations_dto.own)
+                    foreach (dto_conversation conn in Model.conversations_dto.own)
                     {
-                        if (!conn.Viewed(false))
+                        if (!biz.Viewed(conn, false))
                         {
                             mviewed = false;
                         }
@@ -701,22 +704,22 @@
                             {
                                 @Html.AntiForgeryToken()
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                                @Html.HiddenFor(model => model.salesman_poco.person_id, new { @class = "adm_hidden_profileid" });
-                                @Html.HiddenFor(model => model.salesman_poco.profileimage, new { @class = "adm_hidden_profileimage" });
-                                @Html.HiddenFor(model => model.salesman_poco.sysname);
-                                @Html.HiddenFor(model => model.salesman_poco.email);
+                                @Html.HiddenFor(model => model.salesman_dto.person_id, new { @class = "adm_hidden_profileid" });
+                                @Html.HiddenFor(model => model.salesman_dto.profileimage, new { @class = "adm_hidden_profileimage" });
+                                @Html.HiddenFor(model => model.salesman_dto.sysname);
+                                @Html.HiddenFor(model => model.salesman_dto.email);
                                 <div class="col-sm-4 form-horizontal">
                                     <div class="form-group">
                                         <div class="col-sm-12">
-                                            @Html.LabelFor(model => model.salesman_poco.profileimage, htmlAttributes: new { @class = "control-label" })
+                                            @Html.LabelFor(model => model.salesman_dto.profileimage, htmlAttributes: new { @class = "control-label" })
                                         </div>
                                         <div class="col-sm-12">
                                             <div class="container_overlay">
-                                                @if (!string.IsNullOrEmpty(Model.salesman_poco.profileimage))
+                                                @if (!string.IsNullOrEmpty(Model.salesman_dto.profileimage))
                                                 {
-                                                    var image_path = "/_content/images/profiles/" + Model.salesman_poco.sysname + "/profile/" + Model.salesman_poco.profileimage;
+                                                    var image_path = "/_content/images/profiles/" + Model.salesman_dto.sysname + "/profile/" + Model.salesman_dto.profileimage;
                                                     <img class="adm_img_profileimage" src="@image_path" style="background-color:#EEEEEE" alt="Sample Image" />
-                                                    <input type="hidden" class="adm_hidden_images_imagename" value="@Model.salesman_poco.profileimage">
+                                                    <input type="hidden" class="adm_hidden_images_imagename" value="@Model.salesman_dto.profileimage">
                                                     <div class="overlay">
                                                         <a href="#" class="icon" title="User Profile">
                                                             <i class="fa fa-window-close fa-2x myfade" onclick="removeImage();"></i>
@@ -741,45 +744,45 @@
                                 <div class="col-sm-4 form-horizontal">
                                     <div class="form-group">
                                         <div class="col-sm-12">
-                                            @Html.LabelFor(model => model.salesman_poco.firstname, htmlAttributes: new { @class = "control-label" })
+                                            @Html.LabelFor(model => model.salesman_dto.firstname, htmlAttributes: new { @class = "control-label" })
                                         </div>
                                         <div class="col-sm-12">
                                             @{
-                                                string css = Model.salesman_poco.firstname == "" ? " realred_bdr" : "";
+                                                string css = Model.salesman_dto.firstname == "" ? " realred_bdr" : "";
                                                 string placeholder = "..hvis ikke udfyldt, vil email blive brugt på siden";
                                             }
-                                            @Html.EditorFor(model => model.salesman_poco.firstname, new { htmlAttributes = new { @class = "adm_input_firstname form-control darkgrey_bdr adm_control" + css, placeholder = placeholder } })
-                                            @Html.ValidationMessageFor(model => model.salesman_poco.firstname, "", new { @class = "text-danger" })
+                                            @Html.EditorFor(model => model.salesman_dto.firstname, new { htmlAttributes = new { @class = "adm_input_firstname form-control darkgrey_bdr adm_control" + css, placeholder = placeholder } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.firstname, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="col-sm-12">
-                                            @Html.LabelFor(model => model.salesman_poco.lastname, htmlAttributes: new { @class = "control-label" })
+                                            @Html.LabelFor(model => model.salesman_dto.lastname, htmlAttributes: new { @class = "control-label" })
                                         </div>
                                         <div class="col-sm-12">
                                             @{
-                                                css = Model.salesman_poco.lastname == "" ? " realred_bdr" : "";
+                                                css = Model.salesman_dto.lastname == "" ? " realred_bdr" : "";
                                             }
-                                            @Html.EditorFor(model => model.salesman_poco.lastname, new { htmlAttributes = new { @class = "adm_input_lastname form-control darkgrey_bdr adm_control" + css } })
-                                            @Html.ValidationMessageFor(model => model.salesman_poco.lastname, "", new { @class = "text-danger" })
+                                            @Html.EditorFor(model => model.salesman_dto.lastname, new { htmlAttributes = new { @class = "adm_input_lastname form-control darkgrey_bdr adm_control" + css } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.lastname, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="col-sm-12">
-                                            @Html.LabelFor(model => model.salesman_poco.phonenumber, htmlAttributes: new { @class = "control-label" })
+                                            @Html.LabelFor(model => model.salesman_dto.phonenumber, htmlAttributes: new { @class = "control-label" })
                                         </div>
                                         <div class="col-sm-8">
                                             @{
-                                                css = Model.salesman_poco.phonenumber == null ? " realred_bdr" : "";
+                                                css = Model.salesman_dto.phonenumber == null ? " realred_bdr" : "";
                                             }
-                                            @Html.EditorFor(model => model.salesman_poco.phonenumber, new { htmlAttributes = new { @class = "adm_input_phone form-control darkgrey_bdr adm_control" + css } })
-                                            @Html.ValidationMessageFor(model => model.salesman_poco.phonenumber, "", new { @class = "text-danger" })
+                                            @Html.EditorFor(model => model.salesman_dto.phonenumber, new { htmlAttributes = new { @class = "adm_input_phone form-control darkgrey_bdr adm_control" + css } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.phonenumber, "", new { @class = "text-danger" })
                                         </div>
                                         <div class="col-sm-4" style="padding-top:5px; height:30px;">
                                             <table>
                                                 <tr>
                                                     <td valign="top">
-                                                        @Html.CheckBoxFor(model => model.salesman_poco.show_phone, new { @class = "adm_input_show_phone darkgrey_bdr" })
+                                                        @Html.CheckBoxFor(model => model.salesman_dto.show_phone, new { @class = "adm_input_show_phone darkgrey_bdr" })
                                                     </td>
                                                     <td>
                                                         Vis fuld Nr.
@@ -790,16 +793,16 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="col-sm-8">
-                                            @Html.LabelFor(model => model.salesman_poco.email, htmlAttributes: new { @class = "control-label" })
+                                            @Html.LabelFor(model => model.salesman_dto.email, htmlAttributes: new { @class = "control-label" })
                                             @{
-                                                css = Model.salesman_poco.email == "" ? " realred_bdr" : "";
+                                                css = Model.salesman_dto.email == "" ? " realred_bdr" : "";
                                             }
                                         </div>
                                         <div class="col-sm-4" style="padding-top:5px; height:30px;">
                                             <table>
                                                 <tr>
                                                     <td valign="top">
-                                                        @Html.CheckBoxFor(model => model.salesman_poco.request_email, new { @class = "adm_input_request_email black_bdr" })
+                                                        @Html.CheckBoxFor(model => model.salesman_dto.request_email, new { @class = "adm_input_request_email black_bdr" })
                                                     </td>
                                                     <td>
                                                         Tillad E-mail.
@@ -808,25 +811,25 @@
                                             </table>
                                         </div>
                                         <div class="col-sm-8">
-                                            @Html.DisplayFor(model => model.salesman_poco.email, new { htmlAttributes = new { @class = "adm_input_email form-control adm_control darkgrey_bdr " + css } })
-                                            @Html.ValidationMessageFor(model => model.salesman_poco.email, "", new { @class = "text-danger" })
+                                            @Html.DisplayFor(model => model.salesman_dto.email, new { htmlAttributes = new { @class = "adm_input_email form-control adm_control darkgrey_bdr " + css } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.email, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                 </div>
                                 string mplaceholder_desk = "";
-                                if (string.IsNullOrEmpty(Model.salesman_poco.description))
+                                if (string.IsNullOrEmpty(Model.salesman_dto.description))
                                 {
                                     mplaceholder_desk = Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
                                 }
                                 <div class="col-sm-4 form-horizontal adm_div_group3">
                                     <div class="form-group">
                                         <div class="col-sm-12">
-                                            @Html.LabelFor(model => model.salesman_poco.description, htmlAttributes: new { @class = "control-label xcol-sm-2" })
+                                            @Html.LabelFor(model => model.salesman_dto.description, htmlAttributes: new { @class = "control-label xcol-sm-2" })
                                             <span class="desc_msg"></span>
                                         </div>
                                         <div class="col-sm-12">
-                                            @Html.TextAreaFor(model => Model.salesman_poco.description, new { placeholder = mplaceholder_desk, @class = "adm_input_description form-control adm_control darkgrey_bdr", rows = "16" })
-                                            @Html.ValidationMessageFor(model => model.salesman_poco.description, "", new { @class = "text-danger" })
+                                            @Html.TextAreaFor(model => Model.salesman_dto.description, new { placeholder = mplaceholder_desk, @class = "adm_input_description form-control adm_control darkgrey_bdr", rows = "16" })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.description, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                 </div>
@@ -842,7 +845,7 @@
                             @Html.Partial("~/Views/Partials/_Profile_Following.cshtml", @Model)
                         </div>
                         <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="feedback">
-                            @Html.Partial("~/Views/Partials/_Profile_Feedback.cshtml", new dto_email())
+                            @Html.Partial("~/Views/Partials/_Profile_Feedback.cshtml", new col_email())
                         </div>
                     </div>
                 }
@@ -853,27 +856,27 @@
                     <table class="table">
                         <tr class="adm_th_products" style="background-color: #FFFFFF;">
                             <th style="width:10%;" class="adm_th_booths_image">
-                                @Html.DisplayNameFor(model => model.booth_pocos.FirstOrDefault().frontimage)
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().frontimage)
                             </th>
                             <th style="width:15%;" class="adm_th_booths_name">
-                                @Html.DisplayNameFor(model => model.booth_pocos.FirstOrDefault().name)
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().name)
                             </th>
                             <th style="width:15%;" class="adm_th_booths_createdon">
-                                @Html.DisplayNameFor(model => model.booth_pocos.FirstOrDefault().created_on)
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().created_on)
                             </th>
                             <th style="width:50%;" class="adm_th_booths_description">
-                                @Html.DisplayNameFor(model => model.booth_pocos.FirstOrDefault().description)
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().description)
                             </th>
                             <th style="width:10%;"></th>
                         </tr>
-                        @foreach (var item in Model.booth_pocos)
+                        @foreach (var item in Model.booth_dtos)
                         {
                             <tr>
                                 <td class="adm_td_booths_image">
                                     @if (!string.IsNullOrEmpty(item.frontimage))
                                     {
-                                        string thumb = "/_content/images/profiles/" + Model.salesman_poco.sysname + "/booths/" + item.sysname + "/t_" + item.frontimage;
-                                        string path = "/_content/images/profiles/" + Model.salesman_poco.sysname + "/booths/" + item.sysname + "/" + item.frontimage;
+                                        string thumb = "/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + item.sysname + "/t_" + item.frontimage;
+                                        string path = "/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + item.sysname + "/" + item.frontimage;
                                         @*@Html.ActionImage("EditBooth", "Administration", new { booth_id = item.booth_id }, path, "Sample Image", new string[] { "adm_img_booths_boothimage" })*@
                                         <a href="@Url.RouteUrl("EditBooth1", new { booth_id=@item.booth_id})">
                                             <img alt="Sample Image" class="adm_img_booths_boothimage loadlater" src="@thumb" data-src="@path">

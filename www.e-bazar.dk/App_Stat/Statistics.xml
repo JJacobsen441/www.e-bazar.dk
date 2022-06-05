@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <maxuserspermonth count="1" date="01-04-2022" />
-  <userspermonth count="0" date="04-2022" />
-  <usersperday count="13" date="09-04-2022" />
+  <maxuserspermonth count="1" date="02-06-2022" />
+  <userspermonth count="0" date="06-2022" />
+  <usersperday count="13" date="05-06-2022" />
 </root>

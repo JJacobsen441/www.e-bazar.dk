@@ -1,4 +1,4 @@
-﻿@model www.e_bazar.dk.Models.DTOs.poco_booth
+﻿@model www.e_bazar.dk.Models.DTOs.dto_booth
 @{
     string s = ViewContext.Controller.ViewBag.Search as string;
     string c = ViewContext.Controller.ViewBag.Cat as string;
@@ -12,8 +12,8 @@
         <div class="col-xs-12 z-padding-sides-0 l-mp-newest4">
 
             @{
-                var dthumb_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_poco.sysname + "/booths/" + Model.sysname + "/t_" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
-                var dimage_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_poco.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+                var dthumb_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/t_" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+                var dimage_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
 
                 string[] dclasses = { "l-mp-newest5", "", "myfade", "loadlater" };
 
@@ -48,8 +48,8 @@
         <div class="col-xs-12 z-padding-sides-0 l-mp-newest4">
 
             @{
-                var tthumb_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_poco.sysname + "/booths/" + Model.sysname + "/t_" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
-                var timage_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_poco.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+                var tthumb_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/t_" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+                var timage_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
 
                 string[] tclasses = { "l-mp-newest5", "", "myfade", "loadlater" };
 
@@ -88,8 +88,8 @@
         <div class="col-xs-12 z-padding-sides-0 l-mp-newest4">
 
             @{
-                var mthumb_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_poco.sysname + "/booths/" + Model.sysname + "/t_" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
-                var mimage_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_poco.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+                var mthumb_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/t_" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+                var mimage_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
 
                 string[] mclasses = { "l-mp-newest5", "", "myfade", "loadlater" };
 

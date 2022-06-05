@@ -37,12 +37,14 @@ namespace www.e_bazar.dk.Extensions
 
                 return ip == set_ip;
             }
+
             public static bool IsPhonenumber(int? nr)
             {
                 if (nr != null && nr > 0 && nr <= 99999999 && nr.ToString().Count() == 8)
                     return true;
                 return false;
             }
+
             public static bool IsPhonenumber(string nr)
             {
                 int n;
@@ -96,6 +98,7 @@ namespace www.e_bazar.dk.Extensions
 
             //    //return ok;
             //}
+
             public static bool IsAmount(ref string str)
             {
                 int tmp;
@@ -108,6 +111,7 @@ namespace www.e_bazar.dk.Extensions
                 return false;
             }
         }
+
         public static string ProductPrice(string str, ref Dictionary<string, ERROR_MESSAGE> err)
         {
             str = str.Replace(".", ",");
@@ -122,6 +126,7 @@ namespace www.e_bazar.dk.Extensions
             err["PRODUCT_PRICE"] = ERROR_MESSAGE.PRODUCT_PRICE;
             return NOP.INGEN_PRIS.ToString();
         }
+
         public static string ProductCategory(string str, ref Dictionary<string, ERROR_MESSAGE> err)
         {
             if (str != "-1")
@@ -133,6 +138,7 @@ namespace www.e_bazar.dk.Extensions
             err["PRODUCT_CATEGORY"] = ERROR_MESSAGE.PRODUCT_CATEGORY;
             return Texts.GetNopValue(NOP.UDFYLD.ToString());
         }
+
         public static string ProductName(string str, ref Dictionary<string, ERROR_MESSAGE> err)
         {
             if (!string.IsNullOrEmpty(str) && str != Texts.GetNopValue(NOP.UDFYLD.ToString()))
@@ -146,6 +152,7 @@ namespace www.e_bazar.dk.Extensions
             err["PRODUCT_NAME"] = ERROR_MESSAGE.PRODUCT_NAME;
             return Texts.GetNopValue(NOP.UDFYLD.ToString());
         }
+
         public static string ProductNote(string str, ref Dictionary<string, ERROR_MESSAGE> err)
         {
             if (!string.IsNullOrEmpty(str))
@@ -157,6 +164,7 @@ namespace www.e_bazar.dk.Extensions
             err["PRODUCT_NOTE"] = ERROR_MESSAGE.OK;
             return "";
         }
+
         public static string ProductDescription(string str, ref Dictionary<string, ERROR_MESSAGE> err)
         {
             if (!string.IsNullOrEmpty(str))
@@ -185,7 +193,7 @@ namespace www.e_bazar.dk.Extensions
             return 0;//dette er jo heller ikke rigtigt
         }
 
-        //public static bool CreateProduct(poco_product product_poco, ref Dictionary<string, ERROR_MESSAGE> err)
+        //public static bool CreateProduct(biz_product product_poco, ref Dictionary<string, ERROR_MESSAGE> err)
         //{
         //    if (product_poco.booth_poco.category_main == null || product_poco.booth_poco.category_main.Count <= 0)
         //    {
@@ -210,6 +218,7 @@ namespace www.e_bazar.dk.Extensions
             err["COLLECTION_PRICE"] = ERROR_MESSAGE.COLLECTION_PRICE;
             return NOP.INGEN_PRIS.ToString();
         }
+
         public static string CollectionCategory(string str, ref Dictionary<string, ERROR_MESSAGE> err)
         {
             if (str != "-1")
@@ -235,6 +244,7 @@ namespace www.e_bazar.dk.Extensions
             err["COLLECTION_NAME"] = ERROR_MESSAGE.COLLECTION_NAME;
             return Texts.GetNopValue(NOP.UDFYLD.ToString());
         }
+
         public static string CollectionNote(string str, ref Dictionary<string, ERROR_MESSAGE> err)
         {
             if (!string.IsNullOrEmpty(str))
@@ -246,6 +256,7 @@ namespace www.e_bazar.dk.Extensions
             err["COLLECTION_NOTE"] = ERROR_MESSAGE.OK;
             return "";
         }
+
         public static string CollectionDescription(string str, ref Dictionary<string, ERROR_MESSAGE> err)
         {
             if (!string.IsNullOrEmpty(str))
@@ -260,7 +271,8 @@ namespace www.e_bazar.dk.Extensions
             err["COLLECTION_DESCRIPTION"] = ERROR_MESSAGE.OK;
             return "";
         }
-        //public static bool CreateCollection(poco_collection collection_poco, ref Dictionary<string, ERROR_MESSAGE> err)
+
+        //public static bool CreateCollection(biz_collection collection_poco, ref Dictionary<string, ERROR_MESSAGE> err)
         //{
         //    if (collection_poco.booth_poco.category_main == null || collection_poco.booth_poco.category_main.Count <= 0)
         //    {
@@ -270,6 +282,7 @@ namespace www.e_bazar.dk.Extensions
         //    err["BOOTH_TAGS"] = ERROR_MESSAGE.OK;
         //    return true;
         //}
+
         public static string BoothName(string str, ref Dictionary<string, ERROR_MESSAGE> err)
         {
             if (!string.IsNullOrEmpty(str) && str != Texts.GetNopValue(NOP.UDFYLD.ToString()))
@@ -283,6 +296,7 @@ namespace www.e_bazar.dk.Extensions
             err["BOOTH_NAME"] = ERROR_MESSAGE.BOOTH_NAME;
             return Texts.GetNopValue(NOP.UDFYLD.ToString());
         }
+
         public static string BoothDescription(string str, ref Dictionary<string, ERROR_MESSAGE> err)
         {
             if (!string.IsNullOrEmpty(str))
@@ -311,6 +325,7 @@ namespace www.e_bazar.dk.Extensions
             err["PROFILE_FIRSTNAME"] = ERROR_MESSAGE.PROFILE_FIRSTNAME;
             return "";
         }
+
         public static string ProfileLastname(string str, ref Dictionary<string, ERROR_MESSAGE> err)
         {
             str = string.IsNullOrEmpty(str) ? "********" : str;
@@ -325,6 +340,7 @@ namespace www.e_bazar.dk.Extensions
             err["PROFILE_LASTNAME"] = ERROR_MESSAGE.PROFILE_LASTNAME;
             return "";
         }
+
         public static int? ProfilePhonenumber(int? nr, ref Dictionary<string, ERROR_MESSAGE> err)
         {
             if (nr != null && !string.IsNullOrEmpty(nr.ToString()) && nr.ToString().Count() == 8)
@@ -335,6 +351,7 @@ namespace www.e_bazar.dk.Extensions
             err["PROFILE_PHONENUMBER"] = ERROR_MESSAGE.PROFILE_PHONENUMBER;
             return null;
         }
+
         public static string ProfileEmail(string str, ref Dictionary<string, ERROR_MESSAGE> err)
         {
             if (!string.IsNullOrEmpty(str) && str != Texts.GetNopValue(NOP.UDFYLD.ToString()) && CheckHelper.Generel.IsValidEmail(str))
@@ -346,6 +363,7 @@ namespace www.e_bazar.dk.Extensions
             err["PROFILE_EMAIL"] = ERROR_MESSAGE.PROFILE_EMAIL;
             return "";
         }
+
         public static string ProfileDescription(string str)
         {
             if (!string.IsNullOrEmpty(str))
@@ -358,14 +376,15 @@ namespace www.e_bazar.dk.Extensions
             }
             return "";
         }
-        public static bool PartAddress(poco_booth model, ref Dictionary<string, ERROR_MESSAGE> err)
+
+        public static bool PartAddress(dto_booth model, ref Dictionary<string, ERROR_MESSAGE> err)
         {
             //model.street_address = !string.IsNullOrEmpty(model.street_address) ? StringHelper.OnlyAlphanumeric(model.street_address, true, out ok) : "";
-            model.region_poco.town = model.region_poco.town;
-            model.region_poco.zip = model.region_poco.zip;
+            model.region_dto.town = model.region_dto.town;
+            model.region_dto.zip = model.region_dto.zip;
             //model.country = !string.IsNullOrEmpty(model.country) ? StringHelper.OnlyAlphanumeric(model.country, true) : "";
 
-            if (!string.IsNullOrEmpty(model.region_poco.town) && model.region_poco.town != "(Ikke angivet.)" && model.region_poco.zip > 0 && model.region_poco.zip.ToString().Length == 4)
+            if (!string.IsNullOrEmpty(model.region_dto.town) && model.region_dto.town != "(Ikke angivet.)" && model.region_dto.zip > 0 && model.region_dto.zip.ToString().Length == 4)
             {
                 err["BOOTH_ADDRESSPART"] = ERROR_MESSAGE.OK;
                 return true;
@@ -374,14 +393,15 @@ namespace www.e_bazar.dk.Extensions
                 err["BOOTH_ADDRESSPART"] = ERROR_MESSAGE.BOOTH_ADDRESSPART;
             return false;
         }
-        public static bool FullAddress(poco_booth model, ref Dictionary<string, ERROR_MESSAGE> err)
+
+        public static bool FullAddress(dto_booth model, ref Dictionary<string, ERROR_MESSAGE> err)
         {
             bool ok;
             model.street_address = StringHelper.OnlyAlphanumeric(model.street_address, false, true, "notag", CharacterHelper.Address(), out ok);
             //model.street_address = StringHelper.RemoveStrings(model.street_address, new string[] { "select ", "delete ", "update ", "alter ", "drop ", " from ", "SELECT ", "DELETE ", "UPDATE ", "ALTER ", "DROP ", " FROM " });
 
-            string town = model.region_poco.town;
-            int zip = model.region_poco.zip;
+            string town = model.region_dto.town;
+            int zip = model.region_dto.zip;
             model.country = StringHelper.OnlyAlphanumeric(model.country, false, true, "notag", CharacterHelper.Country(), out ok);
 
             //if(!model.fulladdress)
@@ -397,7 +417,8 @@ namespace www.e_bazar.dk.Extensions
                 err["BOOTH_ADDRESSFULL"] = ERROR_MESSAGE.BOOTH_ADDRESSFULL;
             return false;
         }
-        /*public static bool Tags(poco_booth model, ref Dictionary<string, ERROR_MESSAGE> err)
+
+        /*public static bool Tags(biz_booth model, ref Dictionary<string, ERROR_MESSAGE> err)
         {
             bool ok;
             if (model.booth_id == 0 || (model.tag_pocos != null && model.tag_pocos.Count > 0))
@@ -409,6 +430,7 @@ namespace www.e_bazar.dk.Extensions
                 err["BOOTH_TAGS"] = ERROR_MESSAGE.BOOTH_TAGS;
             return false;
         }*/
+
         public static void Register(bool success, ref Dictionary<string, SYSTEM_MESSAGE> err)
         {
             bool ok;
@@ -417,6 +439,7 @@ namespace www.e_bazar.dk.Extensions
             else
                 err["REGISTER"] = SYSTEM_MESSAGE.NO_MESSAGE;
         }
+
         public static void CookieLogin(bool success, ref Dictionary<string, SYSTEM_MESSAGE> err)
         {
             bool ok;
@@ -425,6 +448,7 @@ namespace www.e_bazar.dk.Extensions
             else
                 err["COOKIE"] = SYSTEM_MESSAGE.COOKIE;
         }
+
         public static void CreateLevel(bool success, ref Dictionary<string, SYSTEM_MESSAGE> err)
         {
             bool ok;
@@ -433,7 +457,8 @@ namespace www.e_bazar.dk.Extensions
             else
                 err["CREATELEVEL"] = SYSTEM_MESSAGE.NO_MESSAGE;
         }
-        public static void CheckFeedback(dto_email mail, ref Dictionary<string, SYSTEM_MESSAGE> err)
+
+        public static void CheckFeedback(col_email mail, ref Dictionary<string, SYSTEM_MESSAGE> err)
         {
             bool ok;
             if (string.IsNullOrEmpty(mail.Subject) || string.IsNullOrEmpty(mail.Message))
@@ -441,6 +466,7 @@ namespace www.e_bazar.dk.Extensions
             else
                 err["FEEDBACK"] = SYSTEM_MESSAGE.NO_MESSAGE;
         }
+
         /*public static bool FullAddress(poco_address address_poco, ref Dictionary<string, ERROR_MESSAGE> err)
         {
             if ((string.IsNullOrEmpty(address_poco.street_address) || address_poco.street_address == "(Ikke angivet.)") ||
@@ -454,6 +480,7 @@ namespace www.e_bazar.dk.Extensions
             err["BOOTH_ADDRESSFULL"] = ERROR_MESSAGE.OK;
             return true;
         }*/
+
         public static class ErrorProduct
         {
             public static bool HasError(Dictionary<string, ERROR_MESSAGE> errors)
@@ -497,6 +524,7 @@ namespace www.e_bazar.dk.Extensions
                 return true;
             }
         }
+
         public static class ErrorSalesmanProfile
         {
             public static bool HasError(Dictionary<string, ERROR_MESSAGE> errors)
@@ -510,6 +538,7 @@ namespace www.e_bazar.dk.Extensions
 
             }
         }
+
         public static class ErrorCustomerProfile
         {
             public static bool HasError(Dictionary<string, ERROR_MESSAGE> errors)
@@ -523,6 +552,5 @@ namespace www.e_bazar.dk.Extensions
 
             }
         }
-
     }
 }

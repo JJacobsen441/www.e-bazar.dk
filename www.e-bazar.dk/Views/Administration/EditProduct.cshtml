@@ -1,4 +1,4 @@
-﻿@model www.e_bazar.dk.Models.DTOs.poco_product
+﻿@model www.e_bazar.dk.Models.DTOs.dto_product
 
 @{
     ViewBag.Title = "Administrer Vare";
@@ -11,11 +11,11 @@
             <div class="container">
                 <div class="col-xs-6" xstyle="padding-left:0px;">
                     <br />
-                    [@Model.booth_poco.name]
+                    [@Model.booth_dto.name]
                     <h2>Administrer Vare</h2>
                     <br />
                     <input type="button" value="Tilbage til stand" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("EditBooth1", new { booth_id = Model.booth_id })'" />
-                    <input type="button" value="Nyt Produkt" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("CreateProduct", new { booth_id = Model.booth_poco.booth_id })'" />
+                    <input type="button" value="Nyt Produkt" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("CreateProduct", new { booth_id = Model.booth_dto.booth_id })'" />
                     <input type="button" value="Vis vare" class="btn btn-default green_bg lightgreen_bdr white myfade" onclick="location.href='@Url.RouteUrl("Product", new { id = Model.id })'" />
                 </div>
             </div>
@@ -27,9 +27,9 @@
                     }
                     Sidst modificeret: @Html.DisplayFor(m => ddate)
                 </div>
-                @if (Model.image_pocos != null && Model.image_pocos.Count > 0)
+                @if (Model.image_dtos != null && Model.image_dtos.Count > 0)
                 {
-                    <input type="hidden" class="adm_hidden_no_product_dtos" value="@Model.image_pocos.Count" />//måske unødvendig
+                    <input type="hidden" class="adm_hidden_no_product_dtos" value="@Model.image_dtos.Count" />//måske unødvendig
                 }
 
                 @using (Html.BeginRouteForm("EditProduct2", FormMethod.Post, @Model))
@@ -49,7 +49,7 @@
                                     <div class="col-xs-12">
                                         @{
                                             <div class="col-xs-12 z-cursor-pointer z-tooltip8">
-                                                @Html.LabelFor(model => model.image_pocos, htmlAttributes: new { @class = "control-label" })
+                                                @Html.LabelFor(model => model.image_dtos, htmlAttributes: new { @class = "control-label" })
                                                 <span class="z-desc-tooltip8 z-padding-all-15 z-align-left">
                                                     Her er det muligt at uploade billeder.<br />
                                                     *&nbsp;&nbsp;&nbsp;&nbsp;billedet bør repræsentere dit produkt<br />
@@ -64,13 +64,13 @@
 
 
                                             int i = 0;
-                                            if (Model.image_pocos != null && Model.image_pocos.Count > 0 && !string.IsNullOrEmpty(Model.image_pocos.FirstOrDefault().name))
+                                            if (Model.image_dtos != null && Model.image_dtos.Count > 0 && !string.IsNullOrEmpty(Model.image_dtos.FirstOrDefault().name))
                                             {
-                                                foreach (poco_productimage img in Model.image_pocos)
+                                                foreach (dto_image img in Model.image_dtos)
                                                 {
                                                     <div class="container_overlay">
                                                         @{
-                                                            var image_path = "/_content/images/profiles/" + Model.booth_poco.salesman_poco.sysname + "/booths/" + Model.booth_poco.sysname + "/products/" + Model.sysname + "/" + img.name;
+                                                            var image_path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/products/" + Model.sysname + "/" + img.name;
                                                             <input type="hidden" class="adm_hidden_images_imagename_@i" value="@img.name">
                                                             <img class="adm_img_productimage_@i adm_img_productimage" src="@image_path" alt="Sample Image" />
                                                             <div class="overlay">
@@ -94,14 +94,14 @@
                                 <div class="form-group">
                                     <div class="col-xs-12 adm_div_images_thumbnail">
                                         @{
-                                            if (Model.image_pocos != null && Model.image_pocos.Count > 0)
+                                            if (Model.image_dtos != null && Model.image_dtos.Count > 0)
                                             {
                                                 i = 0;
-                                                foreach (poco_productimage img in Model.image_pocos)
+                                                foreach (dto_image img in Model.image_dtos)
                                                 {
                                                     if (img != null)
                                                     {
-                                                        var image_path = "/_content/images/profiles/" + Model.booth_poco.salesman_poco.sysname + "/booths/" + Model.booth_poco.sysname + "/products/" + Model.sysname + "/" + img.name;
+                                                        var image_path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/products/" + Model.sysname + "/" + img.name;
                                                         <a href="#">
                                                             <input type="hidden" class="adm_hidden_images_thumbnail_@i" name="adm_hidden_images_thumbnail_@i" value="@img.name">
                                                             <img src="@image_path" alt="Sample Image" class="adm_img_images_thumbnail_@i mythumbnail" onclick="setFront(@i);">&nbsp;&nbsp;&nbsp;
@@ -128,24 +128,24 @@
                                         string sels = "";
                                         string spans = "<table><tr>";
                                         int counter_span = 0;
-                                        List<poco_params> list = ViewBag.Params as List<poco_params>;
+                                        List<dto_params> list = ViewBag.Params as List<dto_params>;
                                         //list = list.OrderBy(l=>l.type)
-                                        foreach (poco_params par in list)
+                                        foreach (dto_params par in list)
                                         {
                                             if (par.type == "M" || par.type == "MS")
                                             {
                                                 string type = par.type == "MS" ? "ms" : "";
                                                 sels += "<table><tr><td valign=\"top\"><span class=\"bold\" style=\"display: inline-block;width:100px;\">" + par.name.ToUpper() + ":&nbsp;&nbsp;&nbsp;</span></td><td>";
-                                                foreach (poco_value v in par.values_daos)
+                                                foreach (dto_value v in par.values_daos)
                                                 {
                                                     string check = "";
-                                                    if (Model.param_daos != null)
+                                                    if (Model.param_dtos != null)
                                                     {
 
-                                                        poco_params tmp = Model.param_daos.Where(x => x.name == par.name).FirstOrDefault();
+                                                        dto_params tmp = Model.param_dtos.Where(x => x.name == par.name).FirstOrDefault();
                                                         if (tmp != null)
                                                         {
-                                                            foreach (poco_value va in tmp.values_daos)
+                                                            foreach (dto_value va in tmp.values_daos)
                                                             {
                                                                 if (va.Id == v.Id && va.value == v.value)
                                                                 {
@@ -163,9 +163,9 @@
                                             else if (par.type == "S")
                                             {
                                                 string check = "";
-                                                if (Model.param_daos != null)
+                                                if (Model.param_dtos != null)
                                                 {
-                                                    poco_params tmp = Model.param_daos.Where(x => x.name == par.name).FirstOrDefault();
+                                                    dto_params tmp = Model.param_dtos.Where(x => x.name == par.name).FirstOrDefault();
                                                     if (tmp != null)
                                                     {
                                                         check = "checked=\"checked\"";
@@ -307,16 +307,16 @@
                                         <div class="col-xs-12">
                                             <div class="col-xs-12 panel panel-default black_bdr darkgrey_bg">
                                                 <div xclass="col-xs-12">
-                                                    @Html.LabelFor(model => model.tag_pocos_nop, htmlAttributes: new { @class = "control-label xcol-xs-2" })<br class="hide" />
+                                                    @Html.LabelFor(model => model.tag_dtos_nop, htmlAttributes: new { @class = "control-label xcol-xs-2" })<br class="hide" />
                                                     @{
-                                                        if (Model.tag_pocos != null && Model.tag_pocos.Count > 0)
+                                                        if (Model.tag_dtos != null && Model.tag_dtos.Count > 0)
                                                         {
                                                             string msg = "";
                                                             @Html.EditorFor(model => msg, new { htmlAttributes = new { @class = "adm_input_edit_tagname form-control adm_control black_bdr", placeholder = "indtast søgeterm.." } })
                                                             <br />
 
                                                             <span class="adm_span_edit_results">
-                                                                @foreach (poco_tag t in Model.tag_pocos)
+                                                                @foreach (dto_tag t in Model.tag_dtos)
                                                                 {
                                                                     <input type="button" onclick="removeTag('@t.tag_id')" value="@t.name (X)" class="adm_input_tag_@t.tag_id btn btn-default black_bdr" />
                                                                 }
@@ -386,11 +386,11 @@
             <div class="container">
                 <div class="col-xs-6" xstyle="padding-left:0px;">
                     <br />
-                    [@Model.booth_poco.name]
+                    [@Model.booth_dto.name]
                     <h2>Administrer Vare</h2>
                     <br />
                     <input type="button" value="Tilbage til stand" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("EditBooth1", new { booth_id = Model.booth_id })'" />
-                    <input type="button" value="Nyt Produkt" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("CreateProduct", new { booth_id = Model.booth_poco.booth_id })'" />
+                    <input type="button" value="Nyt Produkt" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("CreateProduct", new { booth_id = Model.booth_dto.booth_id })'" />
                     <input type="button" value="Vis vare" class="btn btn-default green_bg lightgreen_bdr white myfade" onclick="location.href='@Url.RouteUrl("Product", new { id = Model.id })'" />
                 </div>
             </div>
@@ -402,9 +402,9 @@
                     }
                     Sidst modificeret: @Html.DisplayFor(m => tdate)
                 </div>
-                @if (Model.image_pocos != null && Model.image_pocos.Count > 0)
+                @if (Model.image_dtos != null && Model.image_dtos.Count > 0)
                 {
-                    <input type="hidden" class="adm_hidden_no_product_dtos" value="@Model.image_pocos.Count" />//måske unødvendig
+                    <input type="hidden" class="adm_hidden_no_product_dtos" value="@Model.image_dtos.Count" />//måske unødvendig
                 }
 
                 @using (Html.BeginRouteForm("EditProduct2", FormMethod.Post, @Model))
@@ -424,7 +424,7 @@
                                     <div class="col-xs-12">
                                         @{
                                             <div class="col-xs-12 z-cursor-pointer z-tooltip8">
-                                                @Html.LabelFor(model => model.image_pocos, htmlAttributes: new { @class = "control-label" })
+                                                @Html.LabelFor(model => model.image_dtos, htmlAttributes: new { @class = "control-label" })
                                                 <span class="z-desc-tooltip8 z-padding-all-15 z-align-left">
                                                     Her er det muligt at uploade billeder.<br />
                                                     *&nbsp;&nbsp;&nbsp;&nbsp;billedet bør repræsentere dit produkt<br />
@@ -440,13 +440,13 @@
 
 
                                             int i = 0;
-                                            if (Model.image_pocos != null && Model.image_pocos.Count > 0 && !string.IsNullOrEmpty(Model.image_pocos.FirstOrDefault().name))
+                                            if (Model.image_dtos != null && Model.image_dtos.Count > 0 && !string.IsNullOrEmpty(Model.image_dtos.FirstOrDefault().name))
                                             {
-                                                foreach (poco_productimage img in Model.image_pocos)
+                                                foreach (dto_image img in Model.image_dtos)
                                                 {
                                                     <div class="container_overlay">
                                                         @{
-                                                            var image_path = "/_content/images/profiles/" + Model.booth_poco.salesman_poco.sysname + "/booths/" + Model.booth_poco.sysname + "/products/" + Model.sysname + "/" + img.name;
+                                                            var image_path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/products/" + Model.sysname + "/" + img.name;
                                                             <input type="hidden" class="adm_hidden_images_imagename_@i" value="@img.name">
                                                             <img class="adm_img_productimage_@i adm_img_productimage" src="@image_path" alt="Sample Image" />
                                                             <div class="overlay">
@@ -470,14 +470,14 @@
                                 <div class="form-group">
                                     <div class="col-xs-12 adm_div_images_thumbnail">
                                         @{
-                                            if (Model.image_pocos != null && Model.image_pocos.Count > 0)
+                                            if (Model.image_dtos != null && Model.image_dtos.Count > 0)
                                             {
                                                 i = 0;
-                                                foreach (poco_productimage img in Model.image_pocos)
+                                                foreach (dto_image img in Model.image_dtos)
                                                 {
                                                     if (img != null)
                                                     {
-                                                        var image_path = "/_content/images/profiles/" + Model.booth_poco.salesman_poco.sysname + "/booths/" + Model.booth_poco.sysname + "/products/" + Model.sysname + "/" + img.name;
+                                                        var image_path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/products/" + Model.sysname + "/" + img.name;
                                                         <a href="#">
                                                             <input type="hidden" class="adm_hidden_images_thumbnail_@i" name="adm_hidden_images_thumbnail_@i" value="@img.name">
                                                             <img src="@image_path" alt="Sample Image" class="adm_img_images_thumbnail_@i mythumbnail" onclick="setFront(@i);">&nbsp;&nbsp;&nbsp;
@@ -504,24 +504,24 @@
                                         string sels = "";
                                         string spans = "<table><tr>";
                                         int counter_span = 0;
-                                        List<poco_params> list = ViewBag.Params as List<poco_params>;
+                                        List<dto_params> list = ViewBag.Params as List<dto_params>;
                                         //list = list.OrderBy(l=>l.type)
-                                        foreach (poco_params par in list)
+                                        foreach (dto_params par in list)
                                         {
                                             if (par.type == "M" || par.type == "MS")
                                             {
                                                 string type = par.type == "MS" ? "ms" : "";
                                                 sels += "<table><tr><td valign=\"top\"><span class=\"bold\" style=\"display: inline-block;width:100px;\">" + par.name.ToUpper() + ":&nbsp;&nbsp;&nbsp;</span></td><td>";
-                                                foreach (poco_value v in par.values_daos)
+                                                foreach (dto_value v in par.values_daos)
                                                 {
                                                     string check = "";
-                                                    if (Model.param_daos != null)
+                                                    if (Model.param_dtos != null)
                                                     {
 
-                                                        poco_params tmp = Model.param_daos.Where(x => x.name == par.name).FirstOrDefault();
+                                                        dto_params tmp = Model.param_dtos.Where(x => x.name == par.name).FirstOrDefault();
                                                         if (tmp != null)
                                                         {
-                                                            foreach (poco_value va in tmp.values_daos)
+                                                            foreach (dto_value va in tmp.values_daos)
                                                             {
                                                                 if (va.Id == v.Id && va.value == v.value)
                                                                 {
@@ -539,9 +539,9 @@
                                             else if (par.type == "S")
                                             {
                                                 string check = "";
-                                                if (Model.param_daos != null)
+                                                if (Model.param_dtos != null)
                                                 {
-                                                    poco_params tmp = Model.param_daos.Where(x => x.name == par.name).FirstOrDefault();
+                                                    dto_params tmp = Model.param_dtos.Where(x => x.name == par.name).FirstOrDefault();
                                                     if (tmp != null)
                                                     {
                                                         check = "checked=\"checked\"";
@@ -682,16 +682,16 @@
                                         <div class="col-xs-12">
                                             <div class="col-xs-12 panel panel-default black_bdr darkgrey_bg">
                                                 <div xclass="col-xs-12">
-                                                    @Html.LabelFor(model => model.tag_pocos_nop, htmlAttributes: new { @class = "control-label xcol-xs-2" })<br class="hide" />
+                                                    @Html.LabelFor(model => model.tag_dtos_nop, htmlAttributes: new { @class = "control-label xcol-xs-2" })<br class="hide" />
                                                     @{
-                                                        if (Model.tag_pocos != null && Model.tag_pocos.Count > 0)
+                                                        if (Model.tag_dtos != null && Model.tag_dtos.Count > 0)
                                                         {
                                                             string msg = "";
                                                             @Html.EditorFor(model => msg, new { htmlAttributes = new { @class = "adm_input_edit_tagname form-control adm_control black_bdr", placeholder = "indtast søgeterm.." } })
                                                             <br />
 
                                                             <span class="adm_span_edit_results">
-                                                                @foreach (poco_tag t in Model.tag_pocos)
+                                                                @foreach (dto_tag t in Model.tag_dtos)
                                                                 {
                                                                     <input type="button" onclick="removeTag('@t.tag_id')" value="@t.name (X)" class="adm_input_tag_@t.tag_id btn btn-default black_bdr" />
                                                                 }
@@ -761,11 +761,11 @@
             <div class="container">
                 <div class="col-xs-6" xstyle="padding-left:0px;">
                     <br />
-                    [@Model.booth_poco.name]
+                    [@Model.booth_dto.name]
                     <h2>Administrer Vare</h2>
                     <br />
                     <input type="button" value="Tilbage til stand" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("EditBooth1", new { booth_id = Model.booth_id })'" />
-                    <input type="button" value="Nyt Produkt" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("CreateProduct", new { booth_id = Model.booth_poco.booth_id })'" />
+                    <input type="button" value="Nyt Produkt" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("CreateProduct", new { booth_id = Model.booth_dto.booth_id })'" />
                     <input type="button" value="Vis vare" class="btn btn-default green_bg lightgreen_bdr white myfade" onclick="location.href='@Url.RouteUrl("Product", new { id = Model.id })'" />
                 </div>
             </div>
@@ -777,9 +777,9 @@
                     }
                     Sidst modificeret: @Html.DisplayFor(m => mdate)
                 </div>
-                @if (Model.image_pocos != null && Model.image_pocos.Count > 0)
+                @if (Model.image_dtos != null && Model.image_dtos.Count > 0)
                 {
-                    <input type="hidden" class="adm_hidden_no_product_dtos" value="@Model.image_pocos.Count" />//måske unødvendig
+                    <input type="hidden" class="adm_hidden_no_product_dtos" value="@Model.image_dtos.Count" />//måske unødvendig
                 }
 
                 @using (Html.BeginRouteForm("EditProduct2", FormMethod.Post, @Model))
@@ -799,16 +799,16 @@
                                     <div class="col-sm-12">
                                         @{
                                             <div>
-                                                @Html.LabelFor(model => model.image_pocos, htmlAttributes: new { @class = "control-label" })
+                                                @Html.LabelFor(model => model.image_dtos, htmlAttributes: new { @class = "control-label" })
                                             </div>
                                             int i = 0;
-                                            if (Model.image_pocos != null && Model.image_pocos.Count > 0 && !string.IsNullOrEmpty(Model.image_pocos.FirstOrDefault().name))
+                                            if (Model.image_dtos != null && Model.image_dtos.Count > 0 && !string.IsNullOrEmpty(Model.image_dtos.FirstOrDefault().name))
                                             {
-                                                foreach (poco_productimage img in Model.image_pocos)
+                                                foreach (dto_image img in Model.image_dtos)
                                                 {
                                                     <div class="container_overlay">
                                                         @{
-                                                            var image_path = "/_content/images/profiles/" + Model.booth_poco.salesman_poco.sysname + "/booths/" + Model.booth_poco.sysname + "/products/" + Model.sysname + "/" + img.name;
+                                                            var image_path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/products/" + Model.sysname + "/" + img.name;
                                                             <input type="hidden" class="adm_hidden_images_imagename_@i" value="@img.name">
                                                             <img class="adm_img_productimage_@i adm_img_productimage" src="@image_path" alt="Sample Image" />
                                                             <div class="overlay">
@@ -832,14 +832,14 @@
                                 <div class="form-group">
                                     <div class="col-sm-12 adm_div_images_thumbnail">
                                         @{
-                                            if (Model.image_pocos != null && Model.image_pocos.Count > 0)
+                                            if (Model.image_dtos != null && Model.image_dtos.Count > 0)
                                             {
                                                 i = 0;
-                                                foreach (poco_productimage img in Model.image_pocos)
+                                                foreach (dto_image img in Model.image_dtos)
                                                 {
                                                     if (img != null)
                                                     {
-                                                        var image_path = "/_content/images/profiles/" + Model.booth_poco.salesman_poco.sysname + "/booths/" + Model.booth_poco.sysname + "/products/" + Model.sysname + "/" + img.name;
+                                                        var image_path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/products/" + Model.sysname + "/" + img.name;
                                                         <a href="#">
                                                             <input type="hidden" class="adm_hidden_images_thumbnail_@i" name="adm_hidden_images_thumbnail_@i" value="@img.name">
                                                             <img src="@image_path" alt="Sample Image" class="adm_img_images_thumbnail_@i mythumbnail" onclick="setFront(@i);">&nbsp;&nbsp;&nbsp;
@@ -891,24 +891,24 @@
                                         string sels = "";
                                         string spans = "<table><tr>";
                                         int counter_span = 0;
-                                        List<poco_params> list = ViewBag.Params as List<poco_params>;
+                                        List<dto_params> list = ViewBag.Params as List<dto_params>;
                                         //list = list.OrderBy(l=>l.type)
-                                        foreach (poco_params par in list)
+                                        foreach (dto_params par in list)
                                         {
                                             if (par.type == "M" || par.type == "MS")
                                             {
                                                 string type = par.type == "MS" ? "ms" : "";
                                                 sels += "<table><tr><td valign=\"top\"><span class=\"bold\" style=\"display: inline-block;width:100px;\">" + par.name.ToUpper() + ":&nbsp;&nbsp;&nbsp;</span></td><td>";
-                                                foreach (poco_value v in par.values_daos)
+                                                foreach (dto_value v in par.values_daos)
                                                 {
                                                     string check = "";
-                                                    if (Model.param_daos != null)
+                                                    if (Model.param_dtos != null)
                                                     {
 
-                                                        poco_params tmp = Model.param_daos.Where(x => x.name == par.name).FirstOrDefault();
+                                                        dto_params tmp = Model.param_dtos.Where(x => x.name == par.name).FirstOrDefault();
                                                         if (tmp != null)
                                                         {
-                                                            foreach (poco_value va in tmp.values_daos)
+                                                            foreach (dto_value va in tmp.values_daos)
                                                             {
                                                                 if (va.Id == v.Id && va.value == v.value)
                                                                 {
@@ -926,9 +926,9 @@
                                             else if (par.type == "S")
                                             {
                                                 string check = "";
-                                                if (Model.param_daos != null)
+                                                if (Model.param_dtos != null)
                                                 {
-                                                    poco_params tmp = Model.param_daos.Where(x => x.name == par.name).FirstOrDefault();
+                                                    dto_params tmp = Model.param_dtos.Where(x => x.name == par.name).FirstOrDefault();
                                                     if (tmp != null)
                                                     {
                                                         check = "checked=\"checked\"";
@@ -1074,16 +1074,16 @@
                                         <div class="col-sm-12">
                                             <div class="col-sm-12 panel panel-default black_bdr darkgrey_bg">
                                                 <div xclass="col-sm-12">
-                                                    @Html.LabelFor(model => model.tag_pocos_nop, htmlAttributes: new { @class = "control-label xcol-sm-2" })<br class="hide" />
+                                                    @Html.LabelFor(model => model.tag_dtos_nop, htmlAttributes: new { @class = "control-label xcol-sm-2" })<br class="hide" />
                                                     @{
-                                                        if (Model.tag_pocos != null && Model.tag_pocos.Count > 0)
+                                                        if (Model.tag_dtos != null && Model.tag_dtos.Count > 0)
                                                         {
                                                             string msg = "";
                                                             @Html.EditorFor(model => msg, new { htmlAttributes = new { @class = "adm_input_edit_tagname form-control adm_control black_bdr", placeholder = "indtast søgeterm.." } })
                                                             <br />
 
                                                             <span class="adm_span_edit_results">
-                                                                @foreach (poco_tag t in Model.tag_pocos)
+                                                                @foreach (dto_tag t in Model.tag_dtos)
                                                                 {
                                                                     <input type="button" onclick="removeTag('@t.tag_id')" value="@t.name (X)" class="adm_input_tag_@t.tag_id btn btn-default black_bdr" />
                                                                 }

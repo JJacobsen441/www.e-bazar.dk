@@ -6,7 +6,7 @@ using www.e_bazar.dk.SharedClasses;
 
 namespace www.e_bazar.dk.Models.DTOs
 {
-    public class poco_params
+    public class biz_params
     {
         //private EbazarDB db;
         public int Id { get; set; }
@@ -16,14 +16,14 @@ namespace www.e_bazar.dk.Models.DTOs
         public int prio { get; set; }
         public int? category_id { get; set; }
 
-        public poco_category category_dao { get; set; }
-        public List<poco_value> values_daos { get; set; }
+        public biz_category category_dao { get; set; }
+        public List<biz_value> values_daos { get; set; }
 
-        public poco_params()
+        public biz_params()
         {
             //this.db = new EbazarDB();
         }
-        /*~poco_params()
+        /*~biz_params()
         {
             db?.Dispose();
         }*/
@@ -93,49 +93,53 @@ namespace www.e_bazar.dk.Models.DTOs
             }
         }
 
-        public List<poco_params> ToPOCO_List(List<param> param)
+        public List<dto_params> ToDTO_List(List<param> param)
         {
             if (param== null)
                 throw new Exception("A-OK, Check");
 
-            List<poco_params> list = new List<poco_params>();
+            List<dto_params> list = new List<dto_params>();
             foreach (param par in param)
             {
-                poco_params dao = new poco_params();
-                dao.ToPOCO(par);
-                list.Add(dao);
+                biz_params biz = new biz_params();
+                dto_params dto = new dto_params();
+                dto = biz.ToDTO(par);
+                list.Add(dto);
             }
             return list.OrderBy(x => x.prio).ToList();
         }
 
-        public void ToPOCO(param par)
+        public dto_params ToDTO(param par)
         {
             if (par == null)
                 throw new Exception("A-OK, Check");
 
-            this.Id = par.Id;
-            this.name = par.name;
-            this.type = par.type;
-            this.value = par.value;
-            this.prio = par.prio;
-            this.category_id = par.category_id;
+            dto_params dto = new dto_params();
 
-            poco_category cat_dao = new poco_category();
-            poco_collection col_dao = new poco_collection();
-            poco_product pro_dao = new poco_product();
-            poco_value val_dao = new poco_value();
+            dto.Id = par.Id;
+            dto.name = par.name;
+            dto.type = par.type;
+            dto.value = par.value;
+            dto.prio = par.prio;
+            dto.category_id = par.category_id;
+
+            biz_category cat_dao = new biz_category();
+            biz_collection col_dao = new biz_collection();
+            biz_product pro_dao = new biz_product();
+            biz_value val_dao = new biz_value();
 
             if (par.category != null)
             {
-                this.category_dao = new poco_category();
-                this.category_dao.ToPOCO(par.category, false, false);
+                biz_category biz = new biz_category();
+                dto.category_dao = biz.ToDTO(par.category, false, false);
             }
 
             if (par.value1 != null)
             {
-                this.values_daos = new List<poco_value>();
-                this.values_daos = val_dao.ToDAO_List(par.value1.ToList());
+                dto.values_daos = val_dao.ToDTO_List(par.value1.ToList());
             }
+
+            return dto;
         }
     }
 }

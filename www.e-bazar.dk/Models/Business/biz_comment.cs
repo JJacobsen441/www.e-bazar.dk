@@ -5,26 +5,26 @@ using www.e_bazar.dk.Extensions;
 
 namespace www.e_bazar.dk.Models.DTOs
 {
-    public class poco_comment
+    public class biz_comment
     {
-        public poco_comment()
+        public biz_comment()
         {
             
         }
         
-        public DateTime created_on { get; set; }
-        public string text { get; set; }
-        public float? bid { get; set; }
-        public string type { get; set; }
-        public long? conversation_id { get; set; }
-        public string person_id { get; set; }
-        public bool product_viewed_owner { get; set; }
-        public bool viewed_other { get; set; }
+        //public DateTime created_on { get; set; }
+        //public string text { get; set; }
+        //public float? bid { get; set; }
+        //public string type { get; set; }
+        //public long? conversation_id { get; set; }
+        //public string person_id { get; set; }
+        //public bool product_viewed_owner { get; set; }
+        //public bool viewed_other { get; set; }
 
-        public virtual poco_conversation conversation_poco { get; set; }
+        //public virtual biz_conversation conversation_poco { get; set; }
 
-        public poco_salesman poco_salesman { get; set; }
-        public poco_customer poco_customer { get; set; }
+        //public biz_salesman biz_salesman { get; set; }
+        //public biz_customer biz_customer { get; set; }
 
         /*public List<comment> _GetComments(long? conversation_id)
         {
@@ -43,8 +43,8 @@ namespace www.e_bazar.dk.Models.DTOs
 
                 IEnumerable<comment> c = _c.AsEnumerable().ToList();
 
-                /*poco_salesman salesman_poco = new poco_salesman();
-                poco_customer customer_poco = new poco_customer();
+                /*biz_salesman salesman_poco = new biz_salesman();
+                biz_customer customer_poco = new biz_customer();
                 person per = new person();
             
                 List<comment> comments = (from c in _db.comment.Include("person")
@@ -56,8 +56,8 @@ namespace www.e_bazar.dk.Models.DTOs
                                               bid = c.bid,
                                               type = c.type,
                                               conversation_id = c.conversation_id,
-                                              //person = c.person,//salesman_poco.GetPerson<poco_salesman>(c.person_id, true, false, false) != null ? salesman_poco.GetPerson<poco_salesman>(c.person_id, true, false, false) : customer_poco.GetPerson<poco_customer>(c.person_id, true, false, false),
-                                              //pocostomer = customer_poco.GetPersonPOCO<poco_customer>(c.person_id, true, false, false),
+                                              //person = c.person,//salesman_poco.GetPerson<biz_salesman>(c.person_id, true, false, false) != null ? salesman_poco.GetPerson<biz_salesman>(c.person_id, true, false, false) : customer_poco.GetPerson<biz_customer>(c.person_id, true, false, false),
+                                              //pocostomer = customer_poco.GetPersonPOCO<biz_customer>(c.person_id, true, false, false),
                                               person_id = c.person_id,
                                               person = c.person,
                                               viewed_owner = c.viewed_owner,
@@ -85,13 +85,13 @@ namespace www.e_bazar.dk.Models.DTOs
             }
         }
 
-        public List<poco_comment> _GetCommentPOCOs(long? conversation_id)
+        public List<biz_comment> _GetCommentPOCOs(long? conversation_id)
         {
             List<comment> comments = _GetComments(conversation_id);
-            List<poco_comment> list = new List<poco_comment>();
+            List<biz_comment> list = new List<biz_comment>();
             foreach (comment com in comments)
             {
-                poco_comment com_poco = new poco_comment();
+                biz_comment com_poco = new biz_comment();
                 com_poco.ToPoco(com);
                 list.Add(com_poco);
             }
@@ -117,45 +117,50 @@ namespace www.e_bazar.dk.Models.DTOs
             return comment;
         }
 
-        public List<poco_comment> ToPocoList(ICollection<comment> comments)
+        public List<dto_comment> ToDTOList(ICollection<comment> comments)
         {
             if (comments == null)
                 throw new Exception("A-OK, Check");
 
-            List<poco_comment> list = new List<poco_comment>();
+            List<dto_comment> list = new List<dto_comment>();
             foreach(comment c in comments.ToList())
             {
-                poco_comment com_poco = new poco_comment();
-                com_poco.ToPoco(c);
-                list.Add(com_poco);
+                biz_comment biz = new biz_comment();
+                dto_comment _dto = new dto_comment();
+                _dto = biz.ToDTO(c);
+                list.Add(_dto);
             }
             return list;
         }
         
-        public void ToPoco(comment com)
+        public dto_comment ToDTO(comment com)
         {
             if (com == null)
                 throw new Exception("A-OK, Check");
 
-            this.created_on = com.created_on;
-            this.text = com.text;
-            this.bid = com.bid;
-            this.type = com.type;
-            this.conversation_id = com.conversation_id;
-            this.product_viewed_owner = com.viewed_owner;
-            this.viewed_other = com.viewed_other;
+            dto_comment dto = new dto_comment();
+
+            dto.created_on = com.created_on;
+            dto.text = com.text;
+            dto.bid = com.bid;
+            dto.type = com.type;
+            dto.conversation_id = com.conversation_id;
+            dto.product_viewed_owner = com.viewed_owner;
+            dto.viewed_other = com.viewed_other;
 
             if (com.person.descriminator == "Salesman")
             {
-                this.poco_salesman = new poco_salesman();
-                this.poco_salesman.ToPoco<poco_salesman>(NullHelper.ComNull(com.person));
+                biz_salesman biz = new biz_salesman();
+                dto.dto_salesman = biz.ToDTO<dto_salesman>(NullHelper.ComNull(com.person));
             }
             else
             {
-                this.poco_customer = new poco_customer();
-                this.poco_customer.ToPoco<poco_customer>(NullHelper.ComNull(com.person));
+                biz_customer biz = new biz_customer();
+                dto.dto_customer = biz.ToDTO<dto_customer>(NullHelper.ComNull(com.person));
             }
-            this.person_id = com.person_id;
+            dto.person_id = com.person_id;
+
+            return dto;
         }
     }    
 }

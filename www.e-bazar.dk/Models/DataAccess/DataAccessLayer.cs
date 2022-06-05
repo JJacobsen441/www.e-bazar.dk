@@ -16,29 +16,6 @@ namespace www.e_bazar.dk.Models.DataAccess
     {
         private List<EbazarDB> _dbs = null;
 
-        /*public EbazarDB GetContext()
-        {
-            
-            if (_dbs == null)
-                _dbs = new List<EbazarDB>();
-            EbazarDB _db = new EbazarDB();
-
-            
-            /*try
-            {
-                EbazarDB db = new EbazarDB();
-                foreach (category cat in db.category)
-                    _db.Entry(cat).Reload();
-            }
-            catch (Exception e)
-            {
-                ;
-            }/**
-
-            _dbs.Add(_db);
-            return _db;
-        }*/
-
         private DAL()
         {
             
@@ -51,36 +28,6 @@ namespace www.e_bazar.dk.Models.DataAccess
                 d = new DAL();
             return d;
         }
-
-        /*public void Dispose()
-        {
-            if (_dbs == null)
-                return;
-
-            foreach (EbazarDB d in _dbs)
-            {
-                try
-                {
-                    d?.Dispose();
-                }
-                catch (Exception e) 
-                {
-                    ErrorHandler err = new ErrorHandler();
-                    string subject = "Fejl i DataAccessLayer -> Dispose!";
-                    string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
-                }
-            }
-            _dbs = null;
-        }/**/
-
-        /*public List<poco_booth> GetBoothPOCOs()
-        {
-            poco_booth booth_dto = new poco_booth() { db = this.db };
-            List<poco_booth> booth_dtos = booth_dto.GetBoothPOCOs();
-
-            return booth_dtos;
-        }*/
 
         public long GetTagIdByName_FORTEST(string name)
         {
@@ -147,134 +94,111 @@ namespace www.e_bazar.dk.Models.DataAccess
             }
         }        
 
-        public poco_category GetChildInCategory(int cat_id, int nr)
+        public dto_category GetChildInCategory(int cat_id, int nr)
         {
-            /*category cat = db.category
-                //.Include("parent")
-                //.Include("children")//.ThenInclude(x => x.Param).ThenInclude(x => x.ValueNavigation)
-                //.Include("product_main")
-                //.Include("product_second")
-                //.Include("booth_category")
-                //.Include(x => x.Param).ThenInclude(x => x.ValueNavigation)
-                .Where(c => c.Id == cat_id).FirstOrDefault();
-
-            //cat.param = IncludeParam(cat.Id);
-
-            //foreach (category c in cat.children)
-            //{
-            //    c.param = IncludeParam(c.Id);
-            //}*/
-            List<poco_category> cat = Categorys.CatsYesYes;
+            List<dto_category> cat = Categorys.CatsYesYes;
             
             if (cat == null)
                 throw new Exception("A-OK, Handled.");
 
-            poco_category cat_poco = cat.Where(x=>x.category_id == cat_id).FirstOrDefault();
-            //cat_poco.ToPOCO(cat/*, cat_id*/, true, false);
-            int elem = nr == -1 ? cat_poco.children.Count() - 1 : nr;
-            return cat_poco.children.ElementAt(elem);
+            dto_category cat_dto = cat.Where(x=>x.category_id == cat_id).FirstOrDefault();
+            int elem = nr == -1 ? cat_dto.children.Count() - 1 : nr;
+            
+            return cat_dto.children.ElementAt(elem);
         }
 
-        public List<poco_booth> GetNewestBoothPOCOs(int skip, int take)
+        public List<dto_booth> GetNewestBoothDTOs(int skip, int take)
         {
-            poco_booth booth_poco = new poco_booth();
-            List<poco_booth> booth_pocos;
-            //if (string.IsNullOrEmpty(search) && string.IsNullOrEmpty(categorys))
-            //    booth_dtos = booth_dto.GetBoothPOCOs();//ingen
-            //else
-            //{
-            booth_pocos = booth_poco.GetNewestBoothPOCOs(skip, take);//categorys eller begge
-            //}
+            biz_booth booth_poco = new biz_booth();
+            List<dto_booth> booth_dtos;
+            
+            booth_dtos = booth_poco.GetNewestBoothDTOs(skip, take);//categorys eller begge
+            
+            return booth_dtos;
+        }
 
+        public List<dto_booth> GetBoothDTOs(int skip, int take, out int count)
+        {
+            biz_booth booth_poco = new biz_booth();
+            List<dto_booth> booth_pocos;
+            
+            booth_pocos = booth_poco.GetBoothDTOs(skip, take, out count);//categorys eller begge
+            
             return booth_pocos;
         }
 
-        public List<poco_booth> GetBoothPOCOs(int skip, int take, out int count)
+        public List<dto_booth> GetBoothDTOs(string salesman_id, bool withsalesman)
         {
-            poco_booth booth_poco = new poco_booth();
-            List<poco_booth> booth_pocos;
-            //if (string.IsNullOrEmpty(search) && string.IsNullOrEmpty(categorys))
-            //    booth_dtos = booth_dto.GetBoothPOCOs();//ingen
-            //else
-            //{
-            booth_pocos = booth_poco.GetBoothPOCOs(skip, take, out count);//categorys eller begge
-            //}
-
-            return booth_pocos;
-        }
-
-        public List<poco_booth> GetBoothPOCOs(string salesman_id, bool withsalesman)
-        {
-            poco_booth booth_poco = new poco_booth();
-            List<poco_booth> booths = booth_poco.GetBoothPOCOs(salesman_id, withsalesman);
+            biz_booth biz = new biz_booth();
+            List<dto_booth> booths = biz.GetBoothDTOs(salesman_id, withsalesman);
 
             return booths;
         }
 
-        public poco_booth GetBoothPOCO(int? booth_id, string lev_a_search, string lev_b_search, bool select_inactive, bool withproducts, bool withcollections, bool overrideonlycollection, bool withlevela, bool withconversations, bool withdefault)
+        public dto_booth GetBoothDTO(int? booth_id, string lev_a_search, string lev_b_search, bool select_inactive, bool withproducts, bool withcollections, bool overrideonlycollection, bool withlevela, bool withconversations, bool withdefault)
         {
-            poco_booth booth_poco = new poco_booth();
-            booth_poco = booth_poco.GetBoothPOCO(booth_id, lev_a_search, lev_b_search, select_inactive, withproducts, withcollections, overrideonlycollection, withlevela, withconversations, withdefault);
+            biz_booth booth_biz = new biz_booth();
+            dto_booth booth_dto = booth_biz.GetBoothDTO(booth_id, lev_a_search, lev_b_search, select_inactive, withproducts, withcollections, overrideonlycollection, withlevela, withconversations, withdefault);
 
-            return booth_poco;
+            return booth_dto;
         }
 
-        public List<poco_booth> GetBoothsByPersonPOCOs(string salesman_id)
+        public List<dto_booth> GetBoothsByPersonDTOs(string salesman_id)
         {
-            poco_booth booth_poco = new poco_booth();
-            return booth_poco.GetBoothsByPersonPOCO(salesman_id);
+            biz_booth booth_biz = new biz_booth();
+            return booth_biz.GetBoothsByPersonDTO(salesman_id);
         }
 
-        //public poco_booth GetBoothPOCOByProductId(long product_id)
+        //public biz_booth GetBoothPOCOByProductId(long product_id)
         //{
-        //    poco_booth booth_poco = new poco_booth();
-        //    poco_booth booth = booth_poco.GetBoothPOCOByProductId(product_id);
+        //    biz_booth booth_poco = new biz_booth();
+        //    biz_booth booth = booth_poco.GetBoothPOCOByProductId(product_id);
 
         //    return booth;
         //}
 
-        //public poco_booth _GetBoothPOCOByCollectionId(long collection_id, bool withperson)
+        //public biz_booth _GetBoothPOCOByCollectionId(long collection_id, bool withperson)
         //{
-        //    poco_booth booth_poco = new poco_booth();
-        //    poco_booth booth = booth_poco.GetBoothPOCOByCollectionId(collection_id, withperson);
+        //    biz_booth booth_poco = new biz_booth();
+        //    biz_booth booth = booth_poco.GetBoothPOCOByCollectionId(collection_id, withperson);
 
         //    return booth;
         //}
 
-        public poco_product GetProductPOCO(long product_id, bool withbooth, bool withproducts, bool withcollection, bool withconversation, bool withtags)
+        public dto_product GetProductDTO(long product_id, bool withbooth, bool withproducts, bool withcollection, bool withconversation, bool withtags)
         {
-            poco_product pr_poco = new poco_product(withcollection);
-            poco_product product = pr_poco.GetProductPOCO(product_id, withbooth, withproducts, withconversation, withtags);
+            biz_product pr_biz = new biz_product(withcollection);
+            dto_product product = pr_biz.GetProductDTO(product_id, withbooth, withproducts, withconversation, withtags);
 
             return product;
         }
 
-        public List<poco_product> GetProductPOCOs(int booth_id, bool select_inactive, bool withbooth, bool withcollection, bool overrideonlycollection, bool withtags, bool withfoldera, bool withdefault)
+        public List<dto_product> GetProductDTOs(int booth_id, bool select_inactive, bool withbooth, bool withcollection, bool overrideonlycollection, bool withtags, bool withfoldera, bool withdefault)
         {
-            poco_product product_poco = new poco_product(withcollection);
-            List<poco_product> list = product_poco.GetProductPOCOs(booth_id, "", "", select_inactive, withbooth, overrideonlycollection, withtags, withfoldera, withdefault);
+            biz_product product_poco = new biz_product(withcollection);
+            List<dto_product> list = product_poco.GetProductDTOs(booth_id, "", "", select_inactive, withbooth, overrideonlycollection, withtags, withfoldera, withdefault);
             return list;
         }
 
-        public poco_collection GetCollectionPOCO(int collection_id, bool withproducts, bool withbooth, bool withconversation, bool withboothsalesman, bool withtags)
+        public dto_collection GetCollectionDTO(int collection_id, bool withproducts, bool withbooth, bool withconversation, bool withboothsalesman, bool withtags)
         {
-            poco_collection col_poco = new poco_collection();
-            poco_collection collection = col_poco.GetCollectionPOCO(collection_id, withproducts, withbooth, withconversation, withboothsalesman, withtags);
+            biz_collection col_poco = new biz_collection();
+            dto_collection collection = col_poco.GetCollectionDTO(collection_id, withproducts, withbooth, withconversation, withboothsalesman, withtags);
 
             return collection;
         }
 
-        public List<poco_collection> GetCollectionPOCOs(int booth_id, bool select_inactive, bool withbooth, bool withtags, bool withfoldera)
+        public List<dto_collection> GetCollectionDTOs(int booth_id, bool select_inactive, bool withbooth, bool withtags, bool withfoldera)
         {
-            poco_collection col_poco = new poco_collection();
-            List<poco_collection> pocos = col_poco.GetCollectionPOCOs(booth_id, "", "", select_inactive, withbooth, withtags, withfoldera);
+            biz_collection col_poco = new biz_collection();
+            List<dto_collection> pocos = col_poco.GetCollectionDTOs(booth_id, "", "", select_inactive, withbooth, withtags, withfoldera);
 
             return pocos;
         }
 
-        public List<poco_params> GetParams(/*long product_id, */int cat_main, int cat_sec)
+        public List<dto_params> GetParams(int cat_main, int cat_sec)
         {
-            poco_params pa = new poco_params();
+            biz_params pa = new biz_params();
             //EbazarDB _db = GetContext();
             using (EbazarDB _db = new EbazarDB())
             {
@@ -315,19 +239,19 @@ namespace www.e_bazar.dk.Models.DataAccess
                 if (list == null)
                     throw new Exception("A-OK, Check.");
 
-                return pa.ToPOCO_List(list);
+                return pa.ToDTO_List(list);
             }
         }
 
-        public List<IBoothItem> GetItemPOCOs(int booth_id)
+        public List<dto_booth_item> GetItemDTOs(int booth_id)
         {
-            List<poco_product> pro = this.GetProductPOCOs(booth_id, false, true, false, false, false, false, true);
+            List<dto_product> pro = this.GetProductDTOs(booth_id, false, true, false, false, false, false, true);
             if (pro == null)
                 return null;
-            List<poco_collection> col = this.GetCollectionPOCOs(booth_id, false, true, false, false);
+            List<dto_collection> col = this.GetCollectionDTOs(booth_id, false, true, false, false);
             if (col == null)
                 return null;
-            List<IBoothItem> items = new List<IBoothItem>();
+            List<dto_booth_item> items = new List<dto_booth_item>();
             items = items.Concat(pro).ToList();
             items = items.Concat(col).ToList();
             items = items.OrderByDescending(i => i.created_on).ToList();
@@ -335,24 +259,26 @@ namespace www.e_bazar.dk.Models.DataAccess
             return items;
         }
 
-        public poco_person GetPersonPOCO<T>(string person_id, bool withbooth, bool withfavorites, bool withfollowing) where T : poco_person, new()
+        public dto_person GetPersonDTO<T>(string person_id, bool withbooth, bool withfavorites, bool withfollowing) where T : dto_person, new()
         {
-            poco_person poco = new poco_salesman();
-            string d = "Salesman";
+            biz_person biz = new biz_salesman();
+            T dto = null;
             
-            if (typeof(T) == typeof(poco_customer))
-            {
-                poco = new poco_customer();
-                d = "Customer";
-            }
-            poco = poco.GetPersonPOCO<T>(person_id, d, withbooth, withfavorites, withfollowing);
+            string _d = "Salesman";
+            if (typeof(T) == typeof(dto_customer))
+                _d = "Customer";
+            
+            dto = biz.GetPersonDTO<T>(person_id, withbooth, withfavorites, withfollowing);
 
-            return poco;
+            if (dto.nator != _d)
+                throw new Exception("A-OK, Handled.");
+
+            return dto;
         }
 
-        /*public List<T> _GetPersonsPOCO<T>(bool withfavorites, bool withfollowing) where T : poco_person, new()
+        /*public List<T> _GetPersonsPOCO<T>(bool withfavorites, bool withfollowing) where T : biz_person, new()
         {
-            poco_person poco = new T();
+            biz_person poco = new T();
             List<T> pocos = new List<T>();
             pocos = poco._GetPersonsPOCO<T>(withfavorites, withfollowing);
 
@@ -366,13 +292,13 @@ namespace www.e_bazar.dk.Models.DataAccess
             return dto;
         }*/
 
-        public int SaveBooth(poco_booth booth_poco)
+        public int SaveBooth(dto_booth booth_dto)
         {
             //EbazarDB _db = GetContext();
             using (EbazarDB _db = new EbazarDB())
             {
-
-                booth booth = booth_poco.ToBooth(true, _db);
+                biz_booth biz = new biz_booth();
+                booth booth = biz.ToBooth(true, booth_dto, _db);
                 _db.booth.Add(booth);
                 _db.SaveChanges();
                 _db.Dispose();
@@ -380,13 +306,13 @@ namespace www.e_bazar.dk.Models.DataAccess
             }
         }
 
-        public void UpdateBooth(poco_booth booth)
+        public void UpdateBooth(dto_booth booth)
         {
             //EbazarDB db = GetContext();
             using (EbazarDB _db = new EbazarDB())
             {
-
-                booth.ToBooth(false, _db);
+                biz_booth biz = new biz_booth();
+                biz.ToBooth(false, booth, _db);
                 _db.SaveChanges();
                 _db.Dispose();
             }
@@ -398,30 +324,32 @@ namespace www.e_bazar.dk.Models.DataAccess
             using (EbazarDB _db = new EbazarDB())
             {
 
-                poco_booth poco = new poco_booth();
+                biz_booth poco = new biz_booth();
                 poco.DeleteBooth(id, _db);
                 _db.SaveChanges();
                 _db.Dispose();
             }
         }
 
-        public long SaveProduct(poco_product product_poco, List<string> uploaded_fnames)
+        public long SaveProduct(dto_product product_dto, List<string> uploaded_fnames)
         {
             //product_poco.db = this.db;
-            long product_id = product_poco.Save();
-            poco_productimage productimage_dto = new poco_productimage();
+            biz_product biz = new biz_product();
+            long product_id = biz.Save<dto_product>(product_dto);
+            biz_image productimage_dto = new biz_image();
             if (uploaded_fnames != null && uploaded_fnames.Count > 0)
-                productimage_dto.SaveImages(product_id, uploaded_fnames);
+                productimage_dto.SaveImages(true, product_id, uploaded_fnames);
             return product_id;
         }
 
-        public void UpdateProduct(poco_product product_poco, List<string> uploaded_fnames)
+        public void UpdateProduct(dto_product product_dto, List<string> uploaded_fnames)
         {
             //product_poco.db = this.db;
-            product_poco.Update();
-            poco_productimage productimage_dto = new poco_productimage();
+            biz_product biz = new biz_product();
+            biz.Update(product_dto);
+            biz_image productimage_dto = new biz_image();
             if (uploaded_fnames != null && uploaded_fnames.Count > 0)
-                productimage_dto.SaveImages(product_poco.id, uploaded_fnames);
+                productimage_dto.SaveImages(true, product_dto.id, uploaded_fnames);
         }
 
         public void DeleteProduct(long id)
@@ -432,30 +360,32 @@ namespace www.e_bazar.dk.Models.DataAccess
             using (EbazarDB _db = new EbazarDB())
             {
 
-                poco_product poco = new poco_product(false);
+                biz_product poco = new biz_product(false);
                 poco.Delete(id, _db);
                 _db.SaveChanges();
                 _db.Dispose();
             }
         }
 
-        public int SaveCollection(poco_collection collection_poco, List<string> uploaded_fnames)
+        public int SaveCollection(dto_collection collection_dto, List<string> uploaded_fnames)
         {
             //collection_poco.db = this.db;
-            int collection_id = (int)collection_poco.Save();
-            poco_collectionimage collectionimage_dto = new poco_collectionimage();
+            biz_collection biz = new biz_collection();
+            int collection_id = (int)biz.Save(collection_dto);
+            biz_image collectionimage_dto = new biz_image();
             if (uploaded_fnames != null && uploaded_fnames.Count > 0)
-                collectionimage_dto.SaveImages(collection_id, uploaded_fnames);
+                collectionimage_dto.SaveImages(false, collection_id, uploaded_fnames);
             return collection_id;
         }
 
-        public void UpdateCollection(poco_collection collection_poco, List<string> uploaded_fnames)
+        public void UpdateCollection(dto_collection collection_dto, List<string> uploaded_fnames)
         {
             //collection_poco.db = this.db;
-            collection_poco.Update();
-            poco_collectionimage collectionimage_poco = new poco_collectionimage();
+            biz_collection biz = new biz_collection();
+            biz.Update<dto_collection>(collection_dto);
+            biz_image collectionimage_poco = new biz_image();
             if (uploaded_fnames != null && uploaded_fnames.Count > 0)
-                collectionimage_poco.SaveImages((int)collection_poco.id, uploaded_fnames);
+                collectionimage_poco.SaveImages(false, (int)collection_dto.id, uploaded_fnames);
         }
 
         public void DeleteCollection(long id)
@@ -466,7 +396,7 @@ namespace www.e_bazar.dk.Models.DataAccess
             using (EbazarDB _db = new EbazarDB())
             {
 
-                poco_collection poco = new poco_collection();
+                biz_collection poco = new biz_collection();
                 poco.Delete(id, _db);
                 _db.SaveChanges();
                 _db.Dispose();
@@ -476,41 +406,36 @@ namespace www.e_bazar.dk.Models.DataAccess
         public void AddProductToCollection(int collection_id, long product_id)
         {
             //EbazarDB _db = DAL.GetInstance().GetContext();
-            using (EbazarDB _db = new EbazarDB())
+            //using (EbazarDB _db = new EbazarDB())
             {
 
-                poco_collection col_poco = this.GetCollectionPOCO(collection_id, false, false, false, false, false);
-                //if (col_poco != null)
-                {
-                    //col_poco.db = this.db;
-                    col_poco.AddProduct(product_id);
-                    _db.SaveChanges();
-                }
+                dto_collection dto = this.GetCollectionDTO(collection_id, false, false, false, false, false);
+
+                biz_collection biz= new biz_collection();
+                biz.AddProduct(dto, product_id);
+                //_db.SaveChanges();
             }
-            //else
-            //    throw new Exception("A-OK, handled.");
         }
 
         public void RemoveProductFromCollection(int collection_id, long product_id)
         {
             //EbazarDB _db = DAL.GetInstance().GetContext();
-            using (EbazarDB _db = new EbazarDB())
+            //using (EbazarDB _db = new EbazarDB())
             {
 
-                poco_collection col_poco = this.GetCollectionPOCO(collection_id, false, false, false, false, false);
-                //if (col_poco == null)
-                //    throw new Exception("A-OK, handled.");
-                //col_poco.db = this.db;
-                col_poco.RemoveProduct(product_id);
+                dto_collection dto = this.GetCollectionDTO(collection_id, false, false, false, false, false);
 
-                _db.SaveChanges();
+                biz_collection biz = new biz_collection();
+                biz.RemoveProduct(dto, product_id);
+
+                //_db.SaveChanges();
             }
         }
 
-        public List<poco_tag> Get5TagPOCOs(string contains)
+        public List<dto_tag> Get5TagDTOs(string contains)
         {
-            poco_tag poco = new poco_tag();
-            List<poco_tag> tag_pocos = poco.Get5TagPOCOs(contains);
+            biz_tag poco = new biz_tag();
+            List<dto_tag> tag_pocos = poco.Get5TagDTOs(contains);
 
             return tag_pocos;
         }
@@ -559,31 +484,26 @@ namespace www.e_bazar.dk.Models.DataAccess
 
         public MESSAGE_TAG SaveTag(string tag_name, string id, TYPE type)
         {
-            poco_tag dto = new poco_tag();
+            biz_tag dto = new biz_tag();
             return dto.SaveTag(tag_name, id, type);
         }
 
         public bool RemoveTag(long tag_id, TYPE type, string id, bool is_updating)
         {
-            poco_booth booth_poco = new poco_booth();
-            poco_product product_poco = new poco_product(false);
-            poco_collection collection_poco = new poco_collection();
+            biz_product biz_product = new biz_product(false);
+            biz_collection biz_collection = new biz_collection();
 
             if (type == TYPE.PRODUCT)
             {
-                product_poco = product_poco.GetProductPOCO(long.Parse(id), false, false, false, false);
-                //if (product_poco == null)
-                //    throw new Exception("A-OK, handled.");
-                //product_poco.db = this.db;
-                return product_poco.RemoveTag(tag_id, is_updating);
+                dto_product dto = biz_product.GetProductDTO(long.Parse(id), false, false, false, false);
+                
+                return biz_product.RemoveTag<dto_product>(dto, tag_id, is_updating);
             }
             else
             {
-                collection_poco = collection_poco.GetCollectionPOCO(int.Parse(id), false, false, false, false, false);
-                //if (collection_poco == null)
-                //    throw new Exception("A-OK, handled.");
-                //collection_poco.db = this.db;
-                return collection_poco.RemoveTag(tag_id, is_updating);
+                dto_collection dto = biz_collection.GetCollectionDTO(int.Parse(id), false, false, false, false, false);
+                
+                return biz_collection.RemoveTag<dto_collection>(dto, tag_id, is_updating);
             }
         }
 
@@ -591,88 +511,102 @@ namespace www.e_bazar.dk.Models.DataAccess
 
         public bool SaveParam(long id, int param_id, int val_id, TYPE type)
         {
-            poco_params dto = new poco_params();
+            biz_params dto = new biz_params();
             return dto.SaveParam(id, param_id, val_id, type);
         }
 
         public bool RemoveParam(int param_id, TYPE type, long id)
         {
-            poco_product product_dao = new poco_product();
-            poco_collection collection_dao = new poco_collection();
+            biz_product biz_product = new biz_product();
+            biz_collection biz_collection = new biz_collection();
 
             if (type == TYPE.PRODUCT)
             {
-                product_dao = product_dao.GetProductPOCO(id, false, false, false, false);
-                //if (product_dao == null)
-                //    throw new Exception("A-OK Handled.");
-                //product_dao.SetupObject(db, httpcon);
-                return product_dao.RemoveParam(param_id);
+                dto_product dto = biz_product.GetProductDTO(id, false, false, false, false);
+                
+                return biz_product.RemoveParam<dto_product>(dto, param_id);
             }
             else
             {
-                collection_dao = collection_dao.GetCollectionPOCO(id, false, false, false, false, false);
-                //if (collection_dao == null)
-                //    throw new Exception("A-OK Handled.");
-                //collection_dao.SetupObject(/*db, */httpcon);
-                return collection_dao.RemoveParam(param_id);
+                dto_collection dto = biz_collection.GetCollectionDTO(id, false, false, false, false, false);
+                
+                return biz_collection.RemoveParam<dto_collection>(dto, param_id);
             }
         }
 
 
 
-        public void SavePerson<T>(T dto) where T:poco_person, new()
+        public void SavePerson<T>(T dto) where T : dto_person, new()
         {
-            dto.SavePerson<T>();
+            biz_person biz = new biz_customer();
+            if (dto.GetType() == typeof(dto_salesman))
+                biz = new biz_salesman();
+            biz.SavePerson<T>(dto);
         }
 
-        public void UpdatePerson<T>(T dto) where T: poco_person, new()
+        public void UpdatePerson<T>(T dto) where T: dto_person, new()
         {
-            dto.UpdatePerson<T>();
+            biz_person biz = new biz_customer();
+            if (dto.GetType() == typeof(dto_salesman))
+                biz = new biz_salesman();
+            biz.UpdatePerson<T>(dto);
         }
 
-        public poco_conversation GetConversation(long id, string person_id, TYPE type)
+        public dto_conversation GetConversation(long id, string person_id, TYPE type)
         {
-            poco_conversation conversation_poco = new poco_conversation();
+            biz_conversation biz = new biz_conversation();
             if(type == TYPE.PRODUCT)
-                return conversation_poco.GetConversationPOCO(id, -1, -1, person_id, type);
+                return biz.GetConversationDTO(id, -1, -1, person_id, type);
             else if (type == TYPE.COLLECTION)
-                return conversation_poco.GetConversationPOCO(-1, (int)id, -1, person_id, type);
+                return biz.GetConversationDTO(-1, (int)id, -1, person_id, type);
             else 
-                return conversation_poco.GetConversationPOCO(-1, -1, (int)id, person_id, type);
+                return biz.GetConversationDTO(-1, -1, (int)id, person_id, type);
         }
 
         public string SaveMessage(long? conversation_id, long product_id, string person_id, string message, TYPE type)
         {
-            poco_conversation conversation_poco = new poco_conversation();
+            biz_conversation conversation_poco = new biz_conversation();
             return conversation_poco.SaveMessage(conversation_id, product_id, person_id, message, type);
         }
 
         public void AddFavorite(long product_id, int collection_id)
         {
-            poco_person current_user = CurrentUser.GetInstance().GetCurrentUser(false, false, false);
+            dto_person current_user = CurrentUser.GetInstance().GetCurrentUser(false, false, false);
+            biz_person biz = new biz_customer();
+            if (current_user.nator == "Salesman")
+                biz = new biz_salesman();
             if(current_user != null)
-                current_user.AddFavorite(product_id, collection_id);
+                biz.AddFavorite(current_user.person_id, product_id, collection_id);
         }
 
         public void RemoveFavorite(long product_id, int collection_id)
         {
-            poco_person current_user = CurrentUser.GetInstance().GetCurrentUser(false, false, false);
+            dto_person current_user = CurrentUser.GetInstance().GetCurrentUser(false, false, false);
+            biz_person biz = new biz_customer();
+            if (current_user.nator == "Salesman")
+                biz = new biz_salesman();
             if (current_user != null)
-                current_user.RemoveFavorite(product_id, collection_id);
+                biz.RemoveFavorite(current_user.person_id, product_id, collection_id);
         }
 
         public void AddFollowing(int booth_id)
         {
-            poco_person current_user = CurrentUser.GetInstance().GetCurrentUser(false, false, false);
+            dto_person current_user = CurrentUser.GetInstance().GetCurrentUser(false, false, false);
+            biz_person biz = new biz_customer();
+            if (current_user.nator == "Salesman")
+                biz = new biz_salesman();
             if (current_user != null)
-                current_user.AddFollowing(booth_id);
+                biz.AddFollowing(current_user.person_id, booth_id);
         }
 
         public void RemoveFollowing(int booth_id)
         {
-            poco_person current_user = CurrentUser.GetInstance().GetCurrentUser(false, false, false);
+            dto_person current_user = CurrentUser.GetInstance().GetCurrentUser(false, false, false);
+            biz_person biz = new biz_customer();
+            if (current_user.nator == "Salesman")
+                biz = new biz_salesman();
             if (current_user != null)
-                current_user.RemoveFollowing(booth_id);            
+                biz.RemoveFollowing(current_user.person_id, booth_id);            
         }
 
         public void DeleteConversation(long con_id)
@@ -692,19 +626,19 @@ namespace www.e_bazar.dk.Models.DataAccess
             }
         }
 
-        public List<poco_folder> GetFolderTree(int booth_id, bool withbooth)
+        public List<dto_folder> GetFolderTree(int booth_id, bool withbooth)
         {
-            poco_folder fa = new poco_folder();
-            List<poco_folder> fld_a_pocos = new List<poco_folder>();
-            fld_a_pocos = fa.GetFolderAPOCOs(booth_id, withbooth);
+            biz_folder fa = new biz_folder();
+            List<dto_folder> fld_a_dtos = new List<dto_folder>();
+            fld_a_dtos = fa.GetFolderADTOs(booth_id, withbooth);
             
-            return fld_a_pocos.OrderBy(l => l.priority).ToList();
+            return fld_a_dtos.OrderBy(l => l.priority).ToList();
         }
 
         public void CreateFolder(string fld_name, int id, TYPE type)
         {
-            poco_folder a = new poco_folder();
-            poco_folder b = new poco_folder();
+            biz_folder a = new biz_folder();
+            biz_folder b = new biz_folder();
             if (type == TYPE.FOLDER_A)
                 a.CreateFolderForA(fld_name, id);
             else
@@ -713,8 +647,8 @@ namespace www.e_bazar.dk.Models.DataAccess
 
         public void MoveFolder(int fld_id, string direction, int id, TYPE type)
         {
-            poco_folder a = new poco_folder();
-            poco_folder b = new poco_folder();
+            biz_folder a = new biz_folder();
+            biz_folder b = new biz_folder();
             if (type == TYPE.FOLDER_A)
                 a.MoveFolderForA(fld_id, direction, id);
             else
@@ -723,8 +657,8 @@ namespace www.e_bazar.dk.Models.DataAccess
 
         public void DeleteFolder(int fld_id, int id, TYPE type)
         {
-            poco_folder a = new poco_folder();
-            poco_folder b = new poco_folder();
+            biz_folder a = new biz_folder();
+            biz_folder b = new biz_folder();
             if (type == TYPE.FOLDER_A)
                 a.DeleteFolderForA(fld_id, id);
             else
@@ -733,8 +667,8 @@ namespace www.e_bazar.dk.Models.DataAccess
 
         public void SetFolder(int fld_id, string id, TYPE type, bool is_product)
         {
-            poco_product p = new poco_product(false);
-            poco_collection c = new poco_collection();
+            biz_product p = new biz_product(false);
+            biz_collection c = new biz_collection();
             if (is_product)
                 p.SetFolder(fld_id, long.Parse(id), type);
             else
@@ -766,10 +700,10 @@ namespace www.e_bazar.dk.Models.DataAccess
             }
         }
 
-        public List<poco_conversation> GetConversationsPerson(string person_id, bool is_salesman, bool withboothsalesman)
+        public List<dto_conversation> GetConversationsPerson(string person_id, bool is_salesman, bool withboothsalesman)
         {
-            poco_conversation c = new poco_conversation();
-            return c.GetConversationsPersonPOCO(person_id, is_salesman, withboothsalesman);
+            biz_conversation c = new biz_conversation();
+            return c.GetConversationsPersonDTO(person_id, is_salesman, withboothsalesman);
 
         }
 
@@ -823,15 +757,17 @@ namespace www.e_bazar.dk.Models.DataAccess
             using (EbazarDB _db = new EbazarDB())
             {
 
-                poco_person currentuser = CurrentUser.GetInstance().GetCurrentUser(false, false, false);
+                dto_person currentuser = CurrentUser.GetInstance().GetCurrentUser(false, false, false);
                 if (currentuser == null)
                     throw new Exception("A-OK, handled.");
-            
-                    poco_product product_poco = new poco_product(false);
-                    poco_booth booth_poco = new poco_booth();
-                    product_poco = product_poco.GetProductPOCO(ProductId, true, false, false, false);
+
+                dto_product product_poco = new dto_product();
+                dto_booth booth_poco = new dto_booth();
+                biz_product biz_product = new biz_product();
+                biz_booth biz_booth = new biz_booth();
+                product_poco = biz_product.GetProductDTO(ProductId, true, false, false, false);
                     
-                    booth_poco = booth_poco.GetBoothPOCO(BoothId, "", "", true, true, false, false, false, false, true);
+                booth_poco = biz_booth.GetBoothDTO(BoothId, "", "", true, true, false, false, false, false, true);
                     
                 if (product_poco.collection_id == null)
                 {
@@ -851,62 +787,56 @@ namespace www.e_bazar.dk.Models.DataAccess
                     string nd = Path.DirectorySeparatorChar.ToString();
                     string old_path = Paths.GetPath(PATH.PRODUCT_DIRECTORY_NAME, dirs_product, true);// + product_poco.sysname + nd;
                     string new_path = Paths.GetPath(PATH.BOOTH_DIRECTORY, dirs_booth, true) + booth_poco.sysname + nd + "products" + nd + product_poco.sysname + nd;
-                    foreach (IImage im in product_poco.image_pocos)
+                    foreach (dto_image im in product_poco.image_dtos)
                     {
-                        Paths.MoveFile(old_path, im.name, new_path, im.name, true, false, false, false);
-                        Paths.MoveFile(old_path, "t_" + im.name, new_path, "t_" + im.name, true, false, false, false);
+                        try { Paths.MoveFile(old_path, im.name, new_path, im.name, true, false, false, false); } catch (Exception _e) { ; }
+                        try { Paths.MoveFile(old_path, "t_" + im.name, new_path, "t_" + im.name, true, false, false, false); } catch (Exception _e) { ; }
                     }
                     Paths.ClearFolder(old_path, true, true);
                     //pro.booth_id = BoothId;
 
 
 
-                    using (EbazarDB db = new EbazarDB())
+                    try
                     {
-                        using (var dbContextTransaction = db.Database.BeginTransaction())
-                        {
-                            try
-                            {
-                                category top = db.category.Where(x=>x.is_parent).OrderBy(x=>x.priority).FirstOrDefault();
-                                category sec = top.children.OrderBy(c => c.priority).ElementAt(top.children.Count() - 1);
+                        category top = _db.category.Where(x=>x.is_parent).OrderBy(x=>x.priority).FirstOrDefault();
+                        category sec = top.children.OrderBy(c => c.priority).ElementAt(top.children.Count() - 1);
 
-                                pro.folder_a_id = null;
-                                pro.folder_b_id = null;
+                        pro.folder_a_id = null;
+                        pro.folder_b_id = null;
 
-                                if (pro.category_main != null)
-                                    pro.category_main = top;
-                                if (pro.category_second != null)
-                                    pro.category_second = sec;
-                                pro.category_main_id = top.Id;
-                                pro.category_second_id = sec.Id;
+                        if (pro.category_main != null)
+                            pro.category_main = top;
+                        if (pro.category_second != null)
+                            pro.category_second = sec;
+                        pro.category_main_id = top.Id;
+                        pro.category_second_id = sec.Id;
 
 
-                                db.SaveChanges();
+                    
 
-                                new_booth.product.Add(pro);
-                                if (!new_booth.category_main.Contains(top))
-                                    new_booth.category_main.Add(top);
-                                old_booth.product.Remove(pro);
+                        new_booth.product.Add(pro);
+                        if (!new_booth.category_main.Contains(top))
+                            new_booth.category_main.Add(top);
+                        old_booth.product.Remove(pro);
 
-                                db.SaveChanges();
+                        _db.SaveChanges();
 
-                                //category old_cat = db.category.Where(c => c.Id == pro.category_main_id).FirstOrDefault();
-                                //category old_cat_sec = db.category.Where(c => c.Id == pro.category_second_id).FirstOrDefault();
-                                //old_cat_sec.product_second.Remove(pro);
-                                //old_cat.product_main.Remove(pro);
-                                //if (old_cat.product_main.Where(c => c.booth_id == old_booth.Id).Count() + old_cat.collection_main.Where(c => c.booth_id == old_booth.Id).Count() == 0)
-                                //    old_booth.category_main.Remove(old_cat);
+                        //category old_cat = db.category.Where(c => c.Id == pro.category_main_id).FirstOrDefault();
+                        //category old_cat_sec = db.category.Where(c => c.Id == pro.category_second_id).FirstOrDefault();
+                        //old_cat_sec.product_second.Remove(pro);
+                        //old_cat.product_main.Remove(pro);
+                        //if (old_cat.product_main.Where(c => c.booth_id == old_booth.Id).Count() + old_cat.collection_main.Where(c => c.booth_id == old_booth.Id).Count() == 0)
+                        //    old_booth.category_main.Remove(old_cat);
 
-                                db.SaveChanges();
-                                dbContextTransaction.Commit();
-                            }
-                            catch (Exception ex)
-                            {
-                                //Log, handle or absorbe I don't care ^_^
-                            }
-                        }
-                        return true;
+                        //db.SaveChanges();
+                        //dbContextTransaction.Commit();
                     }
+                    catch (Exception ex)
+                    {
+                        ;//Log, handle or absorbe I don't care ^_^
+                    }
+                    return true;
                 }
                 return false;
             }

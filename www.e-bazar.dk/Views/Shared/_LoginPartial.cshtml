@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNet.Identity
 @if (Request.IsAuthenticated)
 {
-        poco_person current_user = CurrentUser.GetInstance().GetCurrentUser(false, true, true);
+        dto_person current_user = CurrentUser.GetInstance().GetCurrentUser(false, true, true);
 
         <div class="col-xs-4 remove_desk_block z-padding-top-15">
     @using (Html.BeginRouteForm("LogOff", FormMethod.Post, new { id = "logoutForm", @class = "z-float-right z-display-inline xnavbar-right" }))
@@ -22,16 +22,25 @@
 
                     <ul class="">
                         @{
-
-                            List<IBoothItem> favorites = current_user._GetFavorites();
-
-                            foreach (IBoothItem fav in favorites)
+                            List<dto_booth_item> favorites = null;
+                            if(current_user.nator == "Salesman")
                             {
-                                if (fav.booth_poco != null)
+                                biz_salesman biz = new biz_salesman();
+                                favorites = biz._GetFavorites(current_user);
+                            }
+                            else
+                            {
+                                biz_customer biz = new biz_customer();
+                                favorites = biz._GetFavorites(current_user);
+                            }
+
+                            foreach (dto_booth_item fav in favorites)
+                            {
+                                if (fav.booth_dto != null)
                                 {
-                                    string func = fav.GetType() == typeof(poco_product) ? "Product" : "Collection";
+                                    string func = fav.GetType() == typeof(dto_product) ? "Product" : "Collection";
                                     <li class="z-width-300">
-                                        @Html.RouteLink(fav.booth_poco.name + ", " + fav.name, func, new { id = fav.id }, new { @class = "z-color-white-1 myfade" })
+                                        @Html.RouteLink(fav.booth_dto.name + ", " + fav.name, func, new { id = fav.id }, new { @class = "z-color-white-1 myfade" })
                                     </li>
                                 }
                             }
@@ -51,9 +60,19 @@
                     <ul class="">
                         @{
 
-                            List<poco_booth> following = current_user._GetFollowingPOCOs(CurrentUser.GetInstance().CurrentUserID);
+                            List<dto_booth> following = null;
+                            if (current_user.nator == "Salesman")
+                            {
+                                biz_salesman biz = new biz_salesman();
+                                following = biz._GetFollowingDTOs(CurrentUser.GetInstance().CurrentUserID);
+                            }
+                            else
+                            {
+                                biz_customer biz = new biz_customer();
+                                following = biz._GetFollowingDTOs(CurrentUser.GetInstance().CurrentUserID);
+                            }
 
-                            foreach (poco_booth fol in following)
+                            foreach (dto_booth fol in following)
                             {
                                 <li class="z-width-300">
                                     @Html.RouteLink(fol.name, "Booth", new { id = fol.booth_id }, new { @class = "z-color-white-1 myfade" })
@@ -116,15 +135,25 @@
                     <ul class="">
                         @{
 
-                            List<IBoothItem> favorites = current_user._GetFavorites();
-
-                            foreach (IBoothItem fav in favorites)
+                            List<dto_booth_item> favorites = null;
+                            if (current_user.nator == "Salesman")
                             {
-                                if (fav.booth_poco != null)
+                                biz_salesman biz = new biz_salesman();
+                                favorites = biz._GetFavorites(current_user);
+                            }
+                            else
+                            {
+                                biz_customer biz = new biz_customer();
+                                favorites = biz._GetFavorites(current_user);
+                            }
+
+                            foreach (dto_booth_item fav in favorites)
+                            {
+                                if (fav.booth_dto != null)
                                 {
-                                    string func = fav.GetType() == typeof(poco_product) ? "Product" : "Collection";
+                                    string func = fav.GetType() == typeof(biz_product) ? "Product" : "Collection";
                                     <li class="z-width-300">
-                                        @Html.RouteLink(fav.booth_poco.name + ", " + fav.name, func, new { id = fav.id }, new { @class = "z-color-white-1 myfade" })
+                                        @Html.RouteLink(fav.booth_dto.name + ", " + fav.name, func, new { id = fav.id }, new { @class = "z-color-white-1 myfade" })
                                     </li>
                                 }
                             }
@@ -143,10 +172,19 @@
 
                     <ul class="">
                         @{
+                            List<dto_booth> following = null;
+                            if (current_user.nator == "Salesman")
+                            {
+                                biz_salesman biz = new biz_salesman();
+                                following = biz._GetFollowingDTOs(CurrentUser.GetInstance().CurrentUserID);
+                            }
+                            else
+                            {
+                                biz_customer biz = new biz_customer();
+                                following = biz._GetFollowingDTOs(CurrentUser.GetInstance().CurrentUserID);
+                            }
 
-                            List<poco_booth> following = current_user._GetFollowingPOCOs(CurrentUser.GetInstance().CurrentUserID);
-
-                            foreach (poco_booth fol in following)
+                            foreach (dto_booth fol in following)
                             {
                                 <li class="z-width-300">
                                     @Html.RouteLink(fol.name, "Booth", new { id = fol.booth_id }, new { @class = "z-color-white-1 myfade" })

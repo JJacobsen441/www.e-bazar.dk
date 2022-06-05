@@ -1,6 +1,6 @@
-﻿@model www.e_bazar.dk.Models.DTOs.dto_userprofile
+﻿@model www.e_bazar.dk.Models.DTOs.col_userprofile
 @{ 
-    poco_person person = Model.salesman_poco != null ? (poco_person)Model.salesman_poco : (poco_person)Model.customer_poco;
+    dto_person person = Model.salesman_dto != null ? (dto_person)Model.salesman_dto : (dto_person)Model.customer_dto;
 }
 <div class="col-md-4 form-horizontal addpaddingtop" xstyle="padding-left:0px;">
 
@@ -16,7 +16,7 @@
                 </th>
 
             </tr>
-            @foreach (poco_booth boo in person.following)
+            @foreach (dto_booth boo in person.following)
             {
 
                 <tr>
@@ -45,29 +45,40 @@
                 </th>
             </tr>
             @{
-                List<IBoothItem> list = Model.follower_news;
+                List<dto_booth_item> list = Model.follower_news;
                 foreach (var item in list)
                 {
-                    poco_booth booth_poco = item.GetBoothPOCO();
+                    dto_booth booth_poco = null;
+                    if (item.GetType() == typeof(dto_product))
                     {
-                        continue;
+                        biz_booth_item biz = new biz_product();
+                        booth_poco = biz.GetBoothDTO<dto_product>((dto_product)item);
+                    }
+                    else
+                    {
+                        biz_booth_item biz = new biz_collection();
+                        booth_poco = biz.GetBoothDTO<dto_collection>((dto_collection)item);
+                    }
+
+                    {
+                        //continue;
                     }
                     <tr>
                         <td class="adm_td_products_image">
-                            @if (item.image_pocos != null && item.image_pocos.Count > 0 && !string.IsNullOrEmpty(item.image_pocos.FirstOrDefault().name))
+                            @if (item.image_dtos != null && item.image_dtos.Count > 0 && !string.IsNullOrEmpty(item.image_dtos.FirstOrDefault().name))
                             {
-                                if (typeof(poco_product) == item.GetType())
+                                if (typeof(biz_product) == item.GetType())
                                 {
-                                    string thumb = "/_content/images/profiles/" + booth_poco.salesman_poco.sysname + "/booths/" + booth_poco.sysname + "/products/" + item.sysname + "/t_" + item.image_pocos.FirstOrDefault().name;
-                                    string path = "/_content/images/profiles/" + booth_poco.salesman_poco.sysname + "/booths/" + booth_poco.sysname + "/products/" + item.sysname + "/" + item.image_pocos.FirstOrDefault().name;
+                                    string thumb = "/_content/images/profiles/" + booth_poco.salesman_dto.sysname + "/booths/" + booth_poco.sysname + "/products/" + item.sysname + "/t_" + item.image_dtos.FirstOrDefault().name;
+                                    string path = "/_content/images/profiles/" + booth_poco.salesman_dto.sysname + "/booths/" + booth_poco.sysname + "/products/" + item.sysname + "/" + item.image_dtos.FirstOrDefault().name;
                                     <a class="myfade" href="@Url.RouteUrl("Product", new { id = @item.id })">
                                         <img alt="Sample Image" class="adm_img_products_productimage loadlater" src="@thumb" data-src="@path">
                                     </a>
                                 }
                                 else
                                 {
-                                    string thumb = "/_content/images/profiles/" + booth_poco.salesman_poco.sysname + "/booths/" + booth_poco.sysname + "/collections/" + item.sysname + "/t_" + item.image_pocos.FirstOrDefault().name;
-                                    string path = "/_content/images/profiles/" + booth_poco.salesman_poco.sysname + "/booths/" + booth_poco.sysname + "/collections/" + item.sysname + "/" + item.image_pocos.FirstOrDefault().name;
+                                    string thumb = "/_content/images/profiles/" + booth_poco.salesman_dto.sysname + "/booths/" + booth_poco.sysname + "/collections/" + item.sysname + "/t_" + item.image_dtos.FirstOrDefault().name;
+                                    string path = "/_content/images/profiles/" + booth_poco.salesman_dto.sysname + "/booths/" + booth_poco.sysname + "/collections/" + item.sysname + "/" + item.image_dtos.FirstOrDefault().name;
                                     <a class="myfade" href="@Url.RouteUrl("Collection", new { id = @item.id })">
                                         <img alt="Sample Image" class="adm_img_products_productimage loadlater" src="@thumb" data-src="@path">
                                     </a>
@@ -75,7 +86,7 @@
                             }
                             else
                             {
-                                if (typeof(poco_product) == item.GetType())
+                                if (typeof(biz_product) == item.GetType())
                                 {
                                     var image_path = "/_content/images/site/icons/armchair2_bw.png";
                                     <a class="myfade" href="@Url.RouteUrl("Product", new { id = @item.id })">
@@ -92,7 +103,7 @@
                             }
                         </td>
                         <td class="hide_phone">
-                            @if (typeof(poco_collection) == item.GetType())
+                            @if (typeof(biz_collection) == item.GetType())
                             {<span class="bold red">Sæt, </span>}
                             <span style="font-weight:bold;">[@booth_poco.name] </span><br />
                             @item.name

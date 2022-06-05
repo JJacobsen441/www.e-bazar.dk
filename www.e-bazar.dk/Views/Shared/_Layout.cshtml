@@ -94,7 +94,7 @@
 
                     @if (Request.IsAuthenticated)
                     {
-                        poco_person current_user = ViewBag.CurrentUser as poco_person;
+                        dto_person current_user = ViewBag.CurrentUser as dto_person;
 
                         string fname = current_user != null ? current_user.firstname : "";
                         string name = !string.IsNullOrEmpty(fname) ? "" + fname : current_user != null ? "Hjem"/* + current_user.email*/ : "Hjem";
@@ -142,7 +142,7 @@
                     </span>
                     @if (Request.IsAuthenticated)
                     {
-                        poco_person current_user = ViewBag.CurrentUser as poco_person;
+                        dto_person current_user = ViewBag.CurrentUser as dto_person;
                         string fname = current_user != null ? current_user.firstname : "";
                         string name = !string.IsNullOrEmpty(fname) ? "" + fname : current_user != null ? "Hjem"/* + current_user.email*/ : "Hjem";
                         <span class="btn l-header-hello z-border-lightgreen z-height-26 z-padding-top-2 z-hover-white">
@@ -203,7 +203,7 @@
                 <div class="z-navbar z-background-color-green">
                     @if (Request.IsAuthenticated)
                     {
-                        poco_person current_user = ViewBag.CurrentUser as poco_person;
+                        dto_person current_user = ViewBag.CurrentUser as dto_person;
                         string fname = current_user != null ? current_user.firstname : "";
                         string name = !string.IsNullOrEmpty(fname) ? "" + fname : current_user != null ? "Hjem"/* + current_user.email*/ : "Hjem";
 
@@ -322,7 +322,7 @@
             <div class="col-xs-4">
                 <div>
                     @*Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a>
-                        <br />from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>*@
+                <br />from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>*@
                 </div>
                 <div class="z-only-desk">
                     &nbsp;

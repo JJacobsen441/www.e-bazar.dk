@@ -1,4 +1,4 @@
-﻿@model www.e_bazar.dk.Models.DTOs.poco_booth
+﻿@model www.e_bazar.dk.Models.DTOs.dto_booth
 
 @{
     ViewBag.Title = "Administrer Bod";
@@ -39,7 +39,7 @@
                                 </div>
                                 <div class="col-xs-12" style="background-color:#FFFFFF;">
                                     @{
-                                        var image_path = !string.IsNullOrEmpty(Model.frontimage) ? "/_content/images/profiles/" + Model.salesman_poco.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+                                        var image_path = !string.IsNullOrEmpty(Model.frontimage) ? "/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
                                         <img class="adm_img_boothimage" src="@image_path" alt="Sample Image" />
                                     }
                                 </div>
@@ -89,18 +89,18 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-xs-6">
-                                    @Html.LabelFor(model => model.region_poco.zip, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                    @Html.LabelFor(model => model.region_dto.zip, htmlAttributes: new { @class = "control-label xcol-xs-2" })
                                 </div>
                                 <div class="col-xs-6">
-                                    @Html.LabelFor(model => model.region_poco.town, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                    @Html.LabelFor(model => model.region_dto.town, htmlAttributes: new { @class = "control-label xcol-xs-2" })
                                 </div>
                                 <div class="col-xs-6">
-                                    @Html.EditorFor(model => model.region_poco.zip, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control adm_input_address_zip" } })
-                                    @Html.ValidationMessageFor(model => model.region_poco.zip, "", new { @class = "text-danger" })
+                                    @Html.EditorFor(model => model.region_dto.zip, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control adm_input_address_zip" } })
+                                    @Html.ValidationMessageFor(model => model.region_dto.zip, "", new { @class = "text-danger" })
                                 </div>
                                 <div class="col-xs-6">
-                                    @Html.EditorFor(model => model.region_poco.town, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control adm_text_address_town" } })
-                                    @Html.ValidationMessageFor(model => model.region_poco.town, "", new { @class = "text-danger" })
+                                    @Html.EditorFor(model => model.region_dto.town, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control adm_text_address_town" } })
+                                    @Html.ValidationMessageFor(model => model.region_dto.town, "", new { @class = "text-danger" })
                                 </div>
                             </div>
                             <div class="form-group">
@@ -192,7 +192,7 @@
                                 </div>
                                 <div class="col-xs-12" style="background-color:#FFFFFF;">
                                     @{
-                                        var image_path = !string.IsNullOrEmpty(Model.frontimage) ? "/_content/images/profiles/" + Model.salesman_poco.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+                                        var image_path = !string.IsNullOrEmpty(Model.frontimage) ? "/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
                                         <img class="adm_img_boothimage" src="@image_path" alt="Sample Image" />
                                     }
                                 </div>
@@ -242,18 +242,18 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-xs-6">
-                                    @Html.LabelFor(model => model.region_poco.zip, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                    @Html.LabelFor(model => model.region_dto.zip, htmlAttributes: new { @class = "control-label xcol-xs-2" })
                                 </div>
                                 <div class="col-xs-6">
-                                    @Html.LabelFor(model => model.region_poco.town, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                    @Html.LabelFor(model => model.region_dto.town, htmlAttributes: new { @class = "control-label xcol-xs-2" })
                                 </div>
                                 <div class="col-xs-6">
-                                    @Html.EditorFor(model => model.region_poco.zip, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control adm_input_address_zip" } })
-                                    @Html.ValidationMessageFor(model => model.region_poco.zip, "", new { @class = "text-danger" })
+                                    @Html.EditorFor(model => model.region_dto.zip, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control adm_input_address_zip" } })
+                                    @Html.ValidationMessageFor(model => model.region_dto.zip, "", new { @class = "text-danger" })
                                 </div>
                                 <div class="col-xs-6">
-                                    @Html.EditorFor(model => model.region_poco.town, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control adm_text_address_town" } })
-                                    @Html.ValidationMessageFor(model => model.region_poco.town, "", new { @class = "text-danger" })
+                                    @Html.EditorFor(model => model.region_dto.town, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control adm_text_address_town" } })
+                                    @Html.ValidationMessageFor(model => model.region_dto.town, "", new { @class = "text-danger" })
                                 </div>
                             </div>
                             <div class="form-group">
@@ -345,7 +345,7 @@
                                 </div>
                                 <div class="col-sm-12" style="background-color:#FFFFFF;">
                                     @{
-                                        var image_path = !string.IsNullOrEmpty(Model.frontimage) ? "/_content/images/profiles/" + Model.salesman_poco.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+                                        var image_path = !string.IsNullOrEmpty(Model.frontimage) ? "/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
                                         <img class="adm_img_boothimage" src="@image_path" alt="Sample Image" />
                                     }
                                 </div>
@@ -395,18 +395,18 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-6">
-                                    @Html.LabelFor(model => model.region_poco.zip, htmlAttributes: new { @class = "control-label xcol-sm-2" })
+                                    @Html.LabelFor(model => model.region_dto.zip, htmlAttributes: new { @class = "control-label xcol-sm-2" })
                                 </div>
                                 <div class="col-sm-6">
-                                    @Html.LabelFor(model => model.region_poco.town, htmlAttributes: new { @class = "control-label xcol-sm-2" })
+                                    @Html.LabelFor(model => model.region_dto.town, htmlAttributes: new { @class = "control-label xcol-sm-2" })
                                 </div>
                                 <div class="col-sm-6">
-                                    @Html.EditorFor(model => model.region_poco.zip, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control adm_input_address_zip" } })
-                                    @Html.ValidationMessageFor(model => model.region_poco.zip, "", new { @class = "text-danger" })
+                                    @Html.EditorFor(model => model.region_dto.zip, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control adm_input_address_zip" } })
+                                    @Html.ValidationMessageFor(model => model.region_dto.zip, "", new { @class = "text-danger" })
                                 </div>
                                 <div class="col-sm-6">
-                                    @Html.EditorFor(model => model.region_poco.town, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control adm_text_address_town" } })
-                                    @Html.ValidationMessageFor(model => model.region_poco.town, "", new { @class = "text-danger" })
+                                    @Html.EditorFor(model => model.region_dto.town, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control adm_text_address_town" } })
+                                    @Html.ValidationMessageFor(model => model.region_dto.town, "", new { @class = "text-danger" })
                                 </div>
                             </div>
                             <div class="form-group">

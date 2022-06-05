@@ -1,4 +1,4 @@
-﻿@model www.e_bazar.dk.Models.DTOs.poco_booth
+﻿@model www.e_bazar.dk.Models.DTOs.dto_booth
 @{
     string s = ViewContext.Controller.ViewBag.Search as string;
     string c = ViewContext.Controller.ViewBag.Cat as string;
@@ -52,8 +52,8 @@
         </div>
         <div class="col-xs-4 z-padding-sides-0">
             @{
-                var thumb_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_poco.sysname + "/booths/" + Model.sysname + "/t_" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
-                var image_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_poco.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+                var thumb_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/t_" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+                var image_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
                 
                 string[] classes = { "l-bt-other3", "z-background-color-lightgrey", "myfade", "loadlater" };
             

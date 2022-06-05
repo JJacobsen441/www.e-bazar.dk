@@ -1,8 +1,8 @@
-﻿@model www.e_bazar.dk.Models.DTOs.dto_product
+﻿@model www.e_bazar.dk.Models.DTOs.col_product
 @{
     ViewBag.Title = "Vare";
 
-    poco_person current_user = ViewBag.CurrentUser as poco_person;
+    dto_person current_user = ViewBag.CurrentUser as dto_person;
 }
 @{
 
@@ -12,18 +12,18 @@
             <div class="l-pd-filler"></div>
 
             <div class="col-xs-12 z-padding-right-0">
-                @if (Model.product_poco.image_pocos != null && Model.product_poco.image_pocos.Count > 0)
+                @if (Model.product_dto.image_dtos != null && Model.product_dto.image_dtos.Count > 0)
                 {
-                    <input type="hidden" class="pr_hidden_no_product_dtos" value="@Model.product_poco.image_pocos.Count" />//måske unødvendig
+                    <input type="hidden" class="pr_hidden_no_product_dtos" value="@Model.product_dto.image_dtos.Count" />//måske unødvendig
                 }
                 <div class="">
                     <div class="col-xs-8 z-padding-sides-0">
                         <div class="col-xs-12 l-pd-header1 z-border-darkgrey z-background-color-lightgrey z-padding-sides-0 xnavigation-top">
                             <div class="col-xs-4 l-pd-header2">
 
-                                @if (!string.IsNullOrEmpty(Model.product_poco.booth_poco.frontimage))
+                                @if (!string.IsNullOrEmpty(Model.product_dto.booth_dto.frontimage))
                                 {
-                                    var image_pathA = @"/_content/images/profiles/" + Model.product_poco.booth_poco.salesman_poco.sysname + "/booths/" + Model.product_poco.booth_poco.sysname + "/" + Model.product_poco.booth_poco.frontimage;
+                                    var image_pathA = @"/_content/images/profiles/" + Model.product_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.product_dto.booth_dto.sysname + "/" + Model.product_dto.booth_dto.frontimage;
                                     string[] classes = { "l-pd-header3", "", "z-padding-all-15" };
                                     string[] classes_a = { "navbar-left" };
                                     object route = new { };
@@ -37,13 +37,13 @@
                                 <table class="">
                                     <tr>
                                         <td class="z-color-green z-padding-all-15 z-padding-bottom-0 ">
-                                            [@Html.RouteLink(@Model.product_poco.booth_poco.name, "Booth", new { id = Model.product_poco.booth_poco.booth_id }, new { @class = "z-color-green z-padding-right-0" })]<br />
+                                            [@Html.RouteLink(@Model.product_dto.booth_dto.name, "Booth", new { id = Model.product_dto.booth_dto.booth_id }, new { @class = "z-color-green z-padding-right-0" })]<br />
                                         </td>
                                         <td class="l-pd-textB z-padding-all-15 z-padding-bottom-0">
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="l-pd-textA z-padding-left-15">@Model.product_poco.name</td>
+                                        <td class="l-pd-textA z-padding-left-15">@Model.product_dto.name</td>
                                         <td class="z-padding-left-15" valign="top"></td>
                                     </tr>
                                 </table>
@@ -52,14 +52,14 @@
                             <div class="col-xs-4 z-padding-all-15">
 
                                 <span class="xz-float-right">
-                                    <input type="button" value="Vis Stand" class="btn z-background-color-black-1 z-color-white-1 z-hover-white2 xz-float-right myfade" onclick="location.href='@Url.RouteUrl("Booth", new { id = Model.product_poco.booth_poco.booth_id/*, c = ViewBag.Cat*/ })'" />
+                                    <input type="button" value="Vis Stand" class="btn z-background-color-black-1 z-color-white-1 z-hover-white2 xz-float-right myfade" onclick="location.href='@Url.RouteUrl("Booth", new { id = Model.product_dto.booth_dto.booth_id/*, c = ViewBag.Cat*/ })'" />
                                 </span>
                                 <br />
                                 @*<span class="z-float-right">&nbsp;&nbsp;&nbsp;&nbsp;</span>*@
                                 @if (current_user != null && Model.is_owner)
                                 {
                                     <span class="xz-float-right">
-                                        <input type="button" value="Rediger vare" class="btn z-background-color-black-1 z-color-white-1 z-hover-white2 myfade" onclick="location.href='@Url.RouteUrl("EditProduct1", new { product_id = Model.product_poco.id })'" />
+                                        <input type="button" value="Rediger vare" class="btn z-background-color-black-1 z-color-white-1 z-hover-white2 myfade" onclick="location.href='@Url.RouteUrl("EditProduct1", new { product_id = Model.product_dto.id })'" />
                                     </span>
                                 }
 
@@ -71,8 +71,8 @@
                                     </button>
                                     <div class="z-pr-fav l-pd-fav z-padding-all-15 z-z-index-infinity-high z-background-color-black-2 z-color-white-1">
                                         <ul class="">
-                                            <li>@Html.RouteLink("Tilføj", "AddFavorite", new { product_id = Model.product_poco.id, collection_id = -1 }, new { @class = "z-color-white-1 myfade" })</li>
-                                            <li>@Html.RouteLink("Fjern", "RemoveFavorite1", new { product_id = Model.product_poco.id, collection_id = -1 }, new { @class = "z-color-white-1 myfade" })</li>
+                                            <li>@Html.RouteLink("Tilføj", "AddFavorite", new { product_id = Model.product_dto.id, collection_id = -1 }, new { @class = "z-color-white-1 myfade" })</li>
+                                            <li>@Html.RouteLink("Fjern", "RemoveFavorite1", new { product_id = Model.product_dto.id, collection_id = -1 }, new { @class = "z-color-white-1 myfade" })</li>
                                         </ul>
                                     </div>
                                 }
@@ -86,13 +86,13 @@
                             <div>
                                 @{
                                     int di = 0;
-                                    if (@Model.product_poco.image_pocos != null && @Model.product_poco.image_pocos.Count > 0)
+                                    if (@Model.product_dto.image_dtos != null && @Model.product_dto.image_dtos.Count > 0)
                                     {
-                                        foreach (poco_productimage pro in Model.product_poco.image_pocos)
+                                        foreach (dto_image pro in Model.product_dto.image_dtos)
                                         {
                                             if (!string.IsNullOrEmpty(pro.name))
                                             {
-                                                var image_pathB = "/_content/images/profiles/" + Model.product_poco.booth_poco.salesman_poco.sysname + "/booths/" + Model.product_poco.booth_poco.sysname + "/products/" + Model.product_poco.sysname + "/" + pro.name;
+                                                var image_pathB = "/_content/images/profiles/" + Model.product_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.product_dto.booth_dto.sysname + "/products/" + Model.product_dto.sysname + "/" + pro.name;
                                                 <a href="#/"><img src="@image_pathB" alt="Sample Image" class="pr_img_content_productimage_@di l-pd-productimage"></a>
                                             }
                                             di++;
@@ -108,12 +108,12 @@
                             <div class="z-border-white">
                                 @{
                                     di = 0;
-                                    foreach (poco_productimage img in Model.product_poco.image_pocos)
+                                    foreach (dto_image img in Model.product_dto.image_dtos)
                                     {
                                         if (img != null)
                                         {
-                                            var thumb_pathC = "/_content/images/profiles/" + Model.product_poco.booth_poco.salesman_poco.sysname + "/booths/" + Model.product_poco.booth_poco.sysname + "/products/" + Model.product_poco.sysname + "/t_" + img.name;
-                                            var image_pathC = "/_content/images/profiles/" + Model.product_poco.booth_poco.salesman_poco.sysname + "/booths/" + Model.product_poco.booth_poco.sysname + "/products/" + Model.product_poco.sysname + "/" + img.name;
+                                            var thumb_pathC = "/_content/images/profiles/" + Model.product_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.product_dto.booth_dto.sysname + "/products/" + Model.product_dto.sysname + "/t_" + img.name;
+                                            var image_pathC = "/_content/images/profiles/" + Model.product_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.product_dto.booth_dto.sysname + "/products/" + Model.product_dto.sysname + "/" + img.name;
                                             <a href="#/">
                                                 <img src="@thumb_pathC" data-src="@image_pathC" alt="Sample Image" class="pr_img_content_thumbnail_@di l-pd-thumbnail loadlater" onclick="setFront(@di);">&nbsp;&nbsp;&nbsp;
                                             </a>
@@ -127,9 +127,9 @@
                     <div class="col-xs-4 z-padding-right-0 z-padding-sides-0-phone">
                         <div class="col-xs-12 l-pd-profile1 z-border-bottom-0 z-padding-sides-0">
                             <div class="col-xs-4 z-padding-sides-0">
-                                @if (!string.IsNullOrEmpty(Model.product_poco.booth_poco.salesman_poco.profileimage))
+                                @if (!string.IsNullOrEmpty(Model.product_dto.booth_dto.salesman_dto.profileimage))
                                 {
-                                    var path = "/_content/images/profiles/" + Model.product_poco.booth_poco.salesman_poco.sysname + "/profile/" + Model.product_poco.booth_poco.salesman_poco.profileimage;
+                                    var path = "/_content/images/profiles/" + Model.product_dto.booth_dto.salesman_dto.sysname + "/profile/" + Model.product_dto.booth_dto.salesman_dto.profileimage;
 
                                     string[] classes = { "l-pd-profile2" };
                                     string[] classes_a = { "" };
@@ -142,29 +142,29 @@
                             <div class="col-xs-8 z-padding-sides-0-phone">
                                 <div class="col-xs-12 z-bold z-padding-sides-0">
                                     @{
-                                        string dname = @Model.product_poco.booth_poco.salesman_poco.firstname != "" ? @Model.product_poco.booth_poco.salesman_poco.firstname + " " + @Model.product_poco.booth_poco.salesman_poco.lastname : "Sælger";
+                                        string dname = @Model.product_dto.booth_dto.salesman_dto.firstname != "" ? @Model.product_dto.booth_dto.salesman_dto.firstname + " " + @Model.product_dto.booth_dto.salesman_dto.lastname : "Sælger";
                                     }
                                     <span>@dname</span>
 
                                 </div>
                                 <table class="col-xs-12">
-                                    @if (@Model.product_poco.booth_poco.fulladdress)
+                                    @if (@Model.product_dto.booth_dto.fulladdress)
                                     {
                                         <tr>
                                             @*<td class="z-color-green z-padding-left-15">Adresse:</td>*@
-                                            <td>@Model.product_poco.booth_poco.street_address</td>
+                                            <td>@Model.product_dto.booth_dto.street_address</td>
                                         </tr>
                                         <tr>
                                             @*<td class="z-padding-left-15">&nbsp;</td>*@
-                                            <td>@Model.product_poco.booth_poco.region_poco.zip</td>
+                                            <td>@Model.product_dto.booth_dto.region_dto.zip</td>
                                         </tr>
                                         <tr>
                                             @*<td class="z-padding-left-15">&nbsp;</td>*@
-                                            <td>@Model.product_poco.booth_poco.region_poco.town</td>
+                                            <td>@Model.product_dto.booth_dto.region_dto.town</td>
                                         </tr>
                                         <tr>
                                             @*<td class="z-padding-left-15">&nbsp;</td>*@
-                                            <td>@Model.product_poco.booth_poco.country <br /><br /></td>
+                                            <td>@Model.product_dto.booth_dto.country <br /><br /></td>
                                         </tr>
                                     }
                                     else
@@ -172,11 +172,11 @@
 
                                         <tr>
                                             @*<td class="z-color-green z-padding-left-15">Adresse:</td>*@
-                                            <td>@Model.product_poco.booth_poco.region_poco.zip</td>
+                                            <td>@Model.product_dto.booth_dto.region_dto.zip</td>
                                         </tr>
                                         <tr>
                                             @*<td class="z-padding-left-15">&nbsp;</td>*@
-                                            <td>@Model.product_poco.booth_poco.region_poco.town<br /><br /></td>
+                                            <td>@Model.product_dto.booth_dto.region_dto.town<br /><br /></td>
                                         </tr>
                                     }
                                 </table>
@@ -188,18 +188,18 @@
                                 <br />
                                 <table>
 
-                                    @if (@Model.product_poco.booth_poco.salesman_poco.created_on != null)
+                                    @if (@Model.product_dto.booth_dto.salesman_dto.created_on != null)
                                     {
                                         <tr>
                                             <td class="z-color-green">Oprettet:</td>
                                             <td>
-                                                @Model.product_poco.booth_poco.salesman_poco.created_on.ToString("dd/MM/yyyy")
+                                                @Model.product_dto.booth_dto.salesman_dto.created_on.ToString("dd/MM/yyyy")
                                             </td>
                                         </tr>
                                     }
                                     @{
-                                        string dnr = Model.product_poco.booth_poco.salesman_poco.phonenumber != null ? Model.product_poco.booth_poco.salesman_poco.phonenumber.ToString() : "**** ****";
-                                        string dphone = Model.product_poco.booth_poco.salesman_poco.show_phone ? dnr : dnr != "**** ****" ? dnr.Substring(0, 4) + " ****" : Texts.GetNopValue(NOP.NO_PHONENUMBER.ToString());
+                                        string dnr = Model.product_dto.booth_dto.salesman_dto.phonenumber != null ? Model.product_dto.booth_dto.salesman_dto.phonenumber.ToString() : "**** ****";
+                                        string dphone = Model.product_dto.booth_dto.salesman_dto.show_phone ? dnr : dnr != "**** ****" ? dnr.Substring(0, 4) + " ****" : Texts.GetNopValue(NOP.NO_PHONENUMBER.ToString());
 
                                         <tr>
                                             <td class="z-color-green">Tlf Nr.:<br /><br /></td>
@@ -223,7 +223,7 @@
                             </div>
                             <div>
                                 @{
-                                    string ddesc = !string.IsNullOrEmpty(Model.product_poco.booth_poco.salesman_poco.description) ? Model.product_poco.booth_poco.salesman_poco.description : Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                                    string ddesc = !string.IsNullOrEmpty(Model.product_dto.booth_dto.salesman_dto.description) ? Model.product_dto.booth_dto.salesman_dto.description : Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
                                 }
                                 @Html.DisplayWithBreaksFor(ddesc)
                             </div>
@@ -233,7 +233,7 @@
                         @if (current_user == null || !Model.is_owner)
                         {
                             <div class="col-xs-12">
-                                @using (Html.BeginRouteForm("MessageA", new { type = "product", id = Model.product_poco.id }, FormMethod.Get, null))
+                                @using (Html.BeginRouteForm("MessageA", new { type = "product", id = Model.product_dto.id }, FormMethod.Get, null))
                                 {
                                     <input type="submit" value="Skriv til sælger" class="btn z-background-color-black-1 z-color-white-1 z-adm-control z-hover-white2 myfade" />
                                 }
@@ -245,7 +245,7 @@
                             <div class=""><span class="z-bold">Vare Beskrivelse</span></div>
                             <div class="">
                                 @{
-                                    string ddescA = !string.IsNullOrEmpty(Model.product_poco.description) ? Model.product_poco.description : Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                                    string ddescA = !string.IsNullOrEmpty(Model.product_dto.description) ? Model.product_dto.description : Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
                                 }
                                 @Html.DisplayWithBreaksFor(ddescA)
                             </div>
@@ -253,7 +253,7 @@
                                 <span class="z-bold">Note:&nbsp;</span>
                                 <span class="">
                                     @{
-                                        string dnote = !string.IsNullOrEmpty(Model.product_poco.note) ? Model.product_poco.note : Texts.GetNopValue(NOP.NO_NOTE.ToString());
+                                        string dnote = !string.IsNullOrEmpty(Model.product_dto.note) ? Model.product_dto.note : Texts.GetNopValue(NOP.NO_NOTE.ToString());
                                     }
                                     @Html.DisplayFor(m => dnote)
                                 </span>
@@ -264,7 +264,7 @@
                                     <td><span class="z-bold">Pris:&nbsp;&nbsp;&nbsp;</span></td>
                                     <td>
                                         @{
-                                            string dprice = Model.product_poco.price == NOP.INGEN_PRIS.ToString() ? Texts.GetNopValue(Model.product_poco.price) : Model.product_poco.price + " kr";
+                                            string dprice = Model.product_dto.price == NOP.INGEN_PRIS.ToString() ? Texts.GetNopValue(Model.product_dto.price) : Model.product_dto.price + " kr";
                                         }
                                         <span>@dprice</span>
                                     </td>
@@ -272,27 +272,27 @@
                                 <tr>
                                     <td><span class="z-bold">Stand:&nbsp;&nbsp;&nbsp;</span></td>
                                     <td>
-                                        @if (@Model.product_poco.status_condition != null)
+                                        @if (@Model.product_dto.status_condition != null)
                                         {
-                                            <span>@Texts.GetConditionValue(Model.product_poco.status_condition)</span>
+                                            <span>@Texts.GetConditionValue(Model.product_dto.status_condition)</span>
                                         }
                                     </td>
                                 </tr>
                                 @*<tr>
                                     <td><span class="z-bold">Status:&nbsp;&nbsp;&nbsp;</span></td>
                                     <td>
-                                        @if (@Model.product_poco.status_stock != null)
+                                        @if (@Model.product_dto.status_stock != null)
                                         {
-                                            <span>@Texts.GetStockValue(Model.product_poco.status_stock)</span>
+                                            <span>@Texts.GetStockValue(Model.product_dto.status_stock)</span>
                                         }
                                     </td>
                                 </tr>*@
                                 <tr>
                                     <td><span class="z-bold">Enheder tilbage:&nbsp;&nbsp;&nbsp;</span></td>
                                     <td>
-                                        @if (@Model.product_poco.no_of_units >= 0)
+                                        @if (@Model.product_dto.no_of_units >= 0)
                                         {
-                                            <span>@Model.product_poco.no_of_units</span>
+                                            <span>@Model.product_dto.no_of_units</span>
                                         }
                                     </td>
                                 </tr>
@@ -300,24 +300,24 @@
                             <hr />
                             <div>
                                 <span class="z-bold">Søgeord - &nbsp;&nbsp;&nbsp;</span>
-                                @if (Model.product_poco.booth_poco.category_main != null && Model.product_poco.category_main_id != null)
+                                @if (Model.product_dto.booth_dto.category_main != null && Model.product_dto.category_main_id != null)
                                 {
-                                    poco_category main = Model.product_poco.booth_poco.category_main.Where(c => c.category_id == Model.product_poco.category_main_id).FirstOrDefault();
+                                    dto_category main = Model.product_dto.booth_dto.category_main.Where(c => c.category_id == Model.product_dto.category_main_id).FirstOrDefault();
                                     string main_name = main.name;
                                     @Html.RouteLink("[" + main_name + "]", "Marketplace", new { c = Security.Format(main_name, "_", false) }, new { @class = "z-color-green myfade" })
-                                    if (Model.product_poco.category_second_id != null)
+                                    if (Model.product_dto.category_second_id != null)
                                     {
                                         if (main.children.Count() > 0)
                                         {
-                                            poco_category second = main.children.Where(c => c.category_id == Model.product_poco.category_second_id).FirstOrDefault();
+                                            dto_category second = main.children.Where(c => c.category_id == Model.product_dto.category_second_id).FirstOrDefault();
                                             string second_name = second.name;
                                             @Html.RouteLink("[" + second_name + "]", "Marketplace", new { c = Security.Format(Security.EncodeCats_MD5(false, main_name, second_name), "_", false) }, new { @class = "z-color-green myfade" });
                                         }
                                     }
                                 }
-                                @if (Model.product_poco.tag_pocos != null)
+                                @if (Model.product_dto.tag_dtos != null)
                                 {
-                                    foreach (var tag in Model.product_poco.tag_pocos)
+                                    foreach (var tag in Model.product_dto.tag_dtos)
                                     {
                                         @Html.Raw(" ")
                                         @Html.RouteLink("[" + tag.name + "]", "Marketplace", new { s = tag.name }, new { @class = "myfade" })
@@ -333,7 +333,7 @@
                         <div class="col-xs-12 l-pd-others1 xz-only-desk z-background-color-lightgrey z-border-darkgrey">
                             @{
                                 int dcounter = 0;
-                                foreach (IBoothItem item in Model.other)
+                                foreach (dto_booth_item item in Model.other)
                                 {
                                     if (dcounter == 2)
                                     {
@@ -382,18 +382,18 @@
             <div class="l-pd-filler"></div>
 
             <div class="col-xs-12 z-padding-right-0">
-                @if (Model.product_poco.image_pocos != null && Model.product_poco.image_pocos.Count > 0)
+                @if (Model.product_dto.image_dtos != null && Model.product_dto.image_dtos.Count > 0)
                 {
-                    <input type="hidden" class="pr_hidden_no_product_dtos" value="@Model.product_poco.image_pocos.Count" />//måske unødvendig
+                    <input type="hidden" class="pr_hidden_no_product_dtos" value="@Model.product_dto.image_dtos.Count" />//måske unødvendig
                 }
                 <div class="">
                     <div class="col-xs-8 z-padding-left-0">
                         <div class="col-xs-12 l-pd-header1 z-border-darkgrey z-background-color-lightgrey z-padding-sides-0 xnavigation-top">
                             <div class="col-xs-4 l-pd-header2">
 
-                                @if (!string.IsNullOrEmpty(Model.product_poco.booth_poco.frontimage))
+                                @if (!string.IsNullOrEmpty(Model.product_dto.booth_dto.frontimage))
                                 {
-                                    var image_pathA = @"/_content/images/profiles/" + Model.product_poco.booth_poco.salesman_poco.sysname + "/booths/" + Model.product_poco.booth_poco.sysname + "/" + Model.product_poco.booth_poco.frontimage; 
+                                    var image_pathA = @"/_content/images/profiles/" + Model.product_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.product_dto.booth_dto.sysname + "/" + Model.product_dto.booth_dto.frontimage; 
                                     string[] classes = { "l-pd-header3", "", "z-padding-all-15" }; 
                                     string[] classes_a = { "navbar-left" }; 
                                     object route = new { }; 
@@ -407,13 +407,13 @@
                                 <table class="">
                                     <tr>
                                         <td class="z-color-green z-padding-all-15 z-padding-bottom-0 ">
-                                            [@Html.RouteLink(@Model.product_poco.booth_poco.name, "Booth", new { id = Model.product_poco.booth_poco.booth_id }, new { @class = "z-color-green z-padding-right-0" })]<br />
+                                            [@Html.RouteLink(@Model.product_dto.booth_dto.name, "Booth", new { id = Model.product_dto.booth_dto.booth_id }, new { @class = "z-color-green z-padding-right-0" })]<br />
                                         </td>
                                         <td class="l-pd-textB z-padding-all-15 z-padding-bottom-0">
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="l-pd-textA z-padding-left-15">@Model.product_poco.name</td>
+                                        <td class="l-pd-textA z-padding-left-15">@Model.product_dto.name</td>
                                         <td class="z-padding-left-15" valign="top"></td>
                                     </tr>
                                 </table>
@@ -422,14 +422,14 @@
                             <div class="col-xs-4 z-padding-all-15">
 
                                 <span class="">
-                                    <input type="button" value="Vis Stand" class="btn z-background-color-black-1 z-color-white-1 z-hover-white2 xz-float-right myfade" onclick="location.href='@Url.RouteUrl("Booth", new { id = Model.product_poco.booth_poco.booth_id/*, c = ViewBag.Cat*/ })'" />
+                                    <input type="button" value="Vis Stand" class="btn z-background-color-black-1 z-color-white-1 z-hover-white2 xz-float-right myfade" onclick="location.href='@Url.RouteUrl("Booth", new { id = Model.product_dto.booth_dto.booth_id/*, c = ViewBag.Cat*/ })'" />
                                 </span>
                                 <br />
                                 @*<span class="z-float-right">&nbsp;&nbsp;&nbsp;&nbsp;</span>*@
                                 @if (current_user != null && Model.is_owner)
                                 {
                                     <span class="xz-float-right">
-                                        <input type="button" value="Rediger vare" class="btn z-background-color-black-1 z-color-white-1 z-hover-white2 myfade" onclick="location.href='@Url.RouteUrl("EditProduct1", new { product_id = Model.product_poco.id })'" />
+                                        <input type="button" value="Rediger vare" class="btn z-background-color-black-1 z-color-white-1 z-hover-white2 myfade" onclick="location.href='@Url.RouteUrl("EditProduct1", new { product_id = Model.product_dto.id })'" />
                                     </span>
                                 }
 
@@ -441,8 +441,8 @@
                                     </button>
                                     <div class="z-pr-fav l-pd-fav z-padding-all-15 z-z-index-infinity-high z-background-color-black-2 z-color-white-1">
                                         <ul class="">
-                                            <li>@Html.RouteLink("Tilføj", "AddFavorite", new { product_id = Model.product_poco.id, collection_id = -1 }, new { @class = "z-color-white-1 myfade" })</li>
-                                            <li>@Html.RouteLink("Fjern", "RemoveFavorite1", new { product_id = Model.product_poco.id, collection_id = -1 }, new { @class = "z-color-white-1 myfade" })</li>
+                                            <li>@Html.RouteLink("Tilføj", "AddFavorite", new { product_id = Model.product_dto.id, collection_id = -1 }, new { @class = "z-color-white-1 myfade" })</li>
+                                            <li>@Html.RouteLink("Fjern", "RemoveFavorite1", new { product_id = Model.product_dto.id, collection_id = -1 }, new { @class = "z-color-white-1 myfade" })</li>
                                         </ul>
                                     </div>
                                 }
@@ -456,13 +456,13 @@
                                 <div>
                                     @{
                                         int ti = 0;
-                                        if (@Model.product_poco.image_pocos != null && @Model.product_poco.image_pocos.Count > 0)
+                                        if (@Model.product_dto.image_dtos != null && @Model.product_dto.image_dtos.Count > 0)
                                         {
-                                            foreach (poco_productimage pro in Model.product_poco.image_pocos)
+                                            foreach (dto_image pro in Model.product_dto.image_dtos)
                                             {
                                                 if (!string.IsNullOrEmpty(pro.name))
                                                 {
-                                                    var image_pathB = "/_content/images/profiles/" + Model.product_poco.booth_poco.salesman_poco.sysname + "/booths/" + Model.product_poco.booth_poco.sysname + "/products/" + Model.product_poco.sysname + "/" + pro.name;
+                                                    var image_pathB = "/_content/images/profiles/" + Model.product_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.product_dto.booth_dto.sysname + "/products/" + Model.product_dto.sysname + "/" + pro.name;
                                                     <a href="#/"><img src="@image_pathB" alt="Sample Image" class="pr_img_content_productimage_@ti l-pd-productimage"></a>
                                                 }
                                                 ti++;
@@ -478,12 +478,12 @@
                                 <div class="z-border-white">
                                     @{
                                         ti = 0;
-                                        foreach (poco_productimage img in Model.product_poco.image_pocos)
+                                        foreach (dto_image img in Model.product_dto.image_dtos)
                                         {
                                             if (img != null)
                                             {
-                                                var thumb_pathC = "/_content/images/profiles/" + Model.product_poco.booth_poco.salesman_poco.sysname + "/booths/" + Model.product_poco.booth_poco.sysname + "/products/" + Model.product_poco.sysname + "/t_" + img.name;
-                                                var image_pathC = "/_content/images/profiles/" + Model.product_poco.booth_poco.salesman_poco.sysname + "/booths/" + Model.product_poco.booth_poco.sysname + "/products/" + Model.product_poco.sysname + "/" + img.name;
+                                                var thumb_pathC = "/_content/images/profiles/" + Model.product_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.product_dto.booth_dto.sysname + "/products/" + Model.product_dto.sysname + "/t_" + img.name;
+                                                var image_pathC = "/_content/images/profiles/" + Model.product_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.product_dto.booth_dto.sysname + "/products/" + Model.product_dto.sysname + "/" + img.name;
                                                 <a href="#/">
                                                     <img src="@thumb_pathC" data-src="@image_pathC" alt="Sample Image" class="pr_img_content_thumbnail_@ti l-pd-thumbnail loadlater" onclick="setFront(@ti);">&nbsp;&nbsp;&nbsp;
                                                 </a>
@@ -497,9 +497,9 @@
                     <div class="col-xs-4 z-padding-right-0 z-padding-sides-0-phone">
                         <div class="col-xs-12 l-pd-profile1 z-border-bottom-0 z-padding-sides-0">
                             <div class="col-xs-4 z-padding-sides-0">
-                                @if (!string.IsNullOrEmpty(Model.product_poco.booth_poco.salesman_poco.profileimage))
+                                @if (!string.IsNullOrEmpty(Model.product_dto.booth_dto.salesman_dto.profileimage))
                                 {
-                                    var path = "/_content/images/profiles/" + Model.product_poco.booth_poco.salesman_poco.sysname + "/profile/" + Model.product_poco.booth_poco.salesman_poco.profileimage;
+                                    var path = "/_content/images/profiles/" + Model.product_dto.booth_dto.salesman_dto.sysname + "/profile/" + Model.product_dto.booth_dto.salesman_dto.profileimage;
 
                                     string[] classes = { "l-pd-profile2" };
                                     string[] classes_a = { "" };
@@ -512,29 +512,29 @@
                             <div class="col-xs-8 z-padding-sides-0-phone">
                                 <div class="col-xs-12 z-bold z-padding-sides-0">
                                     @{
-                                        string tname = @Model.product_poco.booth_poco.salesman_poco.firstname != "" ? @Model.product_poco.booth_poco.salesman_poco.firstname + " " + @Model.product_poco.booth_poco.salesman_poco.lastname : "Sælger";
+                                        string tname = @Model.product_dto.booth_dto.salesman_dto.firstname != "" ? @Model.product_dto.booth_dto.salesman_dto.firstname + " " + @Model.product_dto.booth_dto.salesman_dto.lastname : "Sælger";
                                     }
                                     <span>@tname</span>
 
                                 </div>
                                 <table class="col-xs-12">
-                                    @if (@Model.product_poco.booth_poco.fulladdress)
+                                    @if (@Model.product_dto.booth_dto.fulladdress)
                                     {
                                         <tr>
                                             @*<td class="z-color-green z-padding-left-15">Adresse:</td>*@
-                                            <td>@Model.product_poco.booth_poco.street_address</td>
+                                            <td>@Model.product_dto.booth_dto.street_address</td>
                                         </tr>
                                         <tr>
                                             @*<td class="z-padding-left-15">&nbsp;</td>*@
-                                            <td>@Model.product_poco.booth_poco.region_poco.zip</td>
+                                            <td>@Model.product_dto.booth_dto.region_dto.zip</td>
                                         </tr>
                                         <tr>
                                             @*<td class="z-padding-left-15">&nbsp;</td>*@
-                                            <td>@Model.product_poco.booth_poco.region_poco.town</td>
+                                            <td>@Model.product_dto.booth_dto.region_dto.town</td>
                                         </tr>
                                         <tr>
                                             @*<td class="z-padding-left-15">&nbsp;</td>*@
-                                            <td>@Model.product_poco.booth_poco.country <br /><br /></td>
+                                            <td>@Model.product_dto.booth_dto.country <br /><br /></td>
                                         </tr>
                                     }
                                     else
@@ -542,11 +542,11 @@
 
                                         <tr>
                                             @*<td class="z-color-green z-padding-left-15">Adresse:</td>*@
-                                            <td>@Model.product_poco.booth_poco.region_poco.zip</td>
+                                            <td>@Model.product_dto.booth_dto.region_dto.zip</td>
                                         </tr>
                                         <tr>
                                             @*<td class="z-padding-left-15">&nbsp;</td>*@
-                                            <td>@Model.product_poco.booth_poco.region_poco.town<br /><br /></td>
+                                            <td>@Model.product_dto.booth_dto.region_dto.town<br /><br /></td>
                                         </tr>
                                     }
                                 </table>
@@ -558,18 +558,18 @@
                                 <br />
                                 <table>
 
-                                    @if (@Model.product_poco.booth_poco.salesman_poco.created_on != null)
+                                    @if (@Model.product_dto.booth_dto.salesman_dto.created_on != null)
                                     {
                                         <tr>
                                             <td class="z-color-green">Oprettet:</td>
                                             <td>
-                                                @Model.product_poco.booth_poco.salesman_poco.created_on.ToString("dd/MM/yyyy")
+                                                @Model.product_dto.booth_dto.salesman_dto.created_on.ToString("dd/MM/yyyy")
                                             </td>
                                         </tr>
                                     }
                                     @{
-                                        string tnr = Model.product_poco.booth_poco.salesman_poco.phonenumber != null ? Model.product_poco.booth_poco.salesman_poco.phonenumber.ToString() : "**** ****";
-                                        string tphone = Model.product_poco.booth_poco.salesman_poco.show_phone ? tnr : tnr != "**** ****" ? tnr.Substring(0, 4) + " ****" : Texts.GetNopValue(NOP.NO_PHONENUMBER.ToString());
+                                        string tnr = Model.product_dto.booth_dto.salesman_dto.phonenumber != null ? Model.product_dto.booth_dto.salesman_dto.phonenumber.ToString() : "**** ****";
+                                        string tphone = Model.product_dto.booth_dto.salesman_dto.show_phone ? tnr : tnr != "**** ****" ? tnr.Substring(0, 4) + " ****" : Texts.GetNopValue(NOP.NO_PHONENUMBER.ToString());
 
                                         <tr>
                                             <td class="z-color-green">Tlf Nr.:<br /><br /></td>
@@ -593,7 +593,7 @@
                             </div>
                             <div>
                                 @{
-                                    string tdesc = !string.IsNullOrEmpty(Model.product_poco.booth_poco.salesman_poco.description) ? Model.product_poco.booth_poco.salesman_poco.description : Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                                    string tdesc = !string.IsNullOrEmpty(Model.product_dto.booth_dto.salesman_dto.description) ? Model.product_dto.booth_dto.salesman_dto.description : Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
                                 }
                                 @Html.DisplayWithBreaksFor(tdesc)
                             </div>
@@ -603,7 +603,7 @@
                         @if (current_user == null || !Model.is_owner)
                         {
                             <div class="col-xs-12">
-                                @using (Html.BeginRouteForm("MessageA", new { type = "product", id = Model.product_poco.id }, FormMethod.Get, null))
+                                @using (Html.BeginRouteForm("MessageA", new { type = "product", id = Model.product_dto.id }, FormMethod.Get, null))
                                 {
                                     <input type="submit" value="Skriv til sælger" class="btn z-background-color-black-1 z-color-white-1 z-adm-control z-hover-white2 myfade" />
                                 }
@@ -615,7 +615,7 @@
                             <div class=""><span class="z-bold">Vare Beskrivelse</span></div>
                             <div class="">
                                 @{
-                                    string tdescA = !string.IsNullOrEmpty(Model.product_poco.description) ? Model.product_poco.description : Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                                    string tdescA = !string.IsNullOrEmpty(Model.product_dto.description) ? Model.product_dto.description : Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
                                 }
                                 @Html.DisplayWithBreaksFor(tdescA)
                             </div>
@@ -623,7 +623,7 @@
                                 <span class="z-bold">Note:&nbsp;</span>
                                 <span class="">
                                     @{
-                                        string tnote = !string.IsNullOrEmpty(Model.product_poco.note) ? Model.product_poco.note : Texts.GetNopValue(NOP.NO_NOTE.ToString());
+                                        string tnote = !string.IsNullOrEmpty(Model.product_dto.note) ? Model.product_dto.note : Texts.GetNopValue(NOP.NO_NOTE.ToString());
                                     }
                                     @Html.DisplayFor(m => tnote)
                                 </span>
@@ -634,7 +634,7 @@
                                     <td><span class="z-bold">Pris:&nbsp;&nbsp;&nbsp;</span></td>
                                     <td>
                                         @{
-                                            string tprice = Model.product_poco.price == NOP.INGEN_PRIS.ToString() ? Texts.GetNopValue(Model.product_poco.price) : Model.product_poco.price + " kr";
+                                            string tprice = Model.product_dto.price == NOP.INGEN_PRIS.ToString() ? Texts.GetNopValue(Model.product_dto.price) : Model.product_dto.price + " kr";
                                         }
                                         <span>@tprice</span>
                                     </td>
@@ -642,27 +642,27 @@
                                 <tr>
                                     <td><span class="z-bold">Stand:&nbsp;&nbsp;&nbsp;</span></td>
                                     <td>
-                                        @if (@Model.product_poco.status_condition != null)
+                                        @if (@Model.product_dto.status_condition != null)
                                         {
-                                            <span>@Texts.GetConditionValue(Model.product_poco.status_condition)</span>
+                                            <span>@Texts.GetConditionValue(Model.product_dto.status_condition)</span>
                                         }
                                     </td>
                                 </tr>
                                 @*<tr>
                     <td><span class="z-bold">Status:&nbsp;&nbsp;&nbsp;</span></td>
                     <td>
-                        @if (@Model.product_poco.status_stock != null)
+                        @if (@Model.product_dto.status_stock != null)
                         {
-                            <span>@Texts.GetStockValue(Model.product_poco.status_stock)</span>
+                            <span>@Texts.GetStockValue(Model.product_dto.status_stock)</span>
                         }
                     </td>
                 </tr>*@
                                 <tr>
                                     <td><span class="z-bold">Enheder tilbage:&nbsp;&nbsp;&nbsp;</span></td>
                                     <td>
-                                        @if (@Model.product_poco.no_of_units >= 0)
+                                        @if (@Model.product_dto.no_of_units >= 0)
                                         {
-                                            <span>@Model.product_poco.no_of_units</span>
+                                            <span>@Model.product_dto.no_of_units</span>
                                         }
                                     </td>
                                 </tr>
@@ -670,24 +670,24 @@
                             <hr />
                             <div>
                                 <span class="z-bold">Søgeord - &nbsp;&nbsp;&nbsp;</span>
-                                @if (Model.product_poco.booth_poco.category_main != null && Model.product_poco.category_main_id != null)
+                                @if (Model.product_dto.booth_dto.category_main != null && Model.product_dto.category_main_id != null)
                                 {
-                                    poco_category main = Model.product_poco.booth_poco.category_main.Where(c => c.category_id == Model.product_poco.category_main_id).FirstOrDefault();
+                                    dto_category main = Model.product_dto.booth_dto.category_main.Where(c => c.category_id == Model.product_dto.category_main_id).FirstOrDefault();
                                     string main_name = main.name;
                                     @Html.RouteLink("[" + main_name + "]", "Marketplace", new { c = Security.Format(main_name, "_", false) }, new { @class = "z-color-green myfade" })
-                                    if (Model.product_poco.category_second_id != null)
+                                    if (Model.product_dto.category_second_id != null)
                                     {
                                         if (main.children.Count() > 0)
                                         {
-                                            poco_category second = main.children.Where(c => c.category_id == Model.product_poco.category_second_id).FirstOrDefault();
+                                            dto_category second = main.children.Where(c => c.category_id == Model.product_dto.category_second_id).FirstOrDefault();
                                             string second_name = second.name;
                                             @Html.RouteLink("[" + second_name + "]", "Marketplace", new { c = Security.Format(Security.EncodeCats_MD5(false, main_name, second_name), "_", false) }, new { @class = "z-color-green myfade" });
                                         }
                                     }
                                 }
-                                @if (Model.product_poco.tag_pocos != null)
+                                @if (Model.product_dto.tag_dtos != null)
                                 {
-                                    foreach (var tag in Model.product_poco.tag_pocos)
+                                    foreach (var tag in Model.product_dto.tag_dtos)
                                     {
                                         @Html.Raw(" ")
                                         @Html.RouteLink("[" + tag.name + "]", "Marketplace", new { s = tag.name }, new { @class = "myfade" })
@@ -751,9 +751,9 @@
         <div class="remove_phone_block ">
             @*<div class="l-pd-filler z-background-color-black-1"></div>*@
             <div class="col-xs-12 z-padding-top-15 xz-padding-sides-0">
-                @if (Model.product_poco.image_pocos != null && Model.product_poco.image_pocos.Count > 0)
+                @if (Model.product_dto.image_dtos != null && Model.product_dto.image_dtos.Count > 0)
                 {
-                    <input type="hidden" class="pr_hidden_no_product_dtos" value="@Model.product_poco.image_pocos.Count" />//måske unødvendig
+                    <input type="hidden" class="pr_hidden_no_product_dtos" value="@Model.product_dto.image_dtos.Count" />//måske unødvendig
                 }
 
 
@@ -762,13 +762,13 @@
                     <div>
                         @{
                             int mi = 0;
-                            if (@Model.product_poco.image_pocos != null && @Model.product_poco.image_pocos.Count > 0)
+                            if (@Model.product_dto.image_dtos != null && @Model.product_dto.image_dtos.Count > 0)
                             {
-                                foreach (poco_productimage pro in Model.product_poco.image_pocos)
+                                foreach (dto_image pro in Model.product_dto.image_dtos)
                                 {
                                     if (!string.IsNullOrEmpty(pro.name))
                                     {
-                                        var image_pathB = "/_content/images/profiles/" + Model.product_poco.booth_poco.salesman_poco.sysname + "/booths/" + Model.product_poco.booth_poco.sysname + "/products/" + Model.product_poco.sysname + "/" + pro.name;
+                                        var image_pathB = "/_content/images/profiles/" + Model.product_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.product_dto.booth_dto.sysname + "/products/" + Model.product_dto.sysname + "/" + pro.name;
                                         <a href="#/"><img src="@image_pathB" alt="Sample Image" class="pr_img_content_productimage_@mi l-pd-productimage"></a>
                                     }
                                     mi++;
@@ -784,12 +784,12 @@
                     <div class="z-border-white">
                         @{
                             mi = 0;
-                            foreach (poco_productimage img in Model.product_poco.image_pocos)
+                            foreach (dto_image img in Model.product_dto.image_dtos)
                             {
                                 if (img != null)
                                 {
-                                    var thumb_pathC = "/_content/images/profiles/" + Model.product_poco.booth_poco.salesman_poco.sysname + "/booths/" + Model.product_poco.booth_poco.sysname + "/products/" + Model.product_poco.sysname + "/t_" + img.name;
-                                    var image_pathC = "/_content/images/profiles/" + Model.product_poco.booth_poco.salesman_poco.sysname + "/booths/" + Model.product_poco.booth_poco.sysname + "/products/" + Model.product_poco.sysname + "/" + img.name;
+                                    var thumb_pathC = "/_content/images/profiles/" + Model.product_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.product_dto.booth_dto.sysname + "/products/" + Model.product_dto.sysname + "/t_" + img.name;
+                                    var image_pathC = "/_content/images/profiles/" + Model.product_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.product_dto.booth_dto.sysname + "/products/" + Model.product_dto.sysname + "/" + img.name;
                                     <a href="#/">
                                         <img src="@thumb_pathC" data-src="@image_pathC" alt="Sample Image" class="pr_img_content_thumbnail_@mi l-pd-thumbnail loadlater" onclick="setFront(@mi);">&nbsp;&nbsp;&nbsp;
                                     </a>
@@ -806,29 +806,29 @@
                     <br />
                     <div class="col-xs-12 z-bold">
                         @{
-                            string mname = @Model.product_poco.booth_poco.salesman_poco.firstname != "" ? @Model.product_poco.booth_poco.salesman_poco.firstname + " " + @Model.product_poco.booth_poco.salesman_poco.lastname : "Sælger";
+                            string mname = @Model.product_dto.booth_dto.salesman_dto.firstname != "" ? @Model.product_dto.booth_dto.salesman_dto.firstname + " " + @Model.product_dto.booth_dto.salesman_dto.lastname : "Sælger";
                         }
                         <span>@mname</span>
 
                     </div>
                     <table class="col-xs-12">
-                        @if (@Model.product_poco.booth_poco.fulladdress)
+                        @if (@Model.product_dto.booth_dto.fulladdress)
                         {
                             <tr>
                                 @*<td class="z-color-green z-padding-left-15">Adresse:</td>*@
-                                <td class="z-padding-left-15 z-color-red">@Model.product_poco.booth_poco.street_address</td>
+                                <td class="z-padding-left-15 z-color-red">@Model.product_dto.booth_dto.street_address</td>
                             </tr>
                             <tr>
                                 @*<td class="z-padding-left-15">&nbsp;</td>*@
-                                <td class="z-padding-left-15 z-color-red">@Model.product_poco.booth_poco.region_poco.zip</td>
+                                <td class="z-padding-left-15 z-color-red">@Model.product_dto.booth_dto.region_dto.zip</td>
                             </tr>
                             <tr>
                                 @*<td class="z-padding-left-15">&nbsp;</td>*@
-                                <td class="z-padding-left-15 z-color-red">@Model.product_poco.booth_poco.region_poco.town</td>
+                                <td class="z-padding-left-15 z-color-red">@Model.product_dto.booth_dto.region_dto.town</td>
                             </tr>
                             <tr>
                                 @*<td class="z-padding-left-15">&nbsp;</td>*@
-                                <td class="z-padding-left-15 z-color-red">@Model.product_poco.booth_poco.country <br /><br /></td>
+                                <td class="z-padding-left-15 z-color-red">@Model.product_dto.booth_dto.country <br /><br /></td>
                             </tr>
                         }
                         else
@@ -836,11 +836,11 @@
 
                             <tr>
                                 @*<td class="z-color-lightgreen z-padding-left-15">Adresse:</td>*@
-                                <td class="z-padding-left-15 z-color-red">@Model.product_poco.booth_poco.region_poco.zip</td>
+                                <td class="z-padding-left-15 z-color-red">@Model.product_dto.booth_dto.region_dto.zip</td>
                             </tr>
                             <tr>
                                 @*<td class="z-padding-left-15">&nbsp;</td>*@
-                                <td class="z-padding-left-15 z-color-red">@Model.product_poco.booth_poco.region_poco.town<br /><br /></td>
+                                <td class="z-padding-left-15 z-color-red">@Model.product_dto.booth_dto.region_dto.town<br /><br /></td>
                             </tr>
                         }
                     </table>
@@ -849,7 +849,7 @@
                 @if (current_user == null || !Model.is_owner)
                 {
                     <div class="col-xs-12 z-background-color-black-1 z-padding-sides-0">
-                        @using (Html.BeginRouteForm("MessageA", new { type = "product", id = Model.product_poco.id }, FormMethod.Get, null))
+                        @using (Html.BeginRouteForm("MessageA", new { type = "product", id = Model.product_dto.id }, FormMethod.Get, null))
                         {
                             <input type="submit" value="Skriv til sælger" class="btn m-l-pd-header1 z-bold z-background-color-black-1 z-color-white-1 z-adm-control myfade" />
                         }
@@ -860,18 +860,18 @@
                         <br />
                         <table>
 
-                            @if (@Model.product_poco.booth_poco.salesman_poco.created_on != null)
+                            @if (@Model.product_dto.booth_dto.salesman_dto.created_on != null)
                             {
                                 <tr>
                                     <td class="z-color-green">Oprettet:</td>
                                     <td>
-                                        @Model.product_poco.booth_poco.salesman_poco.created_on.ToString("dd/MM/yyyy")
+                                        @Model.product_dto.booth_dto.salesman_dto.created_on.ToString("dd/MM/yyyy")
                                     </td>
                                 </tr>
                             }
                             @{
-                                string mnr = Model.product_poco.booth_poco.salesman_poco.phonenumber != null ? Model.product_poco.booth_poco.salesman_poco.phonenumber.ToString() : "**** ****";
-                                string mphone = Model.product_poco.booth_poco.salesman_poco.show_phone ? mnr : mnr != "**** ****" ? mnr.Substring(0, 4) + " ****" : Texts.GetNopValue(NOP.NO_PHONENUMBER.ToString());
+                                string mnr = Model.product_dto.booth_dto.salesman_dto.phonenumber != null ? Model.product_dto.booth_dto.salesman_dto.phonenumber.ToString() : "**** ****";
+                                string mphone = Model.product_dto.booth_dto.salesman_dto.show_phone ? mnr : mnr != "**** ****" ? mnr.Substring(0, 4) + " ****" : Texts.GetNopValue(NOP.NO_PHONENUMBER.ToString());
 
                                 <tr>
                                     <td class="z-color-green">Tlf Nr.:<br /><br /></td>
@@ -895,7 +895,7 @@
                     </div>
                     <div>
                         @{
-                            string mdesc = !string.IsNullOrEmpty(Model.product_poco.booth_poco.salesman_poco.description) ? Model.product_poco.booth_poco.salesman_poco.description : Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                            string mdesc = !string.IsNullOrEmpty(Model.product_dto.booth_dto.salesman_dto.description) ? Model.product_dto.booth_dto.salesman_dto.description : Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
                         }
                         @Html.DisplayWithBreaksFor(mdesc)
                     </div>
@@ -907,7 +907,7 @@
                     <div class=""><span class="z-bold">Vare Beskrivelse</span></div>
                     <div class="">
                         @{
-                            string mdescA = !string.IsNullOrEmpty(Model.product_poco.description) ? Model.product_poco.description : Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                            string mdescA = !string.IsNullOrEmpty(Model.product_dto.description) ? Model.product_dto.description : Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
                         }
                         @Html.DisplayWithBreaksFor(mdescA)
                     </div>
@@ -915,7 +915,7 @@
                         <span class="z-bold">Note:&nbsp;</span>
                         <span class="">
                             @{
-                                string mnote = !string.IsNullOrEmpty(Model.product_poco.note) ? Model.product_poco.note : Texts.GetNopValue(NOP.NO_NOTE.ToString());
+                                string mnote = !string.IsNullOrEmpty(Model.product_dto.note) ? Model.product_dto.note : Texts.GetNopValue(NOP.NO_NOTE.ToString());
                             }
                             @Html.DisplayFor(m => mnote)
                         </span>
@@ -926,7 +926,7 @@
                             <td><span class="z-bold">Pris:&nbsp;&nbsp;&nbsp;</span></td>
                             <td>
                                 @{
-                                    string mprice = Model.product_poco.price == NOP.INGEN_PRIS.ToString() ? Texts.GetNopValue(Model.product_poco.price) : Model.product_poco.price + " kr";
+                                    string mprice = Model.product_dto.price == NOP.INGEN_PRIS.ToString() ? Texts.GetNopValue(Model.product_dto.price) : Model.product_dto.price + " kr";
                                 }
                                 <span>@mprice</span>
                             </td>
@@ -934,27 +934,27 @@
                         <tr>
                             <td><span class="z-bold">Stand:&nbsp;&nbsp;&nbsp;</span></td>
                             <td>
-                                @if (@Model.product_poco.status_condition != null)
+                                @if (@Model.product_dto.status_condition != null)
                                 {
-                                    <span>@Texts.GetConditionValue(Model.product_poco.status_condition)</span>
+                                    <span>@Texts.GetConditionValue(Model.product_dto.status_condition)</span>
                                 }
                             </td>
                         </tr>
                         @*<tr>
                             <td><span class="z-bold">Status:&nbsp;&nbsp;&nbsp;</span></td>
                             <td>
-                                @if (@Model.product_poco.status_stock != null)
+                                @if (@Model.product_dto.status_stock != null)
                                 {
-                                    <span>@Texts.GetStockValue(Model.product_poco.status_stock)</span>
+                                    <span>@Texts.GetStockValue(Model.product_dto.status_stock)</span>
                                 }
                             </td>
                         </tr>*@
                         <tr>
                             <td><span class="z-bold">Enheder tilbage:&nbsp;&nbsp;&nbsp;</span></td>
                             <td>
-                                @if (@Model.product_poco.no_of_units >= 0)
+                                @if (@Model.product_dto.no_of_units >= 0)
                                 {
-                                    <span>@Model.product_poco.no_of_units</span>
+                                    <span>@Model.product_dto.no_of_units</span>
                                 }
                             </td>
                         </tr>
@@ -962,24 +962,24 @@
                     <hr />
                     <div>
                         <span class="z-bold">Søgeord - &nbsp;&nbsp;&nbsp;</span>
-                        @if (Model.product_poco.booth_poco.category_main != null && Model.product_poco.category_main_id != null)
+                        @if (Model.product_dto.booth_dto.category_main != null && Model.product_dto.category_main_id != null)
                         {
-                            poco_category main = Model.product_poco.booth_poco.category_main.Where(c => c.category_id == Model.product_poco.category_main_id).FirstOrDefault();
+                            dto_category main = Model.product_dto.booth_dto.category_main.Where(c => c.category_id == Model.product_dto.category_main_id).FirstOrDefault();
                             string main_name = main.name;
                             @Html.RouteLink("[" + main_name + "]", "Marketplace", new { c = Security.Format(main_name, "_", false) }, new { @class = "z-color-green myfade" })
-                            if (Model.product_poco.category_second_id != null)
+                            if (Model.product_dto.category_second_id != null)
                             {
                                 if (main.children.Count() > 0)
                                 {
-                                    poco_category second = main.children.Where(c => c.category_id == Model.product_poco.category_second_id).FirstOrDefault();
+                                    dto_category second = main.children.Where(c => c.category_id == Model.product_dto.category_second_id).FirstOrDefault();
                                     string second_name = second.name;
                                     @Html.RouteLink("[" + second_name + "]", "Marketplace", new { c = Security.Format(Security.EncodeCats_MD5(false, main_name, second_name), "_", false) }, new { @class = "z-color-green myfade" });
                                 }
                             }
                         }
-                        @if (Model.product_poco.tag_pocos != null)
+                        @if (Model.product_dto.tag_dtos != null)
                         {
-                            foreach (var tag in Model.product_poco.tag_pocos)
+                            foreach (var tag in Model.product_dto.tag_dtos)
                             {
                                 @Html.Raw(" ")
                                 @Html.RouteLink("[" + tag.name + "]", "Marketplace", new { s = tag.name }, new { @class = "myfade" })
@@ -1067,9 +1067,9 @@
     }
     function requestEmail(elem, target)
     {
-        @*var request = @Json.Encode(Model.product_poco.booth_poco.salesman_poco.request_email);*@
+        @*var request = @Json.Encode(Model.product_dto.booth_dto.salesman_dto.request_email);*@
         //if (request) {
-            var booth_id = '@Json.Encode(Model.product_poco.booth_poco.booth_id)';
+            var booth_id = '@Json.Encode(Model.product_dto.booth_dto.booth_id)';
             var path = "@Url.RouteUrl("GetEmail")";//"/Administration/GetEmail";
             var data = { 'booth_id': booth_id };
             getEmail_Ajax(path, data, elem, target);

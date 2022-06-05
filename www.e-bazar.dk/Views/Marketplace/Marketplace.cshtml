@@ -1,4 +1,4 @@
-﻿@model www.e_bazar.dk.Models.DTOs.dto_marketplace
+﻿@model www.e_bazar.dk.Models.DTOs.col_marketplace
 @using www.e_bazar.dk.Extensions
 @{
     ViewBag.Title = "Startside";
@@ -120,7 +120,7 @@
                             </div>
                         </div>
                         <div class="col-xs-7 z-height-100-percent z-pos-rel">
-                            <div><h1 class="z-margin-top-0 z-align-right z-bold z-font-size-40">Markedspladsen</h1></div>
+                            <div><h1 class="z-margin-top-0 z-align-right z-bold z-font-size-40">Markedsplads</h1></div>
                             <div class="z-bottom-right z-margin-bottom-0 z-margin-top-0"><h2 class="z-align-right z-font-size-15">- @Settings.Basic.COMMENT()</h2></div>
                         </div>
                     </div>
@@ -137,7 +137,7 @@
                         {
                             for (int counter = 0; counter < Model.booths_newest.Count() - 1; counter++)
                             {
-                                poco_booth item = Model.booths_newest.ElementAt(counter);
+                                dto_booth item = Model.booths_newest.ElementAt(counter);
                                 @Html.Partial("~/Views/Partials/_Marketplace_Newest.cshtml", item)
                             }
                         }
@@ -182,7 +182,7 @@
                                 int daprox = dlist_count + drest;
                                 for (int counter = 0; counter < daprox; counter++)
                                 {
-                                    poco_booth item = counter < Model.booths_list.Count() ? Model.booths_list.ElementAt(counter) : new poco_booth() { booth_id = -1 };
+                                    dto_booth item = counter < Model.booths_list.Count() ? Model.booths_list.ElementAt(counter) : new dto_booth() { booth_id = -1 };
                                     @*if (tblock_counter % 1 == 0 && tblock_counter != 0)
                     {
                         @Html.Raw("</div>")
@@ -419,7 +419,7 @@
                         {
                             for (int counter = 0; counter < Model.booths_newest.Count() - 3; counter++)
                             {
-                                poco_booth item = Model.booths_newest.ElementAt(counter);
+                                dto_booth item = Model.booths_newest.ElementAt(counter);
                                 @Html.Partial("~/Views/Partials/_Marketplace_Newest.cshtml", item)
                             }
                         }
@@ -463,7 +463,7 @@
                                 int taprox = tlist_count + trest;
                                 for (int counter = 0; counter < taprox; counter++)
                                 {
-                                    poco_booth item = counter < Model.booths_list.Count() ? Model.booths_list.ElementAt(counter) : new poco_booth() { booth_id = -1 };
+                                    dto_booth item = counter < Model.booths_list.Count() ? Model.booths_list.ElementAt(counter) : new dto_booth() { booth_id = -1 };
                                     @*if (tblock_counter % 1 == 0 && tblock_counter != 0)
                     {
                         @Html.Raw("</div>")
@@ -689,7 +689,7 @@
                                 int maprox = mlist_count + mrest;
                                 for (int counter = 0; counter < maprox; counter++)
                                 {
-                                    poco_booth item = counter < Model.booths_list.Count() ? Model.booths_list.ElementAt(counter) : new poco_booth() { booth_id = -1 };
+                                    dto_booth item = counter < Model.booths_list.Count() ? Model.booths_list.ElementAt(counter) : new dto_booth() { booth_id = -1 };
                                     if (mblock_counter % 1 == 0 && mblock_counter != 0)
                                     {
                                         @Html.Raw("</div>")

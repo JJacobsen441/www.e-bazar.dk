@@ -196,15 +196,15 @@ namespace www.e_bazar.dk.SharedClasses
             }
         }
 
-        public static List<poco_params> Params
+        public static List<biz_params> Params
         {
             get
             {
                 //if (!Cookie)
                 //    return new Dictionary<string, string>();
                 if (System.Web.HttpContext.Current.Session["param"] != null)
-                    return (List<poco_params>)System.Web.HttpContext.Current.Session["param"];
-                return new List<poco_params>();
+                    return (List<biz_params>)System.Web.HttpContext.Current.Session["param"];
+                return new List<biz_params>();
             }
             set
             {
@@ -222,7 +222,7 @@ namespace www.e_bazar.dk.SharedClasses
                 //    return new Dictionary<string, string>();
                 //if (System.Web.HttpContext.Current.Session["param"] != null)
                     return (RelevantHelper)System.Web.HttpContext.Current.Session["rele"];
-                //return new List<poco_params>();
+                //return new List<biz_params>();
             }
             set
             {

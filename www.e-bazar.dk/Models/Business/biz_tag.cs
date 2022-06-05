@@ -7,27 +7,27 @@ using www.e_bazar.dk.SharedClasses;
 
 namespace www.e_bazar.dk.Models.DTOs
 {
-    public class poco_tag
+    public class biz_tag
     {
         //private EbazarDB db;// = new EbazarDB();
 
 
-        public long tag_id { get; set; }
+        /*public long tag_id { get; set; }
         public string name { get; set; }
         public string form { get; set; }
         public int numberofhits { get; set; }
         //public List<booth> booth { get; set; }
-        public List<poco_product> product { get; set; }
-        public List<poco_collection> collection { get; set; }
+        public List<biz_product> product { get; set; }
+        public List<biz_collection> collection { get; set; }*/
 
-        /*private poco_tag()
+        /*private biz_tag()
         {
         }*/
-        public poco_tag()
+        public biz_tag()
         {
             //this.db = new EbazarDB();
         }
-        /*~poco_tag() 
+        /*~biz_tag() 
         {
             db?.Dispose();
         }*/
@@ -66,10 +66,10 @@ namespace www.e_bazar.dk.Models.DTOs
             }
         }
 
-        public List<poco_tag> Get5TagPOCOs(string contains)
+        public List<dto_tag> Get5TagDTOs(string contains)
         {
             List<tag> tags = GetTagsStartsWith(contains);
-            return this.ToPocoList(tags).OrderByDescending(t => t.numberofhits).Take(5).ToList();
+            return this.ToDTOList(tags).OrderByDescending(t => t.numberofhits).Take(5).ToList();
            
         }
 
@@ -88,7 +88,7 @@ namespace www.e_bazar.dk.Models.DTOs
             using (EbazarDB _db = new EbazarDB())
             {
 
-                form = "primary";
+                string form = "primary";
                 bool add_to_tags = false;
                 tag tag = _db.tag.Where(t => t.name == tag_name).Select(t => t).FirstOrDefault();
                 if (tag == null)
@@ -173,33 +173,34 @@ namespace www.e_bazar.dk.Models.DTOs
             return c;
         }
 
-        public List<poco_tag> ToPocoList(ICollection<tag> tags)
+        public List<dto_tag> ToDTOList(ICollection<tag> tags)
         {
             if (tags == null)
                 throw new Exception("A-OK, Check.");
 
-            List<poco_tag> res = new List<poco_tag>();
+            List<dto_tag> res = new List<dto_tag>();
+            biz_tag biz = new biz_tag();
             foreach (tag t in tags.ToList())
             {
-                poco_tag tag = new poco_tag();
-                tag.ToPoco(t);
+                dto_tag tag = new dto_tag();
+                tag = biz.ToDTO(t);
                 res.Add(tag);
             }
             return res;
         }
 
-        public void ToPoco(tag tag)
+        public dto_tag ToDTO(tag tag)
         {
             if (tag == null)
                 throw new Exception("A-OK, Check.");
 
             //EbazarDB _db = DAL.GetInstance().GetDB();
-
+            dto_tag dto = new dto_tag();
             using (EbazarDB _db = new EbazarDB()) 
             {
-                this.tag_id = tag.Id;
-                this.name = tag.name;
-                this.form = tag.form;
+                dto.tag_id = tag.Id;
+                dto.name = tag.name;
+                dto.form = tag.form;
 
                 IQueryable<tag> _t = _db.tag
                     .Include("product")
@@ -211,29 +212,33 @@ namespace www.e_bazar.dk.Models.DTOs
 
                 tag tmp = _t.AsEnumerable().FirstOrDefault();
                 if(tmp.IsNotNull() && tmp.product.IsNotNull() && tmp.collection.IsNotNull())
-                    numberofhits = tmp.product.Count() + tmp.collection.Count();
+                    dto.numberofhits = tmp.product.Count() + tmp.collection.Count();
 
-                this.product = new List<poco_product>();
+                dto.product = new List<dto_product>();
                 if (tag.product != null && tag.product.Count() > 0)
                 {
                     foreach (product pro in tag.product)
                     {
-                        poco_product poco = new poco_product(false);
-                        poco.ToPoco(pro, null, "");
-                        this.product.Add(poco);
+                        biz_product biz = new biz_product(false);
+                        dto_product _dto = new dto_product();
+                        _dto = biz.ToDTO(pro, null, "");
+                        dto.product.Add(_dto);
                     }
                 }
-                this.collection = new List<poco_collection>();
+                dto.collection = new List<dto_collection>();
                 if (tag.collection != null && tag.collection.Count() > 0)
                 {
                     foreach (collection col in tag.collection)
                     {
-                        poco_collection poco = new poco_collection();
-                        poco.ToPoco(col, null, "");
-                        this.collection.Add(poco);
+                        biz_collection biz = new biz_collection();
+                        dto_collection _dto = new dto_collection();
+                        _dto = biz.ToDTO(col, null, "");
+                        dto.collection.Add(_dto);
                     }
                 }
             }
+
+            return dto;
         }
     }
 }

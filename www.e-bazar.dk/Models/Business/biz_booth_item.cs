@@ -1,31 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web.Mvc;
 using www.e_bazar.dk.Extensions;
-using www.e_bazar.dk.Interfaces;
 using www.e_bazar.dk.SharedClasses;
-using static www.e_bazar.dk.Models.DTOs.poco_booth;
+using static www.e_bazar.dk.Models.DTOs.dto_booth;
 
 namespace www.e_bazar.dk.Models.DTOs
 {
-    public abstract class booth_item : IBoothItem
+    public abstract class biz_booth_item// : IBoothItem
     {
-        public long id { get; set; }
+        /*public long id { get; set; }
         public int category_second_id { get; set; }
         public int category_main_id { get; set; }
         public SelectList category_main_selectlist { get; set; }
         public SelectList category_second_selectlist { get; set; }
 
-        public poco_folder foldera { get; set; }
+        public biz_folder foldera { get; set; }
         public SelectList foldera_selectlist { get; set; }
-        public poco_folder folderb { get; set; }
+        public biz_folder folderb { get; set; }
         public SelectList folderb_selectlist { get; set; }
 
         [DisplayName("Parametre")]
-        public List<poco_params> param_daos { get; set; }
+        public List<biz_params> param_daos { get; set; }
         public DateTime modified { get; set; }
         [Required]
         [StringLength(50)]
@@ -71,31 +68,41 @@ namespace www.e_bazar.dk.Models.DTOs
         public bool active { get; set; }
 
         public int? booth_id { get; set; }
-        public poco_booth booth_poco { get; set; }
+        public biz_booth booth_poco { get; set; }
         [DisplayName("Billeder")]
         public List<IImage> image_pocos { get; set; }
         [DisplayName("Søgeord")]
-        public List<poco_tag> tag_pocos { get; set; }
+        public List<biz_tag> tag_pocos { get; set; }
         [DisplayName("Søgeord")]
         public string tag_pocos_nop { get; set; }
-        public List<poco_conversation> conversations { get; set; }
+        public List<biz_conversation> conversations { get; set; }
 
-        public abstract long Save();
-        public abstract void Update();
-        public abstract void Delete(long id, EbazarDB db);
-        public abstract bool RemoveTag(long tag_id, bool is_up_dating);
-        public abstract void RemoveImage(string image_name);
-        public abstract poco_booth GetBoothPOCO();
 
         public bool relevant { get; set; }
         public List<Hit> relevant_hits = new List<Hit>();
 
         public string cat_main = "";
+        public string cat_second = "";*/
+
+        //public bool relevant { get; set; }
+
+        //public List<Hit> relevant_hits = new List<Hit>();
+
+        public string cat_main = "";
+
         public string cat_second = "";
 
+        public abstract long Save<T>(T dto) where T : dto_booth_item;
+        public abstract void Update<T>(T dto) where T : dto_booth_item;
+        public abstract void Delete(long id, EbazarDB db);
+        public abstract bool RemoveTag<T>(T dto, long tag_id, bool is_up_dating) where T : dto_booth_item;
+        public abstract bool RemoveParam<T>(T dto, int param_id) where T : dto_booth_item;
+        public abstract void RemoveImage<T>(string image_name, T dto) where T : dto_booth_item;
+        public abstract dto_booth GetBoothDTO<T>(T dto) where T : dto_booth_item;
 
 
-        public void SetupToClient<T>() where T : booth_item
+
+        public T SetupToClient<T>(T dto) where T : dto_booth_item
         {
 
             //EbazarDB _db = DAL.GetInstance().GetContext();
@@ -103,59 +110,61 @@ namespace www.e_bazar.dk.Models.DTOs
             {
 
 
-                if (!this.IsNull() && !this.booth_poco.IsNull())
+                if (!dto.IsNull()/* && !dto.booth_dto.IsNull()*/)
                 {
-                    if (!this.category_main_id.IsNull())
+                    if (!dto.category_main_id.IsNull())
                     {
-                        poco_category cat_poco = new poco_category();
-                        List<poco_category> cats_top = cat_poco._GetAll(true, true);
+                        biz_category cat_poco = new biz_category();
+                        List<dto_category> cats_top = cat_poco._GetAll(true, true);
 
-                        this.category_main_selectlist = new SelectList(cats_top, "category_id", "name", this.category_main_id);
+                        dto.category_main_selectlist = new SelectList(cats_top, "category_id", "name", dto.category_main_id);
 
-                        this.category_second_selectlist = this.category_second_id == 0 ?
-                            new SelectList(cats_top.OrderBy(x => x.priority).FirstOrDefault().children, "category_id", "name", this.category_second_id) :
-                            new SelectList(cats_top.Where(x => x.category_id == this.category_main_id).FirstOrDefault().children, "category_id", "name", this.category_second_id);
+                        dto.category_second_selectlist = dto.category_second_id == 0 ?
+                            new SelectList(cats_top.OrderBy(x => x.priority).FirstOrDefault().children, "category_id", "name", dto.category_second_id) :
+                            new SelectList(cats_top.Where(x => x.category_id == dto.category_main_id).FirstOrDefault().children, "category_id", "name", dto.category_second_id);
                     }
 
-                    poco_folder tmpa = this.foldera;
-                    poco_folder tmpb = this.folderb;
+                    dto_folder tmpa = dto.foldera;
+                    dto_folder tmpb = dto.folderb;
 
                     List<folder> lista = new List<folder>() { new folder() { Id = -1, name = "ingen.." } };
-                    lista = lista.Concat(_db.folder.Where(l => l.booth_id == this.booth_poco.booth_id).OrderBy(l => l.priority)).ToList();
+                    lista = lista.Concat(_db.folder.Where(l => l.booth_id == dto.booth_id).OrderBy(l => l.priority)).ToList();
 
                     List<folder> listb = new List<folder>() { new folder() { Id = -1, name = "ingen.." } };
                     listb = !tmpa.IsNull() ? listb.Concat(_db.folder.Where(l => l.parent_id == tmpa.id).OrderBy(l => l.priority)).ToList() : listb;
 
-                    this.foldera_selectlist = !tmpa.IsNull() && lista.Count() > 0 ?
+                    dto.foldera_selectlist = !tmpa.IsNull() && lista.Count() > 0 ?
                         new SelectList(lista, "Id", "name", tmpa.id) :
                         new SelectList(lista, "Id", "name", -1);
 
-                    this.folderb_selectlist = !tmpa.IsNull() && !tmpb.IsNull() && listb.Count() > 0 ?
+                    dto.folderb_selectlist = !tmpa.IsNull() && !tmpb.IsNull() && listb.Count() > 0 ?
                         new SelectList(listb, "Id", "name", tmpb.id) :
                         new SelectList(listb, "Id", "name", -1);
                 }
 
-                this.status_stock = string.IsNullOrEmpty(this.status_stock) ? STOCK.PÅ_LAGER.ToString() : this.status_stock;
-                this.status_stock_selectlist = EnumHelper.SelectListFor(Texts.GetStockEnum(this.status_stock));
+                dto.status_stock = string.IsNullOrEmpty(dto.status_stock) ? STOCK.PÅ_LAGER.ToString() : dto.status_stock;
+                dto.status_stock_selectlist = EnumHelper.SelectListFor(Texts.GetStockEnum(dto.status_stock));
 
-                this.status_condition = string.IsNullOrEmpty(this.status_condition) ? CONDITION.VELHOLDT.ToString() : this.status_condition;
-                this.status_condition_selectlist = EnumHelper.SelectListFor(Texts.GetConditionEnum(this.status_condition));
+                dto.status_condition = string.IsNullOrEmpty(dto.status_condition) ? CONDITION.VELHOLDT.ToString() : dto.status_condition;
+                dto.status_condition_selectlist = EnumHelper.SelectListFor(Texts.GetConditionEnum(dto.status_condition));
 
-                this.price = string.IsNullOrEmpty(this.price) ? NOP.INGEN_PRIS.ToString() : this.price;
-                this.note = string.IsNullOrEmpty(this.note) ? Texts.GetNopValue(NOP.NO_NOTE.ToString()) : this.note;
-                this.description = string.IsNullOrEmpty(this.description) ? Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString()) : this.description;
+                dto.price = string.IsNullOrEmpty(dto.price) ? NOP.INGEN_PRIS.ToString() : dto.price;
+                dto.note = string.IsNullOrEmpty(dto.note) ? Texts.GetNopValue(NOP.NO_NOTE.ToString()) : dto.note;
+                dto.description = string.IsNullOrEmpty(dto.description) ? Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString()) : dto.description;
 
-                if (this.tag_pocos == null || this.tag_pocos.Count == 0)
+                if (dto.tag_dtos == null || dto.tag_dtos.Count == 0)
                 {
-                    this.tag_pocos = null;
-                    this.tag_pocos_nop = Texts.GetNopValue(NOP.NO_TAGS.ToString());
+                    dto.tag_dtos = null;
+                    dto.tag_dtos_nop = Texts.GetNopValue(NOP.NO_TAGS.ToString());
                 }
             }
+
+            return dto;
         }
 
 
 
-        public bool IsRelevant(product pro, collection col, bool counting, string b_name, RelevantHelper helper)
+        public bool IsRelevant<T>(T dto, product pro, collection col, bool counting, string b_name, RelevantHelper helper) where T: dto_booth_item
         {
             if (pro.IsNull() && col.IsNull())
                 throw new Exception("A-OK, Check.");
@@ -193,14 +202,14 @@ namespace www.e_bazar.dk.Models.DTOs
 
             bool relevantB = is_pro ? ((opt[0] == "") ?
                             true :
-                            ((opt.Where(x => x != "" && pro.name.ToLower().Trim().Contains(x))).Count() > 0 && pro.active ||
-                            (pro.tag != null && opt.Where(x => pro.tag.Where(t => t.name == x).Count() > 0).Count() > 0 && pro.active) ||
-                            (opt.Where(x => x != "" && desc.Contains(x)).Count() > 0 && pro.active))) :
+                            ((opt.Where(x => x != null && x != "" && pro.name.ToLower().Trim().Contains(x))).Count() > 0 && pro.active ||
+                            (pro.tag != null && opt.Where(x => x != null && x != "" && pro.tag.Where(t => t.name == x).Count() > 0).Count() > 0 && pro.active) ||
+                            (opt.Where(x => x != null && x != "" && desc.Contains(x)).Count() > 0 && pro.active))) :
                             ((opt[0] == "") ?
                             true :
-                            ((opt.Where(x => x != "" && col.name.ToLower().Trim().Contains(x))).Count() > 0 && col.active ||
-                            (col.tag != null && opt.Where(x => col.tag.Where(t => t.name == x).Count() > 0).Count() > 0 && col.active) ||
-                            (opt.Where(x => x != "" && desc.Contains(x)).Count() > 0 && col.active)));
+                            ((opt.Where(x => x != null && x != "" && col.name.ToLower().Trim().Contains(x))).Count() > 0 && col.active ||
+                            (col.tag != null && opt.Where(x => x != null && x != "" && col.tag.Where(t => t.name == x).Count() > 0).Count() > 0 && col.active) ||
+                            (opt.Where(x => x != null && x != "" && desc.Contains(x)).Count() > 0 && col.active)));
 
             bool relevantC = is_pro ? ((
                             (cat == "alle") ?
@@ -250,15 +259,19 @@ namespace www.e_bazar.dk.Models.DTOs
 
             bool relevantF = CheckParam(pro, col, false, helper);
 
-            this.relevant = relevantA && relevantB && relevantC && relevantD && relevantF;
-            if (is_pro && this.relevant)
-                this.relevant_hits.Add(new Hit() { booth = b_name, product = pro.name });
-            if (!is_pro && this.relevant)
-                this.relevant_hits.Add(new Hit() { booth = b_name, product = col.name });
-            return this.relevant;
+            bool relevant = relevantA && relevantB && relevantC && relevantD && relevantF;
+            if(dto != null)
+            {
+                if (is_pro && relevant)
+                    dto.relevant_hits.Add(new Hit() { booth = b_name, product = pro.name });
+                if (!is_pro && relevant)
+                    dto.relevant_hits.Add(new Hit() { booth = b_name, product = col.name });
+                dto.relevant = relevant;
+            }
+            return relevant;
         }
 
-        public bool IsRelevant(product pro, collection col, string b_name, bool is_param, RelevantHelper helper)
+        public bool IsRelevant<T>(T dto, product pro, collection col, string b_name, bool is_param, RelevantHelper helper) where T : dto_booth_item
         {
             if (pro.IsNull() && col.IsNull())
                 throw new Exception("A-OK, Check.");
@@ -278,11 +291,14 @@ namespace www.e_bazar.dk.Models.DTOs
                 return true;
 
             bool relevant = CheckParam(pro, col, is_param, helper);
-            if (is_pro && relevant)
-                this.relevant_hits.Add(new Hit() { booth = b_name, product = pro.name });
-            if (!is_pro && relevant)
-                this.relevant_hits.Add(new Hit() { booth = b_name, product = col.name });
-            this.relevant = relevant;
+            if(dto != null)
+            {
+                if (is_pro && relevant)
+                    dto.relevant_hits.Add(new Hit() { booth = b_name, product = pro.name });
+                if (!is_pro && relevant)
+                    dto.relevant_hits.Add(new Hit() { booth = b_name, product = col.name });
+                dto.relevant = relevant;
+            }
             return relevant;
         }
 
@@ -353,11 +369,11 @@ namespace www.e_bazar.dk.Models.DTOs
                 //her tjekkes for params der kommer fra param chooseren
                 if (!relevantF)
                 {
-                    foreach (poco_params pa in ThisSession.Params)
+                    foreach (biz_params pa in ThisSession.Params)
                     {
                         if (pa.type == "MS" || pa.type == "M")
                         {
-                            foreach (poco_value val in pa.values_daos)
+                            foreach (biz_value val in pa.values_daos)
                             {
                                 if (Params(val.value, pa.type, l1, l2))
                                     relevantF = true;

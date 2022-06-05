@@ -112,7 +112,7 @@ namespace www.e_bazar.dk.Controllers
                     if (UserManager.GetRoles(user.Id).Contains("Customer"))
                         type = "Customer";
                     CurrentUser.GetInstance().Login(user.Id, model.Email, true, type);
-                    poco_person current_user = CurrentUser.GetInstance().GetCurrentUser(false, false, false);
+                    dto_person current_user = CurrentUser.GetInstance().GetCurrentUser(false, false, false);
                     if (current_user == null)
                         return HttpNotFound();
                     if (current_user.iscreated == false)
@@ -223,45 +223,45 @@ namespace www.e_bazar.dk.Controllers
                     //await UserManager.SendEmailAsync(user.Id, "Bekræft konto", "Bekræft din konto ved at klikke <a href=\"" + callbackUrl + "\"> her </a>");
                     if (model.user_type == "Salesman")
                     {
-                        poco_salesman person_poco = new poco_salesman();
-                        person_poco.person_id = user.Id;
-                        person_poco.email = user.Email;
-                        person_poco.booth_pocos = new List<poco_booth>();
+                        dto_salesman person_dto = new dto_salesman();
+                        person_dto.person_id = user.Id;
+                        person_dto.email = user.Email;
+                        person_dto.booth_dtos = new List<dto_booth>();
 
-                        DAL.GetInstance(/*true*/).SavePerson<poco_salesman>(person_poco);
+                        DAL.GetInstance().SavePerson<dto_salesman>(person_dto);
                     }
                     else if (model.user_type == "Customer")
                     {
-                        poco_customer person_poco = new poco_customer();
-                        person_poco.person_id = user.Id;
-                        person_poco.email = user.Email;
+                        dto_customer person_dto = new dto_customer();
+                        person_dto.person_id = user.Id;
+                        person_dto.email = user.Email;
 
-                        DAL.GetInstance(/*true*/).SavePerson<poco_customer>(person_poco);
+                        DAL.GetInstance().SavePerson<dto_customer>(person_dto);
                     }
                     //if (!string.IsNullOrEmpty(model.user_type) && model.user_type != "Administrator")
                     //{
                     //    if (model.user_type == "Salesman")
                     //    {
-                    //        poco_salesman person_poco = (poco_salesman)dal.GetPersonPOCO<poco_salesman>(user.Id, true, true, true);
+                    //        biz_salesman person_poco = (biz_salesman)dal.GetPersonPOCO<biz_salesman>(user.Id, true, true, true);
                     //        if (person_poco == null)
                     //        {
-                    //            person_poco = new poco_salesman();
+                    //            person_poco = new biz_salesman();
                     //            person_poco.person_id = user.Id;
                     //            person_poco.email = user.Email;
-                    //            person_poco.booth_pocos = new List<poco_booth>();
+                    //            person_poco.booth_pocos = new List<biz_booth>();
                     //        }
-                    //        dal.SavePerson<poco_salesman>(person_poco);
+                    //        dal.SavePerson<biz_salesman>(person_poco);
                     //    }
                     //    else if (model.user_type == "Customer")
                     //    {
-                    //        poco_customer person_poco = (poco_customer)dal.GetPersonPOCO<poco_customer>(user.Id, true, true, true);
+                    //        biz_customer person_poco = (biz_customer)dal.GetPersonPOCO<biz_customer>(user.Id, true, true, true);
                     //        if (person_poco == null)
                     //        {
-                    //            person_poco = new poco_customer();
+                    //            person_poco = new biz_customer();
                     //            person_poco.person_id = user.Id;
                     //            person_poco.email = user.Email;
                     //        }
-                    //        dal.SavePerson<poco_customer>(person_poco);
+                    //        dal.SavePerson<biz_customer>(person_poco);
                     //    }
                     //}
 

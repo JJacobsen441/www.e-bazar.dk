@@ -9,7 +9,6 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using www.e_bazar.dk.Extensions;
-using www.e_bazar.dk.Interfaces;
 using www.e_bazar.dk.Models;
 using www.e_bazar.dk.Models.DataAccess;
 using www.e_bazar.dk.Models.DTOs;
@@ -72,48 +71,47 @@ namespace www.e_bazar.dk.Controllers
             CurrentUser.GetInstance().Login(current_id, current_name, current_auth, current_type);
         }
         
-        private T SetupUserProfile<T>(string userid, ref dto_userprofile userprofile, string role_name) where T: poco_person, new()
+        private T SetupUserProfile<T>(string userid, ref col_userprofile userprofile, string role_name) where T: dto_person, new()
         {
-            T person_poco = (T)DAL.GetInstance().GetPersonPOCO<T>(userid, true, true, true);
-            if (person_poco == null)
-                throw new Exception("A-OK, handled.");
-            
-            bool is_salesman = typeof(poco_salesman) == typeof(T);
-            List<poco_conversation> lista = DAL.GetInstance().GetConversationsPerson(userid, is_salesman, true);
+            T person_poco = (T)DAL.GetInstance().GetPersonDTO<T>(userid, true, true, true);
+                        
+            bool is_salesman = typeof(dto_salesman) == typeof(T);
+            List<dto_conversation> lista = DAL.GetInstance().GetConversationsPerson(userid, is_salesman, true);
             if (lista == null)
                 return null;
             
-            List<poco_conversation> own = lista.Where(c => c.person_id == userid).ToList();
-            own = own.Where(c=>c.comment_pocos.Count() > 0).OrderBy(c => c.comment_pocos.OrderBy(com => com.created_on).FirstOrDefault().created_on).ToList();
+            List<dto_conversation> own = lista.Where(c => c.person_id == userid).ToList();
+            own = own.Where(c=>c.comment_dtos.Count() > 0).OrderBy(c => c.comment_dtos.OrderBy(com => com.created_on).FirstOrDefault().created_on).ToList();
             
-            List<poco_conversation> items = lista.Where(c => c.product_poco != null && c.person_id != userid).ToList();
-            items = items.Concat(lista.Where(c => c.collection_poco != null && c.person_id != userid)).ToList();
-            items = items.OrderBy(c => c.comment_pocos.OrderBy(com => com.created_on).FirstOrDefault().created_on).ToList();
+            List<dto_conversation> items = lista.Where(c => c.product_dto != null && c.person_id != userid).ToList();
+            items = items.Concat(lista.Where(c => c.collection_dto != null && c.person_id != userid)).ToList();
+            items = items.OrderBy(c => c.comment_dtos.OrderBy(com => com.created_on).FirstOrDefault().created_on).ToList();
             
-            List<poco_conversation> booths = lista.Where(c => c.booth_poco != null && c.person_id != userid).ToList();
-            booths = booths.OrderBy(c => c.comment_pocos.OrderBy(com => com.created_on).FirstOrDefault().created_on).ToList();
-            dto_conversations conversations = new dto_conversations(own, booths, items, is_salesman);
+            List<dto_conversation> booths = lista.Where(c => c.booth_dto != null && c.person_id != userid).ToList();
+            booths = booths.OrderBy(c => c.comment_dtos.OrderBy(com => com.created_on).FirstOrDefault().created_on).ToList();
+            col_conversations conversations = new col_conversations(own, booths, items, is_salesman);
 
-            List<IBoothItem> follower_news = new List<IBoothItem>();
-            foreach (poco_booth boo in person_poco.following)
-                follower_news = follower_news.Concat(boo.GetRelevantItems(0, 5)).ToList();
+            List<dto_booth_item> follower_news = new List<dto_booth_item>();
+            biz_booth biz = new biz_booth();
+            foreach (dto_booth dto in person_poco.following)
+                follower_news = follower_news.Concat(biz.GetRelevantItems(dto, 0, 5)).ToList();
             follower_news = follower_news.OrderByDescending(i => i.created_on).Take(5).ToList();
             
-            if (person_poco.GetType() == typeof(poco_salesman))
+            if (person_poco.GetType() == typeof(dto_salesman))
             {
-                userprofile.customer_poco = null;
+                userprofile.customer_dto = null;
                 userprofile.salesmen = null;
                 userprofile.customers = null;
-                userprofile.booth_pocos = DAL.GetInstance().GetBoothPOCOs(userid, false);
+                userprofile.booth_dtos = DAL.GetInstance().GetBoothDTOs(userid, false);
                 userprofile.follower_news = follower_news;
                 userprofile.conversations_dto = conversations;
             }
             else
             {
-                userprofile.salesman_poco = null;
+                userprofile.salesman_dto = null;
                 userprofile.salesmen = null;
                 userprofile.customers = null;
-                userprofile.booth_pocos = new List<poco_booth>();
+                userprofile.booth_dtos = new List<dto_booth>();
                 userprofile.follower_news = follower_news;
                 userprofile.conversations_dto = conversations;
             }
@@ -131,7 +129,7 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
                 CurrentUser user = CurrentUser.GetInstance();
-                poco_person current_user = user.GetCurrentUser(false, true, true);
+                dto_person current_user = user.GetCurrentUser(false, true, true);
                 if (user.CurrentUserName != "admin@e-bazar.dk")
                 {
                     if(current_user == null)
@@ -159,24 +157,24 @@ namespace www.e_bazar.dk.Controllers
                 List<string> role_names = UserManager.GetRoles(id).ToList();
                 string role_name = role_names.Contains("Administrator") ? "Administrator" : role_names.Contains("Salesman") ? "Salesman" : "Customer";
 
-                dto_userprofile profile = new dto_userprofile();
-                poco_salesman salesman_poco;
-                poco_customer customer_poco;
-                List<poco_booth> booth_pocos = new List<poco_booth>();
+                col_userprofile profile = new col_userprofile();
+                dto_salesman salesman_dto;
+                dto_customer customer_dto;
+                List<biz_booth> booth_pocos = new List<biz_booth>();
                 if (role_name == "Administrator")
                 {
                     return RedirectToRoute("AdminGet");
                 }
                 else if (role_name == "Salesman")
                 {
-                    salesman_poco = SetupUserProfile<poco_salesman>(id, ref profile, role_name);
-                    profile.salesman_poco = salesman_poco;
+                    salesman_dto = SetupUserProfile<dto_salesman>(id, ref profile, role_name);
+                    profile.salesman_dto = salesman_dto;
                     return View("SalesmanProfile", profile);
                 }
                 else
                 {
-                    customer_poco = SetupUserProfile<poco_customer>(id, ref profile, role_name);
-                    profile.customer_poco = customer_poco;
+                    customer_dto = SetupUserProfile<dto_customer>(id, ref profile, role_name);
+                    profile.customer_dto = customer_dto;
                     return View("CustomerProfile", profile);
                 }
             }
@@ -204,7 +202,7 @@ namespace www.e_bazar.dk.Controllers
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult SalesmanProfile(dto_userprofile model)
+        public ActionResult SalesmanProfile(col_userprofile model)
         {
             try
             {
@@ -214,7 +212,7 @@ namespace www.e_bazar.dk.Controllers
                 SetupCurrentUser();
 
                 Dictionary<string, ERROR_MESSAGE> err = Setup.SetupSalesmanProfileFromClient(ref model);
-                Dictionary<string, string> dirs = Setup.SetupProfileDirs(model.salesman_poco);
+                Dictionary<string, string> dirs = Setup.SetupProfileDirs(model.salesman_dto);
 
                 if (CheckHelper.ErrorSalesmanProfile.HasError(err))
                 {
@@ -235,8 +233,8 @@ namespace www.e_bazar.dk.Controllers
                 {
                     List<string> uploaded_profileimage = Paths.GetFileNames(PATH.PROFILE_DIRECTORY_TMP, dirs, false);
                     if (uploaded_profileimage.Count > 0)
-                        model.salesman_poco.profileimage = uploaded_profileimage.Where(f => f.Substring(0, 2) != "t_").ToList().FirstOrDefault();
-                    DAL.GetInstance(/*true*/).UpdatePerson(model.salesman_poco);
+                        model.salesman_dto.profileimage = uploaded_profileimage.Where(f => f.Substring(0, 2) != "t_").ToList().FirstOrDefault();
+                    DAL.GetInstance().UpdatePerson(model.salesman_dto);
 
                     string tmp_path = Paths.GetPath(PATH.PROFILE_DIRECTORY_TMP, dirs, true);
                     List<string> uploaded_files = Paths.GetFileNames(PATH.PROFILE_DIRECTORY_TMP, dirs, false);
@@ -279,7 +277,7 @@ namespace www.e_bazar.dk.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CustomerProfile(dto_userprofile model)
+        public ActionResult CustomerProfile(col_userprofile model)
         {
             try
             {
@@ -289,7 +287,7 @@ namespace www.e_bazar.dk.Controllers
                 SetupCurrentUser();
 
                 Dictionary<string, ERROR_MESSAGE> err = Setup.SetupCustomerProfileFromClient(ref model);
-                Dictionary<string, string> dirs = Setup.SetupProfileDirs(model.customer_poco);
+                Dictionary<string, string> dirs = Setup.SetupProfileDirs(model.customer_dto);
 
                 if (CheckHelper.ErrorCustomerProfile.HasError(err))
                 {
@@ -308,8 +306,8 @@ namespace www.e_bazar.dk.Controllers
                 {
                     List<string> uploaded_profileimage = Paths.GetFileNames(PATH.PROFILE_DIRECTORY_TMP, dirs, false);
                     if (uploaded_profileimage.Count > 0)
-                        model.customer_poco.profileimage = uploaded_profileimage.Where(f => f.Substring(0, 2) != "t_").ToList().FirstOrDefault();
-                    DAL.GetInstance(/*true*/).UpdatePerson(model.customer_poco);
+                        model.customer_dto.profileimage = uploaded_profileimage.Where(f => f.Substring(0, 2) != "t_").ToList().FirstOrDefault();
+                    DAL.GetInstance().UpdatePerson(model.customer_dto);
 
                     string tmp_path = Paths.GetPath(PATH.PROFILE_DIRECTORY_TMP, dirs, true);
                     List<string> uploaded_files = Paths.GetFileNames(PATH.PROFILE_DIRECTORY_TMP, dirs, false);
@@ -363,23 +361,25 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
                 CurrentUser user = CurrentUser.GetInstance();
-                poco_person current_user = user.GetCurrentUser(false, true, true);
+                dto_person current_user = user.GetCurrentUser(false, true, true);
                 if (current_user == null)
                     throw new Exception("A-OK, handled.");
                 ViewBag.CurrentUser = current_user;
 
-                poco_booth model = TempData["datacontainer"] as poco_booth;
+                dto_booth model = TempData["datacontainer"] as dto_booth;
 
                 if (model == null)//ny
                 {
-                    poco_salesman salesman_poco = new poco_salesman();
-                    poco_booth poco = new poco_booth();
+                    biz_salesman salesman_poco = new biz_salesman();
+                    biz_booth biz = new biz_booth();
+                    dto_booth dto = new dto_booth();
                     booth booth = new booth();
-                    booth.person = salesman_poco.GetPerson(CurrentUser.GetInstance().CurrentUserID, "Salesman", false, false, false);
-                    if (booth.person == null)
-                        throw new Exception("A-OK, handled."); 
+                    person per = salesman_poco.GetPerson(CurrentUser.GetInstance().CurrentUserID, false, false, false);
+                    if (per == null || per.descriminator != "Salesman")
+                        throw new Exception("A-OK, Handled.");
+                    booth.person = per;
                     booth.person_id = user.CurrentUserID;
-                    poco.ToPoco(booth, null);
+                    dto = biz.ToDTO(booth, null);
 
                     if (ThisSession.Json_Errors != null)
                     {
@@ -389,13 +389,13 @@ namespace www.e_bazar.dk.Controllers
                             ViewBag.JSON_ERRORS = s;
                         ThisSession.Json_Errors = null;
                     }
-                    return View("CreateBooth", poco);
+                    return View("CreateBooth", dto);
                 }
                 else//der er errors
                 {
-                    poco_salesman salesman_poco = new poco_salesman();
-                    model.salesman_poco = salesman_poco.GetPersonPOCO<poco_salesman>(CurrentUser.GetInstance().CurrentUserID, "Salesman", true, false, false);
-                    if (model.salesman_poco == null)
+                    biz_salesman salesman_poco = new biz_salesman();
+                    model.salesman_dto = salesman_poco.GetPersonDTO<dto_salesman>(CurrentUser.GetInstance().CurrentUserID, true, false, false);
+                    if (model.salesman_dto.nator != "Salesman")
                         throw new Exception("A-OK, handled.");
                     model.salesman_id = user.CurrentUserID;
 
@@ -435,27 +435,21 @@ namespace www.e_bazar.dk.Controllers
         }
         
         [HttpPost]
-        public ActionResult CreateBooth(poco_booth model)
+        public ActionResult CreateBooth(dto_booth model)
         {
             try
             {
                 if (!access.Queue())
                     throw new Exception();
 
-                //if (ThisSession.IsMobile == "none")
-                //    return View("IsMobile");
-
                 SetupCurrentUser();
                 CurrentUser user = CurrentUser.GetInstance();
-                poco_person current_user = user.GetCurrentUser(false, true, true);
+                dto_person current_user = user.GetCurrentUser(false, true, true);
                 if (current_user == null)
                     throw new Exception("A-OK, handled.");
-                //ViewBag.CurrentUser = current_user;
-
-                poco_person salesman_poco = current_user;
+                
+                dto_person salesman_poco = current_user;
                 Dictionary<string, ERROR_MESSAGE> err = Setup.SetupBoothFromClient(ref model, CurrentUser.GetInstance().CurrentUserID, DAL.GetInstance(/*true*/));
-                //if (model == null)
-                //    return _NotFound();
                 Dictionary<string, string> dirs = Setup.SetupBoothDirs(ref model, salesman_poco.sysname);
 
                 if (CheckHelper.ErrorBooth.HasError(err))
@@ -480,7 +474,7 @@ namespace www.e_bazar.dk.Controllers
                     List<string> uploaded_fnames = Paths.GetFileNames(PATH.BOOTH_DIRECTORY_TMP, dirs, false);
                     model.frontimage = uploaded_fnames.Count > 0 ? uploaded_fnames.Where(f => f.Substring(0, 2) != "t_").ToList().FirstOrDefault() : model.frontimage;
                     model.sysname = dirs["booth_sysname"];
-                    int booth_id = DAL.GetInstance(/*true*/).SaveBooth(model);
+                    int booth_id = DAL.GetInstance().SaveBooth(model);
                     model.booth_id = booth_id;
 
 
@@ -534,7 +528,7 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
                 CurrentUser user = CurrentUser.GetInstance();
-                poco_person current_user = user.GetCurrentUser(false, true, true);
+                dto_person current_user = user.GetCurrentUser(false, true, true);
                 if (current_user == null)
                     throw new Exception("A-OK, handled.");
                 ViewBag.CurrentUser = current_user;
@@ -545,7 +539,7 @@ namespace www.e_bazar.dk.Controllers
                 if (!user.OwnsBooth(booth_id))
                     throw new Exception("A-OK, handled.");
 
-                poco_booth model = TempData["datacontainer"] as poco_booth;
+                biz_booth model = TempData["datacontainer"] as biz_booth;
                 ViewBag.Tab = ThisSession.Tab as string == "categorys" ? "categorys" : "home";
                 TempData["datacontainer"] = null;
 
@@ -567,16 +561,15 @@ namespace www.e_bazar.dk.Controllers
                     ThisSession.Json_Messages = null;
                 }
 
-                poco_booth booth_poco = new poco_booth();
-                booth_poco = DAL.GetInstance().GetBoothPOCO(booth_id, "", "", true, true, true, true, false, false, true);
+                dto_booth dto = DAL.GetInstance().GetBoothDTO(booth_id, "", "", true, true, true, true, false, false, true);
                 
-                List<poco_folder> folder_pocos = DAL.GetInstance().GetFolderTree(booth_id, false);
-                dto_folders folders_dto = new dto_folders(folder_pocos, "");
-                poco_category cat_poco = new poco_category();
-                List<poco_category> cats = cat_poco._GetAll(true);
-                List<poco_booth> booth_pocos = DAL.GetInstance().GetBoothPOCOs(CurrentUser.GetInstance().CurrentUserID, false);
+                List<dto_folder> folder_pocos = DAL.GetInstance().GetFolderTree(booth_id, false);
+                col_folders folders_dto = new col_folders(folder_pocos, "");
+                biz_category cat_poco = new biz_category();
+                List<dto_category> cats = cat_poco._GetAll(true);
+                List<dto_booth> booth_dtos = DAL.GetInstance().GetBoothDTOs(CurrentUser.GetInstance().CurrentUserID, false);
                 
-                return View("EditBooth", new dto_booth(booth_poco, folders_dto, cats, null, null, booth_pocos, false, -1/*dont care*/));
+                return View("EditBooth", new col_booth(dto, folders_dto, cats, null, null, booth_dtos, false, -1/*dont care*/));
 
             }
             catch (Exception e)
@@ -603,7 +596,7 @@ namespace www.e_bazar.dk.Controllers
         }
 
         [HttpPost]
-        public ActionResult EditBooth(dto_booth model)
+        public ActionResult EditBooth(col_booth model)
         {
             try
             {
@@ -612,15 +605,15 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
                 CurrentUser user = CurrentUser.GetInstance();
-                poco_person current_user = user.GetCurrentUser(false, true, true);
+                dto_person current_user = user.GetCurrentUser(false, true, true);
                 if (current_user == null)
                     throw new Exception("A-OK, handled.");
                 
-                poco_booth booth_poco = model.booth_poco;
-                poco_person salesman_poco = current_user;
-                Dictionary<string, ERROR_MESSAGE> err = Setup.SetupBoothFromClient(ref booth_poco, CurrentUser.GetInstance().CurrentUserID, DAL.GetInstance());
+                dto_booth booth_dto = model.booth_dto;
+                dto_person salesman_poco = current_user;
+                Dictionary<string, ERROR_MESSAGE> err = Setup.SetupBoothFromClient(ref booth_dto, CurrentUser.GetInstance().CurrentUserID, DAL.GetInstance());
                 
-                Dictionary<string, string> dirs = Setup.SetupBoothDirs(ref booth_poco, salesman_poco.sysname);
+                Dictionary<string, string> dirs = Setup.SetupBoothDirs(ref booth_dto, salesman_poco.sysname);
 
                 if (CheckHelper.ErrorBooth.HasError(err))
                 {
@@ -639,15 +632,15 @@ namespace www.e_bazar.dk.Controllers
                     if (ThisSession.Json_Errors != null)
                         ThisSession.Json_Errors = errors;
                     //TempData["datacontainer"] = model.booth_poco;
-                    return RedirectToRoute("EditBooth1", new { booth_id = model.booth_poco.booth_id });
+                    return RedirectToRoute("EditBooth1", new { booth_id = model.booth_dto.booth_id });
                 }
                 else
                 {
                     List<string> uploaded_fnames = Paths.GetFileNames(PATH.BOOTH_DIRECTORY_TMP, dirs, false);
                     string current_path = Paths.GetPath(PATH.BOOTH_DIRECTORY_NAME, dirs, true);
                     List<string> current_fnames = Paths.GetFileNames(PATH.BOOTH_DIRECTORY_NAME, dirs, false);
-                    booth_poco.frontimage = uploaded_fnames.Count > 0 ? uploaded_fnames.Where(f => f.Substring(0, 2) != "t_").ToList().FirstOrDefault() : current_fnames.Count > 0 ? booth_poco.frontimage : "";
-                    DAL.GetInstance(/*true*/).UpdateBooth(booth_poco);
+                    booth_dto.frontimage = uploaded_fnames.Count > 0 ? uploaded_fnames.Where(f => f.Substring(0, 2) != "t_").ToList().FirstOrDefault() : current_fnames.Count > 0 ? booth_dto.frontimage : "";
+                    DAL.GetInstance().UpdateBooth(booth_dto);
 
                     string tmp_path = Paths.GetPath(PATH.BOOTH_DIRECTORY_TMP, dirs, true);
                     List<string> uploaded_files = Paths.GetFileNames(PATH.BOOTH_DIRECTORY_TMP, dirs, false);
@@ -663,7 +656,7 @@ namespace www.e_bazar.dk.Controllers
                                 Paths.MoveFile(tmp_path, file, Paths.GetPath(PATH.BOOTH_DIRECTORY_NAME, dirs, true), file, true, false, true, false);
                         }
                     }
-                    return RedirectToRoute("EditBooth1", new { booth_id = booth_poco.booth_id });
+                    return RedirectToRoute("EditBooth1", new { booth_id = booth_dto.booth_id });
                 }
             }
             catch (Exception e)
@@ -698,7 +691,7 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
                 CurrentUser user = CurrentUser.GetInstance();
-                poco_person current_user = user.GetCurrentUser(false, true, true);
+                dto_person current_user = user.GetCurrentUser(false, true, true);
                 if (current_user == null)
                     throw new Exception("A-OK, handled.");
                 
@@ -707,14 +700,14 @@ namespace www.e_bazar.dk.Controllers
 
                 Dictionary<string, string> dirs;
                 string path;
-                poco_booth booth_poco = DAL.GetInstance(/*true*/).GetBoothPOCO(booth_id, "", "", true, true, true, false, false, true, true);//////////////husk conversations og categories
+                dto_booth booth_poco = DAL.GetInstance().GetBoothDTO(booth_id, "", "", true, true, true, false, false, true, true);//////////////husk conversations og categories
                 
-                foreach (poco_product product_poco in booth_poco.product_pocos)
+                foreach (dto_product product_poco in booth_poco.product_dtos)
                 {
                     DAL.GetInstance().DeleteProduct(product_poco.id);
                 }
 
-                foreach (poco_collection collection_poco in booth_poco.collection_pocos)
+                foreach (dto_collection collection_poco in booth_poco.collection_dtos)
                 {
                     DAL.GetInstance().DeleteCollection((int)collection_poco.id);
                 }
@@ -758,12 +751,9 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                //if (ThisSession.IsMobile == "none")
-                //    return View("IsMobile");
-
                 SetupCurrentUser();
                 CurrentUser user = CurrentUser.GetInstance();
-                poco_person current_user = user.GetCurrentUser(false, true, true);
+                dto_person current_user = user.GetCurrentUser(false, true, true);
                 if (current_user == null)
                     throw new Exception("A-OK, handled.");
                 ViewBag.CurrentUser = current_user;
@@ -775,25 +765,27 @@ namespace www.e_bazar.dk.Controllers
                 using (EbazarDB _db = new EbazarDB())
                 {
 
-                    poco_product model = TempData["datacontainer"] as poco_product;
+                    dto_product model = TempData["datacontainer"] as dto_product;
                     if (model == null)//ny
                     {
-                        poco_product product_poco = new poco_product(false);
-                        poco_booth booth_poco = new poco_booth();
-                        booth b = booth_poco.GetBooth(booth_id, "", "", true, true, true, true, false, false, true);
-                    
-                        booth_poco.ToPoco(b, null);
+                        biz_product product_biz = new biz_product();
+                        dto_product product_dto = new dto_product();
+                        biz_booth booth_biz = new biz_booth();
+                        dto_booth booth_dto = new dto_booth();
+                                                
+                        product_dto.category_main_id = _db.category.Where(x => x.name != ".ingen" && x.is_parent && x.priority == 1).FirstOrDefault().Id;
 
-                        product_poco.booth_poco = booth_poco;
-                        product_poco.category_main_id = _db.category.Where(x => x.name != ".ingen" && x.is_parent && x.priority == 1).FirstOrDefault().Id;
+                        product_dto = product_biz.ToDTO(new product(), new List<dto_booth.Hit>(), "");
+                        product_dto = product_biz.SetupToClient<dto_product>(product_dto);
 
-                        product_poco.ToPoco(new product(), new List<poco_booth.Hit>(), "");
-                        product_poco.SetupToClient<poco_product>();
+                        booth b = booth_biz.GetBooth(booth_id, "", "", true, true, true, true, false, false, true);
+                        booth_dto = booth_biz.ToDTO(b, null);
+                        product_dto.booth_dto = booth_dto;
                     
-                        ViewBag.ProductCategoryMain = product_poco.category_main_selectlist;
-                        ViewBag.ProductCategorySecond = product_poco.category_second_selectlist;
-                        ViewBag.StatusStock = product_poco.status_stock_selectlist;
-                        ViewBag.StatusCondition = product_poco.status_condition_selectlist;
+                        ViewBag.ProductCategoryMain = product_dto.category_main_selectlist;
+                        ViewBag.ProductCategorySecond = product_dto.category_second_selectlist;
+                        ViewBag.StatusStock = product_dto.status_stock_selectlist;
+                        ViewBag.StatusCondition = product_dto.status_condition_selectlist;
 
                         if (ThisSession.Json_Errors != null)
                         {
@@ -804,14 +796,14 @@ namespace www.e_bazar.dk.Controllers
                             ThisSession.Json_Errors = null;
                         }
 
-                        return View("CreateProduct", product_poco);
+                        return View("CreateProduct", product_dto);
                     }
                     else//der er errors
                     {
-                        model.booth_poco = DAL.GetInstance(/*true*/).GetBoothPOCO(booth_id, "", "", true, false, false, false, false, false, true);
-                        //if (model.booth_poco == null)
-                        //    return _NotFound();
-                        model.SetupToClient<poco_product>();
+                        model.booth_dto = DAL.GetInstance().GetBoothDTO(booth_id, "", "", true, false, false, false, false, false, true);
+                        
+                        biz_product product_biz = new biz_product();
+                        model = product_biz.SetupToClient<dto_product>(model);
                         ViewBag.StatusCondition = model.status_condition_selectlist;
                         ViewBag.StatusStock = model.status_stock_selectlist;
                         ViewBag.ProductCategoryMain = model.category_main_selectlist;
@@ -852,7 +844,7 @@ namespace www.e_bazar.dk.Controllers
         }
         
         [HttpPost]
-        public ActionResult CreateProduct(poco_product model)
+        public ActionResult CreateProduct(dto_product model)
         {
             try
             {
@@ -861,11 +853,11 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
                 CurrentUser user = CurrentUser.GetInstance();
-                poco_person current_user = user.GetCurrentUser(false, true, true);
+                dto_person current_user = user.GetCurrentUser(false, true, true);
                 if (current_user == null)
                     throw new Exception("A-OK, handled.");
                 
-                poco_person salesman_poco = current_user;
+                dto_person salesman_poco = current_user;
                 string status_condition_select = Request != null ? Request.Form["status_condition_select"].ToString() : "TEST_PRODUCT";
                 string status_stock_select = "PÅ_LAGER";
                 
@@ -951,7 +943,7 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
                 CurrentUser user = CurrentUser.GetInstance();
-                poco_person current_user = user.GetCurrentUser(false, true, true);
+                dto_person current_user = user.GetCurrentUser(false, true, true);
                 if (current_user == null)
                     throw new Exception("A-OK, handled.");
                 ViewBag.CurrentUser = current_user;
@@ -959,16 +951,16 @@ namespace www.e_bazar.dk.Controllers
                 if (!user.OwnsProduct(product_id))
                     throw new Exception("A-OK, handled.");
 
-                poco_product product_poco = DAL.GetInstance(/*true*/).GetProductPOCO(product_id, true, false, true, true, true);
+                dto_product product_dto = DAL.GetInstance().GetProductDTO(product_id, true, false, true, true, true);
                 
-                List<poco_params> list = DAL.GetInstance(/*true*/).GetParams((int)product_poco.category_main_id, (int)product_poco.category_second_id);
+                List<dto_params> list = DAL.GetInstance().GetParams((int)product_dto.category_main_id, (int)product_dto.category_second_id);
                 ViewBag.Params = list;
-                ViewBag.ProductCategoryMain = product_poco.category_main_selectlist;
-                ViewBag.ProductCategorySecond = product_poco.category_second_selectlist;
-                ViewBag.LevelA = product_poco.foldera_selectlist;
-                ViewBag.LevelB = product_poco.folderb_selectlist;
-                ViewBag.StatusStock = product_poco.status_stock_selectlist;
-                ViewBag.StatusCondition = product_poco.status_condition_selectlist;
+                ViewBag.ProductCategoryMain = product_dto.category_main_selectlist;
+                ViewBag.ProductCategorySecond = product_dto.category_second_selectlist;
+                ViewBag.LevelA = product_dto.foldera_selectlist;
+                ViewBag.LevelB = product_dto.folderb_selectlist;
+                ViewBag.StatusStock = product_dto.status_stock_selectlist;
+                ViewBag.StatusCondition = product_dto.status_condition_selectlist;
                 
                 if (ThisSession.Json_Errors != null)
                 {
@@ -979,7 +971,7 @@ namespace www.e_bazar.dk.Controllers
                     ThisSession.Json_Errors = null;
                 }
                 
-                return View("EditProduct", product_poco);
+                return View("EditProduct", product_dto);
                 
             }
             catch (Exception e)
@@ -1006,7 +998,7 @@ namespace www.e_bazar.dk.Controllers
         }
 
         [HttpPost]
-        public ActionResult EditProduct(poco_product model)
+        public ActionResult EditProduct(dto_product model)
         {
             try
             {
@@ -1015,11 +1007,11 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
                 CurrentUser user = CurrentUser.GetInstance();
-                poco_person current_user = user.GetCurrentUser(false, true, true);
+                dto_person current_user = user.GetCurrentUser(false, true, true);
                 if (current_user == null)
                     throw new Exception("A-OK, handled.");
                 
-                poco_person salesman_poco = current_user;
+                dto_person salesman_poco = current_user;
                 string status_condition_select = Request != null ? Request.Form["status_condition_select"].ToString() : "TEST_PRODUCT";
                 string status_stock_select = "PÅ_LAGER";
                 
@@ -1103,25 +1095,25 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
                 CurrentUser user = CurrentUser.GetInstance();
-                poco_person current_user = user.GetCurrentUser(false, true, true);
+                dto_person current_user = user.GetCurrentUser(false, true, true);
                 if (current_user == null)
                     throw new Exception("A-OK, handled.");
                 
                 if (!user.OwnsProduct(product_id))
                     throw new Exception("A-OK, handled.");
 
-                poco_product product_poco = DAL.GetInstance().GetProductPOCO(product_id, true, false, false, false, false);
+                dto_product product_dto = DAL.GetInstance().GetProductDTO(product_id, true, false, false, false, false);
                 
                 Dictionary<string, string> dirs = new Dictionary<string, string>();
                 dirs["identity_id"] = current_user.sysname;
-                dirs["booth_sysname"] = product_poco.booth_poco.sysname;
-                dirs["product_sysname"] = product_poco.sysname;
+                dirs["booth_sysname"] = product_dto.booth_dto.sysname;
+                dirs["product_sysname"] = product_dto.sysname;
                 string path = Paths.GetPath(PATH.PRODUCT_DIRECTORY_NAME, dirs, true);
                 Paths.ClearFolder(path, true, true);
 
                 DAL.GetInstance().DeleteProduct(product_id);
 
-                return RedirectToRoute("EditBooth1", new { booth_id = product_poco.booth_poco.booth_id });
+                return RedirectToRoute("EditBooth1", new { booth_id = product_dto.booth_dto.booth_id });
             }
             catch (Exception e)
             {
@@ -1155,7 +1147,7 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
                 CurrentUser user = CurrentUser.GetInstance();
-                poco_person current_user = user.GetCurrentUser(false, true, true);
+                dto_person current_user = user.GetCurrentUser(false, true, true);
                 if (current_user == null)
                     throw new Exception("A-OK, handled.");
                 ViewBag.CurrentUser = current_user;
@@ -1167,25 +1159,26 @@ namespace www.e_bazar.dk.Controllers
                 using (EbazarDB _db = new EbazarDB())
                 {
 
-                    poco_collection model = TempData["datacontainer"] as poco_collection;
+                    dto_collection model = TempData["datacontainer"] as dto_collection;
                     if (model == null)//ny
                     {
-                        poco_collection collection_poco = new poco_collection();
-                        poco_booth booth_poco = new poco_booth();
-                        booth b = booth_poco.GetBooth(booth_id, "", "", true, true, true, true, false, false, true);
+                        dto_collection collection_dto = new dto_collection();
+                        biz_collection collection_biz = new biz_collection();
+                        biz_booth booth_biz = new biz_booth();
+                        
+                        collection_dto.category_main_id = _db.category.Where(x => x.name != ".ingen" && x.is_parent && x.priority == 1).FirstOrDefault().Id;
 
-                        booth_poco.ToPoco(b, null);
+                        collection_dto = collection_biz.ToDTO(new collection(), new List<dto_booth.Hit>(), "");
+                        collection_dto = collection_biz.SetupToClient<dto_collection>(collection_dto);
 
-                        collection_poco.booth_poco = booth_poco;
-                        collection_poco.category_main_id = _db.category.Where(x => x.name != ".ingen" && x.is_parent && x.priority == 1).FirstOrDefault().Id;
+                        booth b = booth_biz.GetBooth(booth_id, "", "", true, true, true, true, false, false, true);
+                        dto_booth booth_dto = booth_biz.ToDTO(b, null);
+                        collection_dto.booth_dto = booth_dto;
 
-                        collection_poco.ToPoco(new collection(), new List<poco_booth.Hit>(), "");
-                        collection_poco.SetupToClient<poco_product>();
-
-                        ViewBag.StatusCondition = collection_poco.status_condition_selectlist;
-                        ViewBag.StatusStock = collection_poco.status_stock_selectlist;
-                        ViewBag.CollectionCategoryMain = collection_poco.category_main_selectlist;
-                        ViewBag.CollectionCategorySecond = collection_poco.category_second_selectlist;
+                        ViewBag.StatusCondition = collection_dto.status_condition_selectlist;
+                        ViewBag.StatusStock = collection_dto.status_stock_selectlist;
+                        ViewBag.CollectionCategoryMain = collection_dto.category_main_selectlist;
+                        ViewBag.CollectionCategorySecond = collection_dto.category_second_selectlist;
 
                         if (ThisSession.Json_Errors != null)
                         {
@@ -1196,16 +1189,17 @@ namespace www.e_bazar.dk.Controllers
                             ThisSession.Json_Errors = null;
                         }
 
-                        return View("CreateCollection", collection_poco);
+                        return View("CreateCollection", collection_dto);
                     }
                     else//der er errors
                     {
-                        poco_product product_poco = new poco_product(false);
-                        model.booth_poco = DAL.GetInstance(/*true*/).GetBoothPOCO(booth_id, "", "", true, false, false, true, false, false, true);
+                        biz_product product_biz = new biz_product(false);
+                        model.booth_dto = DAL.GetInstance().GetBoothDTO(booth_id, "", "", true, false, false, true, false, false, true);
                     
-                        model.product_pocos = product_poco.GetProductPOCOsByCollectionId((int)model.id, false, false);
-                    
-                        model.SetupToClient<poco_collection>();
+                        model.product_dtos = product_biz.GetProductDTOsByCollectionId((int)model.id, false, false);
+
+                        biz_product biz = new biz_product();
+                        model = biz.SetupToClient<dto_collection>(model);
                         ViewBag.StatusCondition = model.status_condition_selectlist;
                         ViewBag.StatusStock = model.status_stock_selectlist;
                         ViewBag.CollectionCategoryMain = model.category_main_selectlist;
@@ -1248,7 +1242,7 @@ namespace www.e_bazar.dk.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateCollection(poco_collection model)
+        public ActionResult CreateCollection(dto_collection model)
         {
             try
             {
@@ -1257,11 +1251,11 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
                 CurrentUser user = CurrentUser.GetInstance();
-                poco_person current_user = user.GetCurrentUser(false, true, true);
+                dto_person current_user = user.GetCurrentUser(false, true, true);
                 if (current_user == null)
                     throw new Exception("A-OK, handled.");
                 
-                poco_person salesman_poco = current_user;
+                dto_person salesman_poco = current_user;
                 string status_condition_select = Request != null ? Request.Form["status_condition_select"].ToString() : "TEST_COLLECTION";
                 string status_stock_select = "PÅ_LAGER";
                 
@@ -1286,7 +1280,7 @@ namespace www.e_bazar.dk.Controllers
                     if (ThisSession.Json_Errors != null)
                         ThisSession.Json_Errors = errors;
                     TempData["datacontainer"] = model;
-                    return RedirectToRoute("CreateCollection", new { booth_id = model.booth_poco.booth_id });
+                    return RedirectToRoute("CreateCollection", new { booth_id = model.booth_dto.booth_id });
                 }
                 else
                 {
@@ -1345,7 +1339,7 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
                 CurrentUser user = CurrentUser.GetInstance();
-                poco_person current_user = user.GetCurrentUser(false, true, true);
+                dto_person current_user = user.GetCurrentUser(false, true, true);
                 if (current_user == null)
                     throw new Exception("A-OK, handled.");
                 ViewBag.CurrentUser = current_user;
@@ -1353,16 +1347,17 @@ namespace www.e_bazar.dk.Controllers
                 if (!user.OwnsCollection(collection_id))
                     throw new Exception("A-OK, handled.");
 
-                poco_collection collection_poco = DAL.GetInstance(/*true*/).GetCollectionPOCO(collection_id, true, true, true, true, true);
+                dto_collection collection_dto = DAL.GetInstance().GetCollectionDTO(collection_id, true, false, true, true, true);
+                collection_dto.booth_dto = DAL.GetInstance().GetBoothDTO(collection_dto.booth_id, "", "", false, true, true, false, false, false, false);
                     
-                List<poco_params> list = DAL.GetInstance(/*true*/).GetParams((int)collection_poco.category_main_id, (int)collection_poco.category_second_id);
+                List<dto_params> list = DAL.GetInstance().GetParams((int)collection_dto.category_main_id, (int)collection_dto.category_second_id);
                 ViewBag.Params = list;
-                ViewBag.StatusCondition = collection_poco.status_condition_selectlist;
-                ViewBag.StatusStock = collection_poco.status_stock_selectlist;
-                ViewBag.CollectionCategoryMain = collection_poco.category_main_selectlist;
-                ViewBag.CollectionCategorySecond = collection_poco.category_second_selectlist;
-                ViewBag.LevelA = collection_poco.foldera_selectlist;
-                ViewBag.LevelB = collection_poco.folderb_selectlist;
+                ViewBag.StatusCondition = collection_dto.status_condition_selectlist;
+                ViewBag.StatusStock = collection_dto.status_stock_selectlist;
+                ViewBag.CollectionCategoryMain = collection_dto.category_main_selectlist;
+                ViewBag.CollectionCategorySecond = collection_dto.category_second_selectlist;
+                ViewBag.LevelA = collection_dto.foldera_selectlist;
+                ViewBag.LevelB = collection_dto.folderb_selectlist;
                     
                 if (ThisSession.Json_Errors != null)
                 {
@@ -1373,7 +1368,7 @@ namespace www.e_bazar.dk.Controllers
                     ThisSession.Json_Errors = null;
                 }
 
-                return View("EditCollection", collection_poco);
+                return View("EditCollection", collection_dto);
 
             }
             catch (Exception e)
@@ -1400,7 +1395,7 @@ namespace www.e_bazar.dk.Controllers
         }
         
         [HttpPost]
-        public ActionResult EditCollection(poco_collection model)
+        public ActionResult EditCollection(dto_collection model)
         {
             try 
             {
@@ -1409,11 +1404,11 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
                 CurrentUser user = CurrentUser.GetInstance();
-                poco_person current_user = user.GetCurrentUser(false, true, true);
+                dto_person current_user = user.GetCurrentUser(false, true, true);
                 if (current_user == null)
                     throw new Exception("A-OK, handled.");
 
-                poco_person salesman_poco = current_user;
+                dto_person salesman_poco = current_user;
                 string status_condition_select = Request != null ? Request.Form["status_condition_select"].ToString() : "TEST_COLLECTION";
                 string status_stock_select = "PÅ_LAGER";
                 
@@ -1497,25 +1492,25 @@ namespace www.e_bazar.dk.Controllers
                                 
                 SetupCurrentUser();
                 CurrentUser user = CurrentUser.GetInstance();
-                poco_person current_user = user.GetCurrentUser(false, true, true);
+                dto_person current_user = user.GetCurrentUser(false, true, true);
                 if (current_user == null)
                     throw new Exception("A-OK, handled.");
                 
                 if (!user.OwnsCollection(collection_id))
                     throw new Exception("A-OK, handled.");
 
-                poco_collection collection_poco = DAL.GetInstance().GetCollectionPOCO(collection_id, false, true, false, false, false);
+                dto_collection collection_dto = DAL.GetInstance().GetCollectionDTO(collection_id, false, true, false, false, false);
                 
                 Dictionary<string, string> dirs = new Dictionary<string, string>();
                 dirs["identity_id"] = current_user.sysname;
-                dirs["booth_sysname"] = collection_poco.booth_poco.sysname;
-                dirs["collection_sysname"] = collection_poco.sysname;
+                dirs["booth_sysname"] = collection_dto.booth_dto.sysname;
+                dirs["collection_sysname"] = collection_dto.sysname;
                 string path = Paths.GetPath(PATH.COLLECTION_DIRECTORY_NAME, dirs, true);
                 Paths.ClearFolder(path, true, true);
 
                 DAL.GetInstance().DeleteCollection(collection_id);
 
-                return RedirectToAction("EditBooth", new { booth_id = collection_poco.booth_poco.booth_id });
+                return RedirectToAction("EditBooth", new { booth_id = collection_dto.booth_dto.booth_id });
             }
             catch (Exception e)
             {
@@ -1549,10 +1544,7 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                //if (ThisSession.IsMobile == "none")
-                //    return View("IsMobile");
-
-                DAL.GetInstance(/*true*/).AddProductToCollection(collection_id, product_id);
+                DAL.GetInstance().AddProductToCollection(collection_id, product_id);
 
                 return RedirectToRoute("EditCollection1", new { collection_id = collection_id });
             }
@@ -1588,10 +1580,7 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                //if (ThisSession.IsMobile == "none")
-                //    return View("IsMobile");
-
-                DAL.GetInstance(/*true*/).RemoveProductFromCollection(collection_id, product_id);
+                DAL.GetInstance().RemoveProductFromCollection(collection_id, product_id);
 
                 return RedirectToRoute("EditCollection1", new { collection_id = collection_id });
             }
@@ -1674,7 +1663,7 @@ namespace www.e_bazar.dk.Controllers
         public void UploadImage(HttpPostedFile file, TYPE type)
         {
             Dictionary<string, string> dirs = new Dictionary<string, string>();
-            poco_person currentuser = CurrentUser.GetInstance().GetCurrentUser(false, false, false);
+            dto_person currentuser = CurrentUser.GetInstance().GetCurrentUser(false, false, false);
             if (currentuser == null)
                 throw new Exception("A-OK, handled.");
             dirs["identity_id"] = currentuser.sysname;
@@ -1747,67 +1736,70 @@ namespace www.e_bazar.dk.Controllers
                 SetupCurrentUser();
 
                 CurrentUser user = CurrentUser.GetInstance();
-                poco_person current_user = user.GetCurrentUser(false, true, true);
+                dto_person current_user = user.GetCurrentUser(false, true, true);
                 if (current_user == null)
                     throw new Exception("A-OK, handled.");
                 
                 TYPE typeEnum;
                 Enum.TryParse(type, out typeEnum);
 
-                poco_person person_poco = current_user;
+                dto_person person_dto = current_user;
+                dto_booth booth_dto = null;
                 PATH path_tmp;
-                poco_booth booth_poco = null;
-                IBoothItem item_poco = null;
+                Dictionary<string, string> dirs = new Dictionary<string, string>();
+                dirs["identity_id"] = person_dto.sysname;
+                
                 if (typeEnum == TYPE.PROFILE)
                 {
+                    biz_person biz = new biz_salesman();
                     path_tmp = PATH.PROFILE_DIRECTORY_NAME;
 
-                    if (person_poco != null)
-                        person_poco.RemoveImage();
+                    if (person_dto != null)
+                    {
+                        if (person_dto.nator == "Salesman")
+                            biz.RemoveImage<dto_salesman>((dto_salesman)person_dto);
+                        else
+                            biz.RemoveImage<dto_customer>((dto_customer)person_dto);
+                    }
                     else
                         throw new Exception("A-OK, handled.");
                 }
                 else
                 {
-                    booth_poco = new poco_booth();
-                    booth_poco = DAL.GetInstance(/*true*/).GetBoothPOCO(int.Parse(BoothId), "", "", true, true, true, true, false, false, true);
+                    booth_dto = new dto_booth();
+                    booth_dto = DAL.GetInstance().GetBoothDTO(int.Parse(BoothId), "", "", true, true, true, true, false, false, true);
+                    dirs["booth_sysname"] = booth_dto.sysname;
                     
                     if (typeEnum == TYPE.BOOTH)
                     {
+                        biz_booth biz = new biz_booth();
                         path_tmp = PATH.BOOTH_DIRECTORY_NAME;
                         
-                        booth_poco.RemoveImage();
+                        biz.RemoveImage(booth_dto);
                     }
                     else
                     {
                         if (typeEnum == TYPE.PRODUCT)
                         {
+                            biz_product biz = new biz_product();
                             path_tmp = PATH.PRODUCT_DIRECTORY_NAME;
-                            item_poco = booth_poco.product_pocos.Where(p => p.id == long.Parse(ItemId)).FirstOrDefault();
+                            dto_product item_poco = booth_dto.product_dtos.Where(p => p.id == long.Parse(ItemId)).FirstOrDefault();
+                            if (item_poco != null)
+                                biz.RemoveImage<dto_product>(ImageName, item_poco);
+                            dirs["product_sysname"] = item_poco.sysname;
                         }
                         else
                         {
+                            biz_collection biz = new biz_collection();
                             path_tmp = PATH.COLLECTION_DIRECTORY_NAME;
-                            item_poco = booth_poco.collection_pocos.Where(c => c.id == long.Parse(ItemId)).FirstOrDefault();
-                        }
-
-                        if (item_poco != null)
-                        {
-                            //item_poco.db = new EbazarDB();
-                            item_poco.RemoveImage(ImageName);
-                        }
-                        else
-                            throw new Exception("A-OK, handled.");
+                            dto_collection item_poco = booth_dto.collection_dtos.Where(c => c.id == long.Parse(ItemId)).FirstOrDefault();
+                            if (item_poco != null)
+                                biz.RemoveImage<dto_collection>(ImageName, item_poco);
+                            dirs["collection_sysname"] = item_poco.sysname;
+                        }                        
                     }
                 }
-                Dictionary<string, string> dirs = new Dictionary<string, string>();
-                dirs["identity_id"] = person_poco.sysname;
-                if (typeEnum != TYPE.PROFILE)
-                    dirs["booth_sysname"] = booth_poco.sysname;
-                if (typeEnum == TYPE.PRODUCT)
-                    dirs["product_sysname"] = item_poco.sysname;
-                if (typeEnum == TYPE.COLLECTION)
-                    dirs["collection_sysname"] = item_poco.sysname;
+                
                 string path = Paths.GetPath(path_tmp, dirs, true);
 
                 bool clearpath = typeEnum == TYPE.PROFILE;// || typeEnum == TYPE.COLLECTION || typeEnum == TYPE.PRODUCT;
@@ -1849,13 +1841,12 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                //string contains = System.Web.HttpContext.Current.Request.Form["TagName"];
                 bool ok;
                 TagName = StringHelper.OnlyAlphanumeric(TagName.ToLower().Trim(), false, false, "notag", CharacterHelper.Space(), out ok);
-                List<poco_tag> tag_pocos = DAL.GetInstance(/*true*/).Get5TagPOCOs(TagName);
+                List<dto_tag> tag_dtos = DAL.GetInstance().Get5TagDTOs(TagName);
 
-                if (tag_pocos != null)
-                    return Json(new { success = true, tags = tag_pocos });
+                if (tag_dtos != null)
+                    return Json(new { success = true, tags = tag_dtos });
                 else
                     return Json(new { success = false });
             }
@@ -1892,8 +1883,6 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                //string tag_name = System.Web.HttpContext.Current.Request.Form["TagName"];
-                //string product_id = System.Web.HttpContext.Current.Request.Form["ProductId"];
                 TYPE typeEnum;
                 Enum.TryParse(type, out typeEnum);
 
@@ -1907,10 +1896,10 @@ namespace www.e_bazar.dk.Controllers
                     msg = "Max 3 søgeord";
                 else
                 {
-                    MESSAGE_TAG result = DAL.GetInstance(/*true*/).SaveTag(tag_name, id, typeEnum);
+                    MESSAGE_TAG result = DAL.GetInstance().SaveTag(tag_name, id, typeEnum);
 
                     if (result == MESSAGE_TAG.OK)
-                        tag_id = DAL.GetInstance(/*true*/).GetTag(tag_name).Id;
+                        tag_id = DAL.GetInstance().GetTag(tag_name).Id;
                     else if (result == MESSAGE_TAG.MAXLIMIT)
                         msg = "Max grænse nået!";
                     else
@@ -1955,15 +1944,13 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                //string tag_name = System.Web.HttpContext.Current.Request.Form["TagName"];
-                //string product_id = System.Web.HttpContext.Current.Request.Form["ProductId"];
                 TYPE typeEnum;
                 Enum.TryParse(type, out typeEnum);
 
                 long tag_id = 0;
                 string msg = "";
                 bool ok;
-                ok = DAL.GetInstance(/*true*/).RemoveTag(long.Parse(TagId), typeEnum, Id, false);
+                ok = DAL.GetInstance().RemoveTag(long.Parse(TagId), typeEnum, Id, false);
 
                 if (ok)
                     tag_id = long.Parse(TagId);
@@ -2007,32 +1994,19 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
                 CurrentUser user = CurrentUser.GetInstance();
-                poco_person current_user = user.GetCurrentUser(false, true, true);
+                dto_person current_user = user.GetCurrentUser(false, true, true);
                 if (current_user == null)
                     throw new Exception("A-OK, Check.");
-                //if (current_user.test == "TEST")
-                //    return Json(new { msg = "slået fra til test.", success = false });
-
-                //string tag_name = System.Web.HttpContext.Current.Request.Form["TagName"];
-                //string product_id = System.Web.HttpContext.Current.Request.Form["ProductId"];
+                
                 TYPE typeEnum;
                 Enum.TryParse(type, out typeEnum);
 
-                bool result = DAL.GetInstance(/*true*/).SaveParam(id, param_id, val_id, typeEnum);
+                bool result = DAL.GetInstance().SaveParam(id, param_id, val_id, typeEnum);
 
                 string msg = "ok";
                 bool success = true;
 
-                if (result)
-                {
-                    //if (typeEnum == TYPE.PRODUCT)
-                    //    Cache.products_ok = false;
-                    //if (typeEnum == TYPE.COLLECTION)
-                    //    Cache.collections_ok = false;
-                    //if (typeEnum == TYPE.SHOP)
-                    //    Cache.shops_ok = false;
-                }
-                else
+                if (!result)
                 {
                     msg = "Der skete en fejl, beklager.";
                     success = false;
@@ -2078,29 +2052,18 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
                 CurrentUser user = CurrentUser.GetInstance();
-                poco_person current_user = user.GetCurrentUser(false, true, true);
+                dto_person current_user = user.GetCurrentUser(false, true, true);
                 if (current_user == null)
                     throw new Exception("A-OK, Check.");
-                //if (current_user.test == "TEST")
-                //    return Json(new { msg = "slået fra til test.", success = false });
-
+                
                 TYPE typeEnum;
                 Enum.TryParse(type, out typeEnum);
 
                 string msg = "";
                 bool ok;
-                ok = DAL.GetInstance(/*true*/).RemoveParam(param_id, typeEnum, id);
+                ok = DAL.GetInstance().RemoveParam(param_id, typeEnum, id);
 
-                if (ok)
-                {
-                    //if (typeEnum == TYPE.PRODUCT)
-                    //    Cache.products_ok = false;
-                    //if (typeEnum == TYPE.COLLECTION)
-                    //    Cache.collections_ok = false;
-                    //if (typeEnum == TYPE.SHOP)
-                    //    Cache.shops_ok = false;
-                }
-                else
+                if (!ok)
                     msg = "err_msg";
                 return Json(new { success = ok, msg = msg });
             }
@@ -2138,12 +2101,9 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                //string tag_name = System.Web.HttpContext.Current.Request.Form["TagName"];
-                //string product_id = System.Web.HttpContext.Current.Request.Form["ProductId"];
-
                 long cat_id = 0;
                 string msg = "";
-                string cat_name = DAL.GetInstance(/*true*/).AddCategory(CatId, BoothId);
+                string cat_name = DAL.GetInstance().AddCategory(CatId, BoothId);
 
                 if (!string.IsNullOrEmpty(cat_name))
                     cat_id = CatId;
@@ -2184,11 +2144,10 @@ namespace www.e_bazar.dk.Controllers
             {
                 if (!access.Queue())
                     throw new Exception();
-                //string tag_name = System.Web.HttpContext.Current.Request.Form["TagName"];
-                //string product_id = System.Web.HttpContext.Current.Request.Form["ProductId"];
+                
                 long cat_id = 0;
                 string msg = "";
-                bool ok = DAL.GetInstance(/*true*/).RemoveCategory(CatId, BoothId);
+                bool ok = DAL.GetInstance().RemoveCategory(CatId, BoothId);
 
                 if (ok)
                     cat_id = CatId;
@@ -2227,7 +2186,7 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                DAL.GetInstance(/*true*/).DeleteConversation(conversation_id);
+                DAL.GetInstance().DeleteConversation(conversation_id);
                 return Json( new { success = true });
             }
             catch (Exception e)
@@ -2260,12 +2219,9 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                //if (ThisSession.IsMobile == "none")
-                //    return View("IsMobile");
-
                 SetupCurrentUser();
 
-                DAL.GetInstance(/*true*/).RemoveFavorite(product_id, collection_id);
+                DAL.GetInstance().RemoveFavorite(product_id, collection_id);
                 return RedirectToAction("Userprofile", new { coming_from = "RemoveFavorite" });
             }
             catch (Exception e)
@@ -2298,12 +2254,9 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                //if (ThisSession.IsMobile == "none")
-                //    return View("IsMobile");
-
                 SetupCurrentUser();
 
-                DAL.GetInstance(/*true*/).RemoveFollowing(booth_id);
+                DAL.GetInstance().RemoveFollowing(booth_id);
                 return RedirectToRoute("Userprofile");
             }
             catch (Exception e)
@@ -2337,9 +2290,6 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                //if (ThisSession.IsMobile == "none")
-                //    return View("IsMobile");
-
                 ThisSession.Tab = "categorys";
 
                 TYPE typeEnum;
@@ -2348,7 +2298,7 @@ namespace www.e_bazar.dk.Controllers
                 bool ok;
                 fld_name = StringHelper.OnlyAlphanumeric(fld_name, false, true, "notag", CharacterHelper.Limited(false), out ok);
                 if (ok)
-                    DAL.GetInstance(/*true*/).CreateFolder(fld_name, int.Parse(id), typeEnum);
+                    DAL.GetInstance().CreateFolder(fld_name, int.Parse(id), typeEnum);
                 else
                 {
                     Dictionary<string, SYSTEM_MESSAGE> err = Setup.SetupCreateLevel(true);
@@ -2391,13 +2341,10 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                //if (ThisSession.IsMobile == "none")
-                //    return View("IsMobile");
-
                 TYPE typeEnum;
                 Enum.TryParse(type, out typeEnum);
 
-                DAL.GetInstance(/*true*/).MoveFolder(int.Parse(fld_id), direction, int.Parse(id), typeEnum);
+                DAL.GetInstance().MoveFolder(int.Parse(fld_id), direction, int.Parse(id), typeEnum);
                 ThisSession.Tab = "categorys";
                 return RedirectToRoute("EditBooth1", new { booth_id = int.Parse(booth_id) });
             }
@@ -2432,13 +2379,10 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                //if (ThisSession.IsMobile == "none")
-                //    return View("IsMobile");
-
                 TYPE typeEnum;
                 Enum.TryParse(type, out typeEnum);
 
-                DAL.GetInstance(/*true*/).DeleteFolder(int.Parse(fld_id), int.Parse(id), typeEnum);
+                DAL.GetInstance().DeleteFolder(int.Parse(fld_id), int.Parse(id), typeEnum);
                 ThisSession.Tab = "categorys";
                 return RedirectToRoute("EditBooth1", new { booth_id = int.Parse(booth_id) });
             }
@@ -2473,13 +2417,10 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                //if (ThisSession.IsMobile == "none")
-                //    return View("IsMobile");
-
                 TYPE typeEnum;
                 Enum.TryParse(type, out typeEnum);
 
-                DAL.GetInstance(/*true*/).SetFolder(int.Parse(fld_id), id, typeEnum, is_product == "true");
+                DAL.GetInstance().SetFolder(int.Parse(fld_id), id, typeEnum, is_product == "true");
                 ThisSession.Tab = "categorys";
                 if (is_product == "true")
                     return RedirectToRoute("EditProduct1", new { product_id = long.Parse(id) });
@@ -2523,16 +2464,11 @@ namespace www.e_bazar.dk.Controllers
                 int _id;
                 if(int.TryParse(booth_id, out _id))
                 {
-                    poco_booth booth_poco = DAL.GetInstance(/*true*/).GetBoothPOCO(_id, "", "", true, false, false, false, false, false, true);
+                    dto_booth booth_dto = DAL.GetInstance().GetBoothDTO(_id, "", "", true, false, false, false, false, false, true);
                 
-                    //if (booth_poco != null)
-                    //{
-                        if(booth_poco.salesman_poco.request_email)
-                            return Json(new { success = true, ok = true, value = booth_poco.salesman_poco.email });
-                        return Json(new { success = true, ok = false, value = "" });
-                    //}
-                    //else
-                    //    return Json(new { success = false });
+                    if(booth_dto.salesman_dto.request_email)
+                        return Json(new { success = true, ok = true, value = booth_dto.salesman_dto.email });
+                    return Json(new { success = true, ok = false, value = "" });
                 }
                 return Json(new { success = false });
             }
@@ -2569,12 +2505,8 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                //string zip = System.Web.HttpContext.Current.Request.Form["Zip"];
-
-                string town = DAL.GetInstance(/*true*/).GetAddressTown(Zip);
-                //List<string> res = new List<string>();
-                //res.Add(town);
-                //return Json(res);
+                string town = DAL.GetInstance().GetAddressTown(Zip);
+                
                 return Json(new { success=true, town=town });
             }
             catch (Exception e)
@@ -2645,10 +2577,8 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                //string tag_name = System.Web.HttpContext.Current.Request.Form["TagName"];
-                //string product_id = System.Web.HttpContext.Current.Request.Form["ProductId"];
                 bool value = Value.ToLower() == "true" ? true : false;
-                string res = DAL.GetInstance(/*true*/).SetActive(Id, value, Type);
+                string res = DAL.GetInstance().SetActive(Id, value, Type);
                 string msg = res == "true" ? "[aktiv]" : "[ikke aktiv]";
                 return Json(new { success = res == "err" ? false : true, msg = msg});
             }
@@ -2686,9 +2616,8 @@ namespace www.e_bazar.dk.Controllers
                     throw new Exception();
                 string a = "";
                 string b = a;
-                //string tag_name = System.Web.HttpContext.Current.Request.Form["TagName"];
-                //string product_id = System.Web.HttpContext.Current.Request.Form["ProductId"];
-                if (DAL.GetInstance(/*true*/).ChangeBoothId(BoothId, ProductId))
+
+                if (DAL.GetInstance().ChangeBoothId(BoothId, ProductId))
                     return Json(new { success = true });
                 else
                     return Json(new { success = false, msg = "Varen er del af Sæt." });
@@ -2717,24 +2646,21 @@ namespace www.e_bazar.dk.Controllers
         }
 
         [HttpPost]
-        public ActionResult Feedback(dto_email mail)
+        public ActionResult Feedback(col_email mail)
         {
             try
             {
                 if (!access.Queue())
                     throw new Exception();
 
-                //if (ThisSession.IsMobile == "none")
-                //    return View("IsMobile");
-
                 SetupCurrentUser();
 
                 CurrentUser user = CurrentUser.GetInstance();
-                poco_person current_user = user.GetCurrentUser(false, true, true);
+                dto_person current_user = user.GetCurrentUser(false, true, true);
                 if (current_user == null)
                     throw new Exception("A-OK, handled.");
-                //ViewBag.CurrentUser = current_user;
-                poco_person per = current_user;
+                
+                dto_person per = current_user;
                 
                 Dictionary<string, SYSTEM_MESSAGE> err = Setup.Feedback(mail);
                 Dictionary<string, string> errors = new Dictionary<string, string>();

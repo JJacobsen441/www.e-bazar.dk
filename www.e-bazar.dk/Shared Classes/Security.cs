@@ -14,19 +14,19 @@ namespace www.e_bazar.dk.SharedClasses
     {
         //private static EbazarDB db = new EbazarDB();
         private static int groups = int.Parse(Settings.Security.GROUPS());
-        private static List<poco_category> special_ae;
-        private static List<poco_category> special_æ;
+        private static List<dto_category> special_ae;
+        private static List<dto_category> special_æ;
 
 
-        private static poco_category GetTop(string top)
+        private static dto_category GetTop(string top)
         {
             using (EbazarDB db = new EbazarDB())
             {
-                List<poco_category> cats = Categorys.CatsYesYes;
+                List<dto_category> cats = Categorys.CatsYesYes;
 
                 if (cats.IsNullOrEmpty() || string.IsNullOrEmpty(top))
                     throw new Exception("A-OK, Check.");
-                foreach (poco_category c in cats)
+                foreach (dto_category c in cats)
                 {
                     if (Security.Encode(Security.Format(c.name, "_", true)) == top)
                         return c;
@@ -112,11 +112,11 @@ namespace www.e_bazar.dk.SharedClasses
             return GenerateHashMD5_A(text, 2).Replace("-", "");
         }
         
-        private static List<poco_category> Dec_FromBitsToList(poco_category top, string bits, int index)
+        private static List<dto_category> Dec_FromBitsToList(dto_category top, string bits, int index)
         {
-            List<poco_category> children = Categorys.CatsYesYes.Where(c => c.parent != null && c.parent.name == top.name).OrderBy(c => c.priority).ToList();
+            List<dto_category> children = Categorys.CatsYesYes.Where(c => c.parent != null && c.parent.name == top.name).OrderBy(c => c.priority).ToList();
 
-            List<poco_category> res_list = new List<poco_category>();
+            List<dto_category> res_list = new List<dto_category>();
             res_list.Add(top);
             if (bits != "")
             {
@@ -133,14 +133,14 @@ namespace www.e_bazar.dk.SharedClasses
             return res_list;
         }
 
-        private static List<poco_category> Dec_FromHexToList(string top, char hex, int index/*, out int count*/)
+        private static List<dto_category> Dec_FromHexToList(string top, char hex, int index)
         {
-            List<poco_category> all = Categorys.CatsYesYes;
-            List<poco_category> children = all.Where(c => Security.Format(c.name, "_", true) == Security.Format(top, "_", true)).FirstOrDefault().children;
+            List<dto_category> all = Categorys.CatsYesYes;
+            List<dto_category> children = all.Where(c => Security.Format(c.name, "_", true) == Security.Format(top, "_", true)).FirstOrDefault().children;
             children = children.OrderBy(c => c.priority).ToList();
             //count = 0;
 
-            List<poco_category> res_list = new List<poco_category>();
+            List<dto_category> res_list = new List<dto_category>();
             if ((int)hex != 0)
             {
                 for (int i = 0; i < 4; i += 1)
@@ -217,10 +217,10 @@ namespace www.e_bazar.dk.SharedClasses
         {
             string[] isset = Security.Format(route, "_", true).Split('-').Where(s => s != "").OrderBy(r => r.Substring(0, 1)).ToArray();
             top = Security.Format(top, "_", false);
-            poco_category cat = Categorys.CatsYesNo.ToList().Where(c => Security.Format(c.name, "_", true) == top.ToLower()).FirstOrDefault();
+            dto_category cat = Categorys.CatsYesNo.ToList().Where(c => Security.Format(c.name, "_", true) == top.ToLower()).FirstOrDefault();
             if(cat != null)
             {
-                List<poco_category> children = cat.children.OrderBy(c => c.priority).ToList();
+                List<dto_category> children = cat.children.OrderBy(c => c.priority).ToList();
                 byte res = 0x00;
                 for (int i = group_curr * 4; i < group_curr * 4 + 4; i++)
                 {
@@ -234,10 +234,10 @@ namespace www.e_bazar.dk.SharedClasses
             throw new Exception("A-OK, handled");
         }
 
-        private static string Dec_FromArrayToString(List<poco_category> list)
+        private static string Dec_FromArrayToString(List<dto_category> list)
         {
             string res = "";
-            foreach (poco_category cat in list)
+            foreach (dto_category cat in list)
                 res += cat.name + "-";
             return res;
         }
@@ -350,12 +350,11 @@ namespace www.e_bazar.dk.SharedClasses
             int count = int.Parse(Settings.Security.MD5_COUNT());
 
             string[] cats_arr = c.Split('-');
-            cats_arr = cats_arr.Where(s => s != "")/*.Skip(1)*/.ToArray();
+            cats_arr = cats_arr.Where(s => s != "").ToArray();
 
             if (cats_arr.Count() == 1 || cats_arr.Count() == groups + 1)
             {
-                //List<category> cats = db.category.Where(ca => ca.is_parent).ToList();
-                List<poco_category> cats = Categorys.CatsNoNo;//.db.category.Where(ca => ca.is_parent).ToList();
+                List<dto_category> cats = Categorys.CatsNoNo;
                 cats = cats.Where(x => Security.Encode(Security.Format(x.name, "_", true)) == cats_arr[0]).ToList();
                 if (cats.IsNullOrEmpty())//kun parent?
                     return -1;
@@ -373,9 +372,9 @@ namespace www.e_bazar.dk.SharedClasses
             return no_groups;
         }
 
-        private static bool _GetParamsSelected(string c, string p, int no_groups, out List<poco_params> _params)
+        private static bool _GetParamsSelected(string c, string p, int no_groups, out List<biz_params> _params)
         {
-            _params = new List<poco_params>();
+            _params = new List<biz_params>();
 
             if (p == "")
                 return true;
@@ -405,11 +404,11 @@ namespace www.e_bazar.dk.SharedClasses
             special_ae = Categorys.CatsYesYes.Where(_c => _c.name.Contains("ae")).ToList();
             special_æ = Categorys.CatsYesYes.Where(_c => _c.name.Contains("æ") || _c.name.Contains("ø") || _c.name.Contains("å")).ToList();
 
-            poco_category c_top = GetTop(c.Split('-')[0]);
+            dto_category c_top = GetTop(c.Split('-')[0]);
             string c_top_name = c_top.name;
             string[] groups = { c.Split('-')[1], c.Split('-')[2] };
-            List<poco_category> subs_tmp = new List<poco_category>();
-            List<poco_category> subs;
+            List<dto_category> subs_tmp = new List<dto_category>();
+            List<dto_category> subs;
             if (Settings.Security.MD5() != "true")
                 subs = (subs_tmp = Dec_FromBitsToList(c_top, groups[0], 0)).Count > 0 ? subs_tmp : Dec_FromBitsToList(c_top, groups[1], 1);
             else
@@ -422,7 +421,7 @@ namespace www.e_bazar.dk.SharedClasses
             //c_top_name = Replace(c_top.Name, '-').Replace("_", " ").Replace("-", "");
             c_top_name = c_top.name.Replace("_", " ").Replace("-", "");
 
-            List<poco_params> parms = (Categorys.s_Params()[c_top_name])[subs[0].name].OrderBy(x => x.prio).OrderByDescending(x => x.type).ToList();
+            List<dto_params> parms = (Categorys.s_Params()[c_top_name])[subs[0].name].OrderBy(x => x.prio).OrderByDescending(x => x.type).ToList();
             int no_m_ms = parms.Where(x => x.type == "M" || x.type == "MS").Count();
             int no_s = parms.Where(x => x.type == "S").Count();
 
@@ -432,12 +431,12 @@ namespace www.e_bazar.dk.SharedClasses
                 return false;
 
             int par_counter = 0;
-            foreach (poco_params par in parms)
+            foreach (dto_params par in parms)
             {
                 if (par.type == "S" && !pa_str[par_counter].Contains(':'))
                 {
                     if (pa_str[par_counter].Substring(0, 1) == "1")
-                        _params.Add(new poco_params() { name = par.name, type = par.type });
+                        _params.Add(new biz_params() { name = par.name, type = par.type });
                     par_counter++;
                 }
                 else if (par.type == "M" || par.type == "MS")
@@ -445,16 +444,16 @@ namespace www.e_bazar.dk.SharedClasses
                     string[] va_str = pa_str[par_counter].Split(':').ToArray();
                     if (va_str.Count() != par.values_daos.Count())
                         return false;
-                    poco_params p_val = new poco_params() { name = par.name, type = par.type };
+                    biz_params p_val = new biz_params() { name = par.name, type = par.type };
                     int val_counter = 0;
                     bool add_param = false;
-                    foreach (poco_value val in par.values_daos)
+                    foreach (dto_value val in par.values_daos)
                     {
                         if (pa_str[par_counter].Contains(':') && va_str[val_counter].Substring(0, 1) == "1")
                         {
                             if (p_val.values_daos == null)
-                                p_val.values_daos = new List<poco_value>();
-                            p_val.values_daos.Add(new poco_value() { value = val.value, Id = val.Id });
+                                p_val.values_daos = new List<biz_value>();
+                            p_val.values_daos.Add(new biz_value() { value = val.value, Id = val.Id });
                             add_param = true;
                         }
                         val_counter++;
@@ -468,13 +467,13 @@ namespace www.e_bazar.dk.SharedClasses
             return true;
         }
 
-        public static bool First(List<string> area_selected, string area_check, string c, string p, out string c_url, out string c_search, out List<poco_params> _params)
+        public static bool First(List<string> area_selected, string area_check, string c, string p, out string c_url, out string c_search, out List<biz_params> _params)
         {
             using (EbazarDB db = new EbazarDB())
             {
 
 
-                _params = new List<poco_params>();
+                _params = new List<biz_params>();
                 c_search = "none";
                 c_url = "none";
 

@@ -5,21 +5,21 @@ using System.Linq;
 
 namespace www.e_bazar.dk.Models.DTOs
 {
-    public class poco_folder
+    public class biz_folder
     {
-        //private EbazarDB db;
-        /*private poco_folder()
+        /*//private EbazarDB db;
+        /*private biz_folder()
         {
 
-        }*/
-        public poco_folder()
+        }*
+        public biz_folder()
         {
             //this.db = new EbazarDB();
         }
-        /*~poco_folder()
+        /*~biz_folder()
         {
             db?.Dispose();
-        }*/
+        }*
 
         public long id { get; set; }
         [Required]
@@ -31,8 +31,8 @@ namespace www.e_bazar.dk.Models.DTOs
         public int? parent_id { get; set; }
         public bool is_parent { get; set; }
         public int count { get; set; }
-        public virtual poco_booth booth { get; set; }
-        public virtual List<poco_folder> children { get; set; }
+        public virtual biz_booth booth { get; set; }
+        public virtual List<biz_folder> children { get; set; }*/
 
         public folder GetFolderA(long fol_a_id, bool withbooth, bool withproducts)
         {
@@ -73,14 +73,15 @@ namespace www.e_bazar.dk.Models.DTOs
             }
         }
 
-        public poco_folder GetFolderAPOCO(long? fld_a_id, bool withbooth, bool withproducts)
+        public dto_folder GetFolderADTO(long? fld_a_id, bool withbooth, bool withproducts)
         {
             if (fld_a_id == null)
-                return new poco_folder();
-            poco_folder poco = new poco_folder();
+                return new dto_folder();
+            biz_folder biz = new biz_folder();
+            dto_folder dto = new dto_folder();
             folder foldera = GetFolderA((long)fld_a_id, withbooth, withproducts);
-            poco.ToPoco(foldera);
-            return poco;            
+            dto = biz.ToDTO(foldera);
+            return dto;            
         }
 
         public List<folder> GetFolderAs(int booth_id, bool withbooth)
@@ -90,8 +91,8 @@ namespace www.e_bazar.dk.Models.DTOs
             {
 
 
-                poco_folder folderb = new poco_folder();
-                poco_booth booth = new poco_booth();
+                biz_folder folderb = new biz_folder();
+                biz_booth booth = new biz_booth();
                 List<folder> folders = (from l in _db.folder
                                         where l.booth_id == booth_id
                                        select new 
@@ -127,12 +128,12 @@ namespace www.e_bazar.dk.Models.DTOs
             }
         }
 
-        public List<poco_folder> GetFolderAPOCOs(int booth_id, bool withbooth)
+        public List<dto_folder> GetFolderADTOs(int booth_id, bool withbooth)
         {
-            List<poco_folder> list = new List<poco_folder>();
+            List<dto_folder> list = new List<dto_folder>();
             List<folder> folderas = GetFolderAs(booth_id, withbooth);
             folderas = folderas.OrderBy(l => l.priority).ToList();
-            return this.ToPocoList(folderas);
+            return this.ToDTOList(folderas);
         }
 
         public folder GetFolderB(long fld_b_id)
@@ -149,7 +150,7 @@ namespace www.e_bazar.dk.Models.DTOs
                                  Id = l.Id,
                                  name = l.name,
                                  priority = l.priority,
-                                 parent_id = parent_id,
+                                 parent_id = l.parent_id,
                                  is_parent = l.is_parent,
                                  product = l.product,
                                  collection = l.collection,
@@ -161,7 +162,7 @@ namespace www.e_bazar.dk.Models.DTOs
                                 Id = l.Id,
                                 name = l.name,
                                 priority = l.priority,
-                                parent_id = parent_id,
+                                parent_id = l.parent_id,
                                 is_parent = l.is_parent,
                                 product = l.product,
                                 collection = l.collection,
@@ -174,17 +175,18 @@ namespace www.e_bazar.dk.Models.DTOs
             }
         }
 
-        public poco_folder GetFolderBPOCO(long? fld_b_id)
+        public dto_folder GetFolderBDTO(long? fld_b_id)
         {
             if (fld_b_id == null)
-                return new poco_folder();
+                return new dto_folder();
 
-            poco_folder poco = new poco_folder();
+            biz_folder biz = new biz_folder();
+            dto_folder dto = new dto_folder();
             folder folderb = GetFolderB((long)fld_b_id);
-            poco.ToPoco(folderb);
-            return poco;
+            dto = biz.ToDTO(folderb);
+            return dto;
             
-            //return new poco_folder();
+            //return new biz_folder();
         }
 
         public List<folder> GetFolderBs(long foldera_id)
@@ -201,7 +203,7 @@ namespace www.e_bazar.dk.Models.DTOs
                                        Id = l.Id,
                                        name = l.name,
                                        priority = l.priority,
-                                        parent_id = parent_id,
+                                        parent_id = l.parent_id,
                                         is_parent = l.is_parent,
                                         product = l.product,
                                         collection = l.collection,
@@ -213,7 +215,7 @@ namespace www.e_bazar.dk.Models.DTOs
                                       Id = l.Id,
                                       name = l.name,
                                       priority = l.priority,
-                                      parent_id = parent_id,
+                                      parent_id = l.parent_id,
                                       is_parent = l.is_parent,
                                       product = l.product,
                                       collection = l.collection,
@@ -226,14 +228,14 @@ namespace www.e_bazar.dk.Models.DTOs
             }
         }
 
-        public List<poco_folder> GetFolderBPOCOs(long? foldera_id)
+        public List<dto_folder> GetFolderBDTOs(long? foldera_id)
         {
             if (foldera_id == null)
-                return new List<poco_folder>();
+                return new List<dto_folder>();
 
             List<folder> folders = GetFolderBs((long)foldera_id);
             folders = folders.OrderBy(l => l.priority).ToList();
-            return this.ToPocoList(folders);
+            return this.ToDTOList(folders);
         }
 
         private void swap(folder current, folder other)
@@ -408,79 +410,85 @@ namespace www.e_bazar.dk.Models.DTOs
             }
         }
 
-        public void ToFolder(EbazarDB db, ref folder f)
+        public void ToFolder(EbazarDB db, dto_folder dto, ref folder f)
         {
-            if (!string.IsNullOrEmpty(this.name))
-                f.name = this.name;
-            else
-                throw new Exception("A-OK, Handled.");
-            if (this.priority != null)
-                f.priority = this.priority;
+            if (!string.IsNullOrEmpty(dto.name))
+                f.name = dto.name;
             else
                 throw new Exception("A-OK, Handled.");
 
-            if (this.children != null)
-                f.children = db.folder.Where(l => l.Id == this.parent_id).ToList();
+            if (dto.priority != null)
+                f.priority = dto.priority;
             else
                 throw new Exception("A-OK, Handled.");
 
-            if (this.booth != null)
-                f.booth = db.booth.Where(b => b.Id == this.booth.booth_id).FirstOrDefault();
+            if (dto.children != null)
+                f.children = db.folder.Where(l => l.Id == dto.parent_id).ToList();
+            else
+                throw new Exception("A-OK, Handled.");
+
+            if (dto.booth != null)
+                f.booth = db.booth.Where(b => b.Id == dto.booth.booth_id).FirstOrDefault();
             else
                 throw new Exception("A-OK, Handled.");
         }
 
-        public List<poco_folder> ToPocoList(ICollection<folder> folderas)
+        public List<dto_folder> ToDTOList(ICollection<folder> folderas)
         {
             if (folderas == null)
                 throw new Exception("A-OK, Check");
 
-            List<poco_folder> list = new List<poco_folder>();
+            List<dto_folder> list = new List<dto_folder>();
             foreach (folder b in folderas.ToList())
             {
-                poco_folder folder_poco = new poco_folder();
-                folder_poco.ToPoco(b);
-                list.Add(folder_poco);
+                dto_folder folder_dto = new dto_folder();
+                folder_dto = this.ToDTO(b);
+                list.Add(folder_dto);
             }
             return list;
         }
 
-        public void ToPoco(folder f)
+        public dto_folder ToDTO(folder f)
         {
             if (f == null)
                 throw new Exception("A-OK, Check");
 
-            if (f.is_parent == true)
-                this.count = (f.product != null ? f.product.Count() : 0) + (f.collection != null ? f.collection.Count() : 0);
-            else
-                this.count = (f.product1 != null ? f.product1.Count() : 0) + (f.collection1 != null ? f.collection1.Count() : 0);
+            dto_folder dto = new dto_folder();
 
-            this.id = f.Id;
+            if (f.is_parent == true)
+                dto.count = (f.product != null ? f.product.Count() : 0) + (f.collection != null ? f.collection.Count() : 0);
+            else
+                dto.count = (f.product1 != null ? f.product1.Count() : 0) + (f.collection1 != null ? f.collection1.Count() : 0);
+
+            dto.id = f.Id;
             
             if (!string.IsNullOrEmpty(f.name))
-                this.name = f.name;
+                dto.name = f.name;
             else
                 throw new Exception("A-OK, Handled.");
 
             if (f.priority != null)
-                this.priority = f.priority;
+                dto.priority = f.priority;
             else
                 throw new Exception("A-OK, Handled.");
 
             if (f.booth_id != null)
-                this.booth_id = (int)f.booth_id;
+                dto.booth_id = (int)f.booth_id;
 
-            this.children = new List<poco_folder>();
+            dto.children = new List<dto_folder>();
             if (f.children != null)
             {
                 foreach (folder b in f.children)
                 {
-                    poco_folder fb = new poco_folder();
-                    fb.ToPoco(b);
-                    this.children.Add(fb);
+                    biz_folder fb = new biz_folder();
+                    dto_folder _dto = new dto_folder();
+                    _dto = fb.ToDTO(b);
+                    dto.children.Add(_dto);
                 }
-                this.children = this.children.OrderBy(l => l.priority).ToList();
+                dto.children = dto.children.OrderBy(l => l.priority).ToList();
             }
+
+            return dto;
         }
     }
 }
