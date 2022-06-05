@@ -4,9 +4,9 @@ recent updates:
 
 using Linq to entities and eager loading for EF queries  
 
-todo:  
-
 return (real) DTOs instead of Business Objects to front-end  
+
+todo:  
 
 generel clean up in code  
 
