@@ -60,8 +60,9 @@
                         booth_poco = biz.GetBoothDTO<dto_collection>((dto_collection)item);
                     }
 
+                    if (booth_poco == null)
                     {
-                        //continue;
+                        continue;
                     }
                     <tr>
                         <td class="adm_td_products_image">
