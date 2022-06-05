@@ -4,7 +4,7 @@ recent updates:
 
 using Linq to entities and eager loading for EF queries  
 
-return (real) DTOs instead of Business Objects to front-end  
+return DTOs instead of Business Objects to front-end  
 
 todo:  
 
