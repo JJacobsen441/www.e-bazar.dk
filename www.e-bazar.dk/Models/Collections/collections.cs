@@ -8,8 +8,8 @@ namespace www.e_bazar.dk.Models.DTOs
     {
         public col_userprofile()
         {
-
         }
+
         public col_userprofile(dto_salesman s_dto, dto_customer c_dto)
         {
             this.salesman_dto = s_dto;
@@ -31,12 +31,13 @@ namespace www.e_bazar.dk.Models.DTOs
         public string isset_bottom { get; set; }
         public List<dto_category> cats { get; set; }
     }
+
     public class col_marketplace
     {
         private col_marketplace()
         {
-            ;
         }
+
         public col_marketplace(List<dto_booth> booth_list, int number_booths, int number_booths_page, List<dto_booth> booth_newest, List<string> area_selected, List<dto_category> cats, string c_search, int z, int f, int t, bool g, Stats stats, bool fromsearch = false)
         {
             this.booths_list = booth_list;
@@ -71,6 +72,7 @@ namespace www.e_bazar.dk.Models.DTOs
 
             this.categories = new col_categories() { isset_top = isset_top, isset_bottom = isset_bottom, cats = cats_list };
         }
+
         private string ListToString(List<string> list, char split)
         {
             string s = "";
@@ -153,7 +155,6 @@ namespace www.e_bazar.dk.Models.DTOs
     {
         public col_product()
         {
-
         }
 
         public col_product(dto_product product_dto, List<dto_booth_item> other)
@@ -204,9 +205,9 @@ namespace www.e_bazar.dk.Models.DTOs
     {
         public List<dto_conversation> booths { get; set; }
         public List<dto_conversation> items { get; set; }
-
         public List<dto_conversation> own { get; set; }
         public bool is_salesman { get; set; }
+
         public col_conversations(List<dto_conversation> own, List<dto_conversation> booths, List<dto_conversation> items, bool is_salesman)
         {
             this.own = own;

@@ -261,7 +261,12 @@ namespace www.e_bazar.dk.Models.DataAccess
 
         public dto_person GetPersonDTO<T>(string person_id, bool withbooth, bool withfavorites, bool withfollowing) where T : dto_person, new()
         {
-            biz_person biz = new biz_salesman();
+            biz_person biz = null;
+            if (typeof(dto_salesman) == typeof(T))
+                biz = new biz_salesman();
+            else 
+                biz = new biz_customer();
+
             T dto = null;
             
             string _d = "Salesman";
@@ -270,8 +275,8 @@ namespace www.e_bazar.dk.Models.DataAccess
             
             dto = biz.GetPersonDTO<T>(person_id, withbooth, withfavorites, withfollowing);
 
-            if (dto.nator != _d)
-                throw new Exception("A-OK, Handled.");
+            //if (dto == null || dto.nator != _d)
+            //    throw new Exception("A-OK, Handled.");
 
             return dto;
         }

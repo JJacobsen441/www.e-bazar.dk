@@ -10,10 +10,6 @@ namespace www.e_bazar.dk.Models.DTOs
 {
     public abstract class biz_booth_item// : IBoothItem
     {
-        public string cat_main = "";
-
-        public string cat_second = "";
-
         public abstract long Save<T>(T dto) where T : dto_booth_item;
         public abstract void Update<T>(T dto) where T : dto_booth_item;
         public abstract void Delete(long id, EbazarDB db);
@@ -106,8 +102,8 @@ namespace www.e_bazar.dk.Models.DTOs
             //RelevantHelper helper = RelevantHelper._Create(false);
             helper.GetVals(out opt, out op1, out op2, out op3, out op4, out op5, out op6, out cats, out cat, out fra, out til, out zip);
 
-            cat_main = is_pro ? pro.category_main.name : col.category_main.name;
-            cat_second = is_pro ? (pro.category_second != null ? pro.category_second.name : null) : (col.category_second != null ? col.category_second.name : null);
+            string cat_main = is_pro ? pro.category_main.name : col.category_main.name;
+            string cat_second = is_pro ? (pro.category_second != null ? pro.category_second.name : null) : (col.category_second != null ? col.category_second.name : null);
 
             bool ok;
             string desc = is_pro ?  (StringHelper.OnlyAlphanumeric(pro.description.ToLower().Trim(), false, false, "notag", CharacterHelper.Space(), out ok)) :

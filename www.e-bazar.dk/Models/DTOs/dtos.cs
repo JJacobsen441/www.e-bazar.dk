@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
-using www.e_bazar.dk.Interfaces;
 using static www.e_bazar.dk.Models.DTOs.dto_booth;
 
 namespace www.e_bazar.dk.Models.DTOs
@@ -191,26 +190,9 @@ namespace www.e_bazar.dk.Models.DTOs
 
         public List<dto_conversation> conversations { get; set; }
 
-
-
-
-
-
-
-
-
-
         public bool relevant { get; set; }
 
         public List<Hit> relevant_hits = new List<Hit>();
-
-
-
-
-
-
-
-
     }
 
     public class dto_product : dto_booth_item
@@ -296,17 +278,6 @@ namespace www.e_bazar.dk.Models.DTOs
         public long? _id { get; set; }
     }
 
-    /*public class dto_productimage 
-    {
-        public long id { get; set; }
-        
-        public string name { get; set; }
-        
-        public DateTime created_on { get; set; }
-        
-        public long? _id { get; set; }
-    }*/
-
     public class dto_comment
     {
         public DateTime created_on { get; set; }
@@ -319,7 +290,6 @@ namespace www.e_bazar.dk.Models.DTOs
         public bool viewed_other { get; set; }
 
         public virtual dto_conversation conversation_dto { get; set; }
-
         public dto_salesman dto_salesman { get; set; }
         public dto_customer dto_customer { get; set; }
     }
@@ -339,7 +309,6 @@ namespace www.e_bazar.dk.Models.DTOs
         public virtual dto_product product_dto { get; set; }
         public virtual dto_collection collection_dto { get; set; }
         public virtual dto_booth booth_dto { get; set; }
-        //public virtual dto_person other { get; set; }
     }
 
     public class dto_params
@@ -390,7 +359,6 @@ namespace www.e_bazar.dk.Models.DTOs
         [Required]
         [StringLength(50)]
         public string name { get; set; }
-
         public int? priority { get; set; }
         public int? booth_id { get; set; }
         public int? parent_id { get; set; }
