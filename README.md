@@ -2,6 +2,8 @@
 
 recent updates:  
 
+generally the business classes are most up to date  
+
 using Linq to entities and eager loading for EF queries  
 
 return DTOs instead of Business Objects to front-end  

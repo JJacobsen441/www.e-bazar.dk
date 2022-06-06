@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using www.e_bazar.dk.Interfaces;
 using www.e_bazar.dk.Models.DTOs;
 using www.e_bazar.dk.SharedClasses;
 
@@ -12,10 +11,9 @@ namespace www.e_bazar.dk.Models.DataAccess
     /*
      * DataAccessLayer
      * */
+
     public class DAL
     {
-        private List<EbazarDB> _dbs = null;
-
         private DAL()
         {
             
@@ -147,23 +145,7 @@ namespace www.e_bazar.dk.Models.DataAccess
         {
             biz_booth booth_biz = new biz_booth();
             return booth_biz.GetBoothsByPersonDTO(salesman_id);
-        }
-
-        //public biz_booth GetBoothPOCOByProductId(long product_id)
-        //{
-        //    biz_booth booth_poco = new biz_booth();
-        //    biz_booth booth = booth_poco.GetBoothPOCOByProductId(product_id);
-
-        //    return booth;
-        //}
-
-        //public biz_booth _GetBoothPOCOByCollectionId(long collection_id, bool withperson)
-        //{
-        //    biz_booth booth_poco = new biz_booth();
-        //    biz_booth booth = booth_poco.GetBoothPOCOByCollectionId(collection_id, withperson);
-
-        //    return booth;
-        //}
+        }        
 
         public dto_product GetProductDTO(long product_id, bool withbooth, bool withproducts, bool withcollection, bool withconversation, bool withtags)
         {
@@ -280,22 +262,6 @@ namespace www.e_bazar.dk.Models.DataAccess
 
             return dto;
         }
-
-        /*public List<T> _GetPersonsPOCO<T>(bool withfavorites, bool withfollowing) where T : biz_person, new()
-        {
-            biz_person poco = new T();
-            List<T> pocos = new List<T>();
-            pocos = poco._GetPersonsPOCO<T>(withfavorites, withfollowing);
-
-            return pocos;
-        }*/
-
-        /*public customer_dto GetCustomerDTO(string customer_id)
-        {
-            customer_dto dto = new customer_dto();
-            dto = dto.GetCustomerDTO(customer_id);
-            return dto;
-        }*/
 
         public int SaveBooth(dto_booth booth_dto)
         {

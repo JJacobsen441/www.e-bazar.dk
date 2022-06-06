@@ -1,5 +1,4 @@
-﻿//using Booking_2017.Controllers;
-using System;
+﻿using System;
 
 namespace www.e_bazar.dk.SharedClasses
 {
