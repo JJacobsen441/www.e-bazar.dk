@@ -11,6 +11,7 @@ using www.e_bazar.dk.Models.DataAccess;
 using www.e_bazar.dk.Models.DTOs;
 using www.e_bazar.dk.Models.Identity;
 using www.e_bazar.dk.SharedClasses;
+using www.e_bazar.dk.Statics;
 
 namespace www.e_bazar.dk.Controllers
 {
@@ -82,10 +83,10 @@ namespace www.e_bazar.dk.Controllers
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             if(!ThisSession.Cookie)
             {
-                Dictionary<string, SYSTEM_MESSAGE> err = Setup.CheckCookieLogin(false);
+                Dictionary<string, SYSTEM_MESSAGE> err = SetupHelper.CheckCookieLogin(false);
                 Dictionary<string, string> errors = new Dictionary<string, string>();
                 if (err.ToList()[0].Value != SYSTEM_MESSAGE.NO_MESSAGE)
-                    errors.Add(err.ToList()[0].Key, Texts.GetSystemMessageValue(err.ToList()[0].Key.ToString()));//price
+                    errors.Add(err.ToList()[0].Key, TextHelper.GetSystemMessageValue(err.ToList()[0].Key.ToString()));//price
                 if (ThisSession.Json_Messages != null)
                     ThisSession.Json_Messages = errors;
 
@@ -273,12 +274,12 @@ namespace www.e_bazar.dk.Controllers
                                $"For at validere din mail, tryk her: <a href='{callbackUrl}'>link</a>.<br /><br />" +
                                "Med venlig hilsen<br />" +
                                "e-bazar.dk";
-                    Admin.Notification.Run("mail@e-bazar.dk", model.Email, "mail@e-bazar.dk", subject, body);
+                    AdminHelper.Notification.Run("mail@e-bazar.dk", model.Email, "mail@e-bazar.dk", subject, body);
 
-                    Dictionary<string, SYSTEM_MESSAGE> err = Setup.SetupRegisterFromClient(true);
+                    Dictionary<string, SYSTEM_MESSAGE> err = SetupHelper.SetupRegisterFromClient(true);
                     Dictionary<string, string> errors = new Dictionary<string, string>();
                     if (err.ToList()[0].Value != SYSTEM_MESSAGE.NO_MESSAGE)
-                        errors.Add(err.ToList()[0].Key, Texts.GetSystemMessageValue(err.ToList()[0].Key.ToString()));//price
+                        errors.Add(err.ToList()[0].Key, TextHelper.GetSystemMessageValue(err.ToList()[0].Key.ToString()));//price
                     if (HttpContext != null)
                         HttpContext.Session["Json_Messages"] = errors;
 
@@ -312,16 +313,16 @@ namespace www.e_bazar.dk.Controllers
                             "* Siden er GRATIS<br />" +
                             "* Siden er uden annoncering.<br />" +
                             "* Siden drives af donationer fra sælgerne.<br />" +
-                            "Opstår problemer kontakt venligst: " + Settings.Basic.EMAIL_ADMIN() + "<br /><br />" +
+                            "Opstår problemer kontakt venligst: " + SettingsHelper.Basic.EMAIL_ADMIN() + "<br /><br />" +
                             "Med venlig hilsen<br />" +
-                            Settings.Basic.SITENAME_SHORT();
-                Admin.Notification.Run(Settings.Basic.EMAIL_ADMIN(), UserManager.GetEmail(userId), Settings.Basic.EMAIL_ADMIN(), subject, body);
+                            SettingsHelper.Basic.SITENAME_SHORT();
+                AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_ADMIN(), UserManager.GetEmail(userId), SettingsHelper.Basic.EMAIL_ADMIN(), subject, body);
 
                 subject = "Admin: ny bruger";
                 body = "Der er oprette ny bruger på e-bazar.dk <br /><br />" +
                             "Med venlig hilsen <br />" +
                             "e-bazar.dk(Admin)";
-                Admin.Notification.Run(Settings.Basic.EMAIL_ADMIN(), Settings.Basic.EMAIL_ADMIN(), Settings.Basic.EMAIL_ADMIN(), subject, body);
+                AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_ADMIN(), SettingsHelper.Basic.EMAIL_ADMIN(), SettingsHelper.Basic.EMAIL_ADMIN(), subject, body);
             }
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
@@ -362,7 +363,7 @@ namespace www.e_bazar.dk.Controllers
                            "For at ændre kodeord, tryk her: <a href=\"" + callbackUrl + "\">link</a>.<br /><br />" +
                            "Med venlig hilsen<br />" +
                            "e-bazar.dk";
-                Admin.Notification.Run("no-reply@e-bazar.dk", model.Email, "no-reply@e-bazar.dk", subject, body);
+                AdminHelper.Notification.Run("no-reply@e-bazar.dk", model.Email, "no-reply@e-bazar.dk", subject, body);
 
                 return RedirectToRoute("ForgotPasswordConfirmation");
             }

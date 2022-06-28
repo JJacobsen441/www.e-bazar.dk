@@ -89,7 +89,7 @@
                 <br />
                 <p style="width:75%">
                     Med venlig hilsen<br />
-                    @Settings.Basic.EMAIL_ADMIN()
+                    @SettingsHelper.Basic.EMAIL_ADMIN()
                 </p>
             </div>
         </div>
@@ -191,7 +191,7 @@
                 <br />
                 <p style="width:75%">
                     Med venlig hilsen<br />
-                    @Settings.Basic.EMAIL_ADMIN()
+                    @SettingsHelper.Basic.EMAIL_ADMIN()
                 </p>
             </div>
         </div>
@@ -291,7 +291,7 @@
                 <br />
                 <p style="width:75%">
                     Med venlig hilsen<br />
-                    @Settings.Basic.EMAIL_ADMIN()
+                    @SettingsHelper.Basic.EMAIL_ADMIN()
                 </p>
             </div>
         </div>
@@ -302,7 +302,7 @@
         string s = err.HandleError(ERROR.CONDITIONS, e);
         string subject = "Fejl i front, Conditions(MOB)";
         string body = s;
-        Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+        AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
     }
 
 }

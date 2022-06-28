@@ -499,15 +499,15 @@
                 </div>
             </div>
         </div>
-    }
-    catch (Exception e)
-    {
-        ErrorHandler err = new ErrorHandler();
-        string s = err.HandleError(ERROR.CONDITIONS, e);
-        string subject = "Fejl i front, MessageView(MOB)";
-        string body = s;
-        Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
-    }
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            ErrorHandler err = new ErrorHandler();
+                                            string s = err.HandleError(ERROR.CONDITIONS, e);
+                                            string subject = "Fejl i front, MessageView(MOB)";
+                                            string body = s;
+                                            AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
+                                        }
 
 }
 <script>

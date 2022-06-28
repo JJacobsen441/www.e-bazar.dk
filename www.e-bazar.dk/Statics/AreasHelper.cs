@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using www.e_bazar.dk.SharedClasses;
 
-namespace www.e_bazar.dk.SharedClasses
+namespace www.e_bazar.dk.Statics
 {
     public struct Area
     {
@@ -11,7 +12,7 @@ namespace www.e_bazar.dk.SharedClasses
         public int alt_from { get; set; }
         public int alt_to { get; set; }
     }
-    public class Areas 
+    public class AreasHelper
     {
         private static bool is_setup = false;
         private static bool is_running = false;
@@ -65,7 +66,7 @@ namespace www.e_bazar.dk.SharedClasses
         }
         public static List<Area> areas = new List<Area>();
 
-        public Areas()
+        public AreasHelper()
         {
         }
         private static void Setup()

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using www.e_bazar.dk.Extensions;
 using www.e_bazar.dk.SharedClasses;
+using www.e_bazar.dk.Statics;
 
 namespace www.e_bazar.dk.Models.DTOs
 {

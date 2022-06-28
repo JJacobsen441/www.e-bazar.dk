@@ -199,7 +199,7 @@
                                     }
                                     @{
                                         string dnr = Model.product_dto.booth_dto.salesman_dto.phonenumber != null ? Model.product_dto.booth_dto.salesman_dto.phonenumber.ToString() : "**** ****";
-                                        string dphone = Model.product_dto.booth_dto.salesman_dto.show_phone ? dnr : dnr != "**** ****" ? dnr.Substring(0, 4) + " ****" : Texts.GetNopValue(NOP.NO_PHONENUMBER.ToString());
+                                        string dphone = Model.product_dto.booth_dto.salesman_dto.show_phone ? dnr : dnr != "**** ****" ? dnr.Substring(0, 4) + " ****" : TextHelper.GetNopValue(NOP.NO_PHONENUMBER.ToString());
 
                                         <tr>
                                             <td class="z-color-green">Tlf Nr.:<br /><br /></td>
@@ -223,7 +223,7 @@
                             </div>
                             <div>
                                 @{
-                                    string ddesc = !string.IsNullOrEmpty(Model.product_dto.booth_dto.salesman_dto.description) ? Model.product_dto.booth_dto.salesman_dto.description : Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                                    string ddesc = !string.IsNullOrEmpty(Model.product_dto.booth_dto.salesman_dto.description) ? Model.product_dto.booth_dto.salesman_dto.description : TextHelper.GetNopValue(NOP.NO_DESCRIPTION.ToString());
                                 }
                                 @Html.DisplayWithBreaksFor(ddesc)
                             </div>
@@ -245,7 +245,7 @@
                             <div class=""><span class="z-bold">Vare Beskrivelse</span></div>
                             <div class="">
                                 @{
-                                    string ddescA = !string.IsNullOrEmpty(Model.product_dto.description) ? Model.product_dto.description : Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                                    string ddescA = !string.IsNullOrEmpty(Model.product_dto.description) ? Model.product_dto.description : TextHelper.GetNopValue(NOP.NO_DESCRIPTION.ToString());
                                 }
                                 @Html.DisplayWithBreaksFor(ddescA)
                             </div>
@@ -253,7 +253,7 @@
                                 <span class="z-bold">Note:&nbsp;</span>
                                 <span class="">
                                     @{
-                                        string dnote = !string.IsNullOrEmpty(Model.product_dto.note) ? Model.product_dto.note : Texts.GetNopValue(NOP.NO_NOTE.ToString());
+                                        string dnote = !string.IsNullOrEmpty(Model.product_dto.note) ? Model.product_dto.note : TextHelper.GetNopValue(NOP.NO_NOTE.ToString());
                                     }
                                     @Html.DisplayFor(m => dnote)
                                 </span>
@@ -264,7 +264,7 @@
                                     <td><span class="z-bold">Pris:&nbsp;&nbsp;&nbsp;</span></td>
                                     <td>
                                         @{
-                                            string dprice = Model.product_dto.price == NOP.INGEN_PRIS.ToString() ? Texts.GetNopValue(Model.product_dto.price) : Model.product_dto.price + " kr";
+                                            string dprice = Model.product_dto.price == NOP.INGEN_PRIS.ToString() ? TextHelper.GetNopValue(Model.product_dto.price) : Model.product_dto.price + " kr";
                                         }
                                         <span>@dprice</span>
                                     </td>
@@ -274,7 +274,7 @@
                                     <td>
                                         @if (@Model.product_dto.status_condition != null)
                                         {
-                                            <span>@Texts.GetConditionValue(Model.product_dto.status_condition)</span>
+                                            <span>@TextHelper.GetConditionValue(Model.product_dto.status_condition)</span>
                                         }
                                     </td>
                                 </tr>
@@ -304,14 +304,14 @@
                                 {
                                     dto_category main = Model.product_dto.booth_dto.category_main.Where(c => c.category_id == Model.product_dto.category_main_id).FirstOrDefault();
                                     string main_name = main.name;
-                                    @Html.RouteLink("[" + main_name + "]", "Marketplace", new { c = Security.Format(main_name, "_", false) }, new { @class = "z-color-green myfade" })
+                                    @Html.RouteLink("[" + main_name + "]", "Marketplace", new { c = SecurityHelper.Format(main_name, "_", false) }, new { @class = "z-color-green myfade" })
                                     if (Model.product_dto.category_second_id != null)
                                     {
                                         if (main.children.Count() > 0)
                                         {
                                             dto_category second = main.children.Where(c => c.category_id == Model.product_dto.category_second_id).FirstOrDefault();
                                             string second_name = second.name;
-                                            @Html.RouteLink("[" + second_name + "]", "Marketplace", new { c = Security.Format(Security.EncodeCats_MD5(false, main_name, second_name), "_", false) }, new { @class = "z-color-green myfade" });
+                                            @Html.RouteLink("[" + second_name + "]", "Marketplace", new { c = SecurityHelper.Format(SecurityHelper.EncodeCats_MD5(false, main_name, second_name), "_", false) }, new { @class = "z-color-green myfade" });
                                         }
                                     }
                                 }
@@ -569,7 +569,7 @@
                                     }
                                     @{
                                         string tnr = Model.product_dto.booth_dto.salesman_dto.phonenumber != null ? Model.product_dto.booth_dto.salesman_dto.phonenumber.ToString() : "**** ****";
-                                        string tphone = Model.product_dto.booth_dto.salesman_dto.show_phone ? tnr : tnr != "**** ****" ? tnr.Substring(0, 4) + " ****" : Texts.GetNopValue(NOP.NO_PHONENUMBER.ToString());
+                                        string tphone = Model.product_dto.booth_dto.salesman_dto.show_phone ? tnr : tnr != "**** ****" ? tnr.Substring(0, 4) + " ****" : TextHelper.GetNopValue(NOP.NO_PHONENUMBER.ToString());
 
                                         <tr>
                                             <td class="z-color-green">Tlf Nr.:<br /><br /></td>
@@ -593,7 +593,7 @@
                             </div>
                             <div>
                                 @{
-                                    string tdesc = !string.IsNullOrEmpty(Model.product_dto.booth_dto.salesman_dto.description) ? Model.product_dto.booth_dto.salesman_dto.description : Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                                    string tdesc = !string.IsNullOrEmpty(Model.product_dto.booth_dto.salesman_dto.description) ? Model.product_dto.booth_dto.salesman_dto.description : TextHelper.GetNopValue(NOP.NO_DESCRIPTION.ToString());
                                 }
                                 @Html.DisplayWithBreaksFor(tdesc)
                             </div>
@@ -615,7 +615,7 @@
                             <div class=""><span class="z-bold">Vare Beskrivelse</span></div>
                             <div class="">
                                 @{
-                                    string tdescA = !string.IsNullOrEmpty(Model.product_dto.description) ? Model.product_dto.description : Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                                    string tdescA = !string.IsNullOrEmpty(Model.product_dto.description) ? Model.product_dto.description : TextHelper.GetNopValue(NOP.NO_DESCRIPTION.ToString());
                                 }
                                 @Html.DisplayWithBreaksFor(tdescA)
                             </div>
@@ -623,7 +623,7 @@
                                 <span class="z-bold">Note:&nbsp;</span>
                                 <span class="">
                                     @{
-                                        string tnote = !string.IsNullOrEmpty(Model.product_dto.note) ? Model.product_dto.note : Texts.GetNopValue(NOP.NO_NOTE.ToString());
+                                        string tnote = !string.IsNullOrEmpty(Model.product_dto.note) ? Model.product_dto.note : TextHelper.GetNopValue(NOP.NO_NOTE.ToString());
                                     }
                                     @Html.DisplayFor(m => tnote)
                                 </span>
@@ -634,7 +634,7 @@
                                     <td><span class="z-bold">Pris:&nbsp;&nbsp;&nbsp;</span></td>
                                     <td>
                                         @{
-                                            string tprice = Model.product_dto.price == NOP.INGEN_PRIS.ToString() ? Texts.GetNopValue(Model.product_dto.price) : Model.product_dto.price + " kr";
+                                            string tprice = Model.product_dto.price == NOP.INGEN_PRIS.ToString() ? TextHelper.GetNopValue(Model.product_dto.price) : Model.product_dto.price + " kr";
                                         }
                                         <span>@tprice</span>
                                     </td>
@@ -644,7 +644,7 @@
                                     <td>
                                         @if (@Model.product_dto.status_condition != null)
                                         {
-                                            <span>@Texts.GetConditionValue(Model.product_dto.status_condition)</span>
+                                            <span>@TextHelper.GetConditionValue(Model.product_dto.status_condition)</span>
                                         }
                                     </td>
                                 </tr>
@@ -674,14 +674,14 @@
                                 {
                                     dto_category main = Model.product_dto.booth_dto.category_main.Where(c => c.category_id == Model.product_dto.category_main_id).FirstOrDefault();
                                     string main_name = main.name;
-                                    @Html.RouteLink("[" + main_name + "]", "Marketplace", new { c = Security.Format(main_name, "_", false) }, new { @class = "z-color-green myfade" })
+                                    @Html.RouteLink("[" + main_name + "]", "Marketplace", new { c = SecurityHelper.Format(main_name, "_", false) }, new { @class = "z-color-green myfade" })
                                     if (Model.product_dto.category_second_id != null)
                                     {
                                         if (main.children.Count() > 0)
                                         {
                                             dto_category second = main.children.Where(c => c.category_id == Model.product_dto.category_second_id).FirstOrDefault();
                                             string second_name = second.name;
-                                            @Html.RouteLink("[" + second_name + "]", "Marketplace", new { c = Security.Format(Security.EncodeCats_MD5(false, main_name, second_name), "_", false) }, new { @class = "z-color-green myfade" });
+                                            @Html.RouteLink("[" + second_name + "]", "Marketplace", new { c = SecurityHelper.Format(SecurityHelper.EncodeCats_MD5(false, main_name, second_name), "_", false) }, new { @class = "z-color-green myfade" });
                                         }
                                     }
                                 }
@@ -871,7 +871,7 @@
                             }
                             @{
                                 string mnr = Model.product_dto.booth_dto.salesman_dto.phonenumber != null ? Model.product_dto.booth_dto.salesman_dto.phonenumber.ToString() : "**** ****";
-                                string mphone = Model.product_dto.booth_dto.salesman_dto.show_phone ? mnr : mnr != "**** ****" ? mnr.Substring(0, 4) + " ****" : Texts.GetNopValue(NOP.NO_PHONENUMBER.ToString());
+                                string mphone = Model.product_dto.booth_dto.salesman_dto.show_phone ? mnr : mnr != "**** ****" ? mnr.Substring(0, 4) + " ****" : TextHelper.GetNopValue(NOP.NO_PHONENUMBER.ToString());
 
                                 <tr>
                                     <td class="z-color-green">Tlf Nr.:<br /><br /></td>
@@ -895,7 +895,7 @@
                     </div>
                     <div>
                         @{
-                            string mdesc = !string.IsNullOrEmpty(Model.product_dto.booth_dto.salesman_dto.description) ? Model.product_dto.booth_dto.salesman_dto.description : Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                            string mdesc = !string.IsNullOrEmpty(Model.product_dto.booth_dto.salesman_dto.description) ? Model.product_dto.booth_dto.salesman_dto.description : TextHelper.GetNopValue(NOP.NO_DESCRIPTION.ToString());
                         }
                         @Html.DisplayWithBreaksFor(mdesc)
                     </div>
@@ -907,7 +907,7 @@
                     <div class=""><span class="z-bold">Vare Beskrivelse</span></div>
                     <div class="">
                         @{
-                            string mdescA = !string.IsNullOrEmpty(Model.product_dto.description) ? Model.product_dto.description : Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                            string mdescA = !string.IsNullOrEmpty(Model.product_dto.description) ? Model.product_dto.description : TextHelper.GetNopValue(NOP.NO_DESCRIPTION.ToString());
                         }
                         @Html.DisplayWithBreaksFor(mdescA)
                     </div>
@@ -915,7 +915,7 @@
                         <span class="z-bold">Note:&nbsp;</span>
                         <span class="">
                             @{
-                                string mnote = !string.IsNullOrEmpty(Model.product_dto.note) ? Model.product_dto.note : Texts.GetNopValue(NOP.NO_NOTE.ToString());
+                                string mnote = !string.IsNullOrEmpty(Model.product_dto.note) ? Model.product_dto.note : TextHelper.GetNopValue(NOP.NO_NOTE.ToString());
                             }
                             @Html.DisplayFor(m => mnote)
                         </span>
@@ -926,7 +926,7 @@
                             <td><span class="z-bold">Pris:&nbsp;&nbsp;&nbsp;</span></td>
                             <td>
                                 @{
-                                    string mprice = Model.product_dto.price == NOP.INGEN_PRIS.ToString() ? Texts.GetNopValue(Model.product_dto.price) : Model.product_dto.price + " kr";
+                                    string mprice = Model.product_dto.price == NOP.INGEN_PRIS.ToString() ? TextHelper.GetNopValue(Model.product_dto.price) : Model.product_dto.price + " kr";
                                 }
                                 <span>@mprice</span>
                             </td>
@@ -936,7 +936,7 @@
                             <td>
                                 @if (@Model.product_dto.status_condition != null)
                                 {
-                                    <span>@Texts.GetConditionValue(Model.product_dto.status_condition)</span>
+                                    <span>@TextHelper.GetConditionValue(Model.product_dto.status_condition)</span>
                                 }
                             </td>
                         </tr>
@@ -966,14 +966,14 @@
                         {
                             dto_category main = Model.product_dto.booth_dto.category_main.Where(c => c.category_id == Model.product_dto.category_main_id).FirstOrDefault();
                             string main_name = main.name;
-                            @Html.RouteLink("[" + main_name + "]", "Marketplace", new { c = Security.Format(main_name, "_", false) }, new { @class = "z-color-green myfade" })
+                            @Html.RouteLink("[" + main_name + "]", "Marketplace", new { c = SecurityHelper.Format(main_name, "_", false) }, new { @class = "z-color-green myfade" })
                             if (Model.product_dto.category_second_id != null)
                             {
                                 if (main.children.Count() > 0)
                                 {
                                     dto_category second = main.children.Where(c => c.category_id == Model.product_dto.category_second_id).FirstOrDefault();
                                     string second_name = second.name;
-                                    @Html.RouteLink("[" + second_name + "]", "Marketplace", new { c = Security.Format(Security.EncodeCats_MD5(false, main_name, second_name), "_", false) }, new { @class = "z-color-green myfade" });
+                                    @Html.RouteLink("[" + second_name + "]", "Marketplace", new { c = SecurityHelper.Format(SecurityHelper.EncodeCats_MD5(false, main_name, second_name), "_", false) }, new { @class = "z-color-green myfade" });
                                 }
                             }
                         }
@@ -994,15 +994,15 @@
 
             </div>
         </div>
-    }
-    catch (Exception e)
-    {
-        ErrorHandler err = new ErrorHandler();
-        string s = err.HandleError(ERROR.MARKETPLACE, e);
-        string subject = "Fejl i front, Product(MOB)";
-        string body = s;
-        Admin.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
-    }
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        ErrorHandler err = new ErrorHandler();
+                                        string s = err.HandleError(ERROR.MARKETPLACE, e);
+                                        string subject = "Fejl i front, Product(MOB)";
+                                        string body = s;
+                                        AdminHelper.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
+                                    }
 
 }
 

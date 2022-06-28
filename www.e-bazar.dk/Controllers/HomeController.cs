@@ -5,11 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Web;
 using System.Web.Mvc;
-using www.e_bazar.dk.Extensions;
 using www.e_bazar.dk.Models.DataAccess;
 using www.e_bazar.dk.Models.DTOs;
 using www.e_bazar.dk.Models.Identity;
 using www.e_bazar.dk.SharedClasses;
+using www.e_bazar.dk.Statics;
 
 namespace www.e_bazar.dk.Controllers
 {
@@ -56,7 +56,7 @@ namespace www.e_bazar.dk.Controllers
             string msg;
             string ip_str = stats.first ? " [" + stats.ip + "]" : " ";
 
-            if (Statics.IsDebug)
+            if (StaticsHelper.IsDebug)
                 return;
             if (CheckHelper.Generel.IsAdmin(stats.ip))
                 return;
@@ -65,8 +65,8 @@ namespace www.e_bazar.dk.Controllers
 
             string subject = msg;
             string body = "IP: " + stats.ip + "<br />";
-                        
-            Admin.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
+
+            AdminHelper.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
         }
 
         [AllowAnonymous]
@@ -77,7 +77,7 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                if (Statics.Maintenance)
+                if (StaticsHelper.Maintenance)
                     return View("Maintenance");
 
                 if (ThisSession.Json_Messages != null)
@@ -130,7 +130,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }

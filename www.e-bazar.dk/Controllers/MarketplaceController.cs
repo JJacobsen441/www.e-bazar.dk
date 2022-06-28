@@ -7,12 +7,12 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using www.e_bazar.dk.Extensions;
 using www.e_bazar.dk.Models;
 using www.e_bazar.dk.Models.DataAccess;
 using www.e_bazar.dk.Models.DTOs;
 using www.e_bazar.dk.Models.Identity;
 using www.e_bazar.dk.SharedClasses;
+using www.e_bazar.dk.Statics;
 using static www.e_bazar.dk.Models.ViewModels.ViewModels;
 
 namespace www.e_bazar.dk.Controllers
@@ -107,7 +107,7 @@ namespace www.e_bazar.dk.Controllers
 
                 string subject = "Admin(run)" + ip_str;
                 string body = "IP: " + ip;
-                Admin.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
+                AdminHelper.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
 
                 SetupCurrentUser();
                 CurrentUser user = CurrentUser.GetInstance();
@@ -135,12 +135,12 @@ namespace www.e_bazar.dk.Controllers
                                 switch (model.cmd)
                                 {
                                     case "categorys":
-                                        Admin.Commands.Categorys(bool.Parse(model.bool1), bool.Parse(model.bool2), _db);
+                                        AdminHelper.Commands.Categorys(bool.Parse(model.bool1), bool.Parse(model.bool2), _db);
                                         status = (int)HttpStatusCode.OK;
                                         break;
                                     case "deleteuser":
                                         status = (int)HttpStatusCode.NotFound;
-                                        if (Admin.Commands.DeleteUser("test@e-bazar.dk", UserManager, _db))
+                                        if (AdminHelper.Commands.DeleteUser("test@e-bazar.dk", UserManager, _db))
                                             status = (int)HttpStatusCode.OK;
                                         break;
                                     default:
@@ -150,7 +150,7 @@ namespace www.e_bazar.dk.Controllers
 
                                 subject = "Admin(is me?)";
                                 body = "IP: " + ip;
-                                Admin.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
+                                AdminHelper.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
 
                                 return View("AdminPost", status);
                             }
@@ -161,7 +161,7 @@ namespace www.e_bazar.dk.Controllers
             }
             catch (Exception e) 
             {
-                Statics.Log(err.HandleError(ERROR.MARKETPLACE, e));
+                StaticsHelper.Log(err.HandleError(ERROR.MARKETPLACE, e));
                 TempData["err_msg"] = err.HandleError(ERROR.MARKETPLACE, e);
                 TempData["ErrorMessage"] = "";
                 return ErrorPage();
@@ -178,7 +178,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -188,7 +188,7 @@ namespace www.e_bazar.dk.Controllers
             string msg;
             string ip_str = stats.first ? " [" + stats.ip + "]" : " ";
 
-            if (Statics.IsDebug)
+            if (StaticsHelper.IsDebug)
                 return;
             if (CheckHelper.Generel.IsAdmin(stats.ip))
                 return;// msg = "Der har været en besøgende! - Admin" + ip_str + " [" + stats.users_per_day + "]";
@@ -200,18 +200,18 @@ namespace www.e_bazar.dk.Controllers
                         + "Search: " + s + "<br />"
                         + "Cat (_c): " + _c + "<br />"
                         //+ "Cat (c): " + c + "<br />"
-                        + "Område: " + Security.ListToString(Areas.selected, ';') + "<br />"
+                        + "Område: " + SecurityHelper.ListToString(AreasHelper.selected, ';') + "<br />"
                         + "Zip: " + zip + "<br />"
                         + "From: " + fra + "<br />"
                         + "To: " + til + "<br />"
                         + "G: " + g;
-            Admin.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);            
+            AdminHelper.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);            
         }
 
         private col_marketplace Default() 
         {
             ViewBag.AreasChecked = "dk";
-            Areas.selected = new List<string>() { "dk" };
+            AreasHelper.selected = new List<string>() { "dk" };
 
             int zip = 0;
             int til = 999999;
@@ -240,14 +240,14 @@ namespace www.e_bazar.dk.Controllers
             biz_category cat_poco = new biz_category();
             List<dto_category> cats = cat_poco._GetAll(true);
 
-            Dictionary<string, Dictionary<string, List<dto_params>>> param_a = Categorys.s_Params();
+            Dictionary<string, Dictionary<string, List<dto_params>>> param_a = CategorysHelper.s_Params();
             ViewBag.Subs = param_a;
             ViewBag.Param = ""; 
 
             pag = new Paginator(count, num_per_page);
             pag.GotoPage(page);
 
-            return new col_marketplace(booth_list, count, num_per_page, booth_newest, Areas.selected, cats, c, zip, fra, til, kun_med_fast, stats_res, s != "");
+            return new col_marketplace(booth_list, count, num_per_page, booth_newest, AreasHelper.selected, cats, c, zip, fra, til, kun_med_fast, stats_res, s != "");
 
         }
 
@@ -260,17 +260,17 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                if (Statics.Maintenance)
+                if (StaticsHelper.Maintenance)
                     return View("Maintenance");
                 
                 SetupCurrentUser();
 
                 CheckHelper.Generel.CheckMarketPlace(model, out _s, out _c_orig, out _z, out _t, out _f, out _g);
 
-                if (!Security.First(model.area_selected, model.a, model.c, model.p, out _c_url, out _c_search, out _params))
+                if (!SecurityHelper.First(model.area_selected, model.a, model.c, model.p, out _c_url, out _c_search, out _params))
                     return View("Marketplace", Default());
                 
-                if (!Security.Second())
+                if (!SecurityHelper.Second())
                     return View("Marketplace", Default());
                                 
                 if (ThisSession.Cookie)
@@ -307,7 +307,7 @@ namespace www.e_bazar.dk.Controllers
                 
                 biz_category cat_poco = new biz_category();
                 List<dto_category> cats = cat_poco._GetAll(true);
-                Dictionary<string, Dictionary<string, List<dto_params>>> param_a = Categorys.s_Params();
+                Dictionary<string, Dictionary<string, List<dto_params>>> param_a = CategorysHelper.s_Params();
                 ViewBag.Subs = param_a;
                 ViewBag.Param = model.p; 
 
@@ -315,11 +315,11 @@ namespace www.e_bazar.dk.Controllers
                 pag.GotoPage(model.page);
                 
                 ViewBag.CurrentUser = CurrentUser.GetInstance().GetCurrentUser(false, true, true);
-                ViewBag.AreasChecked = Security.ListToString(Areas.selected, '-');
+                ViewBag.AreasChecked = SecurityHelper.ListToString(AreasHelper.selected, '-');
                 ViewBag.CatA = _c_search.IsNullOrEmpty() || _c_search == "alle" || _c_search.Split('-')[0].IsNullOrEmpty() ? "" : _c_search.Split('-')[0];
                 ViewBag.CatB = _c_search.IsNullOrEmpty() || _c_search == "alle" || _c_search.Split('-')[1].IsNullOrEmpty() ? "" : _c_search.Split('-')[1];
 
-                col_marketplace marketplace = new col_marketplace(booth_list, count, num_per_page, booth_newest, Areas.selected, cats, _c_search, _z, _f, _t, _g, stats_res, model.s != "");
+                col_marketplace marketplace = new col_marketplace(booth_list, count, num_per_page, booth_newest, AreasHelper.selected, cats, _c_search, _z, _f, _t, _g, stats_res, model.s != "");
 
                 return View("Marketplace", marketplace);
             }
@@ -341,7 +341,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -355,14 +355,14 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                List<dto_category> cats = Categorys.CatsYesNo;
+                List<dto_category> cats = CategorysHelper.CatsYesNo;
 
                 string res = "{\"list\":[";
                 int c = 0;
                 foreach (dto_category entry in cats)
                 {
-                    string name1 = Security.Format(entry.name, "_", false);
-                    string routes_check = Security.EncodeCats_MD5(true, entry.name);
+                    string name1 = SecurityHelper.Format(entry.name, "_", false);
+                    string routes_check = SecurityHelper.EncodeCats_MD5(true, entry.name);
 
                     if (c != 0)
                         res += ",";
@@ -370,8 +370,8 @@ namespace www.e_bazar.dk.Controllers
                     res += obj;
                     foreach (dto_category entry2 in entry.children)
                     {
-                        string name2 = Security.Format(entry2.name, "_", false);
-                        routes_check = Security.EncodeCats_MD5(false, entry.name, name2);
+                        string name2 = SecurityHelper.Format(entry2.name, "_", false);
+                        routes_check = SecurityHelper.EncodeCats_MD5(false, entry.name, name2);
 
                         res += ",";
                         obj = "{\"top\":\"" + name1 + "\",\"sub\":\"" + name1 + "_" + name2 + "\",\"value\":\"" + routes_check + "\"}";
@@ -384,7 +384,7 @@ namespace www.e_bazar.dk.Controllers
             }
             catch (Exception e)
             {
-                Statics.Log(err.HandleError(ERROR.MARKETPLACE, e));
+                StaticsHelper.Log(err.HandleError(ERROR.MARKETPLACE, e));
                 return AjaxErrorReturn("Beklager der skete en fejl!");
             }
             finally
@@ -399,7 +399,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -412,7 +412,7 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                if (Statics.Maintenance)
+                if (StaticsHelper.Maintenance)
                     return View("Maintenance");
                 
                 SetupCurrentUser();
@@ -475,7 +475,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -508,7 +508,7 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                if (Statics.Maintenance)
+                if (StaticsHelper.Maintenance)
                     return View("Maintenance");
                 
                 SetupCurrentUser();
@@ -548,7 +548,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -562,7 +562,7 @@ namespace www.e_bazar.dk.Controllers
                 if (!access.Queue())
                     throw new Exception();
 
-                if (Statics.Maintenance)
+                if (StaticsHelper.Maintenance)
                     return View("Maintenance");
 
                 SetupCurrentUser();
@@ -602,7 +602,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -717,7 +717,7 @@ namespace www.e_bazar.dk.Controllers
             }
             catch (Exception e)
             {
-                Statics.Log(err.HandleError(ERROR.MESSAGE, e));
+                StaticsHelper.Log(err.HandleError(ERROR.MESSAGE, e));
                 TempData["err_msg"] = err.HandleError(ERROR.MESSAGE, e);
                 TempData["ErrorMessage"] = "";
                 return ErrorPage();
@@ -734,7 +734,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -769,7 +769,7 @@ namespace www.e_bazar.dk.Controllers
             }
             catch (Exception e)
             {
-                Statics.Log(err.HandleError(ERROR.MESSAGE, e));
+                StaticsHelper.Log(err.HandleError(ERROR.MESSAGE, e));
                 TempData["err_msg"] = err.HandleError(ERROR.MESSAGE, e);
                 TempData["ErrorMessage"] = "";
                 return ErrorPage();
@@ -786,7 +786,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -834,23 +834,23 @@ namespace www.e_bazar.dk.Controllers
                                 "Du har sendt en besked.<br />" +
                                 "besked: " + model.message + "<br /><br />" +
                                 "Med venlig hilsen<br />" +
-                                Settings.Basic.SITENAME_SHORT_CAP();
-                Admin.Notification.Run(Settings.Basic.EMAIL_NO_REPLY(), selfmailaddress, Settings.Basic.EMAIL_NO_REPLY(), subject, body);
+                                SettingsHelper.Basic.SITENAME_SHORT_CAP();
+                AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_NO_REPLY(), selfmailaddress, SettingsHelper.Basic.EMAIL_NO_REPLY(), subject, body);
 
-                subject = "Besked fra " + Settings.Basic.SITENAME_SHORT() + "";
+                subject = "Besked fra " + SettingsHelper.Basic.SITENAME_SHORT() + "";
                 body = "Kære " + @othername + ", <br /><br />" +
-                                    "Du har modtaget en besked på " + Settings.Basic.SITENAME_SHORT() + ".<br />" +
+                                    "Du har modtaget en besked på " + SettingsHelper.Basic.SITENAME_SHORT() + ".<br />" +
                                     "besked: " + model.message + "<br />" +
                                     "Login på din på din profil for at svare beskeden: <a href='https://www.e-bazar.dk/konto/login?returnUrl=%2Fadministration%2Fredigerprofil'>Klik her</a><br /><br />" +
                                     "Med venlig hilsen<br />" +
-                                    Settings.Basic.SITENAME_SHORT();
-                Admin.Notification.Run(Settings.Basic.EMAIL_NO_REPLY(), othermailaddress, Settings.Basic.EMAIL_NO_REPLY(), subject, body);
+                                    SettingsHelper.Basic.SITENAME_SHORT();
+                AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_NO_REPLY(), othermailaddress, SettingsHelper.Basic.EMAIL_NO_REPLY(), subject, body);
 
                 return View("MessageView", col);
             }
             catch (Exception e)
             {
-                Statics.Log(err.HandleError(ERROR.MESSAGE, e));
+                StaticsHelper.Log(err.HandleError(ERROR.MESSAGE, e));
                 TempData["err_msg"] = err.HandleError(ERROR.MESSAGE, e);
                 TempData["ErrorMessage"] = "";
                 return ErrorPage();
@@ -867,7 +867,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -907,7 +907,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -947,7 +947,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -987,7 +987,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -1025,7 +1025,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -1063,7 +1063,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -1098,7 +1098,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -1133,7 +1133,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -1177,7 +1177,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }        
@@ -1214,7 +1214,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -1249,7 +1249,7 @@ namespace www.e_bazar.dk.Controllers
                         //"fra: " + fra + "<br />" +
                         //"kun med fast: " + kun_med_fast + "<br />" + "<br />" +
                         "MSG: " + /*Extensions.Extensions.HtmlEncode(*/err_msg/*)*/;
-                Admin.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
+                AdminHelper.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
             }
 
             return View();
@@ -1270,7 +1270,7 @@ namespace www.e_bazar.dk.Controllers
                        "id: " + model.id + "<br />" +
                        ((model.a != "") ? "sub_a: " + model.a + "<br />" : "") +
                        ((model.b != "") ? "sub_b: " + model.b + "<br />" : "");
-            Admin.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
+            AdminHelper.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
 
             return HttpNotFound(HttpStatusCode.NotFound.ToString());
         }
@@ -1281,8 +1281,8 @@ namespace www.e_bazar.dk.Controllers
             string err_msg = TempData["err_msg"] as string;
 
             string subject = "Der er sket en fejl!";
-            string body = Extensions.Extensions.HtmlEncode(err_msg);
-            Admin.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
+            string body = Extensions.HtmlEncode(err_msg);
+            AdminHelper.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
 
             return Json(new { success = false, res = user_msg });
         }

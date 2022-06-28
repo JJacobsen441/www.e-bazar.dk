@@ -2,7 +2,7 @@
 using System.Linq;
 using www.e_bazar.dk.Models;
 
-namespace www.e_bazar.dk.Extensions
+namespace www.e_bazar.dk.Statics
 {
     public class NullHelper
     {

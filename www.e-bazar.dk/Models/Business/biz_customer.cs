@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using www.e_bazar.dk.Extensions;
 using www.e_bazar.dk.SharedClasses;
+using www.e_bazar.dk.Statics;
 
 namespace www.e_bazar.dk.Models.DTOs
 {
@@ -25,13 +25,13 @@ namespace www.e_bazar.dk.Models.DTOs
                 else
                     throw new Exception("A-OK, handled.");
 
-                Dictionary<string, string> dirs = Setup.SetupProfileDirs(_s);
+                Dictionary<string, string> dirs = SetupHelper.SetupProfileDirs(_s);
                 per.sysname = dirs["identity_id"];
 
-                per.firstname = !string.IsNullOrEmpty(_s.firstname) && _s.firstname != Texts.GetNopValue(NOP.NO_FIRSTNAME.ToString()) ? _s.firstname : "";
+                per.firstname = !string.IsNullOrEmpty(_s.firstname) && _s.firstname != TextHelper.GetNopValue(NOP.NO_FIRSTNAME.ToString()) ? _s.firstname : "";
                 per.lastname = !string.IsNullOrEmpty(_s.lastname) ? _s.lastname : "********";
                 per.created_on = DateTime.Now;
-                per.email = !string.IsNullOrEmpty(_s.email) && _s.email != Texts.GetNopValue(NOP.NO_EMAIL.ToString()) ? _s.email : "";
+                per.email = !string.IsNullOrEmpty(_s.email) && _s.email != TextHelper.GetNopValue(NOP.NO_EMAIL.ToString()) ? _s.email : "";
                 per.request_email = _s.request_email;
                 per.profileimage = !string.IsNullOrEmpty(_s.profileimage) ? _s.profileimage : "";
 
@@ -60,9 +60,9 @@ namespace www.e_bazar.dk.Models.DTOs
                 else
                     throw new Exception("A-OK, handled.");
 
-                per.firstname = !string.IsNullOrEmpty(_c.firstname) && _c.firstname != Texts.GetNopValue(NOP.NO_FIRSTNAME.ToString()) ? _c.firstname : "";
+                per.firstname = !string.IsNullOrEmpty(_c.firstname) && _c.firstname != TextHelper.GetNopValue(NOP.NO_FIRSTNAME.ToString()) ? _c.firstname : "";
                 per.lastname = !string.IsNullOrEmpty(_c.lastname) ? _c.lastname : "****";
-                per.email = !string.IsNullOrEmpty(_c.email) && _c.email != Texts.GetNopValue(NOP.NO_EMAIL.ToString()) ? _c.email : "";
+                per.email = !string.IsNullOrEmpty(_c.email) && _c.email != TextHelper.GetNopValue(NOP.NO_EMAIL.ToString()) ? _c.email : "";
                 per.request_email = _c.request_email;
                 per.profileimage = !string.IsNullOrEmpty(_c.profileimage) ? _c.profileimage : "";
 

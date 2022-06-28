@@ -12,7 +12,7 @@
     <h2>Featureliste@*<span class="hide_phone"><a href="/konto/login?returnUrl=%2Fadministration%2Frediger-profil"><img style="padding-bottom:3px" width="35" height="35" src="/images/site/rabbit_wh.jpg" title="I believe in you!" /></a></span>*@</h2>
 
     <p style="width:75%">
-        Som bruger på @Settings.Basic.SITENAME_SHORT() får du adgang til disse features:
+        Som bruger på @SettingsHelper.Basic.SITENAME_SHORT() får du adgang til disse features:
     </p>
     <br />
     <br />
@@ -77,7 +77,7 @@
     <h2>Featureliste@*<span class="hide_phone"><a href="/konto/login?returnUrl=%2Fadministration%2Frediger-profil"><img style="padding-bottom:3px" width="35" height="35" src="/images/site/rabbit_wh.jpg" title="I believe in you!" /></a></span>*@</h2>
 
     <p style="width:75%">
-        Som bruger på @Settings.Basic.SITENAME_SHORT() får du adgang til disse features:
+        Som bruger på @SettingsHelper.Basic.SITENAME_SHORT() får du adgang til disse features:
     </p>
     <br />
     <br />
@@ -141,7 +141,7 @@
     <h2>Featureliste@*<span class="hide_phone"><a href="/konto/registrer"><img style="padding-bottom:3px" width="30" height="30" src="/images/site/rabbit_wh.jpg" title="I believe in you!" /></a></span>*@</h2>
 
     <p style="width:75%">
-        Som bruger på @Settings.Basic.SITENAME_SHORT() får du adgang til disse features:
+        Som bruger på @SettingsHelper.Basic.SITENAME_SHORT() får du adgang til disse features:
     </p>
     <br />
     <br />
@@ -186,14 +186,14 @@
     </p>
 </div>
 
-        }
-        catch (Exception e)
-        {
-            ErrorHandler err = new ErrorHandler();
-            string s = err.HandleError(ERROR.FEATURES, e);
-            string subject = "Fejl i front, Features(DESK)";
-            string body = s;
-            Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
-        }
-    
+    }
+    catch (Exception e)
+    {
+        ErrorHandler err = new ErrorHandler();
+        string s = err.HandleError(ERROR.FEATURES, e);
+        string subject = "Fejl i front, Features(DESK)";
+        string body = s;
+        AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
+    }
+
 }

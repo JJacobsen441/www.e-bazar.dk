@@ -150,7 +150,7 @@
                                 continue;
                             }
                             string name = "[" + cat.name + "]";
-                            @Html.RouteLink(name, "Marketplace", new { area = areas, c = Security.EncodeCats_MD5(true, cat.name) }, new { @class = "green myfade" })
+                            @Html.RouteLink(name, "Marketplace", new { area = areas, c = SecurityHelper.EncodeCats_MD5(true, cat.name) }, new { @class = "green myfade" })
                         }
                     }
                 </div>
@@ -360,7 +360,7 @@ else
                                     continue;
                                 }
                                 string name = "[" + cat.name + "]";
-                                @Html.RouteLink(name, "Marketplace", new { area = areas, c = Security.EncodeCats_MD5(true, cat.name) }, new { @class = "green myfade" })
+                                @Html.RouteLink(name, "Marketplace", new { area = areas, c = SecurityHelper.EncodeCats_MD5(true, cat.name) }, new { @class = "green myfade" })
                             }
                         }
                     </div>
@@ -566,7 +566,7 @@ else
                                     continue;
                                 }
                                 string name = "[" + cat.name + "]";
-                                @Html.RouteLink(name, "Marketplace", new { area = areas, c = Security.EncodeCats_MD5(true, cat.name) }, new { @class = "green myfade" })
+                                @Html.RouteLink(name, "Marketplace", new { area = areas, c = SecurityHelper.EncodeCats_MD5(true, cat.name) }, new { @class = "green myfade" })
                             }
                         }
                     </div>

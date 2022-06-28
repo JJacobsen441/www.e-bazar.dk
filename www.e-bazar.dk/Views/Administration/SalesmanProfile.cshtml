@@ -181,7 +181,7 @@
                                 string dplaceholder_desk = "";
                                 if (string.IsNullOrEmpty(Model.salesman_dto.description))
                                 {
-                                    dplaceholder_desk = Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                                    dplaceholder_desk = TextHelper.GetNopValue(NOP.NO_DESCRIPTION.ToString());
                                 }
 
 
@@ -499,7 +499,7 @@
                                 string tplaceholder_desk = "";
                                 if (string.IsNullOrEmpty(Model.salesman_dto.description))
                                 {
-                                    tplaceholder_desk = Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                                    tplaceholder_desk = TextHelper.GetNopValue(NOP.NO_DESCRIPTION.ToString());
                                 }
 
 
@@ -819,7 +819,7 @@
                                 string mplaceholder_desk = "";
                                 if (string.IsNullOrEmpty(Model.salesman_dto.description))
                                 {
-                                    mplaceholder_desk = Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                                    mplaceholder_desk = TextHelper.GetNopValue(NOP.NO_DESCRIPTION.ToString());
                                 }
                                 <div class="col-sm-4 form-horizontal adm_div_group3">
                                     <div class="form-group">
@@ -929,15 +929,15 @@
                 </div>
             </div>
         </div>
-    }
-    catch (Exception e)
-    {
-        ErrorHandler err = new ErrorHandler();
-        string s = err.HandleError(ERROR.SALESMANPROFILE, e);
-        string subject = "Fejl i front, Salesmanfile(MOB)";
-        string body = s;
-        Admin.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
-    }
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            ErrorHandler err = new ErrorHandler();
+                                            string s = err.HandleError(ERROR.SALESMANPROFILE, e);
+                                            string subject = "Fejl i front, Salesmanfile(MOB)";
+                                            string body = s;
+                                            AdminHelper.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
+                                        }
 
 }
 

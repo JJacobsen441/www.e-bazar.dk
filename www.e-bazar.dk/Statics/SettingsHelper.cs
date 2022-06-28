@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Xml.Linq;
 
-namespace www.e_bazar.dk.SharedClasses
+namespace www.e_bazar.dk.Statics
 {
-    public class Settings
+    public class SettingsHelper
     {
         public class Security
         {
             public static string MD5()
             {
-                var xdoc = XElement.Load(Statics.Root + "App_Data\\settings.xml");
+                var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");
                 var group = xdoc.Elements("security");
 
                 foreach (XElement elem in group.Descendants())
@@ -23,7 +23,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             public static string MD5_COUNT()
             {
-                var xdoc = XElement.Load(Statics.Root + "App_Data\\settings.xml");
+                var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");
                 var group = xdoc.Elements("security");
 
                 foreach (XElement elem in group.Descendants())
@@ -37,7 +37,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             public static string GROUPS()
             {
-                var xdoc = XElement.Load(Statics.Root + "App_Data\\settings.xml");
+                var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");
                 var group = xdoc.Elements("security");
 
                 foreach (XElement elem in group.Descendants())
@@ -54,7 +54,7 @@ namespace www.e_bazar.dk.SharedClasses
         {
             public static string SITENAME()
             {
-                var xdoc = XElement.Load(Statics.Root + "App_Data\\settings.xml");
+                var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");
                 var group = xdoc.Elements("basic");
 
                 foreach (XElement elem in group.Descendants())
@@ -68,7 +68,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             public static string SITENAME_SHORT()
             {
-                var xdoc = XElement.Load(Statics.Root + "App_Data\\settings.xml");
+                var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");
                 var group = xdoc.Elements("basic");
 
                 foreach (XElement elem in group.Descendants())
@@ -92,7 +92,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             public static string SITE_NAME_FULL()
             {
-                var xdoc = XElement.Load(Statics.Root + "App_Data\\settings.xml");
+                var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");
                 var group = xdoc.Elements("basic");
 
                 foreach (XElement elem in group.Descendants())
@@ -106,7 +106,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             public static string SLOGAN()
             {
-                var xdoc = XElement.Load(Statics.Root + "App_Data\\settings.xml");
+                var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");
                 var group = xdoc.Elements("basic");
 
                 foreach (XElement elem in group.Descendants())
@@ -120,7 +120,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             public static string COMMENT()
             {
-                var xdoc = XElement.Load(Statics.Root + "App_Data\\settings.xml");
+                var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");
                 var group = xdoc.Elements("basic");
 
                 foreach (XElement elem in group.Descendants())
@@ -134,7 +134,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             public static string EMAIL_ADMIN()
             {
-                var xdoc = XElement.Load(Statics.Root + "App_Data\\settings.xml");
+                var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");
                 var group = xdoc.Elements("basic");
 
                 foreach (XElement elem in group.Descendants())
@@ -148,7 +148,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             public static string EMAIL_MAIL()
             {
-                var xdoc = XElement.Load(Statics.Root + "App_Data\\settings.xml");
+                var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");
                 var group = xdoc.Elements("basic");
 
                 foreach (XElement elem in group.Descendants())
@@ -162,7 +162,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             public static string EMAIL_NO_REPLY()
             {
-                var xdoc = XElement.Load(Statics.Root + "App_Data\\settings.xml");
+                var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");
                 var group = xdoc.Elements("basic");
 
                 foreach (XElement elem in group.Descendants())
@@ -176,7 +176,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             public static string EMAIL_TEST()
             {
-                var xdoc = XElement.Load(Statics.Root + "App_Data\\settings.xml");
+                var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");
                 var group = xdoc.Elements("basic");
 
                 foreach (XElement elem in group.Descendants())
@@ -190,7 +190,7 @@ namespace www.e_bazar.dk.SharedClasses
             }
             public static string IP()
             {
-                var xdoc = XElement.Load(Statics.Root + "App_Data\\settings.xml");
+                var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");
                 var group = xdoc.Elements("basic");
 
                 foreach (XElement elem in group.Descendants())
@@ -202,121 +202,6 @@ namespace www.e_bazar.dk.SharedClasses
                 }
                 throw new Exception("A-OK, Check.");
             }
-            //public static string CVR()
-            //{
-            //    var xdoc = XElement.Load(Statics.Root + "App_Data\\settings.xml");
-            //    var group = xdoc.Elements("basic");
-
-            //    foreach (XElement elem in group.Descendants())
-            //    {
-            //        if (elem.Name == "setting" && elem.Attribute("name").Value == "CVR")
-            //        {
-            //            return elem.Value;
-            //        }
-            //    }
-            //    throw new Exception("A-OK, Check.");
-            //}
-            //public static string ACCOUNT()
-            //{
-            //    var xdoc = XElement.Load(Statics.Root + "App_Data\\settings.xml");
-            //    var group = xdoc.Elements("basic");
-
-            //    foreach (XElement elem in group.Descendants())
-            //    {
-            //        if (elem.Name == "setting" && elem.Attribute("name").Value == "ACCOUNT")
-            //        {
-            //            return elem.Value;
-            //        }
-            //    }
-            //    throw new Exception("A-OK Handled.");
-            //}
-            //public static string CVR()
-            //{
-            //    var xdoc = XElement.Load(Statics.Root + "App_Data\\settings.xml");
-            //    var group = xdoc.Elements("basic");
-
-            //    foreach (XElement elem in group.Descendants())
-            //    {
-            //        if (elem.Name == "setting" && elem.Attribute("name").Value == "CVR")
-            //        {
-            //            return elem.Value;
-            //        }
-            //    }
-            //    throw new Exception("A-OK Handled.");
-            //}
-            //public static string CLIENT_ID()
-            //{
-            //    var xdoc = XElement.Load(Statics.Root + "App_Data\\settings.xml");
-            //    var group = xdoc.Elements("basic");
-
-            //    foreach (XElement elem in group.Descendants())
-            //    {
-            //        if (elem.Name == "setting" && elem.Attribute("name").Value == "CLIENT_ID")
-            //        {
-            //            return elem.Value;
-            //        }
-            //    }
-            //    throw new Exception("A-OK Handled.");
-            //}
-            //public static string SECRET()
-            //{
-            //    var xdoc = XElement.Load(Statics.Root + "App_Data\\settings.xml");
-            //    var group = xdoc.Elements("basic");
-
-            //    foreach (XElement elem in group.Descendants())
-            //    {
-            //        if (elem.Name == "setting" && elem.Attribute("name").Value == "SECRET")
-            //        {
-            //            return elem.Value;
-            //        }
-            //    }
-            //    throw new Exception("A-OK Handled.");
-            //}
-            //public static string TESTPROFILE()
-            //{
-            //    var xdoc = XElement.Load(Statics.Root + "App_Data\\settings.xml");
-            //    var group = xdoc.Elements("basic");
-
-            //    foreach (XElement elem in group.Descendants())
-            //    {
-            //        if (elem.Name == "setting" && elem.Attribute("name").Value == "TESTPROFILE")
-            //        {
-            //            return elem.Value;
-            //        }
-            //    }
-            //    throw new Exception("A-OK Handled.");
-            //}
-            //public static string TESTPROFILEPASS()
-            //{
-            //    var xdoc = XElement.Load(Statics.Root + "App_Data\\settings.xml");
-            //    var group = xdoc.Elements("basic");
-
-            //    foreach (XElement elem in group.Descendants())
-            //    {
-            //        if (elem.Name == "setting" && elem.Attribute("name").Value == "TESTPROFILEPASS")
-            //        {
-            //            return elem.Value;
-            //        }
-            //    }
-            //    throw new Exception("A-OK Handled.");
-            //}
-        }
-        //public class System
-        //{
-        //    public static string TAG_MAX_LENGTH()
-        //    {
-        //        var xdoc = XElement.Load(Statics.Root + "App_Data\\settings.xml");
-        //        var group = xdoc.Elements("system");
-
-        //        foreach (XElement elem in group.Descendants())
-        //        {
-        //            if (elem.Name == "setting" && elem.Attribute("name").Value == "TAG_MAX_LENGTH")
-        //            {
-        //                return elem.Value;
-        //            }
-        //        }
-        //        throw new Exception("A-OK, Check.");
-        //    }
-        //}
+        }        
     }
 }

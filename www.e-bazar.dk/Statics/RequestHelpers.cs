@@ -3,7 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 
-namespace www.e_bazar.dk.Extensions
+namespace www.e_bazar.dk.Statics
 {
     public class RequestHelpers
     {

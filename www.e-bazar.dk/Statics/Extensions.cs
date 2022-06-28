@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity.Core.Objects;
 using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using www.e_bazar.dk.SharedClasses;
 
-namespace www.e_bazar.dk.Extensions
+namespace www.e_bazar.dk.Statics
 {
     public static class Extensions
     {
@@ -73,7 +71,7 @@ namespace www.e_bazar.dk.Extensions
         {
             try
             {
-                if (!File.Exists(Statics.Content + FixFolders(imagePath, "_content", true)))
+                if (!File.Exists(StaticsHelper.Content + FixFolders(imagePath, "_content", true)))
                     imagePath = alt;
             }
             catch (Exception e) { imagePath = alt; }

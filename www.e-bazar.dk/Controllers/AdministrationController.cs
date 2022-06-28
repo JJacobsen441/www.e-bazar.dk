@@ -8,12 +8,12 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using www.e_bazar.dk.Extensions;
 using www.e_bazar.dk.Models;
 using www.e_bazar.dk.Models.DataAccess;
 using www.e_bazar.dk.Models.DTOs;
 using www.e_bazar.dk.Models.Identity;
 using www.e_bazar.dk.SharedClasses;
+using www.e_bazar.dk.Statics;
 
 namespace www.e_bazar.dk.Controllers
 {
@@ -195,7 +195,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -211,43 +211,43 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
 
-                Dictionary<string, ERROR_MESSAGE> err = Setup.SetupSalesmanProfileFromClient(ref model);
-                Dictionary<string, string> dirs = Setup.SetupProfileDirs(model.salesman_dto);
+                Dictionary<string, ERROR_MESSAGE> err = SetupHelper.SetupSalesmanProfileFromClient(ref model);
+                Dictionary<string, string> dirs = SetupHelper.SetupProfileDirs(model.salesman_dto);
 
                 if (CheckHelper.ErrorSalesmanProfile.HasError(err))
                 {
                     Dictionary<string, string> errors = new Dictionary<string, string>();
                     if (err.ToList()[0].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[0].Key, Texts.GetErrorMessageValue(err.ToList()[0].Key));
+                        errors.Add(err.ToList()[0].Key, TextHelper.GetErrorMessageValue(err.ToList()[0].Key));
                     if (err.ToList()[1].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[1].Key, Texts.GetErrorMessageValue(err.ToList()[1].Key));
+                        errors.Add(err.ToList()[1].Key, TextHelper.GetErrorMessageValue(err.ToList()[1].Key));
                     if (err.ToList()[2].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[2].Key, Texts.GetErrorMessageValue(err.ToList()[2].Key));
+                        errors.Add(err.ToList()[2].Key, TextHelper.GetErrorMessageValue(err.ToList()[2].Key));
                     if (err.ToList()[3].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[3].Key, Texts.GetErrorMessageValue(err.ToList()[3].Key));
+                        errors.Add(err.ToList()[3].Key, TextHelper.GetErrorMessageValue(err.ToList()[3].Key));
 
                     if (ThisSession.Json_Errors != null)
                         ThisSession.Json_Errors = errors;                    
                 }
                 else
                 {
-                    List<string> uploaded_profileimage = Paths.GetFileNames(PATH.PROFILE_DIRECTORY_TMP, dirs, false);
+                    List<string> uploaded_profileimage = PathHelper.GetFileNames(PATH.PROFILE_DIRECTORY_TMP, dirs, false);
                     if (uploaded_profileimage.Count > 0)
                         model.salesman_dto.profileimage = uploaded_profileimage.Where(f => f.Substring(0, 2) != "t_").ToList().FirstOrDefault();
                     DAL.GetInstance().UpdatePerson(model.salesman_dto);
 
-                    string tmp_path = Paths.GetPath(PATH.PROFILE_DIRECTORY_TMP, dirs, true);
-                    List<string> uploaded_files = Paths.GetFileNames(PATH.PROFILE_DIRECTORY_TMP, dirs, false);
+                    string tmp_path = PathHelper.GetPath(PATH.PROFILE_DIRECTORY_TMP, dirs, true);
+                    List<string> uploaded_files = PathHelper.GetFileNames(PATH.PROFILE_DIRECTORY_TMP, dirs, false);
                     if (uploaded_files != null)
                     {
                         if (uploaded_files.Count() > 0)
                         {
                             string file = uploaded_files[0];
                             if (file != null)
-                                Paths.MoveFile(tmp_path, file, Paths.GetPath(PATH.PROFILE_DIRECTORY_NAME, dirs, true), file, true, true, false, true);
+                                PathHelper.MoveFile(tmp_path, file, PathHelper.GetPath(PATH.PROFILE_DIRECTORY_NAME, dirs, true), file, true, true, false, true);
                             file = uploaded_files[1];
                             if (file != null)
-                                Paths.MoveFile(tmp_path, file, Paths.GetPath(PATH.PROFILE_DIRECTORY_NAME, dirs, true), file, true, false, true, false);
+                                PathHelper.MoveFile(tmp_path, file, PathHelper.GetPath(PATH.PROFILE_DIRECTORY_NAME, dirs, true), file, true, false, true, false);
                         }
                     }
                 }
@@ -270,7 +270,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -286,41 +286,41 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
 
-                Dictionary<string, ERROR_MESSAGE> err = Setup.SetupCustomerProfileFromClient(ref model);
-                Dictionary<string, string> dirs = Setup.SetupProfileDirs(model.customer_dto);
+                Dictionary<string, ERROR_MESSAGE> err = SetupHelper.SetupCustomerProfileFromClient(ref model);
+                Dictionary<string, string> dirs = SetupHelper.SetupProfileDirs(model.customer_dto);
 
                 if (CheckHelper.ErrorCustomerProfile.HasError(err))
                 {
                     Dictionary<string, string> errors = new Dictionary<string, string>();
                     if(err.ToList()[0].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[0].Key, Texts.GetErrorMessageValue(err.ToList()[0].Key));
+                        errors.Add(err.ToList()[0].Key, TextHelper.GetErrorMessageValue(err.ToList()[0].Key));
                     if (err.ToList()[1].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[1].Key, Texts.GetErrorMessageValue(err.ToList()[1].Key));
+                        errors.Add(err.ToList()[1].Key, TextHelper.GetErrorMessageValue(err.ToList()[1].Key));
                     if (err.ToList()[2].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[2].Key, Texts.GetErrorMessageValue(err.ToList()[2].Key));
+                        errors.Add(err.ToList()[2].Key, TextHelper.GetErrorMessageValue(err.ToList()[2].Key));
 
                     if (ThisSession.Json_Errors != null)
                         ThisSession.Json_Errors = errors;
                 }
                 else
                 {
-                    List<string> uploaded_profileimage = Paths.GetFileNames(PATH.PROFILE_DIRECTORY_TMP, dirs, false);
+                    List<string> uploaded_profileimage = PathHelper.GetFileNames(PATH.PROFILE_DIRECTORY_TMP, dirs, false);
                     if (uploaded_profileimage.Count > 0)
                         model.customer_dto.profileimage = uploaded_profileimage.Where(f => f.Substring(0, 2) != "t_").ToList().FirstOrDefault();
                     DAL.GetInstance().UpdatePerson(model.customer_dto);
 
-                    string tmp_path = Paths.GetPath(PATH.PROFILE_DIRECTORY_TMP, dirs, true);
-                    List<string> uploaded_files = Paths.GetFileNames(PATH.PROFILE_DIRECTORY_TMP, dirs, false);
+                    string tmp_path = PathHelper.GetPath(PATH.PROFILE_DIRECTORY_TMP, dirs, true);
+                    List<string> uploaded_files = PathHelper.GetFileNames(PATH.PROFILE_DIRECTORY_TMP, dirs, false);
                     if (uploaded_files != null)
                     {
                         if (uploaded_files.Count() > 0)
                         {
                             string file = uploaded_files[0];
                             if (file != null)
-                                Paths.MoveFile(tmp_path, file, Paths.GetPath(PATH.PROFILE_DIRECTORY_NAME, dirs, true), file, true, true, false, true);
+                                PathHelper.MoveFile(tmp_path, file, PathHelper.GetPath(PATH.PROFILE_DIRECTORY_NAME, dirs, true), file, true, true, false, true);
                             file = uploaded_files[1];
                             if (file != null)
-                                Paths.MoveFile(tmp_path, file, Paths.GetPath(PATH.PROFILE_DIRECTORY_NAME, dirs, true), file, true, false, true, false);
+                                PathHelper.MoveFile(tmp_path, file, PathHelper.GetPath(PATH.PROFILE_DIRECTORY_NAME, dirs, true), file, true, false, true, false);
                         }
                     }
                 }
@@ -344,7 +344,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -394,8 +394,8 @@ namespace www.e_bazar.dk.Controllers
                     string body = "ny bod oprettet.<br />" +
                                 "navn: " + booth.name + "<br /><br />" +
                                 "med venlig hilsen<br />" +
-                                Settings.Basic.SITENAME();
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), per.email, Settings.Basic.EMAIL_MAIL(), subject, body);
+                                SettingsHelper.Basic.SITENAME();
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), per.email, SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
 
                     return View("CreateBooth", dto);
                 }
@@ -437,7 +437,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -457,18 +457,18 @@ namespace www.e_bazar.dk.Controllers
                     throw new Exception("A-OK, handled.");
                 
                 dto_person salesman_poco = current_user;
-                Dictionary<string, ERROR_MESSAGE> err = Setup.SetupBoothFromClient(ref model, CurrentUser.GetInstance().CurrentUserID, DAL.GetInstance(/*true*/));
-                Dictionary<string, string> dirs = Setup.SetupBoothDirs(ref model, salesman_poco.sysname);
+                Dictionary<string, ERROR_MESSAGE> err = SetupHelper.SetupBoothFromClient(ref model, CurrentUser.GetInstance().CurrentUserID, DAL.GetInstance(/*true*/));
+                Dictionary<string, string> dirs = SetupHelper.SetupBoothDirs(ref model, salesman_poco.sysname);
 
                 if (CheckHelper.ErrorBooth.HasError(err))
                 {
                     Dictionary<string, string> errors = new Dictionary<string, string>();
                     if(err.ToList()[0].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[0].Key, Texts.GetErrorMessageValue(err.ToList()[0].Key));
+                        errors.Add(err.ToList()[0].Key, TextHelper.GetErrorMessageValue(err.ToList()[0].Key));
                     if (err.ToList()[1].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[1].Key, Texts.GetErrorMessageValue(err.ToList()[1].Key));
+                        errors.Add(err.ToList()[1].Key, TextHelper.GetErrorMessageValue(err.ToList()[1].Key));
                     if (err.ToList()[2].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[2].Key, Texts.GetErrorMessageValue(err.ToList()[2].Key));
+                        errors.Add(err.ToList()[2].Key, TextHelper.GetErrorMessageValue(err.ToList()[2].Key));
                     //errors.Add(err.ToList()[2].Key, Check.ErrorMessageBooth.GetErrorMessage(err.ToList()[2].Value));
                     //errors.Add(err.ToList()[3].Key, Check.ErrorMessageBooth.GetErrorMessage(err.ToList()[3].Value));
 
@@ -479,25 +479,25 @@ namespace www.e_bazar.dk.Controllers
                 }
                 else
                 {
-                    List<string> uploaded_fnames = Paths.GetFileNames(PATH.BOOTH_DIRECTORY_TMP, dirs, false);
+                    List<string> uploaded_fnames = PathHelper.GetFileNames(PATH.BOOTH_DIRECTORY_TMP, dirs, false);
                     model.frontimage = uploaded_fnames.Count > 0 ? uploaded_fnames.Where(f => f.Substring(0, 2) != "t_").ToList().FirstOrDefault() : model.frontimage;
                     model.sysname = dirs["booth_sysname"];
                     int booth_id = DAL.GetInstance().SaveBooth(model);
                     model.booth_id = booth_id;
 
 
-                    string tmp_path = Paths.GetPath(PATH.BOOTH_DIRECTORY_TMP, dirs, true);
-                    List<string> uploaded_files = Paths.GetFileNames(PATH.BOOTH_DIRECTORY_TMP, dirs, false);
+                    string tmp_path = PathHelper.GetPath(PATH.BOOTH_DIRECTORY_TMP, dirs, true);
+                    List<string> uploaded_files = PathHelper.GetFileNames(PATH.BOOTH_DIRECTORY_TMP, dirs, false);
                     if (uploaded_files != null)
                     {
                         if (uploaded_files.Count() > 0)
                         {
                             string file = uploaded_files[0];
                             if (file != null)
-                                Paths.MoveFile(tmp_path, file, Paths.GetPath(PATH.BOOTH_DIRECTORY_NAME, dirs, true), file, true, true, false, false);
+                                PathHelper.MoveFile(tmp_path, file, PathHelper.GetPath(PATH.BOOTH_DIRECTORY_NAME, dirs, true), file, true, true, false, false);
                             file = uploaded_files[1];
                             if (file != null)
-                                Paths.MoveFile(tmp_path, file, Paths.GetPath(PATH.BOOTH_DIRECTORY_NAME, dirs, true), file, true, false, true, false);
+                                PathHelper.MoveFile(tmp_path, file, PathHelper.GetPath(PATH.BOOTH_DIRECTORY_NAME, dirs, true), file, true, false, true, false);
                         }
                     }
                     return RedirectToRoute("EditBooth1", new { booth_id = booth_id });
@@ -521,7 +521,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -598,7 +598,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -619,21 +619,21 @@ namespace www.e_bazar.dk.Controllers
                 
                 dto_booth booth_dto = model.booth_dto;
                 dto_person salesman_poco = current_user;
-                Dictionary<string, ERROR_MESSAGE> err = Setup.SetupBoothFromClient(ref booth_dto, CurrentUser.GetInstance().CurrentUserID, DAL.GetInstance());
+                Dictionary<string, ERROR_MESSAGE> err = SetupHelper.SetupBoothFromClient(ref booth_dto, CurrentUser.GetInstance().CurrentUserID, DAL.GetInstance());
                 
-                Dictionary<string, string> dirs = Setup.SetupBoothDirs(ref booth_dto, salesman_poco.sysname);
+                Dictionary<string, string> dirs = SetupHelper.SetupBoothDirs(ref booth_dto, salesman_poco.sysname);
 
                 if (CheckHelper.ErrorBooth.HasError(err))
                 {
                     Dictionary<string, string> errors = new Dictionary<string, string>();
                     if (err.ToList()[0].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[0].Key, Texts.GetErrorMessageValue(err.ToList()[0].Key));//booth name
+                        errors.Add(err.ToList()[0].Key, TextHelper.GetErrorMessageValue(err.ToList()[0].Key));//booth name
                     if (err.ToList()[1].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[1].Key, Texts.GetErrorMessageValue(err.ToList()[1].Key));//description
+                        errors.Add(err.ToList()[1].Key, TextHelper.GetErrorMessageValue(err.ToList()[1].Key));//description
                     if (err.ToList()[2].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[2].Key, Texts.GetErrorMessageValue(err.ToList()[2].Key));//part address
+                        errors.Add(err.ToList()[2].Key, TextHelper.GetErrorMessageValue(err.ToList()[2].Key));//part address
                     if (err.ToList()[3].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[3].Key, Texts.GetErrorMessageValue(err.ToList()[3].Key));//full address
+                        errors.Add(err.ToList()[3].Key, TextHelper.GetErrorMessageValue(err.ToList()[3].Key));//full address
                     //if (err.ToList()[4].Value != ERROR_MESSAGE.OK)
                         //errors.Add(err.ToList()[4].Key, Texts.GetErrorMessageValue(err.ToList()[4].Key));//tags
 
@@ -644,24 +644,24 @@ namespace www.e_bazar.dk.Controllers
                 }
                 else
                 {
-                    List<string> uploaded_fnames = Paths.GetFileNames(PATH.BOOTH_DIRECTORY_TMP, dirs, false);
-                    string current_path = Paths.GetPath(PATH.BOOTH_DIRECTORY_NAME, dirs, true);
-                    List<string> current_fnames = Paths.GetFileNames(PATH.BOOTH_DIRECTORY_NAME, dirs, false);
+                    List<string> uploaded_fnames = PathHelper.GetFileNames(PATH.BOOTH_DIRECTORY_TMP, dirs, false);
+                    string current_path = PathHelper.GetPath(PATH.BOOTH_DIRECTORY_NAME, dirs, true);
+                    List<string> current_fnames = PathHelper.GetFileNames(PATH.BOOTH_DIRECTORY_NAME, dirs, false);
                     booth_dto.frontimage = uploaded_fnames.Count > 0 ? uploaded_fnames.Where(f => f.Substring(0, 2) != "t_").ToList().FirstOrDefault() : current_fnames.Count > 0 ? booth_dto.frontimage : "";
                     DAL.GetInstance().UpdateBooth(booth_dto);
 
-                    string tmp_path = Paths.GetPath(PATH.BOOTH_DIRECTORY_TMP, dirs, true);
-                    List<string> uploaded_files = Paths.GetFileNames(PATH.BOOTH_DIRECTORY_TMP, dirs, false);
+                    string tmp_path = PathHelper.GetPath(PATH.BOOTH_DIRECTORY_TMP, dirs, true);
+                    List<string> uploaded_files = PathHelper.GetFileNames(PATH.BOOTH_DIRECTORY_TMP, dirs, false);
                     if (uploaded_files != null)
                     {
                         if (uploaded_files.Count() > 0)
                         {
                             string file = uploaded_files[0];
                             if (file != null)
-                                Paths.MoveFile(tmp_path, file, Paths.GetPath(PATH.BOOTH_DIRECTORY_NAME, dirs, true), file, true, true, false, false);
+                                PathHelper.MoveFile(tmp_path, file, PathHelper.GetPath(PATH.BOOTH_DIRECTORY_NAME, dirs, true), file, true, true, false, false);
                             file = uploaded_files[1];
                             if (file != null)
-                                Paths.MoveFile(tmp_path, file, Paths.GetPath(PATH.BOOTH_DIRECTORY_NAME, dirs, true), file, true, false, true, false);
+                                PathHelper.MoveFile(tmp_path, file, PathHelper.GetPath(PATH.BOOTH_DIRECTORY_NAME, dirs, true), file, true, false, true, false);
                         }
                     }
                     return RedirectToRoute("EditBooth1", new { booth_id = booth_dto.booth_id });
@@ -685,7 +685,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -722,8 +722,8 @@ namespace www.e_bazar.dk.Controllers
                 dirs = new Dictionary<string, string>();
                 dirs["identity_id"] = current_user.sysname;
                 dirs["booth_sysname"] = booth_poco.sysname;
-                path = Paths.GetPath(PATH.BOOTH_DIRECTORY_NAME, dirs, true);
-                Paths.ClearFolder(path, true, true);
+                path = PathHelper.GetPath(PATH.BOOTH_DIRECTORY_NAME, dirs, true);
+                PathHelper.ClearFolder(path, true, true);
 
                 DAL.GetInstance().DeleteBooth(booth_id);
 
@@ -747,7 +747,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }        
@@ -846,7 +846,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -869,25 +869,25 @@ namespace www.e_bazar.dk.Controllers
                 string status_condition_select = Request != null ? Request.Form["status_condition_select"].ToString() : "TEST_PRODUCT";
                 string status_stock_select = "PÅ_LAGER";
                 
-                Dictionary<string, ERROR_MESSAGE> err = Setup.SetupProductFromClient(ref model, model.booth_id, status_condition_select, status_stock_select, DAL.GetInstance());
+                Dictionary<string, ERROR_MESSAGE> err = SetupHelper.SetupProductFromClient(ref model, model.booth_id, status_condition_select, status_stock_select, DAL.GetInstance());
                 
-                Dictionary<string, string> dirs = Setup.SetupProductDirs(model, salesman_poco.sysname);
+                Dictionary<string, string> dirs = SetupHelper.SetupProductDirs(model, salesman_poco.sysname);
 
                 if (CheckHelper.ErrorProduct.HasError(err))
                 {
                     Dictionary<string, string> errors = new Dictionary<string, string>();
                     if (err.ToList()[0].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[0].Key, Texts.GetErrorMessageValue(err.ToList()[0].Key));//price
+                        errors.Add(err.ToList()[0].Key, TextHelper.GetErrorMessageValue(err.ToList()[0].Key));//price
                     //if (err.ToList()[1].Value != ERROR_MESSAGE.OK)
                     //    errors.Add(err.ToList()[1].Key, Texts.GetErrorMessageProduct(err.ToList()[1].Value));//category
                     if (err.ToList()[1].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[1].Key, Texts.GetErrorMessageValue(err.ToList()[1].Key));//name
+                        errors.Add(err.ToList()[1].Key, TextHelper.GetErrorMessageValue(err.ToList()[1].Key));//name
                     //if (err.ToList()[3].Value != ERROR_MESSAGE.OK)
                     //    errors.Add(err.ToList()[3].Key, Texts.GetErrorMessageProduct(err.ToList()[3].Value));//note
                     //if (err.ToList()[4].Value != ERROR_MESSAGE.OK)
                     //    errors.Add(err.ToList()[4].Key, Texts.GetErrorMessageProduct(err.ToList()[4].Value));//description
                     if (err.ToList()[2].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[2].Key, Texts.GetErrorMessageValue(err.ToList()[2].Key));//no_of_units
+                        errors.Add(err.ToList()[2].Key, TextHelper.GetErrorMessageValue(err.ToList()[2].Key));//no_of_units
 
                     if (ThisSession.Json_Errors != null)
                         ThisSession.Json_Errors = errors;
@@ -897,22 +897,22 @@ namespace www.e_bazar.dk.Controllers
                 else
                 {
                     model.sysname = dirs["product_sysname"];
-                    List<string> uploaded_fnames = Paths.GetFileNames(PATH.PRODUCT_DIRECTORY_TMP, dirs, false);
+                    List<string> uploaded_fnames = PathHelper.GetFileNames(PATH.PRODUCT_DIRECTORY_TMP, dirs, false);
                     long product_id = DAL.GetInstance().SaveProduct(model, uploaded_fnames.Where(f => f.Substring(0, 2) != "t_").ToList());
                     model.id = product_id;//for test
 
-                    string tmp_path = Paths.GetPath(PATH.PRODUCT_DIRECTORY_TMP, dirs, true);
-                    List<string> uploaded_files = Paths.GetFileNames(PATH.PRODUCT_DIRECTORY_TMP, dirs, false);
+                    string tmp_path = PathHelper.GetPath(PATH.PRODUCT_DIRECTORY_TMP, dirs, true);
+                    List<string> uploaded_files = PathHelper.GetFileNames(PATH.PRODUCT_DIRECTORY_TMP, dirs, false);
                     if (uploaded_files != null)
                     {
                         if (uploaded_files.Count() > 0)
                         {
                             string file = uploaded_files[0];
                             if (file != null)
-                                Paths.MoveFile(tmp_path, file, Paths.GetPath(PATH.PRODUCT_DIRECTORY_NAME, dirs, true), file, true, false, false, false);
+                                PathHelper.MoveFile(tmp_path, file, PathHelper.GetPath(PATH.PRODUCT_DIRECTORY_NAME, dirs, true), file, true, false, false, false);
                             file = uploaded_files[1];
                             if (file != null)
-                                Paths.MoveFile(tmp_path, file, Paths.GetPath(PATH.PRODUCT_DIRECTORY_NAME, dirs, true), file, true, false, true, false);
+                                PathHelper.MoveFile(tmp_path, file, PathHelper.GetPath(PATH.PRODUCT_DIRECTORY_NAME, dirs, true), file, true, false, true, false);
                         }                        
                     }
                     
@@ -937,7 +937,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -1000,7 +1000,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -1023,25 +1023,25 @@ namespace www.e_bazar.dk.Controllers
                 string status_condition_select = Request != null ? Request.Form["status_condition_select"].ToString() : "TEST_PRODUCT";
                 string status_stock_select = "PÅ_LAGER";
                 
-                Dictionary<string, ERROR_MESSAGE> err = Setup.SetupProductFromClient(ref model, model.booth_id, status_condition_select, status_stock_select, DAL.GetInstance(/*true*/));
+                Dictionary<string, ERROR_MESSAGE> err = SetupHelper.SetupProductFromClient(ref model, model.booth_id, status_condition_select, status_stock_select, DAL.GetInstance(/*true*/));
                 
-                Dictionary<string, string> dirs = Setup.SetupProductDirs(model, salesman_poco.sysname);
+                Dictionary<string, string> dirs = SetupHelper.SetupProductDirs(model, salesman_poco.sysname);
                                
                 if (CheckHelper.ErrorProduct.HasError(err))
                 {
                     Dictionary<string, string> errors = new Dictionary<string, string>();
                     if (err.ToList()[0].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[0].Key, Texts.GetErrorMessageValue(err.ToList()[0].Key));//price
+                        errors.Add(err.ToList()[0].Key, TextHelper.GetErrorMessageValue(err.ToList()[0].Key));//price
                     //if (err.ToList()[1].Value != ERROR_MESSAGE.OK)
                     //    errors.Add(err.ToList()[1].Key, Texts.GetErrorMessageProduct(err.ToList()[1].Value));//category
                     if (err.ToList()[1].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[1].Key, Texts.GetErrorMessageValue(err.ToList()[1].Key));//name
+                        errors.Add(err.ToList()[1].Key, TextHelper.GetErrorMessageValue(err.ToList()[1].Key));//name
                     //if (err.ToList()[3].Value != ERROR_MESSAGE.OK)
                     //    errors.Add(err.ToList()[3].Key, Texts.GetErrorMessageProduct(err.ToList()[3].Value));//note
                     //if (err.ToList()[4].Value != ERROR_MESSAGE.OK)
                     //    errors.Add(err.ToList()[4].Key, Texts.GetErrorMessageProduct(err.ToList()[4].Value));//description
                     if (err.ToList()[2].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[2].Key, Texts.GetErrorMessageValue(err.ToList()[2].Key));//no_of_units
+                        errors.Add(err.ToList()[2].Key, TextHelper.GetErrorMessageValue(err.ToList()[2].Key));//no_of_units
 
                     if (ThisSession.Json_Errors != null)
                         ThisSession.Json_Errors = errors;
@@ -1050,21 +1050,21 @@ namespace www.e_bazar.dk.Controllers
                 }
                 else
                 {
-                    List<string> uploaded_fnames = Paths.GetFileNames(PATH.PRODUCT_DIRECTORY_TMP, dirs, false);
+                    List<string> uploaded_fnames = PathHelper.GetFileNames(PATH.PRODUCT_DIRECTORY_TMP, dirs, false);
                     DAL.GetInstance().UpdateProduct(model, uploaded_fnames.Where(f => f.Substring(0, 2) != "t_" && f.Substring(0, 2) != "s_").ToList());
 
-                    string tmp_path = Paths.GetPath(PATH.PRODUCT_DIRECTORY_TMP, dirs, true);
-                    List<string> uploaded_files = Paths.GetFileNames(PATH.PRODUCT_DIRECTORY_TMP, dirs, false);
+                    string tmp_path = PathHelper.GetPath(PATH.PRODUCT_DIRECTORY_TMP, dirs, true);
+                    List<string> uploaded_files = PathHelper.GetFileNames(PATH.PRODUCT_DIRECTORY_TMP, dirs, false);
                     if (uploaded_files != null)
                     {
                         if (uploaded_files.Count() > 0)
                         {
                             string file = uploaded_files[0];
                             if (file != null)
-                                Paths.MoveFile(tmp_path, file, Paths.GetPath(PATH.PRODUCT_DIRECTORY_NAME, dirs, true), file, true, false, false, false);
+                                PathHelper.MoveFile(tmp_path, file, PathHelper.GetPath(PATH.PRODUCT_DIRECTORY_NAME, dirs, true), file, true, false, false, false);
                             file = uploaded_files[1];
                             if (file != null)
-                                Paths.MoveFile(tmp_path, file, Paths.GetPath(PATH.PRODUCT_DIRECTORY_NAME, dirs, true), file, true, false, true, false);
+                                PathHelper.MoveFile(tmp_path, file, PathHelper.GetPath(PATH.PRODUCT_DIRECTORY_NAME, dirs, true), file, true, false, true, false);
                         }
                     }
                     return RedirectToRoute("EditProduct1", new { product_id = model.id });
@@ -1089,7 +1089,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -1116,8 +1116,8 @@ namespace www.e_bazar.dk.Controllers
                 dirs["identity_id"] = current_user.sysname;
                 dirs["booth_sysname"] = product_dto.booth_dto.sysname;
                 dirs["product_sysname"] = product_dto.sysname;
-                string path = Paths.GetPath(PATH.PRODUCT_DIRECTORY_NAME, dirs, true);
-                Paths.ClearFolder(path, true, true);
+                string path = PathHelper.GetPath(PATH.PRODUCT_DIRECTORY_NAME, dirs, true);
+                PathHelper.ClearFolder(path, true, true);
 
                 DAL.GetInstance().DeleteProduct(product_id);
 
@@ -1141,7 +1141,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -1244,7 +1244,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -1267,19 +1267,19 @@ namespace www.e_bazar.dk.Controllers
                 string status_condition_select = Request != null ? Request.Form["status_condition_select"].ToString() : "TEST_COLLECTION";
                 string status_stock_select = "PÅ_LAGER";
                 
-                Dictionary<string, ERROR_MESSAGE> err = Setup.SetupCollectionFromClient(ref model, model.booth_id, status_condition_select, status_stock_select, DAL.GetInstance());
+                Dictionary<string, ERROR_MESSAGE> err = SetupHelper.SetupCollectionFromClient(ref model, model.booth_id, status_condition_select, status_stock_select, DAL.GetInstance());
                 
-                Dictionary<string, string> dirs = Setup.SetupCollectionDirs(model, salesman_poco.sysname);
+                Dictionary<string, string> dirs = SetupHelper.SetupCollectionDirs(model, salesman_poco.sysname);
 
                 if (CheckHelper.ErrorCollection.HasError(err))
                 {
                     Dictionary<string, string> errors = new Dictionary<string, string>();
                     if(err.ToList()[0].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[0].Key, Texts.GetErrorMessageValue(err.ToList()[0].Key));//price
+                        errors.Add(err.ToList()[0].Key, TextHelper.GetErrorMessageValue(err.ToList()[0].Key));//price
                     //if (err.ToList()[1].Value != ERROR_MESSAGE.OK)
                     //    errors.Add(err.ToList()[1].Key, Texts.GetErrorMessageCollection(err.ToList()[1].Value));//category
                     if (err.ToList()[1].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[1].Key, Texts.GetErrorMessageValue(err.ToList()[1].Key));//name
+                        errors.Add(err.ToList()[1].Key, TextHelper.GetErrorMessageValue(err.ToList()[1].Key));//name
                     //if (err.ToList()[3].Value != ERROR_MESSAGE.OK)
                     //    errors.Add(err.ToList()[3].Key, Texts.GetErrorMessageCollection(err.ToList()[3].Value));//note
                     //if (err.ToList()[3].Value != ERROR_MESSAGE.OK)
@@ -1293,22 +1293,22 @@ namespace www.e_bazar.dk.Controllers
                 else
                 {
                     model.sysname = dirs["collection_sysname"];
-                    List<string> uploaded_fnames = Paths.GetFileNames(PATH.COLLECTION_DIRECTORY_TMP, dirs, false);
+                    List<string> uploaded_fnames = PathHelper.GetFileNames(PATH.COLLECTION_DIRECTORY_TMP, dirs, false);
                     int collection_id = DAL.GetInstance().SaveCollection(model, uploaded_fnames.Where(f => f.Substring(0, 2) != "t_").ToList());
                     model.id = collection_id;//for test
 
-                    string tmp_path = Paths.GetPath(PATH.COLLECTION_DIRECTORY_TMP, dirs, true);
-                    List<string> uploaded_files = Paths.GetFileNames(PATH.COLLECTION_DIRECTORY_TMP, dirs, false);
+                    string tmp_path = PathHelper.GetPath(PATH.COLLECTION_DIRECTORY_TMP, dirs, true);
+                    List<string> uploaded_files = PathHelper.GetFileNames(PATH.COLLECTION_DIRECTORY_TMP, dirs, false);
                     if (uploaded_files != null)
                     {
                         if (uploaded_files.Count() > 0)
                         {
                             string file = uploaded_files[0];
                             if (file != null)
-                                Paths.MoveFile(tmp_path, file, Paths.GetPath(PATH.COLLECTION_DIRECTORY_NAME, dirs, true), file, true, false, false, false);
+                                PathHelper.MoveFile(tmp_path, file, PathHelper.GetPath(PATH.COLLECTION_DIRECTORY_NAME, dirs, true), file, true, false, false, false);
                             file = uploaded_files[1];
                             if (file != null)
-                                Paths.MoveFile(tmp_path, file, Paths.GetPath(PATH.COLLECTION_DIRECTORY_NAME, dirs, true), file, true, false, true, false);
+                                PathHelper.MoveFile(tmp_path, file, PathHelper.GetPath(PATH.COLLECTION_DIRECTORY_NAME, dirs, true), file, true, false, true, false);
                         }                        
                     }
 
@@ -1333,7 +1333,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -1397,7 +1397,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -1420,19 +1420,19 @@ namespace www.e_bazar.dk.Controllers
                 string status_condition_select = Request != null ? Request.Form["status_condition_select"].ToString() : "TEST_COLLECTION";
                 string status_stock_select = "PÅ_LAGER";
                 
-                Dictionary<string, ERROR_MESSAGE> err = Setup.SetupCollectionFromClient(ref model, model.booth_id, status_condition_select, status_stock_select, DAL.GetInstance(/*true*/));
+                Dictionary<string, ERROR_MESSAGE> err = SetupHelper.SetupCollectionFromClient(ref model, model.booth_id, status_condition_select, status_stock_select, DAL.GetInstance(/*true*/));
                 
-                Dictionary<string, string> dirs = Setup.SetupCollectionDirs(model, salesman_poco.sysname);
+                Dictionary<string, string> dirs = SetupHelper.SetupCollectionDirs(model, salesman_poco.sysname);
                 
                 if (CheckHelper.ErrorCollection.HasError(err))
                 {
                     Dictionary<string, string> errors = new Dictionary<string, string>();
                     if (err.ToList()[0].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[0].Key, Texts.GetErrorMessageValue(err.ToList()[0].Key));//price
+                        errors.Add(err.ToList()[0].Key, TextHelper.GetErrorMessageValue(err.ToList()[0].Key));//price
                     //if (err.ToList()[1].Value != ERROR_MESSAGE.OK)
                     //    errors.Add(err.ToList()[1].Key, Texts.GetErrorMessageCollection(err.ToList()[1].Value));//category
                     if (err.ToList()[1].Value != ERROR_MESSAGE.OK)
-                        errors.Add(err.ToList()[1].Key, Texts.GetErrorMessageValue(err.ToList()[1].Key));//name
+                        errors.Add(err.ToList()[1].Key, TextHelper.GetErrorMessageValue(err.ToList()[1].Key));//name
                     //if (err.ToList()[3].Value != ERROR_MESSAGE.OK)
                     //    errors.Add(err.ToList()[3].Key, Texts.GetErrorMessageCollection(err.ToList()[3].Value));//note
                     //if (err.ToList()[4].Value != ERROR_MESSAGE.OK)
@@ -1445,21 +1445,21 @@ namespace www.e_bazar.dk.Controllers
                 }
                 else
                 {
-                    List<string> uploaded_fnames = Paths.GetFileNames(PATH.COLLECTION_DIRECTORY_TMP, dirs, false);
+                    List<string> uploaded_fnames = PathHelper.GetFileNames(PATH.COLLECTION_DIRECTORY_TMP, dirs, false);
                     DAL.GetInstance().UpdateCollection(model, uploaded_fnames.Where(f => f.Substring(0, 2) != "t_" && f.Substring(0, 2) != "s_").ToList());
 
-                    string tmp_path = Paths.GetPath(PATH.COLLECTION_DIRECTORY_TMP, dirs, true);
-                    List<string> uploaded_files = Paths.GetFileNames(PATH.COLLECTION_DIRECTORY_TMP, dirs, false);
+                    string tmp_path = PathHelper.GetPath(PATH.COLLECTION_DIRECTORY_TMP, dirs, true);
+                    List<string> uploaded_files = PathHelper.GetFileNames(PATH.COLLECTION_DIRECTORY_TMP, dirs, false);
                     if (uploaded_files != null)
                     {
                         if (uploaded_files.Count() > 0)
                         {
                             string file = uploaded_files[0];
                             if (file != null)
-                                Paths.MoveFile(tmp_path, file, Paths.GetPath(PATH.COLLECTION_DIRECTORY_NAME, dirs, true), file, true, false, false, false);
+                                PathHelper.MoveFile(tmp_path, file, PathHelper.GetPath(PATH.COLLECTION_DIRECTORY_NAME, dirs, true), file, true, false, false, false);
                             file = uploaded_files[1];
                             if (file != null)
-                                Paths.MoveFile(tmp_path, file, Paths.GetPath(PATH.COLLECTION_DIRECTORY_NAME, dirs, true), file, true, false, true, false);
+                                PathHelper.MoveFile(tmp_path, file, PathHelper.GetPath(PATH.COLLECTION_DIRECTORY_NAME, dirs, true), file, true, false, true, false);
                         }
                         //Paths.MoveFile("t_" + file, Paths.GetPath(PATH.PROFILE_DIRECTORY_NAME, dirs, true));
                     }
@@ -1486,7 +1486,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -1513,8 +1513,8 @@ namespace www.e_bazar.dk.Controllers
                 dirs["identity_id"] = current_user.sysname;
                 dirs["booth_sysname"] = collection_dto.booth_dto.sysname;
                 dirs["collection_sysname"] = collection_dto.sysname;
-                string path = Paths.GetPath(PATH.COLLECTION_DIRECTORY_NAME, dirs, true);
-                Paths.ClearFolder(path, true, true);
+                string path = PathHelper.GetPath(PATH.COLLECTION_DIRECTORY_NAME, dirs, true);
+                PathHelper.ClearFolder(path, true, true);
 
                 DAL.GetInstance().DeleteCollection(collection_id);
 
@@ -1538,7 +1538,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -1574,7 +1574,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -1610,7 +1610,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }        
@@ -1663,7 +1663,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -1677,14 +1677,14 @@ namespace www.e_bazar.dk.Controllers
             dirs["identity_id"] = currentuser.sysname;
 
             string ext = file.FileName.Substring(file.FileName.LastIndexOf('.'));
-            string name = Paths.GenerateFileName(file.FileName.Substring(0, file.FileName.IndexOf('.')), FILE_NAME.NONE);
+            string name = PathHelper.GenerateFileName(file.FileName.Substring(0, file.FileName.IndexOf('.')), FILE_NAME.NONE);
             if (/*ext.ToLower().Contains("gif") || */ext.ToLower().Contains("jpg") || ext.ToLower().Contains("jpeg") || ext.ToLower().Contains("png"))
             {
                 using (Stream inputStream = file.InputStream)
                 {
                     PATH path_tmp = ImageHelper.GetPath(type);
-                    string path = Paths.GetPath(path_tmp, dirs, true);
-                    Paths.CreatePath(path);
+                    string path = PathHelper.GetPath(path_tmp, dirs, true);
+                    PathHelper.CreatePath(path);
                     string[] files = System.IO.Directory.GetFiles(path);
 
                     foreach (string s in files)
@@ -1808,11 +1808,11 @@ namespace www.e_bazar.dk.Controllers
                     }
                 }
                 
-                string path = Paths.GetPath(path_tmp, dirs, true);
+                string path = PathHelper.GetPath(path_tmp, dirs, true);
 
                 bool clearpath = typeEnum == TYPE.PROFILE;// || typeEnum == TYPE.COLLECTION || typeEnum == TYPE.PRODUCT;
-                Paths.DeleteFile(path, ImageName, false);
-                Paths.DeleteFile(path, "t_" + ImageName, clearpath);
+                PathHelper.DeleteFile(path, ImageName, false);
+                PathHelper.DeleteFile(path, "t_" + ImageName, clearpath);
 
                 return Json(new { success = true });
             }
@@ -1834,7 +1834,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -1876,7 +1876,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -1937,7 +1937,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -1984,7 +1984,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -2024,7 +2024,7 @@ namespace www.e_bazar.dk.Controllers
             }
             catch (Exception e)
             {
-                Statics.Log(err.HandleError(ERROR.SAVEPARAM, e));
+                StaticsHelper.Log(err.HandleError(ERROR.SAVEPARAM, e));
                 TempData["err_msg"] = err.HandleError(ERROR.SAVEPARAM, e);
                 TempData["ErrorMessage"] = "";
                 return AjaxErrorReturn("err");
@@ -2041,7 +2041,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -2077,7 +2077,7 @@ namespace www.e_bazar.dk.Controllers
             }
             catch (Exception e)
             {
-                Statics.Log(err.HandleError(ERROR.REMOVEPARAM, e));
+                StaticsHelper.Log(err.HandleError(ERROR.REMOVEPARAM, e));
                 TempData["err_msg"] = err.HandleError(ERROR.REMOVEPARAM, e);
                 TempData["ErrorMessage"] = "";
                 return AjaxErrorReturn("err");
@@ -2094,7 +2094,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -2138,7 +2138,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -2181,7 +2181,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -2215,7 +2215,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -2250,7 +2250,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -2285,7 +2285,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -2309,10 +2309,10 @@ namespace www.e_bazar.dk.Controllers
                     DAL.GetInstance().CreateFolder(fld_name, int.Parse(id), typeEnum);
                 else
                 {
-                    Dictionary<string, SYSTEM_MESSAGE> err = Setup.SetupCreateLevel(true);
+                    Dictionary<string, SYSTEM_MESSAGE> err = SetupHelper.SetupCreateLevel(true);
                     Dictionary<string, string> errors = new Dictionary<string, string>();
                     if (err.ToList()[0].Value != SYSTEM_MESSAGE.NO_MESSAGE)
-                        errors.Add(err.ToList()[0].Key, Texts.GetSystemMessageValue(err.ToList()[0].Key.ToString()));//price
+                        errors.Add(err.ToList()[0].Key, TextHelper.GetSystemMessageValue(err.ToList()[0].Key.ToString()));//price
                     if (ThisSession.Json_Messages != null)
                         ThisSession.Json_Messages = errors;
                 }
@@ -2336,7 +2336,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -2374,7 +2374,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -2412,7 +2412,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -2453,7 +2453,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -2498,7 +2498,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -2535,7 +2535,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -2549,8 +2549,8 @@ namespace www.e_bazar.dk.Controllers
                     throw new Exception();
 
                 if (run)
-                    Statics.Maintenance = !Statics.Maintenance;
-                return Json(new { success = Statics.Maintenance });
+                    StaticsHelper.Maintenance = !StaticsHelper.Maintenance;
+                return Json(new { success = StaticsHelper.Maintenance });
             }
             catch (Exception e)
             {
@@ -2570,7 +2570,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -2608,7 +2608,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -2648,7 +2648,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -2670,17 +2670,17 @@ namespace www.e_bazar.dk.Controllers
                 
                 dto_person per = current_user;
                 
-                Dictionary<string, SYSTEM_MESSAGE> err = Setup.Feedback(mail);
+                Dictionary<string, SYSTEM_MESSAGE> err = SetupHelper.Feedback(mail);
                 Dictionary<string, string> errors = new Dictionary<string, string>();
                 if (err.ToList()[0].Value != SYSTEM_MESSAGE.NO_MESSAGE)
-                    errors.Add(err.ToList()[0].Key, Texts.GetSystemMessageValue(err.ToList()[0].Key.ToString()));//price
+                    errors.Add(err.ToList()[0].Key, TextHelper.GetSystemMessageValue(err.ToList()[0].Key.ToString()));//price
                 else
                 {
                     errors.Add(err.ToList()[0].Key, "Besked sendt, hold øje med spam folder for svar.");//price
                     
                     string subject = "Feedback: " + mail.Subject;
                     string body = mail.Message.Replace("\r\n", "<br />");
-                    Admin.Notification.Run(per.email, "admin@e-bazar.dk", "admin@e-bazar.dk", subject, body);
+                    AdminHelper.Notification.Run(per.email, "admin@e-bazar.dk", "admin@e-bazar.dk", subject, body);
                 }
 
                 
@@ -2707,7 +2707,7 @@ namespace www.e_bazar.dk.Controllers
                     ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
                     string body = err.FormatError(e);
-                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
+                    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
         }
@@ -2726,7 +2726,7 @@ namespace www.e_bazar.dk.Controllers
             string subject = "Der er sket en fejl!";
             string body = "ViewBag: " + ViewBag.ErrorMessage + "<br />" +
                       "MSG: " + /*Extensions.Extensions.HtmlEncode(*/err_msg/*)*/;
-            Admin.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
+            AdminHelper.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
             
             return View("ErrorPage");
         }
@@ -2738,8 +2738,8 @@ namespace www.e_bazar.dk.Controllers
             //    return View("IsMobile");
 
             string subject = "NotFound!";
-            string body = Extensions.Extensions.HtmlEncode("Not Found.");
-            Admin.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
+            string body = Extensions.HtmlEncode("Not Found.");
+            AdminHelper.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
 
             return HttpNotFound(HttpStatusCode.NotFound.ToString());
         }
@@ -2749,8 +2749,8 @@ namespace www.e_bazar.dk.Controllers
             string err_msg = TempData["err_msg"] as string;
 
             string subject = "Der er sket en fejl!";
-            string body = Extensions.Extensions.HtmlEncode(err_msg);
-            Admin.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
+            string body = Extensions.HtmlEncode(err_msg);
+            AdminHelper.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
 
             System.Web.HttpContext.Current.Response.Write(user_msg);//bliver nok ikke fanget på klienten
         }
@@ -2760,8 +2760,8 @@ namespace www.e_bazar.dk.Controllers
             string err_msg = TempData["err_msg"] as string;
 
             string subject = "Der er sket en fejl!";
-            string body = Extensions.Extensions.HtmlEncode(err_msg);
-            Admin.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
+            string body = Extensions.HtmlEncode(err_msg);
+            AdminHelper.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
 
             return Json(new { success = false, res = user_msg });
         }        

@@ -8,9 +8,9 @@ using System.Xml.Linq;
 using www.e_bazar.dk.Models;
 using www.e_bazar.dk.Models.Identity;
 
-namespace www.e_bazar.dk.SharedClasses
+namespace www.e_bazar.dk.Statics
 {
-    public class Admin
+    public class AdminHelper
     {
         public static class Notification
         {
@@ -292,7 +292,7 @@ namespace www.e_bazar.dk.SharedClasses
                     elem_c.Add(active);
                     root.Add(elem_c);
                 }
-                xdocb.Save(Statics.Root + "App_Data\\BackupCats.xml");
+                xdocb.Save(StaticsHelper.Root + "App_Data\\BackupCats.xml");
                 db.SaveChanges();
 
                 return new _lists { _b = booths, _p = products, _c = collections };
@@ -467,8 +467,8 @@ namespace www.e_bazar.dk.SharedClasses
             }
             public static void Categorys(bool clean_install, bool clean_up, EbazarDB db)
             {
-                string patha = Statics.Root + "App_Data\\Categories.xml";
-                string pathb = Statics.Root + "App_Data\\BackupCats.xml";
+                string patha = StaticsHelper.Root + "App_Data\\Categories.xml";
+                string pathb = StaticsHelper.Root + "App_Data\\BackupCats.xml";
                 XDocument xdoca = XDocument.Load(patha);
                 XDocument xdocb = XDocument.Load(pathb);
                 //List<Category>

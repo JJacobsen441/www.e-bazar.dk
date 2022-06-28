@@ -1,20 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using www.e_bazar.dk.SharedClasses;
 
-namespace www.e_bazar.dk.SharedClasses
+namespace www.e_bazar.dk.Statics
 {
-    public class Paths
+    public class PathHelper
     {
-        /*public static string GetEmailAdress(this IIdentity identity)
-        {
-            var userId = identity.GetUserId();
-            using (var context = new DbContext())
-            {
-                var user = context.Users.FirstOrDefault(u => u.Id == userId);
-                return user.Email;
-            }
-        }*/
         public static string GetPath(PATH path, Dictionary<string, string> dirs, bool issystempath)
         {
             string nd = Path.DirectorySeparatorChar.ToString();
@@ -150,7 +142,7 @@ namespace www.e_bazar.dk.SharedClasses
         public static void MoveFile(string src_dir, string old_name, string dest_dir, string new_name, bool delete_orig, bool clear_newpath, bool clear_oldpath, bool clean_newpath_folders)
         {
             // Use static Path methods to extract only the file name from the path.
-            Paths.CreatePath(dest_dir);
+            PathHelper.CreatePath(dest_dir);
             if (clear_newpath)
                 ClearFolder(dest_dir, false, clean_newpath_folders);
             string srcFile = System.IO.Path.Combine(src_dir, Path.GetFileName(old_name));
@@ -171,7 +163,7 @@ namespace www.e_bazar.dk.SharedClasses
         }
         public static List<string> GetFileNames(PATH dir_tmp, Dictionary<string, string> dirs, bool fullpath)
         {
-            string tmp_dir = Paths.GetPath(dir_tmp, dirs, true);
+            string tmp_dir = PathHelper.GetPath(dir_tmp, dirs, true);
             CreatePath(tmp_dir);
             if (System.IO.Directory.Exists(tmp_dir))
             {
@@ -196,7 +188,7 @@ namespace www.e_bazar.dk.SharedClasses
             switch (hashOrGuidOrNone)
             {
                 case FILE_NAME.HASH:
-                    result = "HASH_" + Security.GenerateHashSHA(context.Substring(context.Length - len, len)) + "_{" + DateTime.Now.ToString("yyyyMMdd-HHmmssfff") + "}";
+                    result = "HASH_" + SecurityHelper.GenerateHashSHA(context.Substring(context.Length - len, len)) + "_{" + DateTime.Now.ToString("yyyyMMdd-HHmmssfff") + "}";
                     break;
                 case FILE_NAME.GUID:
                     result = "GUID_" + Guid.NewGuid().ToString("B") + "_{" + DateTime.Now.ToString("yyyyMMdd-HHmmssfff") + "}";
@@ -229,7 +221,7 @@ namespace www.e_bazar.dk.SharedClasses
                     dirs["identity_id"] = res_path;
                 //break;
                 //}
-                systempath = Paths.GetPath(path, dirs, true);
+                systempath = PathHelper.GetPath(path, dirs, true);
             }
 
             //if()

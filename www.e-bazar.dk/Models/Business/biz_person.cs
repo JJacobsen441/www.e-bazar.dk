@@ -3,9 +3,8 @@ using PostgreSQL.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using www.e_bazar.dk.Extensions;
 using www.e_bazar.dk.Models.Identity;
-using www.e_bazar.dk.SharedClasses;
+using www.e_bazar.dk.Statics;
 
 namespace www.e_bazar.dk.Models.DTOs
 {
@@ -104,8 +103,8 @@ namespace www.e_bazar.dk.Models.DTOs
                 if (!pro.active)
                     continue;
                 else if
-                    (Categorys.ListContains(Categorys.CatsNoYes, pro.category_main_id, out o) && o.name == ".ingen" ||
-                     Categorys.ListContains(Categorys.CatsNoYes, pro.category_second_id, out o) && o.name == "..ingen")
+                    (CategorysHelper.ListContains(CategorysHelper.CatsNoYes, pro.category_main_id, out o) && o.name == ".ingen" ||
+                     CategorysHelper.ListContains(CategorysHelper.CatsNoYes, pro.category_second_id, out o) && o.name == "..ingen")
                     continue;
 
                 fav.Add(pro);
@@ -128,8 +127,8 @@ namespace www.e_bazar.dk.Models.DTOs
                 if (!col.active)
                     continue;
                 else if
-                    (Categorys.ListContains(Categorys.CatsNoYes, col.category_main_id, out o) && o.name == ".ingen" ||
-                     Categorys.ListContains(Categorys.CatsNoYes, col.category_second_id, out o) && o.name == "..ingen")
+                    (CategorysHelper.ListContains(CategorysHelper.CatsNoYes, col.category_main_id, out o) && o.name == ".ingen" ||
+                     CategorysHelper.ListContains(CategorysHelper.CatsNoYes, col.category_second_id, out o) && o.name == "..ingen")
                     continue;
 
                 fav.Add(col);

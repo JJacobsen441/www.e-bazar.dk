@@ -62,14 +62,14 @@
     </div>
 }
 
-        catch (Exception e)
-        {
-            ErrorHandler err = new ErrorHandler();
-            string s = err.FormatError(e);
-            string subject = "Fejl i front, Login";
-            string body = s;
-            Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
-        }
+catch (Exception e)
+{
+    ErrorHandler err = new ErrorHandler();
+    string s = err.FormatError(e);
+    string subject = "Fejl i front, Login";
+    string body = s;
+    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
+}
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

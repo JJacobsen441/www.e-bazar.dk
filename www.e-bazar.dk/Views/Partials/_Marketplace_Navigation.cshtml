@@ -27,7 +27,7 @@
                         <div class="cat_main z-padding-left-15 xz-list-style-none">
                             @{
                                 string dareas = ViewContext.Controller.ViewBag.AreasChecked as string;
-                                dareas = Security.Format(dareas, "", true);
+                                dareas = SecurityHelper.Format(dareas, "", true);
 
                                 string dsea = !string.IsNullOrEmpty(ThisSession.Search) ? ThisSession.Search : null;
                                 string droom = "arcade";// ViewBag.Room;
@@ -51,7 +51,7 @@
                                     {
                                         continue;
                                     }
-                                    string dname1 = Security.Format(dentry.name, "_", false);
+                                    string dname1 = SecurityHelper.Format(dentry.name, "_", false);
                                     bool dtop_isset = false;
 
                                     if (Model.isset_top == dname1)
@@ -79,7 +79,7 @@
                                             <ul class="cat_sec catb @dcssclass_lower" data-catb="@dentry.name">
                                                 @foreach (dto_category dentry2 in dentry.children)
                                                 {
-                                                    string dname2 = Security.Format(dentry2.name, "_", false);
+                                                    string dname2 = SecurityHelper.Format(dentry2.name, "_", false);
                                                     string dcount2 = droom.ToLower() == "arcade" ? "(" + (dentry2.booths_with_category_count) + ")" : "";
                                                     bool dcheck = Model.isset_top != "alle" ? Model.isset_bottom == dname2 : false;
                                                     string dstyle_lower = "";
@@ -89,7 +89,7 @@
                                                         dstyle_lower = "z-bold";
                                                     }
 
-                                                    object broutes_check = new { c = Security.EncodeCats_MD5(false, dentry.name, dentry2.name) };
+                                                    object broutes_check = new { c = SecurityHelper.EncodeCats_MD5(false, dentry.name, dentry2.name) };
 
                                                     <li class="cat_sec myfade l-mp-navi4" data-cata="@dentry.name" data-catb="@dentry2.name" onclick="catb(this, false);">
                                                         <div>
@@ -164,7 +164,7 @@
                         <div class="cat_main z-padding-left-15 xz-list-style-none">
                             @{
                                 string tareas = ViewContext.Controller.ViewBag.AreasChecked as string;
-                                tareas = Security.Format(tareas, "", true);
+                                tareas = SecurityHelper.Format(tareas, "", true);
 
                                 string tsea = !string.IsNullOrEmpty(ThisSession.Search) ? ThisSession.Search : null;
                                 string troom = "arcade";// ViewBag.Room;
@@ -188,7 +188,7 @@
                                     {
                                         continue;
                                     }
-                                    string tname1 = Security.Format(tentry.name, "_", false);
+                                    string tname1 = SecurityHelper.Format(tentry.name, "_", false);
                                     bool ttop_isset = false;
 
                                     if (Model.isset_top == tname1)
@@ -216,7 +216,7 @@
                                             <ul class="cat_sec catb @tcssclass_lower" data-catb="@tentry.name">
                                                 @foreach (dto_category tentry2 in tentry.children)
                                                 {
-                                                    string tname2 = Security.Format(tentry2.name, "_", false);
+                                                    string tname2 = SecurityHelper.Format(tentry2.name, "_", false);
                                                     string tcount2 = troom.ToLower() == "arcade" ? "(" + (tentry2.booths_with_category_count) + ")" : "";
                                                     bool tcheck = Model.isset_top != "alle" ? Model.isset_bottom == tname2 : false;
                                                     string tstyle_lower = "";
@@ -226,7 +226,7 @@
                                                         tstyle_lower = "z-bold";
                                                     }
 
-                                                    object broutes_check = new { c = Security.EncodeCats_MD5(false, tentry.name, tentry2.name) };
+                                                    object broutes_check = new { c = SecurityHelper.EncodeCats_MD5(false, tentry.name, tentry2.name) };
 
                                                     <li class="cat_sec myfade l-mp-navi4" data-cata="@tentry.name" data-catb="@tentry2.name" onclick="catb(this, false);">
                                                         <div>
@@ -321,7 +321,7 @@
                     <ul class="cat_main z-list-style-none">
                         @{
                             string mareas2 = ViewContext.Controller.ViewBag.AreasChecked as string;
-                            mareas2 = Security.Format(mareas2, "", true);
+                            mareas2 = SecurityHelper.Format(mareas2, "", true);
 
                             string msea2 = !string.IsNullOrEmpty(ThisSession.Search) ? ThisSession.Search : null;
                             string mroom2 = "arcade";// ViewBag.Room;
@@ -337,7 +337,7 @@
                                 {
                                     continue;
                                 }
-                                string mname1 = Security.Format(mentry.name, "_", false);
+                                string mname1 = SecurityHelper.Format(mentry.name, "_", false);
                                 bool mtop_isset = false;
 
                                 if (Model.isset_top == mname1)
@@ -364,7 +364,7 @@
                                         <ul class="cat_sec catb @mcssclass_lower" data-catb="@mentry.name">
                                             @foreach (dto_category mentry2 in mentry.children)
                                             {
-                                                string mname2 = Security.Format(mentry2.name, "_", false);
+                                                string mname2 = SecurityHelper.Format(mentry2.name, "_", false);
                                                 string mcount2 = mroom2.ToLower() == "arcade" ? "(" + (mentry2.booths_with_category_count) + ")" : "";// "(" + (bentry2.items_with_category_count) + ")";
                                                 bool mcheck = Model.isset_top != "alle" ? Model.isset_bottom == mname2 : false;
                                                 string mstyle_lower = "";
@@ -374,7 +374,7 @@
                                                     mstyle_lower = "z-bold";
                                                 }
 
-                                                object broutes_check = new { c = Security.EncodeCats_MD5(false, mentry.name, mentry2.name) };
+                                                object broutes_check = new { c = SecurityHelper.EncodeCats_MD5(false, mentry.name, mentry2.name) };
 
                                                 <li class="cat_sec m-l-mp-navi3" data-cata="@mentry.name" data-catb="@mentry2.name" onclick="catb(this, true);">
                                                     <div>

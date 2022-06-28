@@ -79,7 +79,7 @@
                         <br />
                         <br />
                         @{
-                            string ddesc = !string.IsNullOrEmpty(Model.booth_dto.description) ? Model.booth_dto.description : Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                            string ddesc = !string.IsNullOrEmpty(Model.booth_dto.description) ? Model.booth_dto.description : TextHelper.GetNopValue(NOP.NO_DESCRIPTION.ToString());
                         }
                         @Html.DisplayWithBreaksFor(ddesc)
                         <br />&nbsp;
@@ -356,7 +356,7 @@
                         <br />
                         <br />
                         @{
-                                    string tdesc = !string.IsNullOrEmpty(Model.booth_dto.description) ? Model.booth_dto.description : Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                                    string tdesc = !string.IsNullOrEmpty(Model.booth_dto.description) ? Model.booth_dto.description : TextHelper.GetNopValue(NOP.NO_DESCRIPTION.ToString());
                                 }
                                 @Html.DisplayWithBreaksFor(tdesc)
                                 <br />&nbsp;
@@ -673,14 +673,14 @@
                 }
             </div>
         </div>
-    }
-    catch (Exception e)
+                            }
+                            catch (Exception e)
                             {
                                 ErrorHandler err = new ErrorHandler();
                                 string s = err.HandleError(ERROR.MARKETPLACE, e);
                                 string subject = "Fejl i front, Booth(MOB)";
                                 string body = s;
-                                Admin.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
+                                AdminHelper.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
                             }
 
 

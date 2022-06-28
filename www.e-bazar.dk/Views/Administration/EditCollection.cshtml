@@ -1388,15 +1388,15 @@
                 </div>
             </div>
         </div>
-    }
-    catch (Exception e)
-    {
-        ErrorHandler err = new ErrorHandler();
-        string s = err.HandleError(ERROR.EDITCOLLECTION, e);
-        string subject = "Fejl i front, EditCollection(MOB)";
-        string body = s;
-        Admin.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
-    }
+                                                        }
+                                                        catch (Exception e)
+                                                        {
+                                                            ErrorHandler err = new ErrorHandler();
+                                                            string s = err.HandleError(ERROR.EDITCOLLECTION, e);
+                                                            string subject = "Fejl i front, EditCollection(MOB)";
+                                                            string body = s;
+                                                            AdminHelper.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
+                                                        }
 
 }
 

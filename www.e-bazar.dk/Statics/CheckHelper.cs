@@ -7,7 +7,7 @@ using www.e_bazar.dk.Models.DTOs;
 using www.e_bazar.dk.SharedClasses;
 using static www.e_bazar.dk.Models.ViewModels.ViewModels;
 
-namespace www.e_bazar.dk.Extensions
+namespace www.e_bazar.dk.Statics
 {
     public class CheckHelper
     {
@@ -49,7 +49,7 @@ namespace www.e_bazar.dk.Extensions
                     model.c = "alle";
 
                 _z = int.TryParse(model.z, out _z) && _z >= 0 && _z <= 10000 ? _z : 0;
-                _z = Areas.selected.Contains("dk") ? _z : 0;
+                _z = AreasHelper.selected.Contains("dk") ? _z : 0;
                 _t = int.TryParse(model.t, out _t) && _t >= 0 && _t <= 999999 ? _t : 999999;
                 _f = int.TryParse(model.f, out _f) && _f >= 0 && _f <= _t ? _f : 0;
                 _g = model.gra == "true";
@@ -111,9 +111,9 @@ namespace www.e_bazar.dk.Extensions
                 if (string.IsNullOrEmpty(ip))
                     return false;
 
-                string set_ip = Settings.Basic.IP().Trim();
+                string set_ip = SettingsHelper.Basic.IP().Trim();
                 ip = ip.Trim();
-                if (Statics.IsDebug)
+                if (StaticsHelper.IsDebug)
                     return ip == "::1" || ip == "127.0.0.1" || ip == set_ip;
 
                 return ip == set_ip;
@@ -217,12 +217,12 @@ namespace www.e_bazar.dk.Extensions
                 return StringHelper.OnlyAlphanumeric(str, false, true, "notag", new char[] { }, out ok);
             }
             err["PRODUCT_CATEGORY"] = ERROR_MESSAGE.PRODUCT_CATEGORY;
-            return Texts.GetNopValue(NOP.UDFYLD.ToString());
+            return TextHelper.GetNopValue(NOP.UDFYLD.ToString());
         }
 
         public static string ProductName(string str, ref Dictionary<string, ERROR_MESSAGE> err)
         {
-            if (!string.IsNullOrEmpty(str) && str != Texts.GetNopValue(NOP.UDFYLD.ToString()))
+            if (!string.IsNullOrEmpty(str) && str != TextHelper.GetNopValue(NOP.UDFYLD.ToString()))
             {
                 bool ok;
                 err["PRODUCT_NAME"] = ERROR_MESSAGE.OK;
@@ -231,7 +231,7 @@ namespace www.e_bazar.dk.Extensions
                 return str;
             }
             err["PRODUCT_NAME"] = ERROR_MESSAGE.PRODUCT_NAME;
-            return Texts.GetNopValue(NOP.UDFYLD.ToString());
+            return TextHelper.GetNopValue(NOP.UDFYLD.ToString());
         }
 
         public static string ProductNote(string str, ref Dictionary<string, ERROR_MESSAGE> err)
@@ -309,12 +309,12 @@ namespace www.e_bazar.dk.Extensions
                 return StringHelper.OnlyAlphanumeric(str, false, true, "notag", new char[] { }, out ok);
             }
             err["COLLECTION_CATEGORY"] = ERROR_MESSAGE.COLLECTION_CATEGORY;
-            return Texts.GetNopValue(NOP.UDFYLD.ToString());
+            return TextHelper.GetNopValue(NOP.UDFYLD.ToString());
         }
 
         public static string CollectionName(string str, ref Dictionary<string, ERROR_MESSAGE> err)
         {
-            if (!string.IsNullOrEmpty(str) && str != Texts.GetNopValue(NOP.UDFYLD.ToString()))
+            if (!string.IsNullOrEmpty(str) && str != TextHelper.GetNopValue(NOP.UDFYLD.ToString()))
             {
                 bool ok;
                 err["COLLECTION_NAME"] = ERROR_MESSAGE.OK;
@@ -323,7 +323,7 @@ namespace www.e_bazar.dk.Extensions
                 return str;
             }
             err["COLLECTION_NAME"] = ERROR_MESSAGE.COLLECTION_NAME;
-            return Texts.GetNopValue(NOP.UDFYLD.ToString());
+            return TextHelper.GetNopValue(NOP.UDFYLD.ToString());
         }
 
         public static string CollectionNote(string str, ref Dictionary<string, ERROR_MESSAGE> err)
@@ -366,7 +366,7 @@ namespace www.e_bazar.dk.Extensions
 
         public static string BoothName(string str, ref Dictionary<string, ERROR_MESSAGE> err)
         {
-            if (!string.IsNullOrEmpty(str) && str != Texts.GetNopValue(NOP.UDFYLD.ToString()))
+            if (!string.IsNullOrEmpty(str) && str != TextHelper.GetNopValue(NOP.UDFYLD.ToString()))
             {
                 err["BOOTH_NAME"] = ERROR_MESSAGE.OK;
                 bool ok;
@@ -375,7 +375,7 @@ namespace www.e_bazar.dk.Extensions
                 return str;
             }
             err["BOOTH_NAME"] = ERROR_MESSAGE.BOOTH_NAME;
-            return Texts.GetNopValue(NOP.UDFYLD.ToString());
+            return TextHelper.GetNopValue(NOP.UDFYLD.ToString());
         }
 
         public static string BoothDescription(string str, ref Dictionary<string, ERROR_MESSAGE> err)
@@ -395,7 +395,7 @@ namespace www.e_bazar.dk.Extensions
 
         public static string ProfileFirstname(string str, ref Dictionary<string, ERROR_MESSAGE> err)
         {
-            if (!string.IsNullOrEmpty(str) && str != Texts.GetNopValue(NOP.UDFYLD.ToString()))
+            if (!string.IsNullOrEmpty(str) && str != TextHelper.GetNopValue(NOP.UDFYLD.ToString()))
             {
                 bool ok;
                 err["PROFILE_FIRSTNAME"] = ERROR_MESSAGE.OK;
@@ -410,7 +410,7 @@ namespace www.e_bazar.dk.Extensions
         public static string ProfileLastname(string str, ref Dictionary<string, ERROR_MESSAGE> err)
         {
             str = string.IsNullOrEmpty(str) ? "********" : str;
-            if (!string.IsNullOrEmpty(str) && str != Texts.GetNopValue(NOP.UDFYLD.ToString()))
+            if (!string.IsNullOrEmpty(str) && str != TextHelper.GetNopValue(NOP.UDFYLD.ToString()))
             {
                 bool ok;
                 err["PROFILE_LASTNAME"] = ERROR_MESSAGE.OK;
@@ -435,7 +435,7 @@ namespace www.e_bazar.dk.Extensions
 
         public static string ProfileEmail(string str, ref Dictionary<string, ERROR_MESSAGE> err)
         {
-            if (!string.IsNullOrEmpty(str) && str != Texts.GetNopValue(NOP.UDFYLD.ToString()) && CheckHelper.Generel.IsValidEmail(str))
+            if (!string.IsNullOrEmpty(str) && str != TextHelper.GetNopValue(NOP.UDFYLD.ToString()) && CheckHelper.Generel.IsValidEmail(str))
             {
                 err["PROFILE_EMAIL"] = ERROR_MESSAGE.OK;
                 //str = StringHelper.RemoveStrings(str, new string[] { "select ", "delete ", "update ", "alter ", "drop ", " from ", "SELECT ", "DELETE ", "UPDATE ", "ALTER ", "DROP ", " FROM " });

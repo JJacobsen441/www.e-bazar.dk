@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using www.e_bazar.dk.Models.DTOs;
 
 namespace www.e_bazar.dk.SharedClasses
 {
@@ -9,7 +8,7 @@ namespace www.e_bazar.dk.SharedClasses
         public DELIVERY[] states = new DELIVERY[2];
     }
     
-    public class Texts
+    public class TextHelper
     {
         private static bool is_setup = false;
         private static bool is_running = false;

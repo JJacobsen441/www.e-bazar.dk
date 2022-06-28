@@ -1,57 +1,11 @@
 ﻿using System.Collections.Generic;
-using www.e_bazar.dk.Extensions;
 using www.e_bazar.dk.Models.DTOs;
+using www.e_bazar.dk.Statics;
 
 namespace www.e_bazar.dk.SharedClasses
 {
     public class ThisSession
     {
-        //public static string AccessGuid
-        //{
-        //    get
-        //    {
-        //        if (System.Web.HttpContext.Current.Session["a_guid"] != null)
-        //            return (string)System.Web.HttpContext.Current.Session["a_guid"];
-        //        return "";
-        //    }
-        //    set
-        //    {
-        //        string s = string.IsNullOrEmpty(value) ? "" : value;
-        //        System.Web.HttpContext.Current.Session["a_guid"] = s;
-        //    }
-        //}
-        //public static Access Access
-        //{
-        //    get
-        //    {
-        //        //ISession _session = _httpContextAccessor.HttpContext.Session;
-        //        if (!string.IsNullOrEmpty(AccessGuid))
-        //            return new Access((string)AccessGuid);
-        //        throw new Exception("A-OK, Handled");
-        //    }
-        //    //set
-        //    //{
-        //    //    ISession _session = _httpContextAccessor.HttpContext.Session;
-        //    //    string s = "";
-        //    //    if (!string.IsNullOrEmpty(value))
-        //    //        s = value;
-        //    //    _session.SetString("access", s);
-        //    //}
-        //}
-        /*public static string IsMobile
-        {
-            get
-            {
-                if (System.Web.HttpContext.Current.Session["mob"] != null)
-                    return (string)System.Web.HttpContext.Current.Session["mob"];
-                return "none";
-            }
-            set
-            {
-                System.Web.HttpContext.Current.Session["mob"] = value;
-            }
-        }*/
-
         public static string CurrentUserId
         {
             get
@@ -68,6 +22,7 @@ namespace www.e_bazar.dk.SharedClasses
                 System.Web.HttpContext.Current.Session["user_id"] = s;
             }
         }
+
         public static string CurrentUserName
         {
             get
@@ -84,6 +39,7 @@ namespace www.e_bazar.dk.SharedClasses
                 System.Web.HttpContext.Current.Session["user_name"] = s;
             }
         }
+
         public static bool CurrentIsAuthenticated
         {
             get
@@ -97,6 +53,7 @@ namespace www.e_bazar.dk.SharedClasses
                 System.Web.HttpContext.Current.Session["is_auth"] = value == true ? "true" : "false";
             }
         }
+
         public static string CurrentType
         {
             get
@@ -111,8 +68,6 @@ namespace www.e_bazar.dk.SharedClasses
             }
         }
 
-
-
         public static List<string> Area
         {
             get
@@ -124,8 +79,6 @@ namespace www.e_bazar.dk.SharedClasses
                 System.Web.HttpContext.Current.Session["area"] = value;
             }
         }
-
-
 
         public static string Catalog
         {
@@ -159,6 +112,7 @@ namespace www.e_bazar.dk.SharedClasses
                 System.Web.HttpContext.Current.Session["cookie"] = value;
             }
         }
+
         public static string Search
         {
             get
@@ -177,6 +131,7 @@ namespace www.e_bazar.dk.SharedClasses
                 System.Web.HttpContext.Current.Session["s"] = s;
             }
         }
+
         public static string Category
         {
             get
@@ -233,8 +188,6 @@ namespace www.e_bazar.dk.SharedClasses
             }
         }
 
-
-
         public static int Zip
         {
             get
@@ -252,6 +205,7 @@ namespace www.e_bazar.dk.SharedClasses
                 System.Web.HttpContext.Current.Session["z"] = value;
             }
         }
+
         public static int Fra
         {
             get
@@ -269,6 +223,7 @@ namespace www.e_bazar.dk.SharedClasses
                 System.Web.HttpContext.Current.Session["f"] = value;
             }
         }
+
         public static int Til
         {
             get
@@ -286,6 +241,7 @@ namespace www.e_bazar.dk.SharedClasses
                 System.Web.HttpContext.Current.Session["t"] = value;
             }
         }
+
         public static bool FastPris
         {
             get
@@ -303,6 +259,7 @@ namespace www.e_bazar.dk.SharedClasses
                 System.Web.HttpContext.Current.Session["g"] = value;
             }
         }
+
         public static int Paginator
         {
             get
@@ -320,6 +277,7 @@ namespace www.e_bazar.dk.SharedClasses
                 System.Web.HttpContext.Current.Session["paginator"] = value;
             }
         }
+
         public static string Tab
         {
             get
@@ -338,6 +296,7 @@ namespace www.e_bazar.dk.SharedClasses
                 System.Web.HttpContext.Current.Session["Tab"] = s;
             }
         }
+
         public static Dictionary<string, string> Json_Errors
         {
             get
@@ -355,6 +314,7 @@ namespace www.e_bazar.dk.SharedClasses
                 System.Web.HttpContext.Current.Session["Json_Errors"] = value;
             }
         }
+
         public static Dictionary<string, string> Json_Messages
         {
             get

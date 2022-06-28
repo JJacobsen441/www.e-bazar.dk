@@ -22,8 +22,8 @@
                 int dcounter_span_sec = 0;
                 
                 dcatb = db.Key;
-                dcatb_oe = Security.Format(db.Key, "_", false);
-                bool dcheck = ((string)Model.isset_top) != "alle" ? (string)Model.isset_bottom == Security.Format(dcatb, "_", true) : false;
+                dcatb_oe = SecurityHelper.Format(db.Key, "_", false);
+                bool dcheck = ((string)Model.isset_top) != "alle" ? (string)Model.isset_bottom == SecurityHelper.Format(dcatb, "_", true) : false;
                 
                 string dstyle = "l-mp-param1";
                 <div class="params_content z-bottom-left z-z-index-infinity-high @dstyle" data-cata="@da.Key" data-catb="@dcatb">
@@ -161,8 +161,8 @@
                 int tcounter_span_sec = 0;
 
                 tcatb = tb.Key;
-                tcatb_oe = Security.Format(tb.Key, "_", false);
-                bool tcheck = ((string)Model.isset_top) != "alle" ? (string)Model.isset_bottom == Security.Format(tcatb, "_", true) : false;
+                tcatb_oe = SecurityHelper.Format(tb.Key, "_", false);
+                bool tcheck = ((string)Model.isset_top) != "alle" ? (string)Model.isset_bottom == SecurityHelper.Format(tcatb, "_", true) : false;
 
                 string tstyle = "l-mp-param1";
                 <div class="params_content z-bottom-left z-z-index-infinity-high @tstyle" data-cata="@ta.Key" data-catb="@tcatb">
@@ -309,8 +309,8 @@
                 int mcounter_span_sec = 0;
 
                 mcatb = mb.Key;
-                mcatb_oe = Security.Format(mb.Key, "_", false);
-                bool mcheck = ((string)Model.isset_top) != "alle" ? (string)Model.isset_bottom == Security.Format(mcatb, "_", true) : false;
+                mcatb_oe = SecurityHelper.Format(mb.Key, "_", false);
+                bool mcheck = ((string)Model.isset_top) != "alle" ? (string)Model.isset_bottom == SecurityHelper.Format(mcatb, "_", true) : false;
 
                 string mstyle = "m-l-mp-param1";
         <div class="params_content @mstyle" data-cata="@ma.Key" data-catb="@mcatb">

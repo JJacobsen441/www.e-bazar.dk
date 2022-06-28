@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using www.e_bazar.dk.Extensions;
 using www.e_bazar.dk.SharedClasses;
+using www.e_bazar.dk.Statics;
 using static www.e_bazar.dk.Models.DTOs.dto_booth;
 
 namespace www.e_bazar.dk.Models.DTOs
@@ -467,7 +467,7 @@ namespace www.e_bazar.dk.Models.DTOs
                 RelevantHelper helper = RelevantHelper.Create(false);
                 helper.GetVals(out opt, out op1, out op2, out op3, out op4, out op5, out op6, out cats, out cat, out fra, out til, out zip);
 
-                bool cat_selected = Categorys.CatsYesNo.Where(x => x.name == cat).Count() > 0;
+                bool cat_selected = CategorysHelper.CatsYesNo.Where(x => x.name == cat).Count() > 0;
                 string option1 = opt[0], option2 = opt[1], option3 = opt[2];
 
                 bool is_param = _db.param.Where(x => x.name == op2 || x.name == op3 || x.name == op4).Count() > 0 || _db.value.Where(x => x.value1 == op2 || x.value1 == op3 || x.value1 == op4).Count() > 0;
@@ -475,13 +475,13 @@ namespace www.e_bazar.dk.Models.DTOs
                 int ato = 0;
                 int afrom = 0;
                 bool dk = false;
-                foreach (string s in Areas.selected)//allways only holds one entry
+                foreach (string s in AreasHelper.selected)//allways only holds one entry
                 {
                     if (s == "dk")
                         dk = true;
                     if (s == "dk")
                         continue;
-                    Area area = Areas.areas.Where(x => x.area.Replace(" ", "").ToLower() == s).FirstOrDefault();
+                    Area area = AreasHelper.areas.Where(x => x.area.Replace(" ", "").ToLower() == s).FirstOrDefault();
                     if (area.IsNull())
                         throw new Exception();
                     ato = area.to;
@@ -805,7 +805,7 @@ namespace www.e_bazar.dk.Models.DTOs
             dto.sysname = b.sysname.IsNotNull() ? b.sysname : "";
             dto.frontimage = b.frontimage.IsNotNull() ? b.frontimage : "";
 
-            dto.description = !string.IsNullOrEmpty(b.description) ? b.description : Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+            dto.description = !string.IsNullOrEmpty(b.description) ? b.description : TextHelper.GetNopValue(NOP.NO_DESCRIPTION.ToString());
 
             if (b.boothrating != null)
             {
@@ -818,7 +818,7 @@ namespace www.e_bazar.dk.Models.DTOs
                 if (b.boothrating.Count() == 0)
                 {
                     dto.boothrating = 0.0;
-                    dto.boothrating_nop = Texts.GetNopValue(NOP.NO_RATING.ToString());
+                    dto.boothrating_nop = TextHelper.GetNopValue(NOP.NO_RATING.ToString());
                 }
             }
 

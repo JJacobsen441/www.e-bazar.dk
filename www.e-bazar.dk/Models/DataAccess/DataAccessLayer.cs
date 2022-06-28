@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using www.e_bazar.dk.Models.DTOs;
 using www.e_bazar.dk.SharedClasses;
+using www.e_bazar.dk.Statics;
 
 namespace www.e_bazar.dk.Models.DataAccess
 {
@@ -94,7 +95,7 @@ namespace www.e_bazar.dk.Models.DataAccess
 
         public dto_category GetChildInCategory(int cat_id, int nr)
         {
-            List<dto_category> cat = Categorys.CatsYesYes;
+            List<dto_category> cat = CategorysHelper.CatsYesYes;
             
             if (cat == null)
                 throw new Exception("A-OK, Handled.");
@@ -753,17 +754,17 @@ namespace www.e_bazar.dk.Models.DataAccess
                     if (old_booth == null)
                         throw new Exception("dal.ChangeShopId > old_shop NULL");
 
-                    Dictionary<string, string> dirs_product = Setup.SetupProductDirs(product_poco, currentuser.sysname);
-                    Dictionary<string, string> dirs_booth = Setup.SetupBoothDirs(ref booth_poco, currentuser.sysname);
+                    Dictionary<string, string> dirs_product = SetupHelper.SetupProductDirs(product_poco, currentuser.sysname);
+                    Dictionary<string, string> dirs_booth = SetupHelper.SetupBoothDirs(ref booth_poco, currentuser.sysname);
                     string nd = Path.DirectorySeparatorChar.ToString();
-                    string old_path = Paths.GetPath(PATH.PRODUCT_DIRECTORY_NAME, dirs_product, true);// + product_poco.sysname + nd;
-                    string new_path = Paths.GetPath(PATH.BOOTH_DIRECTORY, dirs_booth, true) + booth_poco.sysname + nd + "products" + nd + product_poco.sysname + nd;
+                    string old_path = PathHelper.GetPath(PATH.PRODUCT_DIRECTORY_NAME, dirs_product, true);// + product_poco.sysname + nd;
+                    string new_path = PathHelper.GetPath(PATH.BOOTH_DIRECTORY, dirs_booth, true) + booth_poco.sysname + nd + "products" + nd + product_poco.sysname + nd;
                     foreach (dto_image im in product_poco.image_dtos)
                     {
-                        try { Paths.MoveFile(old_path, im.name, new_path, im.name, true, false, false, false); } catch (Exception _e) { ; }
-                        try { Paths.MoveFile(old_path, "t_" + im.name, new_path, "t_" + im.name, true, false, false, false); } catch (Exception _e) { ; }
+                        try { PathHelper.MoveFile(old_path, im.name, new_path, im.name, true, false, false, false); } catch (Exception _e) { ; }
+                        try { PathHelper.MoveFile(old_path, "t_" + im.name, new_path, "t_" + im.name, true, false, false, false); } catch (Exception _e) { ; }
                     }
-                    Paths.ClearFolder(old_path, true, true);
+                    PathHelper.ClearFolder(old_path, true, true);
                     //pro.booth_id = BoothId;
 
 

@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using www.e_bazar.dk.Extensions;
 using www.e_bazar.dk.Models;
 using www.e_bazar.dk.Models.DataAccess;
 using www.e_bazar.dk.Models.DTOs;
+using www.e_bazar.dk.SharedClasses;
 
-namespace www.e_bazar.dk.SharedClasses
+namespace www.e_bazar.dk.Statics
 {
-    public class Setup
+    public class SetupHelper
     {
         public static Dictionary<string, string> SetupProfileDirs(dto_person model)
         {
             Dictionary<string, string> dirs = new Dictionary<string, string>();
             //dirs["identity_id"] = identity_id;
-            dirs["identity_id"] = string.IsNullOrEmpty(model.sysname) ? Paths.GenerateFolderName(PATH.BOOTH_DIRECTORY, dirs, "PROFILE") : model.sysname;
+            dirs["identity_id"] = string.IsNullOrEmpty(model.sysname) ? PathHelper.GenerateFolderName(PATH.BOOTH_DIRECTORY, dirs, "PROFILE") : model.sysname;
 
             return dirs;
         }
@@ -45,7 +45,7 @@ namespace www.e_bazar.dk.SharedClasses
         {
             Dictionary<string, string> dirs = new Dictionary<string, string>();
             dirs["identity_id"] = identity_id;
-            dirs["booth_sysname"] = string.IsNullOrEmpty(model.sysname) ? Paths.GenerateFolderName(PATH.BOOTH_DIRECTORY, dirs, "BOOTH") : model.sysname;
+            dirs["booth_sysname"] = string.IsNullOrEmpty(model.sysname) ? PathHelper.GenerateFolderName(PATH.BOOTH_DIRECTORY, dirs, "BOOTH") : model.sysname;
 
             return dirs;
         }
@@ -86,7 +86,7 @@ namespace www.e_bazar.dk.SharedClasses
             Dictionary<string, string> dirs = new Dictionary<string, string>();
             dirs["identity_id"] = identity_id;
             dirs["booth_sysname"] = model.booth_dto.sysname;
-            dirs["product_sysname"] = string.IsNullOrEmpty(model.sysname) ? Paths.GenerateFolderName(PATH.PRODUCT_DIRECTORY, dirs, "PRODUCT"/*, FILE_NAME.NONE*/) : model.sysname;
+            dirs["product_sysname"] = string.IsNullOrEmpty(model.sysname) ? PathHelper.GenerateFolderName(PATH.PRODUCT_DIRECTORY, dirs, "PRODUCT"/*, FILE_NAME.NONE*/) : model.sysname;
             return dirs;
         }
 
@@ -141,7 +141,7 @@ namespace www.e_bazar.dk.SharedClasses
             Dictionary<string, string> dirs = new Dictionary<string, string>();
             dirs["identity_id"] = identity_id;
             dirs["booth_sysname"] = model.booth_dto.sysname;
-            dirs["collection_sysname"] = string.IsNullOrEmpty(model.sysname) ? Paths.GenerateFolderName(PATH.COLLECTION_DIRECTORY, dirs, "COLL"/*, FILE_NAME.NONE*/) : model.sysname;
+            dirs["collection_sysname"] = string.IsNullOrEmpty(model.sysname) ? PathHelper.GenerateFolderName(PATH.COLLECTION_DIRECTORY, dirs, "COLL"/*, FILE_NAME.NONE*/) : model.sysname;
             return dirs;
         }
 

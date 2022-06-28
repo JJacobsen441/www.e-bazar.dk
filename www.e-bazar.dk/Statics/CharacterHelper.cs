@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Linq;
 
-namespace www.e_bazar.dk.Extensions
+namespace www.e_bazar.dk.Statics
 {
     public class CharacterHelper
     {

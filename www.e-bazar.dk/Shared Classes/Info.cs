@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using www.e_bazar.dk.Statics;
 
 namespace www.e_bazar.dk.SharedClasses
 {
@@ -16,7 +17,7 @@ namespace www.e_bazar.dk.SharedClasses
         {
             List<pageinfo> infos = new List<pageinfo>();
             
-            string path = Statics.Root + "App_Info\\Info.xml";
+            string path = StaticsHelper.Root + "App_Info\\Info.xml";
             
             var xdoc = XElement.Load(path);
             foreach (XElement elem in xdoc.Elements())

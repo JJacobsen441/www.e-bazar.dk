@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using www.e_bazar.dk.SharedClasses;
 
-namespace www.e_bazar.dk.Extensions
+namespace www.e_bazar.dk.Statics
 {
     public class RelevantHelper
     {

@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Xml.Linq;
-using www.e_bazar.dk.Extensions;
 using www.e_bazar.dk.Models;
-using www.e_bazar.dk.Models.DataAccess;
+using www.e_bazar.dk.Statics;
 
 namespace www.e_bazar.dk.SharedClasses
 {
@@ -14,7 +13,7 @@ namespace www.e_bazar.dk.SharedClasses
         //public static List<string> IPs = new List<string>();
         public static bool Logged(string ip)
         {
-            var xdoc = XElement.Load(Statics.Root + "App_Stat\\IP_LOG.xml");
+            var xdoc = XElement.Load(StaticsHelper.Root + "App_Stat\\IP_LOG.xml");
             var ips = xdoc.Elements("ips");
 
             foreach (XElement elem in ips.Descendants())
@@ -27,7 +26,7 @@ namespace www.e_bazar.dk.SharedClasses
 
         public static void Add(string ip)
         {
-            var xdoc = XElement.Load(Statics.Root + "App_Stat\\IP_LOG.xml");
+            var xdoc = XElement.Load(StaticsHelper.Root + "App_Stat\\IP_LOG.xml");
             var ips = xdoc.Element("ips");
             XElement e = new XElement("ip");
             e.Add(new XAttribute("val", ip));
@@ -35,26 +34,26 @@ namespace www.e_bazar.dk.SharedClasses
             //e.Add(new XAttribute("date", date.Ticks));
             ips.Add(e);
 
-            xdoc.Save(Statics.Root + "App_Stat\\IP_LOG.xml");
+            xdoc.Save(StaticsHelper.Root + "App_Stat\\IP_LOG.xml");
 
         }
 
         public static void Reset()
         {
-            var xdoc = XElement.Load(Statics.Root + "App_Stat\\IP_LOG.xml");
+            var xdoc = XElement.Load(StaticsHelper.Root + "App_Stat\\IP_LOG.xml");
             var ips = xdoc.Elements("ips");
 
             foreach (XElement elem in ips.Descendants().ToList())
                 elem.Remove();
 
 
-            xdoc.Save(Statics.Root + "App_Stat\\IP_LOG.xml");
+            xdoc.Save(StaticsHelper.Root + "App_Stat\\IP_LOG.xml");
         }
 
         public static List<Log> Get(string ip)
         {
             List<Log> logs = new List<Log>();
-            var xdoc = XElement.Load(Statics.Root + "App_Stat\\IP_LOG.xml");
+            var xdoc = XElement.Load(StaticsHelper.Root + "App_Stat\\IP_LOG.xml");
             var ips = xdoc.Elements("ips");
 
             foreach (XElement elem in ips.Descendants().ToList())
@@ -71,7 +70,7 @@ namespace www.e_bazar.dk.SharedClasses
 
         public static int CountDistinct()
         {
-            var xdoc = XElement.Load(Statics.Root + "App_Stat\\IP_LOG.xml");
+            var xdoc = XElement.Load(StaticsHelper.Root + "App_Stat\\IP_LOG.xml");
             var ips = xdoc.Element("ips");
             return ips.Descendants().GroupBy(x => x.Attribute("val").Value).Select(x => x.First()).Count();
         }
@@ -207,7 +206,7 @@ namespace www.e_bazar.dk.SharedClasses
             HttpRequestBase httpRequestBase = new HttpRequestWrapper(System.Web.HttpContext.Current.Request);
             string ip = RequestHelpers.GetClientIpAddress(httpRequestBase);
 
-            string path = Statics.Root + "App_Stat\\Statistics.xml";
+            string path = StaticsHelper.Root + "App_Stat\\Statistics.xml";
             
             if (CheckHelper.Generel.IsAdmin(ip))
                 this.SetUserPerMonth(path, 0);

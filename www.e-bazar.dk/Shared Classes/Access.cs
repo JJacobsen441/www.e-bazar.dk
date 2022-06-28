@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using www.e_bazar.dk.Statics;
 
 namespace www.e_bazar.dk.SharedClasses
 {
@@ -26,7 +27,7 @@ namespace www.e_bazar.dk.SharedClasses
             if (l == null)//burde ikke kunne ske!
             {
                 l?.GetThrough(this);
-                Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), "Queue > line NULL", "");
+                AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), "Queue > line NULL", "");
                 return false;
             }
 
@@ -46,7 +47,7 @@ namespace www.e_bazar.dk.SharedClasses
             
             Thread.Sleep(100);
             if (first)
-                Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), "Queue > " + this.Guid, "");
+                AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), "Queue > " + this.Guid, "");
             first = false;
             counter--;
             
@@ -121,7 +122,7 @@ namespace www.e_bazar.dk.SharedClasses
             if (l == null)//burde ikke kunne ske!
             {
                 l?.GetThrough(e);
-                Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), "Queue > line NULL", "");
+                AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), "Queue > line NULL", "");
                 return false;
             }
 

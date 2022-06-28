@@ -2,9 +2,9 @@
 using System.IO;
 using System.Web.Hosting;
 
-namespace www.e_bazar.dk.SharedClasses
+namespace www.e_bazar.dk.Statics
 {
-    public class Statics
+    public class StaticsHelper
     {
         public static string FormatMail(string text)
         {

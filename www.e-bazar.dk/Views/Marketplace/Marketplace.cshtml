@@ -1,5 +1,5 @@
 ﻿@model www.e_bazar.dk.Models.DTOs.col_marketplace
-@using www.e_bazar.dk.Extensions
+@using www.e_bazar.dk.Statics
 @{
     ViewBag.Title = "Startside";
 }
@@ -50,7 +50,7 @@
                                     @Html.TextBoxFor(m => _a, new { @class = "form-control z-background-color-darkgrey z-box-shadow-none z-border-darkgrey z-hover-black zip_input", placeholder = "postnr." })
                                 </div>
                                 <div class="col-xs-6 z-padding-sides-0 z-z-index-low">
-                                    @Html.DropDownListFor(m => Model.area_selected, Areas.GetAreas().Select(i => new SelectListItem()
+                                    @Html.DropDownListFor(m => Model.area_selected, AreasHelper.GetAreas().Select(i => new SelectListItem()
                                {
                                    Text = i.area
                                }), new { @class = "form-control z-background-color-darkgrey z-box-shadow-none z-border-darkgrey z-color-grey-1 z-hover-black area_input" })
@@ -113,7 +113,7 @@
                         </div>
                         <div class="col-xs-7 z-height-100-percent z-pos-rel">
                             <div><h1 class="z-margin-top-0 z-align-right z-bold z-font-size-40">Markedsplads</h1></div>
-                            <div class="z-bottom-right z-margin-bottom-0 z-margin-top-0"><h2 class="z-align-right z-font-size-15">- @Settings.Basic.COMMENT()</h2></div>
+                            <div class="z-bottom-right z-margin-bottom-0 z-margin-top-0"><h2 class="z-align-right z-font-size-15">- @SettingsHelper.Basic.COMMENT()</h2></div>
                         </div>
                     </div>
                     <div class="l-mp-filler2">&nbsp;</div>
@@ -327,7 +327,7 @@
                                 </div>
                                 <div class="col-xs-6 z-padding-sides-0 z-z-index-low">
                                     @*@Html.Label("Område", new { @class = "z-color-black-1" })*@
-                                    @Html.DropDownListFor(m => Model.area_selected, Areas.GetAreas().Select(i => new SelectListItem()
+                                    @Html.DropDownListFor(m => Model.area_selected, AreasHelper.GetAreas().Select(i => new SelectListItem()
                                {
                                    Text = i.area
                                }), new { @class = "form-control z-background-color-darkgrey z-box-shadow-none z-border-darkgrey z-color-grey-1 z-hover-black area_input" })
@@ -395,7 +395,7 @@
                         </div>
                         <div class="col-xs-7 z-height-100-percent z-pos-rel">
                             <div><h1 class="z-margin-top-0 z-align-right z-bold z-font-size-40">Markeds<br />pladsen</h1></div>
-                            <div class="z-bottom-right z-margin-bottom-0 z-margin-top-0"><h2 class="z-align-right z-font-size-15">- @Settings.Basic.COMMENT()</h2></div>
+                            <div class="z-bottom-right z-margin-bottom-0 z-margin-top-0"><h2 class="z-align-right z-font-size-15">- @SettingsHelper.Basic.COMMENT()</h2></div>
                         </div>
                     </div>
                     <div class="l-mp-filler2">&nbsp;</div>
@@ -620,7 +620,7 @@
                                 </div>
                                 <div class="col-xs-12 z-padding-sides-0 z-z-index-low">
                                     @*@Html.Label("Område", new { @class = "z-color-black-1" })*@
-                                    @Html.DropDownListFor(m => Model.area_selected, Areas.GetAreas().Select(i => new SelectListItem()
+                                    @Html.DropDownListFor(m => Model.area_selected, AreasHelper.GetAreas().Select(i => new SelectListItem()
                                {
                                    Text = i.area
                                }), new { @class = "form-control z-background-color-darkgrey z-color-grey-1 z-border-darkgrey z-color-black-1 area_input" })
@@ -745,21 +745,21 @@
                 </div>
             </div>
         </div>
-    }
-    catch (Exception e)
-    {
-        ErrorHandler err = new ErrorHandler();
-        string s = err.HandleError(ERROR.MARKETPLACE, e);
-        string subject = "Fejl i front, Marketplace(MOB)";
-        string body = s;
-        Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), Settings.Basic.EMAIL_MAIL(), subject, body);
-    }
+                            }
+                            catch (Exception e)
+                            {
+                                ErrorHandler err = new ErrorHandler();
+                                string s = err.HandleError(ERROR.MARKETPLACE, e);
+                                string subject = "Fejl i front, Marketplace(MOB)";
+                                string body = s;
+                                AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
+                            }
 
 }
 
 @{
     string area = ViewBag.AreasChecked;
-    object o = new { c = Security.EncodeCats_MD5(false, Model.c) };
+    object o = new { c = SecurityHelper.EncodeCats_MD5(false, Model.c) };
     string url = Url.RouteUrl("Marketplace", o);
     string sys_msg = ViewBag.JSON_SYSTEM_MESSAGE as string;
     <input type="hidden" id="sys_msg" value="@sys_msg" />

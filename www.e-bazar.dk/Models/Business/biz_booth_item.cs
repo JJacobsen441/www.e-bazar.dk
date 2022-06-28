@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using www.e_bazar.dk.Extensions;
 using www.e_bazar.dk.SharedClasses;
+using www.e_bazar.dk.Statics;
 using static www.e_bazar.dk.Models.DTOs.dto_booth;
 
 namespace www.e_bazar.dk.Models.DTOs
@@ -59,19 +59,19 @@ namespace www.e_bazar.dk.Models.DTOs
                 }
 
                 dto.status_stock = string.IsNullOrEmpty(dto.status_stock) ? STOCK.PÅ_LAGER.ToString() : dto.status_stock;
-                dto.status_stock_selectlist = EnumHelper.SelectListFor(Texts.GetStockEnum(dto.status_stock));
+                dto.status_stock_selectlist = EnumHelper.SelectListFor(TextHelper.GetStockEnum(dto.status_stock));
 
                 dto.status_condition = string.IsNullOrEmpty(dto.status_condition) ? CONDITION.VELHOLDT.ToString() : dto.status_condition;
-                dto.status_condition_selectlist = EnumHelper.SelectListFor(Texts.GetConditionEnum(dto.status_condition));
+                dto.status_condition_selectlist = EnumHelper.SelectListFor(TextHelper.GetConditionEnum(dto.status_condition));
 
                 dto.price = string.IsNullOrEmpty(dto.price) ? NOP.INGEN_PRIS.ToString() : dto.price;
-                dto.note = string.IsNullOrEmpty(dto.note) ? Texts.GetNopValue(NOP.NO_NOTE.ToString()) : dto.note;
-                dto.description = string.IsNullOrEmpty(dto.description) ? Texts.GetNopValue(NOP.NO_DESCRIPTION.ToString()) : dto.description;
+                dto.note = string.IsNullOrEmpty(dto.note) ? TextHelper.GetNopValue(NOP.NO_NOTE.ToString()) : dto.note;
+                dto.description = string.IsNullOrEmpty(dto.description) ? TextHelper.GetNopValue(NOP.NO_DESCRIPTION.ToString()) : dto.description;
 
                 if (dto.tag_dtos == null || dto.tag_dtos.Count == 0)
                 {
                     dto.tag_dtos = null;
-                    dto.tag_dtos_nop = Texts.GetNopValue(NOP.NO_TAGS.ToString());
+                    dto.tag_dtos_nop = TextHelper.GetNopValue(NOP.NO_TAGS.ToString());
                 }
             }
 
@@ -169,9 +169,9 @@ namespace www.e_bazar.dk.Models.DTOs
                             ;
 
             bool relevantD = is_pro ? (pro.booth != null && pro.booth.region != null ? (zip != 0 ? pro.booth.region.zip == zip : true) &&
-                Areas.IsRelevant(pro.booth.region.zip) : true) :
+                AreasHelper.IsRelevant(pro.booth.region.zip) : true) :
                 (col.booth != null && col.booth.region != null ? (zip != 0 ? col.booth.region.zip == zip : true) &&
-                Areas.IsRelevant(col.booth.region.zip) : true);
+                AreasHelper.IsRelevant(col.booth.region.zip) : true);
 
             bool relevantF = CheckParam(pro, col, false, helper);
 
