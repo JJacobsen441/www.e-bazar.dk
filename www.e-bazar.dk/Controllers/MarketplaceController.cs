@@ -264,7 +264,6 @@ namespace www.e_bazar.dk.Controllers
                     return View("Maintenance");
                 
                 SetupCurrentUser();
-                ThisSession.Catalog = "";
 
                 CheckHelper.Generel.CheckMarketPlace(model, out _s, out _c_orig, out _z, out _t, out _f, out _g);
 
@@ -276,6 +275,8 @@ namespace www.e_bazar.dk.Controllers
                                 
                 if (ThisSession.Cookie)
                 {
+                    ThisSession.Catalog = "";
+
                     ThisSession.Search = _s;
                     ThisSession.Category = _c_search;
                     ThisSession.Params = _params;
