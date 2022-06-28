@@ -63,8 +63,12 @@ namespace www.e_bazar.dk.Models.DTOs
                                 .Include("foldera")
                                 .Where(x => x.Id == booth_id);
 
+                _b.ToTraceStringD();
+
                 booth b = _b.AsEnumerable().FirstOrDefault();
-            
+
+                _b.ToTraceStringD();
+
                 if (b.IsNull())
                     throw new Exception("A-OK, Handled.");
                 else
@@ -602,7 +606,7 @@ namespace www.e_bazar.dk.Models.DTOs
                          group b by b.Id into g
                          select g.FirstOrDefault());
 
-                _b.ToTraceStringA();
+                _b.ToTraceStringD();
 
                 IEnumerable<booth> booths = _b.AsEnumerable().ToList();
                 if (booths.IsNull())

@@ -98,7 +98,7 @@ namespace www.e_bazar.dk.Controllers
                 string ip = RequestHelpers.GetClientIpAddress(httpRequestBase);
 
                 Statistics stats = new Statistics();
-                Stats stats_res = stats.GetStatistics(ip);
+                Stats stats_res = stats.GetStatistics();
                 ViewBag.Stats = stats_res;
                 
                 SendNotifications(stats_res);

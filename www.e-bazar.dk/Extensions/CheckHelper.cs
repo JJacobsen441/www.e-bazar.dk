@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Web;
 using www.e_bazar.dk.Models.DTOs;
 using www.e_bazar.dk.SharedClasses;
+using static www.e_bazar.dk.Models.ViewModels.ViewModels;
 
 namespace www.e_bazar.dk.Extensions
 {
@@ -10,6 +13,84 @@ namespace www.e_bazar.dk.Extensions
     {
         public class Generel
         {
+            public static bool CheckMarketPlace(MarketplaceViewModel model, out string _s, out string _c_orig, out int _z, out int _t, out int _f, out bool _g)
+            {
+                if (model.IsNull())
+                    throw new Exception();
+
+                if ((model.a = CheckHelper.Generel.FormatString(model.a, true, false, false, "no_tag", CharacterHelper.VeryLimited())) == null)
+                    throw new Exception();
+
+                if ((model.s = CheckHelper.Generel.FormatString(model.s, true, false, true, "no_tag", CharacterHelper.Limited(true))) == null)
+                    throw new Exception();
+
+                if ((model.c = CheckHelper.Generel.FormatString(model.c, false, false, true, "no_tag", CharacterHelper.VeryLimited())) == null)
+                    throw new Exception();
+
+                if ((model.p = CheckHelper.Generel.FormatString(model.p, true, false, false, "no_tag", CharacterHelper.Param())) == null)
+                    throw new Exception();
+
+                if ((model.z = CheckHelper.Generel.FormatString(model.z, true, false, false, "no_tag", CharacterHelper.VeryLimited())) == null)
+                    throw new Exception();
+
+                if ((model.f = CheckHelper.Generel.FormatString(model.f, true, false, false, "no_tag", CharacterHelper.VeryLimited())) == null)
+                    throw new Exception();
+
+                if ((model.t = CheckHelper.Generel.FormatString(model.t, true, false, false, "no_tag", CharacterHelper.VeryLimited())) == null)
+                    throw new Exception();
+
+                if ((model.gra = CheckHelper.Generel.FormatString(model.gra, true, false, false, "no_tag", CharacterHelper.VeryLimited())) == null)
+                    throw new Exception();
+
+                _s = model.s;
+                _c_orig = model.c;
+
+                if (string.IsNullOrEmpty(model.c))
+                    model.c = "alle";
+
+                _z = int.TryParse(model.z, out _z) && _z >= 0 && _z <= 10000 ? _z : 0;
+                _z = Areas.selected.Contains("dk") ? _z : 0;
+                _t = int.TryParse(model.t, out _t) && _t >= 0 && _t <= 999999 ? _t : 999999;
+                _f = int.TryParse(model.f, out _f) && _f >= 0 && _f <= _t ? _f : 0;
+                _g = model.gra == "true";
+
+                return true;
+            }
+
+            public static bool CheckBooth(BoothViewModel model)
+            {
+                if (model.IsNull())
+                    throw new Exception();
+
+                if ((model.a_sub = CheckHelper.Generel.FormatString(model.a_sub, true, false, false, "no_tag", CharacterHelper.VeryLimited())) == null)
+                    throw new Exception();
+
+                if ((model.b_sub = CheckHelper.Generel.FormatString(model.b_sub, true, false, false, "no_tag", CharacterHelper.VeryLimited())) == null)
+                    throw new Exception();
+    
+                model.a_sub = model.a_sub.Replace("_", " ");
+                model.b_sub = model.b_sub.Replace("_", " ");
+
+                return true;
+            }
+
+            public static string FormatString(string str, bool to_lower, bool allow_newline, bool allow_upper, string allow_tag, char[] allowed)
+            {
+                if (str.IsNull())
+                    return "";
+
+                str = HttpUtility.UrlDecode(str);
+                if(to_lower)
+                    str = str.ToLower();
+
+                bool ok;
+                str = StringHelper.OnlyAlphanumeric(str, allow_newline, allow_upper, "no_tag", allowed, out ok);
+                if (!ok)
+                    return null;
+
+                return str;
+            }
+
             public static bool IsValidEmail(string email)
             {
                 try

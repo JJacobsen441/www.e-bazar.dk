@@ -230,6 +230,7 @@
     <Compile Include="Models\DTOs\dtos.cs" />
     <Compile Include="Models\EbazarDB.cs" />
     <Compile Include="Extensions\Extensions.cs" />
+    <Compile Include="Models\ViewModels\ViewModels.cs" />
     <Compile Include="Shared Classes\Paginator.cs" />
     <Compile Include="Models\folder.cs" />
     <Compile Include="Global.asax.cs">

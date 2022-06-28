@@ -244,8 +244,10 @@ namespace www.e_bazar.dk.Extensions
             return !nullableValue.HasValue;
         }*/
 
-        public static string ToTraceStringA<T>(this IQueryable<T> t)
+        /*public static string ToTraceStringA<T>(this IQueryable<T> t)
         {
+            var sqlC = t.ToString();
+
             string sql = "";
             ObjectQuery<T> oqt = t as ObjectQuery<T>;
             if (oqt != null)
@@ -260,11 +262,24 @@ namespace www.e_bazar.dk.Extensions
 
         public static string ToTraceStringC<T>(this IQueryable<T> t)
         {
+            var sqlC = t.ToString();
+
             string sql = "";
             ObjectQuery<T> oqt = t as ObjectQuery<T>;
             if (oqt != null)
                 sql = oqt.ToTraceString();
             return sql;
+        }/**/
+
+        public static void ToTraceStringD<T>(this IQueryable<T> t)
+        {
+            //var sqlA = ((System.Data.Objects.ObjectQuery)t).ToTraceString();
+
+            //or in EF6:
+
+            //var sqlB = ((System.Data.Entity.Core.Objects.ObjectQuery)t).ToTraceString();
+            var sqlC = t.ToString();
+            System.Diagnostics.Trace.WriteLine(t.ToString());
         }
     }
 }

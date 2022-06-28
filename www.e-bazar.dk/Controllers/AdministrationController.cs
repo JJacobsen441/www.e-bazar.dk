@@ -389,6 +389,14 @@ namespace www.e_bazar.dk.Controllers
                             ViewBag.JSON_ERRORS = s;
                         ThisSession.Json_Errors = null;
                     }
+
+                    string subject = "Ny bod oprettet.";
+                    string body = "ny bod oprettet.<br />" +
+                                "navn: " + booth.name + "<br /><br />" +
+                                "med venlig hilsen<br />" +
+                                Settings.Basic.SITENAME();
+                    Admin.Notification.Run(Settings.Basic.EMAIL_MAIL(), per.email, Settings.Basic.EMAIL_MAIL(), subject, body);
+
                     return View("CreateBooth", dto);
                 }
                 else//der er errors

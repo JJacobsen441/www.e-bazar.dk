@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Web;
 using www.e_bazar.dk.Extensions;
 using www.e_bazar.dk.Models;
 using www.e_bazar.dk.Models.DTOs;
@@ -724,12 +725,15 @@ namespace www.e_bazar.dk.SharedClasses
             return null;
         }
 
-        public static bool Second(string ip, string cats)
+        public static bool Second(/*string ip, string cats*/)
         {
-            if (string.IsNullOrEmpty(ip))
-                return false;
-            if (string.IsNullOrEmpty(cats))
-                return false;
+            HttpRequestBase httpRequestBase = new HttpRequestWrapper(System.Web.HttpContext.Current.Request);
+            string ip = RequestHelpers.GetClientIpAddress(httpRequestBase);
+
+            //if (string.IsNullOrEmpty(ip))
+            //    return false;
+            //if (string.IsNullOrEmpty(cats))
+            //    return false;
 
             return CheckIPValid(ip) == "ipv4" || CheckIPValid(ip) == "ipv6";
             //if (!ch)

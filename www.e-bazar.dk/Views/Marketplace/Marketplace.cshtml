@@ -47,11 +47,9 @@
                                     string _t = Model.t == "999999" ? "" : Model.t;
                                 }
                                 <div class="col-xs-6 removepaddingleft z-z-index-low">
-                                    @*@Html.Label("PostNr", new { @class = "z-color-black-1" })*@
                                     @Html.TextBoxFor(m => _a, new { @class = "form-control z-background-color-darkgrey z-box-shadow-none z-border-darkgrey z-hover-black zip_input", placeholder = "postnr." })
                                 </div>
                                 <div class="col-xs-6 z-padding-sides-0 z-z-index-low">
-                                    @*@Html.Label("Område", new { @class = "z-color-black-1" })*@
                                     @Html.DropDownListFor(m => Model.area_selected, Areas.GetAreas().Select(i => new SelectListItem()
                                {
                                    Text = i.area
@@ -59,20 +57,14 @@
                                 </div>
                             </div>
 
-                            <div class="form-group z-padding-sides-0">
+                            @*<div class="form-group z-padding-sides-0">
                                 <div class="col-xs-6 z-padding-left-0 z-z-index-low">
-                                    @*@Html.Label("Pris fra", new { @class = "z-color-black-1" })*@
                                     @Html.TextBoxFor(m => _f, new { @class = "form-control z-background-color-darkgrey z-box-shadow-none z-border-darkgrey z-hover-black fra_input", placeholder = "fra 0 kr" })
                                 </div>
                                 <div class="col-xs-6 removepaddingsides z-z-index-low">
-                                    @*@Html.Label("Pris til", new { @class = "z-color-black-1" })*@
                                     @Html.TextBoxFor(m => _t, new { @class = "form-control z-background-color-darkgrey z-box-shadow-none z-border-darkgrey z-hover-black til_input", placeholder = "til 999999 kr" })
                                 </div>
-                                @*<div class="col-xs-12 removepaddingsides">
-                        @Html.CheckBoxFor(m => Model.g, new { @class = "z-border-white kun_med_fast_input" }) kun med fastsat pris?
-                    </div>*@
-
-                            </div>
+                            </div>*@
                         </fieldset>
 
 

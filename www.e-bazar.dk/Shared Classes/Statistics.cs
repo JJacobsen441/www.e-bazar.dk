@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Xml.Linq;
 using www.e_bazar.dk.Extensions;
 using www.e_bazar.dk.Models;
@@ -201,8 +202,11 @@ namespace www.e_bazar.dk.SharedClasses
             //return true;
         }
 
-        public Stats GetStatistics(string ip)
+        public Stats GetStatistics(/*string ip*/)
         {
+            HttpRequestBase httpRequestBase = new HttpRequestWrapper(System.Web.HttpContext.Current.Request);
+            string ip = RequestHelpers.GetClientIpAddress(httpRequestBase);
+
             string path = Statics.Root + "App_Stat\\Statistics.xml";
             
             if (CheckHelper.Generel.IsAdmin(ip))

@@ -8,26 +8,21 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using www.e_bazar.dk.Extensions;
-using www.e_bazar.dk.Interfaces;
 using www.e_bazar.dk.Models;
 using www.e_bazar.dk.Models.DataAccess;
 using www.e_bazar.dk.Models.DTOs;
 using www.e_bazar.dk.Models.Identity;
 using www.e_bazar.dk.SharedClasses;
+using static www.e_bazar.dk.Models.ViewModels.ViewModels;
 
 namespace www.e_bazar.dk.Controllers
 {
     public class MarketplaceController : Controller
     {
         List<biz_params> _params = null;
-        private string c_orig = "";
-        private string c_search = "";
-        private string c_url = "";
-        private string search = "";
-        private int zip = 0;
-        private int til = 999999;
-        private int fra = 0;
-        private bool kun_med_fast = false;
+        string _c_orig, _c_search, _c_url, _s;
+        int _z, _t, _f;
+        bool _g = false;
 
         private Access access;
         private ErrorHandler err = new ErrorHandler();
@@ -101,7 +96,7 @@ namespace www.e_bazar.dk.Controllers
         }
 
         [HttpPost]
-        public ActionResult AdminPost(string pwd, string cmd, string value1, string bool1, string bool2)
+        public ActionResult AdminPost(AdminPostViewModel model)
         {
             try
             {
@@ -131,16 +126,16 @@ namespace www.e_bazar.dk.Controllers
                 {
                     if (CheckHelper.Generel.IsAdmin(ip))
                     {
-                        if (pwd == "asDf1234")
+                        if (model.pwd == "asDf1234")
                         {
                             using (EbazarDB _db = new EbazarDB())
                             {
 
                                 int status;
-                                switch (cmd)
+                                switch (model.cmd)
                                 {
                                     case "categorys":
-                                        Admin.Commands.Categorys(bool.Parse(bool1), bool.Parse(bool2), _db);
+                                        Admin.Commands.Categorys(bool.Parse(model.bool1), bool.Parse(model.bool2), _db);
                                         status = (int)HttpStatusCode.OK;
                                         break;
                                     case "deleteuser":
@@ -257,19 +252,39 @@ namespace www.e_bazar.dk.Controllers
         }
 
         [AllowAnonymous]
-        public ActionResult Marketplace(List<string> area_selected, string a = "", string s = "", string c = "", string p = "", string z = "0", string f = "0", string t = "999999", string gra = "true", int page = 1)
+        public ActionResult Marketplace(MarketplaceViewModel model)
         {
+            //return View("Marketplace", Default());
             try
             {
-                
-                //return View("Marketplace", Default());
                 if (!access.Queue())
                     throw new Exception();
-
 
                 if (Statics.Maintenance)
                     return View("Maintenance");
                 
+                SetupCurrentUser();
+                ThisSession.Catalog = "";
+
+                CheckHelper.Generel.CheckMarketPlace(model, out _s, out _c_orig, out _z, out _t, out _f, out _g);
+
+                if (!Security.First(model.area_selected, model.a, model.c, model.p, out _c_url, out _c_search, out _params))
+                    return View("Marketplace", Default());
+                
+                if (!Security.Second())
+                    return View("Marketplace", Default());
+                                
+                if (ThisSession.Cookie)
+                {
+                    ThisSession.Search = _s;
+                    ThisSession.Category = _c_search;
+                    ThisSession.Params = _params;
+                    ThisSession.Zip = _z;
+                    ThisSession.Fra = _f;
+                    ThisSession.Til = _t;
+                    ThisSession.FastPris = _g;
+                }
+
                 if (ThisSession.Json_Messages != null)
                 {
                     ViewBag.JSON_SYSTEM_MESSAGE = "";
@@ -279,73 +294,31 @@ namespace www.e_bazar.dk.Controllers
                     ThisSession.Json_Messages = null;
                 }
 
-                SetupCurrentUser();
-                ThisSession.Catalog = "";
-
-                HttpRequestBase httpRequestBase = new HttpRequestWrapper(System.Web.HttpContext.Current.Request);
-                string ip = RequestHelpers.GetClientIpAddress(httpRequestBase);
-
-                c_orig = c;
-                search = s;
-                
-                if (string.IsNullOrEmpty(c))
-                    c = "alle";
-                
-                if (!Security.First(area_selected, a, c, p, out c_url, out c_search, out _params))
-                    return View("Marketplace", Default());
-                
-                if (!Security.Second(ip, c))
-                    return View("Marketplace", Default());
-
                 Statistics stats = new Statistics();
-                Stats stats_res = stats.GetStatistics(ip);
-                
-                bool ok;
-                search = StringHelper.OnlyAlphanumeric(s, false, true, "notag", CharacterHelper.Limited(true), out ok);
-                zip = int.TryParse(z, out zip) && zip >= 0 && zip <= 10000 ? zip : 0;
-                zip = Areas.selected.Contains("dk") ? zip : 0;
-                til = int.TryParse(t, out til) && til >= 0 && til <= 999999 ? til : 999999;
-                fra = int.TryParse(f, out fra) && fra >= 0 && fra <= til ? fra : 0;
-                kun_med_fast = gra == "true";
-                
-                if (ThisSession.Cookie)
-                {
-                    ThisSession.Search = search;
-                    ThisSession.Category = c_search;
-                    ThisSession.Params = _params;
-                    ThisSession.Zip = zip;
-                    ThisSession.Fra = fra;
-                    ThisSession.Til = til;
-                    ThisSession.FastPris = kun_med_fast;
-                }
-
+                Stats stats_res = stats.GetStatistics();
                 RelevantHelper.Create(true);
-                
-                SendNotifications(stats_res, zip, fra, til, gra, s, c_url, c_orig);
+                SendNotifications(stats_res, _z, _f, _t, model.gra, model.s, _c_url, _c_orig);
                 
                 int num_per_page = 18;
                 int count;
-                List<dto_booth> booth_list = DAL.GetInstance().GetBoothDTOs(num_per_page * (page - 1), num_per_page, out count);
-                
+                List<dto_booth> booth_list = DAL.GetInstance().GetBoothDTOs(num_per_page * (model.page - 1), num_per_page, out count);
                 List<dto_booth> booth_newest = DAL.GetInstance().GetNewestBoothDTOs(0, 5);
                 
                 biz_category cat_poco = new biz_category();
                 List<dto_category> cats = cat_poco._GetAll(true);
                 Dictionary<string, Dictionary<string, List<dto_params>>> param_a = Categorys.s_Params();
                 ViewBag.Subs = param_a;
-                ViewBag.Param = p; 
+                ViewBag.Param = model.p; 
 
                 pag = new Paginator(count, num_per_page);
-                pag.GotoPage(page);
+                pag.GotoPage(model.page);
                 
-                CurrentUser user = CurrentUser.GetInstance();
-                dto_person current_user = user.GetCurrentUser(false, true, true);
-                ViewBag.CurrentUser = current_user;
+                ViewBag.CurrentUser = CurrentUser.GetInstance().GetCurrentUser(false, true, true);
                 ViewBag.AreasChecked = Security.ListToString(Areas.selected, '-');
-                ViewBag.CatA = c_search.IsNullOrEmpty() || c_search == "alle" || c_search.Split('-')[0].IsNullOrEmpty() ? "" : c_search.Split('-')[0];
-                ViewBag.CatB = c_search.IsNullOrEmpty() || c_search == "alle" || c_search.Split('-')[1].IsNullOrEmpty() ? "" : c_search.Split('-')[1];
+                ViewBag.CatA = _c_search.IsNullOrEmpty() || _c_search == "alle" || _c_search.Split('-')[0].IsNullOrEmpty() ? "" : _c_search.Split('-')[0];
+                ViewBag.CatB = _c_search.IsNullOrEmpty() || _c_search == "alle" || _c_search.Split('-')[1].IsNullOrEmpty() ? "" : _c_search.Split('-')[1];
 
-                col_marketplace marketplace = new col_marketplace(booth_list, count, num_per_page, booth_newest, Areas.selected, cats, c_search, zip, fra, til, kun_med_fast, stats_res, s != "");
+                col_marketplace marketplace = new col_marketplace(booth_list, count, num_per_page, booth_newest, Areas.selected, cats, _c_search, _z, _f, _t, _g, stats_res, model.s != "");
 
                 return View("Marketplace", marketplace);
             }
@@ -374,7 +347,7 @@ namespace www.e_bazar.dk.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public JsonResult GetCats(string ok)
+        public JsonResult GetCats(GetCatsViewModel model)
         {
             try
             {
@@ -431,12 +404,10 @@ namespace www.e_bazar.dk.Controllers
         }
 
         [AllowAnonymous]
-        public ActionResult Booth(int id, string a_sub = "", string b_sub = "")
+        public ActionResult Booth(BoothViewModel model)
         {
-
             try
             {
-
                 if (!access.Queue())
                     throw new Exception();
 
@@ -445,13 +416,11 @@ namespace www.e_bazar.dk.Controllers
                 
                 SetupCurrentUser();
 
-                a_sub = a_sub.Replace("_", " ");
-                b_sub = b_sub.Replace("_", " ");
+                CheckHelper.Generel.CheckBooth(model);
 
-                CurrentUser user = CurrentUser.GetInstance();
-                dto_person current_user = user.GetCurrentUser(false, true, true);
+                dto_person current_user = CurrentUser.GetInstance().GetCurrentUser(false, true, true);
 
-                dto_booth booth_dto = DAL.GetInstance().GetBoothDTO(id, a_sub, b_sub, false, true, true, false, false, false, false);
+                dto_booth booth_dto = DAL.GetInstance().GetBoothDTO(model.id, model.a_sub, model.b_sub, false, true, true, false, false, false, false);
                 
                 ViewBag.Booth = booth_dto;
                 ViewBag.Address = booth_dto.fulladdress ? booth_dto.street_address.ToLower() + ", " +
@@ -511,22 +480,22 @@ namespace www.e_bazar.dk.Controllers
         }
 
         [AllowAnonymous]
-        public ActionResult SelectCatelog(int id, string a_sub, string b_sub, string catelog)
+        public ActionResult SelectCatelog(SelectCatelogViewModel model)
         {
-            if (string.IsNullOrEmpty(a_sub))
-                a_sub = "";
-            if (string.IsNullOrEmpty(b_sub))
-                b_sub = "";
-            if (string.IsNullOrEmpty(catelog))
-                catelog = "";
+            if (string.IsNullOrEmpty(model.a_sub))
+                model.a_sub = "";
+            if (string.IsNullOrEmpty(model.b_sub))
+                model.b_sub = "";
+            if (string.IsNullOrEmpty(model.catelog))
+                model.catelog = "";
 
-            ThisSession.Catalog = catelog;
+            ThisSession.Catalog = model.catelog;
 
-            return RedirectToRoute("Booth", new { id = id, a_sub = a_sub, b_sub = b_sub });
+            return RedirectToRoute("Booth", new { id = model.id, a_sub = model.a_sub, b_sub = model.b_sub });
         }
 
         [AllowAnonymous]
-        public ActionResult Product(long id)
+        public ActionResult Product(ProductViewModel model)
         {
 
             try
@@ -543,7 +512,7 @@ namespace www.e_bazar.dk.Controllers
                 
                 SetupCurrentUser();
 
-                dto_product product_dto = DAL.GetInstance().GetProductDTO(id, true, true, true, false, true);
+                dto_product product_dto = DAL.GetInstance().GetProductDTO(model.id, true, true, true, false, true);
                 
                 List<dto_booth_item> other = DAL.GetInstance().GetItemDTOs((int)product_dto.booth_id);
                 other = other.Randomize<dto_booth_item>().Skip(0).Take(4).ToList();
@@ -584,7 +553,7 @@ namespace www.e_bazar.dk.Controllers
         }
 
         [AllowAnonymous]
-        public ActionResult Collection(int id)
+        public ActionResult Collection(CollectionViewModel model)
         {
 
             try
@@ -597,7 +566,7 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
 
-                dto_collection collection_dto = DAL.GetInstance().GetCollectionDTO(id, true, true, false, true, true);
+                dto_collection collection_dto = DAL.GetInstance().GetCollectionDTO(model.id, true, true, false, true, true);
                 
                 List<dto_booth_item> other = DAL.GetInstance().GetItemDTOs((int)collection_dto.booth_id);
                 other = other.Randomize<dto_booth_item>().Skip(0).Take(4).ToList();
@@ -705,7 +674,7 @@ namespace www.e_bazar.dk.Controllers
         /* MessageGet er indgang fra front */
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult MessageA(long id, string type)//der skal være både GET og POST, da der GET(booth) ikke kender userid
+        public ActionResult MessageA(MessageAViewModel model)//der skal være både GET og POST, da der GET(booth) ikke kender userid
         {
             try
             {
@@ -720,26 +689,26 @@ namespace www.e_bazar.dk.Controllers
                 ViewBag.CurrentUser = current_user;
                 
                 TYPE e_type;
-                bool ok = Enum.TryParse(type.ToUpper(), out e_type);
+                bool ok = Enum.TryParse(model.type.ToUpper(), out e_type);
 
                 if (e_type == TYPE.PRODUCT)
                 {
-                    if (user.OwnsProduct((long)id))
+                    if (user.OwnsProduct((long)model.id))
                         return RedirectToRoute("UserProfile");
                 }
                 if (e_type == TYPE.COLLECTION)
                 {
-                    if (user.OwnsCollection((int)id))
+                    if (user.OwnsCollection((int)model.id))
                         return RedirectToRoute("UserProfile");
                 }
                 if (e_type == TYPE.BOOTH)
                 {
-                    if (user.OwnsBooth((int)id))
+                    if (user.OwnsBooth((int)model.id))
                         return RedirectToRoute("UserProfile");
                 }
 
                 string conn_owner_id = user.CurrentUserID;//conn_owner_id vil altid være CurrentUser, da der logges ind fra booth
-                col_message dto = MessageView(id, conn_owner_id, e_type);
+                col_message dto = MessageView(model.id, conn_owner_id, e_type);
                 if (dto == null)
                     return new HttpNotFoundResult();
 
@@ -771,7 +740,7 @@ namespace www.e_bazar.dk.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult MessageB(long id, string owner, string type)//der skal være både GET og POST, da der GET(booth) ikke kender userid
+        public ActionResult MessageB(MessageBViewModel model)//der skal være både GET og POST, da der GET(booth) ikke kender userid
         {
             try
             {
@@ -787,11 +756,11 @@ namespace www.e_bazar.dk.Controllers
                 ViewBag.CurrentUser = current_user;
                 
                 TYPE e_type;
-                bool ok = Enum.TryParse(type.ToUpper(), out e_type);
+                bool ok = Enum.TryParse(model.type.ToUpper(), out e_type);
 
                 
-                string conn_owner_id = owner;//conn_owner_id vil altid være CurrentUser, da der logges ind fra booth
-                col_message dto = MessageView(id, conn_owner_id, e_type);
+                string conn_owner_id = model.owner;//conn_owner_id vil altid være CurrentUser, da der logges ind fra booth
+                col_message dto = MessageView(model.id, conn_owner_id, e_type);
                 if (dto == null)
                     return new HttpNotFoundResult();
 
@@ -822,7 +791,7 @@ namespace www.e_bazar.dk.Controllers
         }
 
         [HttpPost]
-        public ActionResult Message(col_message mess)//Save
+        public ActionResult Message(MessageViewModel model)//Save
         {
             try
             {
@@ -843,26 +812,26 @@ namespace www.e_bazar.dk.Controllers
 
                 col_message col;
                 bool ok;
-                mess.message = StringHelper.OnlyAlphanumeric(mess.message, true, true, "notag", CharacterHelper.All(true), out ok);
+                model.message = StringHelper.OnlyAlphanumeric(model.message, true, true, "notag", CharacterHelper.All(true), out ok);
 
                 string conn_owner_id = "";
-                if (!string.IsNullOrEmpty(mess.message))
-                    conn_owner_id = DAL.GetInstance().SaveMessage(mess.conversation_id, mess.id, user.CurrentUserID, mess.message, mess.type);
+                if (!string.IsNullOrEmpty(model.message))
+                    conn_owner_id = DAL.GetInstance().SaveMessage(model.conversation_id, model.id, user.CurrentUserID, model.message, model.type);
 
-                col = MessageView(mess.id, conn_owner_id, mess.type);
+                col = MessageView(model.id, conn_owner_id, model.type);
                 if (col == null)
                     return new HttpNotFoundResult();
                 col.message = "";
 
                 string selfmailaddress = current_user.email;
-                string othermailaddress = mess.other_email;
+                string othermailaddress = model.other_email;
                 string selfname = current_user.firstname;
-                string othername = mess.other_firstname;
+                string othername = model.other_firstname;
 
                 string subject = "Du har sendt en besked";
                 string body = "Kære " + @selfname + ", <br /><br />" +
                                 "Du har sendt en besked.<br />" +
-                                "besked: " + mess.message + "<br /><br />" +
+                                "besked: " + model.message + "<br /><br />" +
                                 "Med venlig hilsen<br />" +
                                 Settings.Basic.SITENAME_SHORT_CAP();
                 Admin.Notification.Run(Settings.Basic.EMAIL_NO_REPLY(), selfmailaddress, Settings.Basic.EMAIL_NO_REPLY(), subject, body);
@@ -870,7 +839,7 @@ namespace www.e_bazar.dk.Controllers
                 subject = "Besked fra " + Settings.Basic.SITENAME_SHORT() + "";
                 body = "Kære " + @othername + ", <br /><br />" +
                                     "Du har modtaget en besked på " + Settings.Basic.SITENAME_SHORT() + ".<br />" +
-                                    "besked: " + mess.message + "<br />" +
+                                    "besked: " + model.message + "<br />" +
                                     "Login på din på din profil for at svare beskeden: <a href='https://www.e-bazar.dk/konto/login?returnUrl=%2Fadministration%2Fredigerprofil'>Klik her</a><br /><br />" +
                                     "Med venlig hilsen<br />" +
                                     Settings.Basic.SITENAME_SHORT();
@@ -1022,7 +991,7 @@ namespace www.e_bazar.dk.Controllers
             }
         }
 
-        public ActionResult AddFavorite(long product_id, int collection_id)
+        public ActionResult AddFavorite(AddFavoriteViewModel model)
         {
             try
             {
@@ -1031,11 +1000,11 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
 
-                DAL.GetInstance(/*true*/).AddFavorite(product_id, collection_id);
-                if (product_id != -1)
-                    return RedirectToRoute("Product", new { id = product_id });
+                DAL.GetInstance().AddFavorite(model.product_id, model.collection_id);
+                if (model.product_id != -1)
+                    return RedirectToRoute("Product", new { id = model.product_id });
                 else
-                    return RedirectToRoute("Collection", new { id = collection_id });
+                    return RedirectToRoute("Collection", new { id = model.collection_id });
             }
             catch (Exception e)
             {
@@ -1060,7 +1029,7 @@ namespace www.e_bazar.dk.Controllers
             }
         }
 
-        public ActionResult RemoveFavorite(long product_id, int collection_id)
+        public ActionResult RemoveFavorite(RemoveFavoriteViewModel model)
         {
             try
             {
@@ -1069,11 +1038,11 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
 
-                DAL.GetInstance().RemoveFavorite(product_id, collection_id);
-                if (product_id != -1)
-                    return RedirectToRoute("Product", new { id = product_id });
+                DAL.GetInstance().RemoveFavorite(model.product_id, model.collection_id);
+                if (model.product_id != -1)
+                    return RedirectToRoute("Product", new { id = model.product_id });
                 else
-                    return RedirectToRoute("Collection", new { id = collection_id });
+                    return RedirectToRoute("Collection", new { id = model.collection_id });
             }
             catch (Exception e)
             {
@@ -1098,7 +1067,7 @@ namespace www.e_bazar.dk.Controllers
             }
         }
 
-        public ActionResult AddFollowing(int booth_id)
+        public ActionResult AddFollowing(AddFollowingViewModel model)
         {
             try
             {
@@ -1107,8 +1076,8 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
 
-                DAL.GetInstance().AddFollowing(booth_id);
-                return RedirectToRoute("Booth", new { id = booth_id });
+                DAL.GetInstance().AddFollowing(model.booth_id);
+                return RedirectToRoute("Booth", new { id = model.booth_id });
             }
             catch (Exception e)
             {
@@ -1133,7 +1102,7 @@ namespace www.e_bazar.dk.Controllers
             }
         }
 
-        public ActionResult RemoveFollowing(int booth_id)
+        public ActionResult RemoveFollowing(RemoveFollowingViewModel model)
         {
             try
             {
@@ -1142,8 +1111,8 @@ namespace www.e_bazar.dk.Controllers
 
                 SetupCurrentUser();
 
-                DAL.GetInstance().RemoveFollowing(booth_id);
-                return RedirectToRoute("Booth", new { id = booth_id });
+                DAL.GetInstance().RemoveFollowing(model.booth_id);
+                return RedirectToRoute("Booth", new { id = model.booth_id });
             }
             catch (Exception e)
             {
@@ -1169,7 +1138,7 @@ namespace www.e_bazar.dk.Controllers
         }
 
         [HttpPost]
-        public JsonResult AddRating(string booth_id, string person_id, string rating)
+        public JsonResult AddRating(AddRatingViewModel model)
         {
             try
             {
@@ -1178,13 +1147,13 @@ namespace www.e_bazar.dk.Controllers
 
                 short r;
                 int b;
-                bool ok = short.TryParse(rating, out r);
+                bool ok = short.TryParse(model.rating, out r);
                 if (ok)
-                    ok = int.TryParse(booth_id, out b);
+                    ok = int.TryParse(model.booth_id, out b);
                 if (ok)
                 {
-                    ok = DAL.GetInstance().AddRating(int.Parse(booth_id), person_id, short.Parse(rating));
-                    return Json(new { success = ok, rating = rating });
+                    ok = DAL.GetInstance().AddRating(int.Parse(model.booth_id), model.person_id, short.Parse(model.rating));
+                    return Json(new { success = ok, rating = model.rating });
                 }
                 else
                     return Json(new { success = false });
@@ -1270,10 +1239,10 @@ namespace www.e_bazar.dk.Controllers
                 string subject = "Der er sket en fejl!";
                 string body = "ViewBag: " + ViewBag.ErrorMessage + "<br />" +
                         "IP: " + ip + "<br />" +
-                        "Cat Orig: " + c_orig + "<br />" +
-                        "Cat Search: " + c_search + "<br />" +
-                        "Cat Url: " + c_url + "<br />" +
-                        "search: " + search + "<br />" + "<br />" +
+                        "Cat Orig: " + _c_orig + "<br />" +
+                        "Cat Search: " + _c_search + "<br />" +
+                        "Cat Url: " + _c_url + "<br />" +
+                        "search: " + _s + "<br />" + "<br />" +
                         //"zip: " + zip + "<br />" +
                         //"til: " + til + "<br />" +
                         //"fra: " + fra + "<br />" +
@@ -1286,20 +1255,20 @@ namespace www.e_bazar.dk.Controllers
         }
 
         [AllowAnonymous]
-        public ActionResult NotFound(TYPE type, long id = -1, string a = "", string b = "")
+        public ActionResult NotFound(NotFoundViewModel model)
         {
             HttpRequestBase httpRequestBase = new HttpRequestWrapper(System.Web.HttpContext.Current.Request);
             string ip = RequestHelpers.GetClientIpAddress(httpRequestBase);
 
             string subject = "NotFound!";
             string body = "IP: " + ip + "<br />" +
-                       "type: " + type.ToString() + "<br />" + "<br />" +
-                       "Cat Orig: " + c_orig + "<br />" +
-                       "Cat Search: " + c_search + "<br />" +
-                       "Cat Url: " + c_url + "<br />" +
-                       "id: " + id + "<br />" +
-                       ((a != "") ? "sub_a: " + a + "<br />" : "") +
-                       ((b != "") ? "sub_b: " + b + "<br />" : "");
+                       "type: " + model.type.ToString() + "<br />" + "<br />" +
+                       "Cat Orig: " + _c_orig + "<br />" +
+                       "Cat Search: " + _c_search + "<br />" +
+                       "Cat Url: " + _c_url + "<br />" +
+                       "id: " + model.id + "<br />" +
+                       ((model.a != "") ? "sub_a: " + model.a + "<br />" : "") +
+                       ((model.b != "") ? "sub_b: " + model.b + "<br />" : "");
             Admin.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
 
             return HttpNotFound(HttpStatusCode.NotFound.ToString());

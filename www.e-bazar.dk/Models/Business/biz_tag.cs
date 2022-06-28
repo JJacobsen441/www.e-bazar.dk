@@ -190,7 +190,7 @@ namespace www.e_bazar.dk.Models.DTOs
                 .Where(t => t.Id == tag.Id);
                 
 
-                _t.ToTraceStringB();
+                _t.ToTraceStringD();
 
                 tag tmp = _t.AsEnumerable().FirstOrDefault();
                 if(tmp.IsNotNull() && tmp.product.IsNotNull() && tmp.collection.IsNotNull())

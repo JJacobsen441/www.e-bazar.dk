@@ -2,6 +2,8 @@
 
 recent updates:  
 
+accepting ViewModels in controller actions (MarketplaceController)  
+
 generally the business classes are most up to date  
 
 using Linq to entities and eager loading for EF queries  
