@@ -16,7 +16,6 @@ namespace www.e_bazar.dk.Controllers
     public class HomeController : Controller
     {
         private Access access;
-        private ErrorHandler err = new ErrorHandler();
         protected ApplicationDbContext ApplicationDbContext { get; set; }
         protected UserManager<ApplicationUser> UserManager { get; set; }
 
@@ -97,8 +96,7 @@ namespace www.e_bazar.dk.Controllers
                 HttpRequestBase httpRequestBase = new HttpRequestWrapper(System.Web.HttpContext.Current.Request);
                 string ip = RequestHelpers.GetClientIpAddress(httpRequestBase);
 
-                Statistics stats = new Statistics();
-                Stats stats_res = stats.GetStatistics();
+                Stats stats_res = StatisticsHelper.GetStatistics();
                 ViewBag.Stats = stats_res;
                 
                 SendNotifications(stats_res);
@@ -115,7 +113,7 @@ namespace www.e_bazar.dk.Controllers
             catch (Exception e)
             {
                 TempData["ErrorMessage"] = "Beklager, der skete en fejl!";
-                TempData["err_msg"] = err.HandleError(ERROR.MARKETPLACE, e);
+                TempData["err_msg"] = ErrorHelper.HandleError(ERROR.MARKETPLACE, e);
                 return RedirectToRoute("ErrorPage1");
             }
             finally
@@ -127,9 +125,8 @@ namespace www.e_bazar.dk.Controllers
                 }
                 catch (Exception e)
                 {
-                    ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
-                    string body = err.FormatError(e);
+                    string body = ErrorHelper.FormatError(e);
                     AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }

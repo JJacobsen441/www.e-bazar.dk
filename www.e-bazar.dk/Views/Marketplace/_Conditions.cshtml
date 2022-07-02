@@ -298,8 +298,8 @@
     }
     catch (Exception e)
     {
-        ErrorHandler err = new ErrorHandler();
-        string s = err.HandleError(ERROR.CONDITIONS, e);
+        
+        string s = ErrorHelper.HandleError(ERROR.CONDITIONS, e);
         string subject = "Fejl i front, Conditions(MOB)";
         string body = s;
         AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);

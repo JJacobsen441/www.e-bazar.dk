@@ -99,7 +99,7 @@
                                     <i class="far fa-file-alt"></i><span class="z-font-info">&nbsp;Infomation</span>
                                     <span class="z-desc-tooltip1 z-align-left">
                                         @{
-                                            List<pageinfo> dlist = Info.GetInfo(5);
+                                            List<pageinfo> dlist = InfoHelper.GetInfo(5);
                                             foreach (pageinfo i in dlist)
                                             {
                                                 @i.date @:- @i.type:<br />
@@ -381,7 +381,7 @@
                                     <i class="far fa-file-alt"></i><span class="z-font-info">&nbsp;Infomation</span>
                                     <span class="z-desc-tooltip1 z-align-left">
                                         @{
-                                            List<pageinfo> tlist = Info.GetInfo(5);
+                                            List<pageinfo> tlist = InfoHelper.GetInfo(5);
                                             foreach (pageinfo i in tlist)
                                             {
                                                 @i.date @:- @i.type:<br />
@@ -748,8 +748,7 @@
                             }
                             catch (Exception e)
                             {
-                                ErrorHandler err = new ErrorHandler();
-                                string s = err.HandleError(ERROR.MARKETPLACE, e);
+                                string s = ErrorHelper.HandleError(ERROR.MARKETPLACE, e);
                                 string subject = "Fejl i front, Marketplace(MOB)";
                                 string body = s;
                                 AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);

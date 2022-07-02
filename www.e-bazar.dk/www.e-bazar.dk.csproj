@@ -252,7 +252,7 @@
     <Compile Include="Statics\AdminHelper.cs" />
     <Compile Include="Statics\CategorysHelper.cs" />
     <Compile Include="Statics\ImageHelper.cs" />
-    <Compile Include="Shared Classes\Info.cs" />
+    <Compile Include="Statics\InfoHelper.cs" />
     <Compile Include="Models\Business\biz_category.cs" />
     <Compile Include="Models\Business\biz_folder.cs" />
     <Compile Include="Models\Business\biz_region.cs" />
@@ -275,7 +275,7 @@
     <Compile Include="Shared Classes\CurrentUser.cs" />
     <Compile Include="Statics\EnumHelper.cs" />
     <Compile Include="Shared Classes\Enums.cs" />
-    <Compile Include="Shared Classes\ErrorHandler.cs" />
+    <Compile Include="Statics\ErrorHelper.cs" />
     <Compile Include="Statics\PathHelper.cs" />
     <Compile Include="Statics\RequestHelpers.cs" />
     <Compile Include="Statics\SecurityHelper.cs" />
@@ -284,7 +284,7 @@
     <Compile Include="Shared Classes\ThisSession.cs" />
     <Compile Include="Statics\SetupHelper.cs" />
     <Compile Include="Statics\StringHelpers.cs" />
-    <Compile Include="Shared Classes\Statistics.cs" />
+    <Compile Include="Statics\StatisticsHelper.cs" />
     <Compile Include="Statics\TextHelper.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Models\storie.cs" />

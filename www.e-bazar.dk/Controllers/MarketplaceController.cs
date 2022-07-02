@@ -25,7 +25,6 @@ namespace www.e_bazar.dk.Controllers
         bool _g = false;
 
         private Access access;
-        private ErrorHandler err = new ErrorHandler();
         private Paginator pag;
         protected ApplicationDbContext ApplicationDbContext { get; set; }
         
@@ -161,8 +160,8 @@ namespace www.e_bazar.dk.Controllers
             }
             catch (Exception e) 
             {
-                StaticsHelper.Log(err.HandleError(ERROR.MARKETPLACE, e));
-                TempData["err_msg"] = err.HandleError(ERROR.MARKETPLACE, e);
+                StaticsHelper.Log(ErrorHelper.HandleError(ERROR.MARKETPLACE, e));
+                TempData["err_msg"] = ErrorHelper.HandleError(ERROR.MARKETPLACE, e);
                 TempData["ErrorMessage"] = "";
                 return ErrorPage();
             }
@@ -175,9 +174,8 @@ namespace www.e_bazar.dk.Controllers
                 }
                 catch (Exception e)
                 {
-                    ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
-                    string body = err.FormatError(e);
+                    string body = ErrorHelper.FormatError(e);
                     AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
@@ -224,8 +222,7 @@ namespace www.e_bazar.dk.Controllers
             HttpRequestBase httpRequestBase = new HttpRequestWrapper(System.Web.HttpContext.Current.Request);
             string ip = RequestHelpers.GetClientIpAddress(httpRequestBase);
             
-            Statistics stats = new Statistics();
-            Stats stats_res = new Stats();
+            Stats stats_res = StatisticsHelper.GetStatistics();
             
             int num_per_page = 6;
             int count = 0;
@@ -295,8 +292,7 @@ namespace www.e_bazar.dk.Controllers
                     ThisSession.Json_Messages = null;
                 }
 
-                Statistics stats = new Statistics();
-                Stats stats_res = stats.GetStatistics();
+                Stats stats_res = StatisticsHelper.GetStatistics();
                 RelevantHelper.Create(true);
                 SendNotifications(stats_res, _z, _f, _t, model.gra, model.s, _c_url, _c_orig);
                 
@@ -305,15 +301,14 @@ namespace www.e_bazar.dk.Controllers
                 List<dto_booth> booth_list = DAL.GetInstance().GetBoothDTOs(num_per_page * (model.page - 1), num_per_page, out count);
                 List<dto_booth> booth_newest = DAL.GetInstance().GetNewestBoothDTOs(0, 5);
                 
-                biz_category cat_poco = new biz_category();
-                List<dto_category> cats = cat_poco._GetAll(true);
-                Dictionary<string, Dictionary<string, List<dto_params>>> param_a = CategorysHelper.s_Params();
-                ViewBag.Subs = param_a;
-                ViewBag.Param = model.p; 
-
                 pag = new Paginator(count, num_per_page);
                 pag.GotoPage(model.page);
+
+                List<dto_category> cats = CategorysHelper.CatsYesNo;
+                Dictionary<string, Dictionary<string, List<dto_params>>> param_a = CategorysHelper.s_Params();
                 
+                ViewBag.Subs = param_a;
+                ViewBag.Param = model.p; 
                 ViewBag.CurrentUser = CurrentUser.GetInstance().GetCurrentUser(false, true, true);
                 ViewBag.AreasChecked = SecurityHelper.ListToString(AreasHelper.selected, '-');
                 ViewBag.CatA = _c_search.IsNullOrEmpty() || _c_search == "alle" || _c_search.Split('-')[0].IsNullOrEmpty() ? "" : _c_search.Split('-')[0];
@@ -326,7 +321,7 @@ namespace www.e_bazar.dk.Controllers
             catch (Exception e)
             {
                 TempData["ErrorMessage"] = "Beklager, der skete en fejl!";
-                TempData["err_msg"] = err.HandleError(ERROR.MARKETPLACE, e);
+                TempData["err_msg"] = ErrorHelper.HandleError(ERROR.MARKETPLACE, e);
                 return RedirectToRoute("ErrorPage1");
             }
             finally
@@ -338,9 +333,8 @@ namespace www.e_bazar.dk.Controllers
                 }
                 catch (Exception e)
                 {
-                    ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
-                    string body = err.FormatError(e);
+                    string body = ErrorHelper.FormatError(e);
                     AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
@@ -384,7 +378,7 @@ namespace www.e_bazar.dk.Controllers
             }
             catch (Exception e)
             {
-                StaticsHelper.Log(err.HandleError(ERROR.MARKETPLACE, e));
+                StaticsHelper.Log(ErrorHelper.HandleError(ERROR.MARKETPLACE, e));
                 return AjaxErrorReturn("Beklager der skete en fejl!");
             }
             finally
@@ -396,9 +390,8 @@ namespace www.e_bazar.dk.Controllers
                 }
                 catch (Exception e)
                 {
-                    ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
-                    string body = err.FormatError(e);
+                    string body = ErrorHelper.FormatError(e);
                     AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
@@ -460,7 +453,7 @@ namespace www.e_bazar.dk.Controllers
             catch (Exception e)
             {
                 TempData["ErrorMessage"] = "Boden kunne ikke findes!";
-                TempData["err_msg"] = err.HandleError(ERROR.BOOTH, e);
+                TempData["err_msg"] = ErrorHelper.HandleError(ERROR.BOOTH, e);
                 return RedirectToRoute("ErrorPage1");
             }
             finally
@@ -472,9 +465,8 @@ namespace www.e_bazar.dk.Controllers
                 }
                 catch (Exception e)
                 {
-                    ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
-                    string body = err.FormatError(e);
+                    string body = ErrorHelper.FormatError(e);
                     AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
@@ -533,7 +525,7 @@ namespace www.e_bazar.dk.Controllers
             catch (Exception e)
             {
                 TempData["ErrorMessage"] = "Varen kunne ikke findes!";
-                TempData["err_msg"] = err.HandleError(ERROR.PRODUCT, e);
+                TempData["err_msg"] = ErrorHelper.HandleError(ERROR.PRODUCT, e);
                 return RedirectToRoute("ErrorPage1");
             }
             finally
@@ -545,9 +537,8 @@ namespace www.e_bazar.dk.Controllers
                 }
                 catch (Exception e)
                 {
-                    ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
-                    string body = err.FormatError(e);
+                    string body = ErrorHelper.FormatError(e);
                     AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
@@ -587,7 +578,7 @@ namespace www.e_bazar.dk.Controllers
             catch (Exception e)
             {
                 TempData["ErrorMessage"] = "Varen kunne ikke findes!";
-                TempData["err_msg"] = err.HandleError(ERROR.COLLECTION, e);
+                TempData["err_msg"] = ErrorHelper.HandleError(ERROR.COLLECTION, e);
                 return RedirectToRoute("ErrorPage1");
             }
             finally
@@ -599,9 +590,8 @@ namespace www.e_bazar.dk.Controllers
                 }
                 catch (Exception e)
                 {
-                    ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
-                    string body = err.FormatError(e);
+                    string body = ErrorHelper.FormatError(e);
                     AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
@@ -717,8 +707,8 @@ namespace www.e_bazar.dk.Controllers
             }
             catch (Exception e)
             {
-                StaticsHelper.Log(err.HandleError(ERROR.MESSAGE, e));
-                TempData["err_msg"] = err.HandleError(ERROR.MESSAGE, e);
+                StaticsHelper.Log(ErrorHelper.HandleError(ERROR.MESSAGE, e));
+                TempData["err_msg"] = ErrorHelper.HandleError(ERROR.MESSAGE, e);
                 TempData["ErrorMessage"] = "";
                 return ErrorPage();
             }
@@ -731,9 +721,8 @@ namespace www.e_bazar.dk.Controllers
                 }
                 catch (Exception e)
                 {
-                    ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
-                    string body = err.FormatError(e);
+                    string body = ErrorHelper.FormatError(e);
                     AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
@@ -769,8 +758,8 @@ namespace www.e_bazar.dk.Controllers
             }
             catch (Exception e)
             {
-                StaticsHelper.Log(err.HandleError(ERROR.MESSAGE, e));
-                TempData["err_msg"] = err.HandleError(ERROR.MESSAGE, e);
+                StaticsHelper.Log(ErrorHelper.HandleError(ERROR.MESSAGE, e));
+                TempData["err_msg"] = ErrorHelper.HandleError(ERROR.MESSAGE, e);
                 TempData["ErrorMessage"] = "";
                 return ErrorPage();
             }
@@ -783,9 +772,8 @@ namespace www.e_bazar.dk.Controllers
                 }
                 catch (Exception e)
                 {
-                    ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
-                    string body = err.FormatError(e);
+                    string body = ErrorHelper.FormatError(e);
                     AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
@@ -850,8 +838,8 @@ namespace www.e_bazar.dk.Controllers
             }
             catch (Exception e)
             {
-                StaticsHelper.Log(err.HandleError(ERROR.MESSAGE, e));
-                TempData["err_msg"] = err.HandleError(ERROR.MESSAGE, e);
+                StaticsHelper.Log(ErrorHelper.HandleError(ERROR.MESSAGE, e));
+                TempData["err_msg"] = ErrorHelper.HandleError(ERROR.MESSAGE, e);
                 TempData["ErrorMessage"] = "";
                 return ErrorPage();
             }
@@ -864,9 +852,8 @@ namespace www.e_bazar.dk.Controllers
                 }
                 catch (Exception e)
                 {
-                    ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
-                    string body = err.FormatError(e);
+                    string body = ErrorHelper.FormatError(e);
                     AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
@@ -891,7 +878,7 @@ namespace www.e_bazar.dk.Controllers
             }
             catch (Exception e)
             {
-                string err_msg = err.HandleError(ERROR.INFO, e);
+                string err_msg = ErrorHelper.HandleError(ERROR.INFO, e);
                 TempData["err_msg"] = err_msg;
                 return RedirectToRoute("ErrorPage1");
             }
@@ -904,9 +891,8 @@ namespace www.e_bazar.dk.Controllers
                 }
                 catch (Exception e)
                 {
-                    ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
-                    string body = err.FormatError(e);
+                    string body = ErrorHelper.FormatError(e);
                     AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
@@ -931,7 +917,7 @@ namespace www.e_bazar.dk.Controllers
             }
             catch (Exception e)
             {
-                string err_msg = err.HandleError(ERROR.FEATURES, e);
+                string err_msg = ErrorHelper.HandleError(ERROR.FEATURES, e);
                 TempData["err_msg"] = err_msg;
                 return RedirectToRoute("ErrorPage1");
             }
@@ -944,9 +930,8 @@ namespace www.e_bazar.dk.Controllers
                 }
                 catch (Exception e)
                 {
-                    ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
-                    string body = err.FormatError(e);
+                    string body = ErrorHelper.FormatError(e);
                     AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
@@ -971,7 +956,7 @@ namespace www.e_bazar.dk.Controllers
             }
             catch (Exception e)
             {
-                string err_msg = err.HandleError(ERROR.CONDITIONS, e);
+                string err_msg = ErrorHelper.HandleError(ERROR.CONDITIONS, e);
                 TempData["err_msg"] = err_msg;
                 return RedirectToRoute("ErrorPage1");
             }
@@ -984,9 +969,8 @@ namespace www.e_bazar.dk.Controllers
                 }
                 catch (Exception e)
                 {
-                    ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
-                    string body = err.FormatError(e);
+                    string body = ErrorHelper.FormatError(e);
                     AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
@@ -1009,7 +993,7 @@ namespace www.e_bazar.dk.Controllers
             }
             catch (Exception e)
             {
-                string err_msg = err.HandleError(ERROR.ADDFAVORITE, e);
+                string err_msg = ErrorHelper.HandleError(ERROR.ADDFAVORITE, e);
                 TempData["err_msg"] = err_msg;
                 return RedirectToRoute("ErrorPage1");
             }
@@ -1022,9 +1006,8 @@ namespace www.e_bazar.dk.Controllers
                 }
                 catch (Exception e)
                 {
-                    ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
-                    string body = err.FormatError(e);
+                    string body = ErrorHelper.FormatError(e);
                     AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
@@ -1047,7 +1030,7 @@ namespace www.e_bazar.dk.Controllers
             }
             catch (Exception e)
             {
-                string err_msg = err.HandleError(ERROR.ADDFAVORITE, e);
+                string err_msg = ErrorHelper.HandleError(ERROR.ADDFAVORITE, e);
                 TempData["err_msg"] = err_msg;
                 return RedirectToRoute("ErrorPage1");
             }
@@ -1060,9 +1043,8 @@ namespace www.e_bazar.dk.Controllers
                 }
                 catch (Exception e)
                 {
-                    ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
-                    string body = err.FormatError(e);
+                    string body = ErrorHelper.FormatError(e);
                     AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
@@ -1082,7 +1064,7 @@ namespace www.e_bazar.dk.Controllers
             }
             catch (Exception e)
             {
-                string err_msg = err.HandleError(ERROR.ADDFAVORITE, e);
+                string err_msg = ErrorHelper.HandleError(ERROR.ADDFAVORITE, e);
                 TempData["err_msg"] = err_msg;
                 return RedirectToRoute("ErrorPage1");
             }
@@ -1095,9 +1077,8 @@ namespace www.e_bazar.dk.Controllers
                 }
                 catch (Exception e)
                 {
-                    ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
-                    string body = err.FormatError(e);
+                    string body = ErrorHelper.FormatError(e);
                     AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
@@ -1117,7 +1098,7 @@ namespace www.e_bazar.dk.Controllers
             }
             catch (Exception e)
             {
-                string err_msg = err.HandleError(ERROR.ADDFAVORITE, e);
+                string err_msg = ErrorHelper.HandleError(ERROR.ADDFAVORITE, e);
                 TempData["err_msg"] = err_msg;
                 return RedirectToRoute("ErrorPage1");
             }
@@ -1130,9 +1111,8 @@ namespace www.e_bazar.dk.Controllers
                 }
                 catch (Exception e)
                 {
-                    ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
-                    string body = err.FormatError(e);
+                    string body = ErrorHelper.FormatError(e);
                     AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
@@ -1161,7 +1141,7 @@ namespace www.e_bazar.dk.Controllers
             }
             catch (Exception e)
             {
-                string err_msg = err.HandleError(ERROR.ADDRATING, e);
+                string err_msg = ErrorHelper.HandleError(ERROR.ADDRATING, e);
                 TempData["err_msg"] = err_msg;
                 return AjaxErrorReturn("err");
             }
@@ -1174,9 +1154,8 @@ namespace www.e_bazar.dk.Controllers
                 }
                 catch (Exception e)
                 {
-                    ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
-                    string body = err.FormatError(e);
+                    string body = ErrorHelper.FormatError(e);
                     AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }
@@ -1198,7 +1177,7 @@ namespace www.e_bazar.dk.Controllers
             }
             catch (Exception e)
             {
-                string err_msg = err.HandleError(ERROR.GETTAGS, e);
+                string err_msg = ErrorHelper.HandleError(ERROR.GETTAGS, e);
                 TempData["err_msg"] = err_msg;
                 return AjaxErrorReturn("err");
             }
@@ -1211,9 +1190,8 @@ namespace www.e_bazar.dk.Controllers
                 }
                 catch (Exception e)
                 {
-                    ErrorHandler err = new ErrorHandler();
                     string subject = "Fejl i finally!";
-                    string body = err.FormatError(e);
+                    string body = ErrorHelper.FormatError(e);
                     AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
                 }
             }

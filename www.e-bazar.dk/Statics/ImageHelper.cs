@@ -26,6 +26,7 @@ namespace www.e_bazar.dk.Statics
                     return PATH.DEFAULT;
             }
         }
+
         public static Image CropImage(Image tmpImg, TYPE type)
         {
             int _divW = type == TYPE.PROFILE ? 4 : 5;
@@ -71,6 +72,7 @@ namespace www.e_bazar.dk.Statics
                     _h = (int)((double)tmpImg.Height * s);
                 }
             }
+
             if (type == TYPE.PROFILE)//portrait
             {
                 double _s_w = (double)tmpImg.Width / (double)tmpImg.Height;
@@ -99,6 +101,7 @@ namespace www.e_bazar.dk.Statics
                     }
                 }
             }
+
             /*if (type == TYPE.PROFILE)//portrait
             {
                 len_1 = (double)((double)tmpImg.Width / (double)_divW);
@@ -132,6 +135,7 @@ namespace www.e_bazar.dk.Statics
             Bitmap bmpImage = new Bitmap(tmpImg);
             return bmpImage.Clone(cropRect, bmpImage.PixelFormat);
         }
+
         public static Image FixOrientation(MemoryStream ms)
         {
             Image originalImage = Image.FromStream(ms);

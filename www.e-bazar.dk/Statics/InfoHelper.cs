@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using www.e_bazar.dk.Statics;
 
-namespace www.e_bazar.dk.SharedClasses
+namespace www.e_bazar.dk.Statics
 {
     public class pageinfo
     {
@@ -11,7 +10,8 @@ namespace www.e_bazar.dk.SharedClasses
         public string type;
         public string text = "";
     }
-    public class Info
+
+    public class InfoHelper
     {
         public static List<pageinfo> GetInfo(int count) 
         {

@@ -8,8 +8,6 @@ namespace www.e_bazar.dk.Statics
 {
     public static class EnumHelper
     {
-        // Get the value of the description attribute if the   
-        // enum has one, otherwise use the value.  
         public static string GetDescription<TEnum>(this TEnum value)
         {
             var fi = value.GetType().GetField(value.ToString());
@@ -27,24 +25,16 @@ namespace www.e_bazar.dk.Statics
             return value.ToString();
         }
 
-        /// <summary>
-        /// Build a select list for an enum
-        /// </summary>
         public static SelectList SelectListFor<T>() where T : struct
         {
             Type t = typeof(T);
-            return !t.IsEnum ? null
-                             : new SelectList(BuildSelectListItems(t), "Value", "Text");
+            return !t.IsEnum ? null : new SelectList(BuildSelectListItems(t), "Value", "Text");
         }
 
-        /// <summary>
-        /// Build a select list for an enum with a particular value selected 
-        /// </summary>
         public static SelectList SelectListFor<T>(T selected) where T : struct
         {
             Type t = typeof(T);
-            return !t.IsEnum ? null
-                             : new SelectList(BuildSelectListItems(t), "Text", "Value", selected.ToString());
+            return !t.IsEnum ? null : new SelectList(BuildSelectListItems(t), "Text", "Value", selected.ToString());
         }
 
         private static IEnumerable<SelectListItem> BuildSelectListItems(Type t)

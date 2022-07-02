@@ -189,8 +189,8 @@
     }
     catch (Exception e)
     {
-        ErrorHandler err = new ErrorHandler();
-        string s = err.HandleError(ERROR.FEATURES, e);
+        
+        string s = ErrorHelper.HandleError(ERROR.FEATURES, e);
         string subject = "Fejl i front, Features(DESK)";
         string body = s;
         AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);

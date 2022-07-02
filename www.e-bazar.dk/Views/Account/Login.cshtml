@@ -64,8 +64,7 @@
 
 catch (Exception e)
 {
-    ErrorHandler err = new ErrorHandler();
-    string s = err.FormatError(e);
+    string s = ErrorHelper.FormatError(e);
     string subject = "Fejl i front, Login";
     string body = s;
     AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);

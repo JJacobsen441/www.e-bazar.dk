@@ -135,51 +135,6 @@ namespace www.e_bazar.dk.Statics
                 return false;
             }
 
-            //public static bool IsOrderObj(orderOBJ obj)
-            //{
-            //    bool ok = true;
-            //    bool tmp;
-
-            //    long token;
-            //    long s_id;
-            //    long p_id;
-            //    string s_name;
-            //    string p_name;
-            //    double p_weight;
-            //    long p_amt;
-            //    long p_qty;
-            //    string type;
-
-            //    //ok = !string.IsNullOrEmpty(obj.token) ? true : false;
-            //    ok &= long.TryParse("" + obj.s_id, out s_id);
-            //    ok &= obj.p_id > 0;
-
-            //    s_name = StringHelper.OnlyAlphanumeric(obj.s_name, false, true, "notag", Characters.Limited(false), out tmp);
-            //    ok &= tmp;
-
-            //    p_name = StringHelper.OnlyAlphanumeric(obj.p_name, false, true, "notag", Characters.Limited(false), out tmp);
-            //    //p_name = StringHelper.RemoveStrings(p_name, new string[] { "select ", "delete ", "update ", "alter ", "drop ", " from ", "SELECT ", "DELETE ", "UPDATE ", "ALTER ", "DROP ", " FROM " });
-            //    ok &= tmp;
-
-            //    ok &= obj.p_amt > 0;
-            //    ok &= obj.p_qty > 0;
-            //    ok &= obj.p_weight > 0;
-
-            //    ok &= obj.type == "PRODUCT" || obj.type == "COLLECTION";
-
-            //    return ok;
-
-            //    //obj.s_id = s_id;
-            //    //obj.p_id = "" + p_id;
-            //    //obj.s_name = s_name;
-            //    //obj.p_name = p_name;
-            //    //obj.p_amount = "" + l_amt;
-            //    //obj.p_quantity = "" + l_qty;
-            //    //obj.type = obj.type;
-
-            //    //return ok;
-            //}
-
             public static bool IsAmount(ref string str)
             {
                 int tmp;

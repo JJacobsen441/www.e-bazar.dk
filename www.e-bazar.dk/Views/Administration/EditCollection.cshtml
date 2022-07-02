@@ -1391,8 +1391,7 @@
                                                         }
                                                         catch (Exception e)
                                                         {
-                                                            ErrorHandler err = new ErrorHandler();
-                                                            string s = err.HandleError(ERROR.EDITCOLLECTION, e);
+                                                            string s = ErrorHelper.HandleError(ERROR.EDITCOLLECTION, e);
                                                             string subject = "Fejl i front, EditCollection(MOB)";
                                                             string body = s;
                                                             AdminHelper.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);

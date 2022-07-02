@@ -21,6 +21,7 @@ namespace www.e_bazar.dk.Statics
                 }
                 throw new Exception("A-OK, Check.");
             }
+
             public static string MD5_COUNT()
             {
                 var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");
@@ -35,6 +36,7 @@ namespace www.e_bazar.dk.Statics
                 }
                 throw new Exception("A-OK, Check.");
             }
+
             public static string GROUPS()
             {
                 var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");
@@ -50,6 +52,7 @@ namespace www.e_bazar.dk.Statics
                 throw new Exception("A-OK, Check.");
             }
         }
+
         public class Basic
         {
             public static string SITENAME()
@@ -66,6 +69,7 @@ namespace www.e_bazar.dk.Statics
                 }
                 throw new Exception("A-OK, Check.");
             }
+
             public static string SITENAME_SHORT()
             {
                 var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");
@@ -80,16 +84,19 @@ namespace www.e_bazar.dk.Statics
                 }
                 throw new Exception("A-OK, Check.");
             }
+
             public static string SITENAME_SHORT_CAP()
             {
                 string str = SITENAME_SHORT();
                 return ("" + str[0]).ToUpper() + str.Substring(1);
             }
+
             public static string SITENAME_SHORT_UP()
             {
                 string str = SITENAME_SHORT();
                 return str.ToUpper();
             }
+
             public static string SITE_NAME_FULL()
             {
                 var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");
@@ -104,6 +111,7 @@ namespace www.e_bazar.dk.Statics
                 }
                 throw new Exception("A-OK, Check.");
             }
+
             public static string SLOGAN()
             {
                 var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");
@@ -118,6 +126,7 @@ namespace www.e_bazar.dk.Statics
                 }
                 throw new Exception("A-OK, Check.");
             }
+
             public static string COMMENT()
             {
                 var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");
@@ -132,6 +141,7 @@ namespace www.e_bazar.dk.Statics
                 }
                 throw new Exception("A-OK, Check.");
             }
+
             public static string EMAIL_ADMIN()
             {
                 var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");
@@ -146,6 +156,7 @@ namespace www.e_bazar.dk.Statics
                 }
                 throw new Exception("A-OK, Check.");
             }
+
             public static string EMAIL_MAIL()
             {
                 var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");
@@ -160,6 +171,7 @@ namespace www.e_bazar.dk.Statics
                 }
                 throw new Exception("A-OK, Check.");
             }
+
             public static string EMAIL_NO_REPLY()
             {
                 var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");
@@ -174,6 +186,7 @@ namespace www.e_bazar.dk.Statics
                 }
                 throw new Exception("A-OK, Check.");
             }
+
             public static string EMAIL_TEST()
             {
                 var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");
@@ -188,6 +201,7 @@ namespace www.e_bazar.dk.Statics
                 }
                 throw new Exception("A-OK, Check.");
             }
+
             public static string IP()
             {
                 var xdoc = XElement.Load(StaticsHelper.Root + "App_Data\\settings.xml");

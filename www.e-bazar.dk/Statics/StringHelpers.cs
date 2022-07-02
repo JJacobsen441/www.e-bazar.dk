@@ -5,7 +5,6 @@ namespace www.e_bazar.dk.Statics
 {
     public static class StringHelper
     {
-
         public static string RemoveCharacter(string str, char character)
         {
             if (str == null)
@@ -15,6 +14,7 @@ namespace www.e_bazar.dk.Statics
                 str = str.Remove(charindex, 1);
             return str;
         }
+
         private static int CountChars(string str, char c)
         {
             int count = 0;
@@ -25,6 +25,7 @@ namespace www.e_bazar.dk.Statics
             }
             return count;
         }
+
         public static string _RemoveCharacters(string str, char[] characters)
         {
             if (str == null)
@@ -38,6 +39,7 @@ namespace www.e_bazar.dk.Statics
             }
             return str;
         }
+
         public static string RemoveStrings(string str, string[] strings)
         {
             if (str == null)
@@ -49,6 +51,7 @@ namespace www.e_bazar.dk.Statics
             }
             return str;
         }
+
         //public static string OnlyAlphanumeric(string str, bool allow_upper, char[] allowed, out bool ok)
         //{
         //    ok = true;
@@ -77,6 +80,7 @@ namespace www.e_bazar.dk.Statics
         //    }
         //    return str;
         //}
+
         public static string OnlyAlphanumeric(string str, bool allow_newline, bool allow_upper, string allow_tag, char[] allowed, out bool ok)
         {
             ok = true;
@@ -138,6 +142,7 @@ namespace www.e_bazar.dk.Statics
             }
             return str;
         }
+
         public static string Only(string str, char[] allowed, out bool ok)
         {
             ok = true;

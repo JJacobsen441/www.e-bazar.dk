@@ -6,7 +6,7 @@ using System.Xml.Linq;
 using www.e_bazar.dk.Models;
 using www.e_bazar.dk.Statics;
 
-namespace www.e_bazar.dk.SharedClasses
+namespace www.e_bazar.dk.Statics
 {
     public class IP_Logs
     {
@@ -121,15 +121,13 @@ namespace www.e_bazar.dk.SharedClasses
         public int items_count { get; set; }
     }
 
-    public class Statistics
+    public class StatisticsHelper
     {
-        Stats stats = new Stats();
-
-        public Statistics() 
+        public StatisticsHelper() 
         {
-            //this.db = db;
         }
-        private void SetUserPerMonth(string path, int count)
+        
+        private static void SetUserPerMonth(Stats stat, string path, int count)
         {
             var xdoc = XElement.Load(path);
             int res = 0;
@@ -149,9 +147,10 @@ namespace www.e_bazar.dk.SharedClasses
                 users_per_month.Attribute("date").SetValue(now.ToString("MM-yyyy"));
             }
             xdoc.Save(path);
-            stats.users_per_month = res;
+            stat.users_per_month = res;
         }
-        private void SetUsersPerDay(string ip, string path/*, int count*/, out bool first, out int users_per_day, out int max_users_per_month)
+        
+        private static void SetUsersPerDay(string ip, string path, out bool first, out int users_per_day, out int max_users_per_month)
         {
             DateTime now = DateTime.Now;
 
@@ -198,41 +197,42 @@ namespace www.e_bazar.dk.SharedClasses
             max_users_per_month = int.Parse(elem_per_month.Attribute("count").Value.ToString());
 
             xdoc.Save(path);
-            //return true;
         }
 
-        public Stats GetStatistics(/*string ip*/)
+        public static Stats GetStatistics()
         {
+            Stats stats = new Stats();
+
             HttpRequestBase httpRequestBase = new HttpRequestWrapper(System.Web.HttpContext.Current.Request);
             string ip = RequestHelpers.GetClientIpAddress(httpRequestBase);
 
             string path = StaticsHelper.Root + "App_Stat\\Statistics.xml";
             
             if (CheckHelper.Generel.IsAdmin(ip))
-                this.SetUserPerMonth(path, 0);
+                SetUserPerMonth(stats, path, 0);
             else
-                this.SetUserPerMonth(path, 1);
+                SetUserPerMonth(stats, path, 1);
 
             bool first;
             //bool ok;
             int users_per_day;
             int max_users_per_month;
             if (CheckHelper.Generel.IsAdmin(ip))
-                this.SetUsersPerDay(ip, path/*, 0*/, out first, out users_per_day, out max_users_per_month);
+                SetUsersPerDay(ip, path, out first, out users_per_day, out max_users_per_month);
             else
-                this.SetUsersPerDay(ip, path/*, 1*/, out first, out users_per_day, out max_users_per_month);
+                SetUsersPerDay(ip, path, out first, out users_per_day, out max_users_per_month);
 
             //EbazarDB _db = DAL.GetInstance().GetContext();
             using (EbazarDB _db = new EbazarDB())
             {
 
                 //this.stats.ok = ok;
-                this.stats.ip = ip;
-                this.stats.first = first;
-                this.stats.users_per_day = users_per_day;
-                this.stats.max_users_per_month = max_users_per_month;
-                this.stats.booths_count = _db.booth.Where(b => b.product.Where(p => p.active).Count() > 0 || b.collection.Where(co => co.active).Count() > 0).Count();
-                this.stats.items_count = _db.product.Where(p => p.active).Count() + _db.collection.Where(co => co.active).Count();
+                stats.ip = ip;
+                stats.first = first;
+                stats.users_per_day = users_per_day;
+                stats.max_users_per_month = max_users_per_month;
+                stats.booths_count = _db.booth.Where(b => b.product.Where(p => p.active).Count() > 0 || b.collection.Where(co => co.active).Count() > 0).Count();
+                stats.items_count = _db.product.Where(p => p.active).Count() + _db.collection.Where(co => co.active).Count();
 
                 return stats;
             }

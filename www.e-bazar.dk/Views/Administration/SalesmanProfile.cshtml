@@ -932,8 +932,8 @@
                                         }
                                         catch (Exception e)
                                         {
-                                            ErrorHandler err = new ErrorHandler();
-                                            string s = err.HandleError(ERROR.SALESMANPROFILE, e);
+                                            
+                                            string s = ErrorHelper.HandleError(ERROR.SALESMANPROFILE, e);
                                             string subject = "Fejl i front, Salesmanfile(MOB)";
                                             string body = s;
                                             AdminHelper.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
