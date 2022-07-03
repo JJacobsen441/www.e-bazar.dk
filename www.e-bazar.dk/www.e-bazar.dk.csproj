@@ -266,9 +266,9 @@
     <Compile Include="Models\Business\biz_product.cs" />
     <Compile Include="Models\Business\biz_salesman.cs" />
     <Compile Include="Models\Business\biz_tag.cs" />
-    <Compile Include="Models\Identity\AccountViewModels.cs" />
-    <Compile Include="Models\Identity\IdentityModels.cs" />
-    <Compile Include="Models\Identity\ManageViewModels.cs" />
+    <Compile Include="Models\_Identity\AccountViewModels.cs" />
+    <Compile Include="Models\_Identity\IdentityModels.cs" />
+    <Compile Include="Models\_Identity\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Statics\AreasHelper.cs" />
     <Compile Include="Statics\CheckHelper.cs" />

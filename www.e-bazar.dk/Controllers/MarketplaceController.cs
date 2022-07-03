@@ -300,15 +300,13 @@ namespace www.e_bazar.dk.Controllers
                 int count;
                 List<dto_booth> booth_list = DAL.GetInstance().GetBoothDTOs(num_per_page * (model.page - 1), num_per_page, out count);
                 List<dto_booth> booth_newest = DAL.GetInstance().GetNewestBoothDTOs(0, 5);
+                List<dto_category> cats = CategorysHelper.CatsYesNo;
                 
                 pag = new Paginator(count, num_per_page);
                 pag.GotoPage(model.page);
-
-                List<dto_category> cats = CategorysHelper.CatsYesNo;
-                Dictionary<string, Dictionary<string, List<dto_params>>> param_a = CategorysHelper.s_Params();
                 
-                ViewBag.Subs = param_a;
                 ViewBag.Param = model.p; 
+                ViewBag.Subs = CategorysHelper.s_Params();
                 ViewBag.CurrentUser = CurrentUser.GetInstance().GetCurrentUser(false, true, true);
                 ViewBag.AreasChecked = SecurityHelper.ListToString(AreasHelper.selected, '-');
                 ViewBag.CatA = _c_search.IsNullOrEmpty() || _c_search == "alle" || _c_search.Split('-')[0].IsNullOrEmpty() ? "" : _c_search.Split('-')[0];
