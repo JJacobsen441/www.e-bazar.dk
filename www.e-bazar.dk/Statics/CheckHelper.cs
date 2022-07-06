@@ -64,9 +64,11 @@ namespace www.e_bazar.dk.Statics
                 if (str.IsNull())
                     return "";
 
-                str = HttpUtility.UrlDecode(str);
-                if(to_lower)
-                    str = str.ToLower();
+                //str = HttpUtility.UrlDecode(str);
+                //str = HttpUtility.HtmlDecode(str);
+
+                str = to_lower ? str.ToLower() : str;
+                str = str.Trim();
 
                 bool ok;
                 str = StringHelper.OnlyAlphanumeric(str, allow_newline, allow_upper, "no_tag", allowed, out ok);
