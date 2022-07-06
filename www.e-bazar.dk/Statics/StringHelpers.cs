@@ -108,37 +108,42 @@ namespace www.e_bazar.dk.Statics
                     i--;
                 }
             }
-            //str = str.Replace("<", "");
-            //str = str.Replace(">", "");
+            
             for (int i = 0; i < str.Length; i++)
             {
                 if (allow_tag != "")
                 {
                     char c = str.ElementAt(i);
-                    if (i < str.Length - allow_tag.Length - 4 && str.Substring(i, allow_tag.Length + 4) == "<" + allow_tag + " />")
-                        i += allow_tag.Length + 3;
-                    else if (i < str.Length - allow_tag.Length - 2 && str.Substring(i, allow_tag.Length + 2) == "<" + allow_tag + ">")
+                    if (i < str.Length - allow_tag.Length - 2 && str.Substring(i, allow_tag.Length + 2) == "<" + allow_tag + ">")
                         i += allow_tag.Length + 1;
                     else if (i < str.Length - allow_tag.Length - 3 && str.Substring(i, allow_tag.Length + 3) == "</" + allow_tag + ">")
                         i += allow_tag.Length + 2;
+                    else if (i < str.Length - allow_tag.Length - 4 && str.Substring(i, allow_tag.Length + 4) == "<" + allow_tag + " />")
+                        i += allow_tag.Length + 3;
                     else if (c == '<')
                     {
-                        int j = i;
-                        int counter = 1;
+                        int j = i + 1;
+                                                
                         while (j < i + 15 && j < str.Length)
                         {
-                            if (str.ElementAt(j) == '>')
+                            if (alphalower.Contains(str.ElementAt(j)) || alphaupper.Contains(str.ElementAt(j)))
+                                ;
+                            else if (str.ElementAt(j) == '>')
                             {
-                                str = str.Replace(str.Substring(i, counter), "");
-                                //i -= counter;
+                                str = "";
+                                ok = false;
                                 break;
                             }
-                            j++;
-                            counter++;
+                            else
+                                break;
+                                              
+                            j++;                            
                         }
                     }
-
                 }
+
+                if (!ok)
+                    break;
             }
             return str;
         }
