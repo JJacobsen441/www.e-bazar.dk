@@ -74,18 +74,6 @@ namespace www.e_bazar.dk.Statics
             char[] alphaupper = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Æ', 'Ø', 'Å' };
             char[] newline = { '\r', '\n' };
 
-            for (int i = 0; i < str.Length; i++)
-            {
-                char c = str.ElementAt(i);
-                if (allowed.Contains(c) || (allow_newline && newline.Contains(c)) || (allow_upper && alphaupper.Contains(c)) || alphalower.Contains(c) || numeric.Contains(c))
-                    ;
-                else
-                {
-                    str = RemoveCharacter(str, c);
-                    ok = false;
-                    i--;
-                }
-            }            
             
             for (int i = 0; i < str.Length; i++)
             {
@@ -121,6 +109,23 @@ namespace www.e_bazar.dk.Statics
                 if (!ok)
                     break;
             }
+
+            if (!ok)
+                return str;
+
+            for (int i = 0; i < str.Length; i++)
+            {
+                char c = str.ElementAt(i);
+                if (allowed.Contains(c) || (allow_newline && newline.Contains(c)) || (allow_upper && alphaupper.Contains(c)) || alphalower.Contains(c) || numeric.Contains(c))
+                    ;
+                else
+                {
+                    str = RemoveCharacter(str, c);
+                    ok = false;
+                    i--;
+                }
+            }
+            
             return str;
         }
 

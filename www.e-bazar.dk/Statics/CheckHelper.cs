@@ -18,29 +18,14 @@ namespace www.e_bazar.dk.Statics
                 if (model.IsNull())
                     throw new Exception();
 
-                if ((model.a = CheckHelper.Generel.FormatString(model.a, true, false, false, "no_tag", CharacterHelper.VeryLimited())) == null)
-                    throw new Exception();
-
-                if ((model.s = CheckHelper.Generel.FormatString(model.s, true, false, true, "no_tag", CharacterHelper.Limited(true))) == null)
-                    throw new Exception();
-
-                if ((model.c = CheckHelper.Generel.FormatString(model.c, false, false, true, "no_tag", CharacterHelper.VeryLimited())) == null)
-                    throw new Exception();
-
-                if ((model.p = CheckHelper.Generel.FormatString(model.p, true, false, false, "no_tag", CharacterHelper.Param())) == null)
-                    throw new Exception();
-
-                if ((model.z = CheckHelper.Generel.FormatString(model.z, true, false, false, "no_tag", CharacterHelper.VeryLimited())) == null)
-                    throw new Exception();
-
-                if ((model.f = CheckHelper.Generel.FormatString(model.f, true, false, false, "no_tag", CharacterHelper.VeryLimited())) == null)
-                    throw new Exception();
-
-                if ((model.t = CheckHelper.Generel.FormatString(model.t, true, false, false, "no_tag", CharacterHelper.VeryLimited())) == null)
-                    throw new Exception();
-
-                if ((model.gra = CheckHelper.Generel.FormatString(model.gra, true, false, false, "no_tag", CharacterHelper.VeryLimited())) == null)
-                    throw new Exception();
+                model.a = CheckHelper.Generel.FormatString(model.a, true, false, false, "no_tag", CharacterHelper.VeryLimited());
+                model.s = CheckHelper.Generel.FormatString(model.s, true, false, true, "no_tag", CharacterHelper.VeryLimited());
+                model.c = CheckHelper.Generel.FormatString(model.c, false, false, true, "no_tag", CharacterHelper.VeryLimited());
+                model.p = CheckHelper.Generel.FormatString(model.p, true, false, false, "no_tag", CharacterHelper.Param());
+                model.z = CheckHelper.Generel.FormatString(model.z, true, false, false, "no_tag", CharacterHelper.VeryLimited());
+                model.f = CheckHelper.Generel.FormatString(model.f, true, false, false, "no_tag", CharacterHelper.VeryLimited());
+                model.t = CheckHelper.Generel.FormatString(model.t, true, false, false, "no_tag", CharacterHelper.VeryLimited());
+                model.gra = CheckHelper.Generel.FormatString(model.gra, true, false, false, "no_tag", CharacterHelper.VeryLimited());
 
                 _s = model.s;
                 _c_orig = model.c;
@@ -86,7 +71,7 @@ namespace www.e_bazar.dk.Statics
                 bool ok;
                 str = StringHelper.OnlyAlphanumeric(str, allow_newline, allow_upper, "no_tag", allowed, out ok);
                 if (!ok)
-                    return null;
+                    throw new Exception();
 
                 return str;
             }
