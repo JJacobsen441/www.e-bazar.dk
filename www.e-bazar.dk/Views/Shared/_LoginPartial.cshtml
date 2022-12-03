@@ -1,0 +1,301 @@
+﻿@using Microsoft.AspNet.Identity
+@if (Request.IsAuthenticated)
+{
+        dto_person current_user = CurrentUser.Inst().GetDTO(SETUP.FTT);
+
+        <div class="col-xs-4 remove_desk_block z-padding-top-15">
+    @using (Html.BeginRouteForm("LogOff", FormMethod.Post, new { id = "logoutForm", @class = "z-float-right z-display-inline xnavbar-right" }))
+    {
+        @Html.AntiForgeryToken()
+
+            <span class="btn xz-float-right  z-height-26 z-padding-top-2 z-margin-top-5 lightgreen_bdr z-margin-left-15 z-hover-white">
+                <a href="javascript:document.getElementById('logoutForm').submit()" class=" z-text-decoration-none white myfade">Log off</a>
+            </span>
+    }
+            @if (Request.IsAuthenticated && current_user != null && (current_user.favorites_product != null || current_user.favorites_collection != null))
+            {
+
+                <button class="z-fav-toggle btn z-float-right  z-height-26 z-padding-top-2 z-margin-top-5 z-margin-left-15 green_bg lightgreen_bdr white z-hover-white" type="button">
+                    <i class="fas fa-bookmark lightgreen" title="Favoritter"></i>
+                </button>
+                <div class="z-fav z-top-right z-padding-all-15 z-margin-top-50 z-z-index-infinity-high z-background-color-black-2 z-color-white-1">
+
+                    <ul class="">
+                        @{
+                            List<dto_booth_item> favorites = null;
+                            if(current_user.nator == "Salesman")
+                            {
+                                biz_salesman biz = new biz_salesman();
+                                favorites = biz._GetFavorites(current_user);
+                            }
+                            else
+                            {
+                                biz_customer biz = new biz_customer();
+                                favorites = biz._GetFavorites(current_user);
+                            }
+
+                            foreach (dto_booth_item fav in favorites)
+                            {
+                                if (fav.booth_dto != null)
+                                {
+                                    string func = fav.GetType() == typeof(dto_product) ? "Product" : "Collection";
+                                    <li class="z-width-300">
+                                        @Html.RouteLink(fav.booth_dto.name + ", " + fav.name, func, new { id = fav.id }, new { @class = "z-color-white-1 myfade" })
+                                    </li>
+                                }
+                            }
+                        }
+                    </ul>
+                </div>
+            }
+
+            @if (Request.IsAuthenticated && current_user != null && (current_user.following != null))
+            {
+
+                <button class="z-fol-toggle btn z-float-right  z-height-26 z-padding-top-2 z-margin-top-5 z-margin-left-15 green_bg lightgreen_bdr white z-hover-white" type="button">
+                    <i class="fas fa-store lightgreen" title="Følger"></i>
+                </button>
+                <div class="z-fol z-top-right z-padding-all-15 z-margin-top-50 z-z-index-infinity-high z-background-color-black-2 z-color-white-1">
+
+                    <ul class="">
+                        @{
+
+                            List<dto_booth> following = null;
+                            if (current_user.nator == "Salesman")
+                            {
+                                biz_salesman biz = new biz_salesman();
+                                following = biz._GetFollowingDTOs(CurrentUser.Inst().CurrentUserID);
+                            }
+                            else
+                            {
+                                biz_customer biz = new biz_customer();
+                                following = biz._GetFollowingDTOs(CurrentUser.Inst().CurrentUserID);
+                            }
+
+                            foreach (dto_booth fol in following)
+                            {
+                                <li class="z-width-300">
+                                    @Html.RouteLink(fol.name, "Booth", new { id = fol.booth_id }, new { @class = "z-color-white-1 myfade" })
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+            }
+
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="col-xs-4 remove_tab_block z-padding-top-15 z-padding-left-0">
+            @using (Html.BeginRouteForm("LogOff", FormMethod.Post, new { id = "logoutForm", @class = "z-float-right z-display-inline xnavbar-right" }))
+            {
+                @Html.AntiForgeryToken()
+                <span class="btn z-float-right  z-height-26 z-padding-top-2 z-margin-top-5 lightgreen_bdr z-margin-left-15 z-hover-white">
+                    <a href="javascript:document.getElementById('logoutForm').submit()" class=" z-text-decoration-none white myfade">Log off</a>
+                </span>
+            }
+            @if (Request.IsAuthenticated && current_user != null && (current_user.favorites_product != null || current_user.favorites_collection != null))
+            {
+
+                <button class="l-header-fav z-fav-toggle btn z-float-right  z-height-26 z-padding-top-2 z-margin-top-5 green_bg lightgreen_bdr white z-hover-white" type="button">
+                    <i class="fas fa-bookmark lightgreen" title="Favoritter"></i>
+                </button>
+                <div class="z-fav z-top-right z-padding-all-15 z-margin-top-50 z-z-index-infinity-high z-background-color-black-2 z-color-white-1">
+
+                    <ul class="">
+                        @{
+
+                            List<dto_booth_item> favorites = null;
+                            if (current_user.nator == "Salesman")
+                            {
+                                biz_salesman biz = new biz_salesman();
+                                favorites = biz._GetFavorites(current_user);
+                            }
+                            else
+                            {
+                                biz_customer biz = new biz_customer();
+                                favorites = biz._GetFavorites(current_user);
+                            }
+
+                            foreach (dto_booth_item fav in favorites)
+                            {
+                                if (fav.booth_dto != null)
+                                {
+                                    string func = fav.GetType() == typeof(biz_product) ? "Product" : "Collection";
+                                    <li class="z-width-300">
+                                        @Html.RouteLink(fav.booth_dto.name + ", " + fav.name, func, new { id = fav.id }, new { @class = "z-color-white-1 myfade" })
+                                    </li>
+                                }
+                            }
+                        }
+                    </ul>
+                </div>
+            }
+
+            @if (Request.IsAuthenticated && current_user != null && (current_user.following != null))
+            {
+
+                <button class="l-header-fol z-fol-toggle btn z-float-right  z-height-26 z-padding-top-2 z-margin-top-5 green_bg lightgreen_bdr white z-hover-white" type="button">
+                    <i class="fas fa-store lightgreen" title="Følger"></i>
+                </button>
+                <div class="z-fol z-top-right z-padding-all-15 z-margin-top-50 z-z-index-infinity-high z-background-color-black-2 z-color-white-1">
+
+                    <ul class="">
+                        @{
+                            List<dto_booth> following = null;
+                            if (current_user.nator == "Salesman")
+                            {
+                                biz_salesman biz = new biz_salesman();
+                                following = biz._GetFollowingDTOs(CurrentUser.Inst().CurrentUserID);
+                            }
+                            else
+                            {
+                                biz_customer biz = new biz_customer();
+                                following = biz._GetFollowingDTOs(CurrentUser.Inst().CurrentUserID);
+                            }
+
+                            foreach (dto_booth fol in following)
+                            {
+                                <li class="z-width-300">
+                                    @Html.RouteLink(fol.name, "Booth", new { id = fol.booth_id }, new { @class = "z-color-white-1 myfade" })
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class=" remove_phone_block z-padding-top-15">
+            @using (Html.BeginRouteForm("LogOff", FormMethod.Post, new { id = "logoutForm", @class = "z-float-right z-display-inline xnavbar-right z-width-100-percent" }))
+            {
+                @Html.AntiForgeryToken()
+                <span class="btn z-float-left  z-height-26 z-padding-top-2 z-margin-top-5 lightgreen_bdr z-width-100-percent z-align-left">
+                    <a href="javascript:document.getElementById('logoutForm').submit()" class="white myfade">Log off</a>
+                </span>
+            }
+            </div>
+    
+}
+else
+{
+    <div class="remove_desk_block z-float-right z-padding-bottom-15 z-padding-top-15">
+
+        <span class="btn z-float-left  z-height-26 z-padding-top-2 z-margin-top-5 lightgreen_bdr z-hover-white">
+            @Html.RouteLink("Registrer", "Register1", routeValues: null, htmlAttributes: new { id = "registerLink", @class = " z-text-decoration-none white myfade" })
+        </span>
+
+        <span class="btn z-float-left  z-height-26 z-padding-top-2 z-margin-top-5 z-margin-left-15 lightgreen_bdr z-hover-white">
+            @Html.RouteLink("Log in", "Login1", routeValues: new { returnUrl = "/administration/redigerprofil" }, htmlAttributes: new { id = "loginLink", @class = " z-text-decoration-none white myfade" })
+        </span>
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <div class="remove_tab_block z-float-right z-padding-bottom-15 z-padding-top-15">
+
+        <span class="btn z-float-left  z-height-26 z-padding-top-2 z-margin-top-5 lightgreen_bdr z-hover-white">
+            @Html.RouteLink("Registrer", "Register1", routeValues: null, htmlAttributes: new { id = "registerLink", @class = " z-text-decoration-none white myfade" })
+        </span>
+
+        <span class="btn z-float-left  z-height-26 z-padding-top-2 z-margin-top-5 z-margin-left-15 lightgreen_bdr z-hover-white">
+            @Html.RouteLink("Log in", "Login1", routeValues: new { returnUrl = "/administration/redigerprofil" }, htmlAttributes: new { id = "loginLink", @class = " z-text-decoration-none white myfade" })
+        </span>
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+    <div class="remove_phone_block">
+
+        <div class="z-height-40">
+
+            <span class="btn z-float-left  z-height-26 z-padding-top-2 z-margin-top-5 lightgreen_bdr z-width-100-percent z-align-left">
+                @Html.RouteLink("Registrer", "Register1", routeValues: null, htmlAttributes: new { id = "registerLink", @class = "white myfade" })
+            </span>
+        </div>
+        <div class="z-height-40">
+
+            <span class="btn z-float-left  z-height-26 z-padding-top-2 z-margin-top-5 lightgreen_bdr z-width-100-percent z-align-left">
+                @Html.RouteLink("Log in", "Login1", routeValues: new { returnUrl = "/administration/redigerprofil" }, htmlAttributes: new { id = "loginLink", @class = "white myfade" })
+            </span>
+        </div>
+    </div>
+
+}
+@*@{
+        string id = Request.IsAuthenticated ? User.Identity.GetUserId() : "";
+        string name = Request.IsAuthenticated ? User.Identity.GetUserName() : "";
+        CurrentUser.GetInstance().Login(id, name, Request.IsAuthenticated);
+    }*@

@@ -1,0 +1,68 @@
+﻿@model www.e_bazar.dk.Models.DTOs.dto_booth
+    @{
+
+    }
+
+    <div>
+        <div class="col-xs-12 z-padding-sides-0">
+            <span class="z-font-info z-bold">| @Html.RouteLink(Model.name, "Booth", new { id = Model.booth_id }, new { @class="myfade" }) |</span><br />
+        </div>
+        <div class="col-xs-12 z-padding-sides-0">
+            
+            @if (Model.boothrating != null && Model.boothrating != 0.0)
+            {
+                <span>
+                    @for (double i = 0; i < 5; i += 0.5)
+                    {
+                        if (i % 1 == 0 && i + 1 <= Model.boothrating)
+                        {
+                            <i class="fas fa-star"></i>
+                        }
+                        else if (i % 1 == 0 && i + 0.5 <= Model.boothrating)
+                        {
+                            <i class="fas fa-star-half-alt"></i>
+                        }
+                        else if (i % 1 == 0)
+                        {
+                            <i class="far fa-star"></i>
+                        }
+                    }
+                    (@if (Model.numberofratings == 1)
+                    {
+                        @Model.numberofratings @Html.Raw(" stemme")
+                    }
+                    else
+                    {
+                        @Model.numberofratings @Html.Raw(" stemmer")
+                    })
+                </span>
+            }
+            else
+            {
+                <span>
+                    <i class="far fa-star"></i>
+                    <i class="far fa-star"></i>
+                    <i class="far fa-star"></i>
+                    <i class="far fa-star"></i>
+                    <i class="far fa-star"></i>
+                    (0 stemmer)
+                </span>
+            }
+        </div>
+        <div class="col-xs-12 z-tooltip6 z-padding-sides-0">
+            <i class="far fa-file-alt"></i>&nbsp;Om Standen
+            <span class="z-center2 z-desc-tooltip6 z-align-left">
+                @Html.DisplayWithBreaksFor(Model.description_limit)<br /><br />
+                @if (Model.category_main != null)
+                {
+                    @: Kategorier:
+                    <br />
+                    foreach (var cat in Model.category_main)
+                    {
+                        @: @cat.name,
+                    }
+                }
+            </span>
+        </div>      
+        <br />
+    </div>

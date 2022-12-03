@@ -1,0 +1,1586 @@
+﻿@model www.e_bazar.dk.Models.DTOs.col_booth
+
+@{
+    ViewBag.Title = "Administrer Bod";
+
+}
+@{
+
+
+    try
+    {
+        <div class="xhide_phone remove_desk_block ">
+            @*<div class="loading"><span class="centered" style="font-size: 300%;">loader..</span></div>*@
+            <div class="container">
+                <div class="col-xs-12" xstyle="padding-left:0px;">
+                    <h2>Administrer Stand</h2>
+                    <br />
+                    <input type="button" value="Rediger Profil" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("UserProfile")'" />
+                    <input type="button" value="Opret Produkt" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("CreateProduct", new { booth_id = Model.booth_dto.booth_id })'" />
+                    <input type="button" value="Opret Tilbud" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("CreateCollection", new { booth_id = Model.booth_dto.booth_id })'" />
+                    @*@using (Html.BeginForm("CreateProductRetrieve", "Administration", FormMethod.Post, new { style = "display: inline" }))
+                        {
+                            @Html.Hidden("booth_id", Model.booth_dto.booth_id);
+                            <input type="submit" value="Opret Produkt" class="btn btn-default btn_green myfade" />
+                        }
+                        @using (Html.BeginForm("CreateCollectionRetrieve", "Administration", FormMethod.Post, new { style = "display: inline" }))
+                        {
+                            @Html.Hidden("booth_id", Model.booth_dto.booth_id);
+                            <input type="submit" value="Opret Sæt" class="btn btn-default btn_green myfade" />
+                        }*@
+                    <input type="button" value="Vis stand" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("Booth", new { id = Model.booth_dto.booth_id })'" />
+                    <br class="hide_desk  hide_tab " /><input type="submit" value="Gem" class="btn btn-default green_bg lightgreen_bdr white myfade adm_button_form_submit" />
+                </div>
+            </div>
+            <hr class="hr_lightgrey" />
+            <div class="container">
+                <div class="white_bdr darkgrey_bg removeborder-bottom navigation-top navigation-right addpaddingleft">
+                    @{
+                        string dmodified = Model.booth_dto.modified.ToString("dd/MM/yyyy");
+                    }
+                    Sidst modificeret: @Html.DisplayFor(m => dmodified)
+                </div>
+                @using (Html.BeginRouteForm("EditBooth2", FormMethod.Post, @Model))
+                {
+                    //List<biz_product> ok = new List<biz_product>();
+                    //List<biz_collection> ja = new List<biz_collection>();
+                    //List<IBoothItem> list = Model.booth_dto.GetRelevantItems(-1, -1);
+                    //foreach (IBoothItem i in list)
+                    //{
+                    //    if (typeof(biz_product) == i.GetType()) { ok.Add((biz_product)i); }
+                    //    else { ja.Add((biz_collection)i); }
+                    //}
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.booth_dto.booth_id, new { @class = "adm_hidden_edit_boothid" })
+                    @Html.HiddenFor(model => model.booth_dto.sysname)
+                    @Html.HiddenFor(model => model.booth_dto.frontimage)
+                    @Html.HiddenFor(model => model.booth_dto.country)
+                    @*@Html.HiddenFor(model => model.booth_dto.product_dtos, new { @Value = ok })
+                    @Html.HiddenFor(model => model.booth_dto.collection_dtos, new { @Value = ja })*@
+                    <input type="hidden" value="@ViewBag.Tab" class="input_tab" />
+                    <ul class="nav nav-tabs white_bdr darkgrey_bg">
+                        <li><a class="black active" href="#home" data-toggle="tab">Stamdata</a></li>
+                        <li><a class="black" href="#categorys" data-toggle="tab">Mapper</a></li>
+                    </ul>
+                    <div class="tab-content" style="overflow:hidden;">
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="home">
+                            <div class="col-xs-4 form-horizontal" xstyle="padding-left:0px;">
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        @Html.LabelFor(model => model.booth_dto.frontimage, htmlAttributes: new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-xs-12" style="background-color:#FFFFFF;">
+                                        @{
+                                            <div class="container_overlay">
+                                                @{
+                                                    var image_path = !string.IsNullOrEmpty(Model.booth_dto.frontimage) ? "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/" + Model.booth_dto.frontimage : "/_content/images/site/icons/booth_logo.png";
+                                                    <input type="hidden" class="adm_hidden_images_imagename" value="@Model.booth_dto.frontimage">
+                                                    <img class="adm_img_boothimage" src="@image_path" alt="Sample Image" />
+                                                    <div class="overlay">
+                                                        <a href="#" class="icon" title="User Profile">
+                                                            <i class="fa fa-window-close fa-2x" onclick="removeImage(); false;"></i>
+                                                        </a>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            &nbsp;
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            <input type="file" name="product" class="adm_input_boothimage btn btn-default adm_control" />
+                                            <span class="booth_fileupload"></span><br /><span class="booth_uploading"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            <div class="col-xs-12">
+                                                Logoet er dit billed udadtil. Det er med dette, samt en god beskrivelse af standen du skal fange kundernes opmærksomhed.<br /><br />
+                                                <table>
+                                                    <tr>
+                                                        <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                        <td>billedet bør repræsentere din stand</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                        <td>billeddet kan for eksempel være af udvalgte vare</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                        <td>hvis intet billed bliver valgt, vil et standart billed(ovenfor) blive brugt</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                        <td>accepterede fil typer: jpg, jpeg og png</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                        <td>max størrelse: 5MB</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                </div>
+
+                            </div>
+                            <div class="col-xs-4 form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        @Html.LabelFor(model => model.booth_dto.name, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                    </div>
+                                    <div class="col-xs-12">
+                                        @Html.EditorFor(model => model.booth_dto.name, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control" } })
+                                        @Html.ValidationMessageFor(model => model.booth_dto.name, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        @Html.LabelFor(model => model.booth_dto.street_address, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                    </div>
+                                    <div class="col-xs-12">
+                                        @Html.EditorFor(model => model.booth_dto.street_address, new { htmlAttributes = new { @class = "adm_input_street_address form-control darkgrey_bdr adm_control" } })
+                                        @Html.ValidationMessageFor(model => model.booth_dto.street_address, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <table>
+                                            <tr>
+                                                <td style="width:45%">@Html.LabelFor(model => model.booth_dto.region_dto.zip, htmlAttributes: new { @class = "control-label xcol-xs-2" })</td>
+                                                <td style="width:5%"></td>
+                                                <td>@Html.LabelFor(model => model.booth_dto.region_dto.town, htmlAttributes: new { @class = "control-label xcol-xs-2" })</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:45%">
+                                                    @Html.EditorFor(model => model.booth_dto.region_dto.zip, new { htmlAttributes = new { @class = "adm_input_zip form-control darkgrey_bdr adm_control" } })
+                                                    @Html.ValidationMessageFor(model => model.booth_dto.region_dto.zip, "", new { @class = "text-danger" })
+                                                </td>
+                                                <td style="width:5%"></td>
+                                                <td>
+                                                    @Html.EditorFor(model => model.booth_dto.region_dto.town, new { htmlAttributes = new { @readonly = "readonly", @class = "adm_input_town form-control darkgrey_bdr adm_control" } })
+                                                    @Html.ValidationMessageFor(model => model.booth_dto.region_dto.town, "", new { @class = "text-danger" })
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:45%">
+                                                    @{
+                                                        if (@Model.booth_dto.fulladdress)
+                                                        {
+                                                            @Html.RadioButtonFor(m => m.booth_dto.fulladdress_str, "Part", new { @class = "adm_radio_part" }) <span>Kun postnr og by<br /></span>
+                                                            @Html.RadioButtonFor(m => m.booth_dto.fulladdress_str, "Full", new { Checked = "checked", @class = "adm_radio_full" }) <span>Fuld addresse</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.RadioButtonFor(m => m.booth_dto.fulladdress_str, "Part", new { Checked = "checked", @class = "adm_radio_part" }) <span>Kun postnr og by<br /></span>
+                                                            @Html.RadioButtonFor(m => m.booth_dto.fulladdress_str, "Full", new { @class = "adm_radio_full" }) <span>Fuld addresse</span>
+                                                        }
+                                                    }
+                                                </td>
+                                                <td style="width:5%"></td>
+                                                <td>
+                                                    [Note: Her vælges om den fulde addresse skal vises]
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        @Html.Label(@Model.booth_dto.country, new { htmlAttributes = new { @class = "adm_input_name form-control adm_control" } })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        @Html.LabelFor(model => model.booth_dto.description, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                        <span class="desc_msg"></span>
+                                    </div>
+                                    <div class="col-xs-12">
+                                        @Html.TextAreaFor(model => Model.booth_dto.description, new { @class = "adm_input_description form-control darkgrey_bdr adm_control", rows = "11" })
+                                        @Html.ValidationMessageFor(model => model.booth_dto.description, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <hr />
+                            </div>
+                            <div class="col-xs-4 form-horizontal adm_div_group3">
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <div xclass="col-xs-12">
+                                            @Html.Label("Søgeord", htmlAttributes: new { @class = "control-label xcol-xs-2" }) <br class="hide" />
+                                            <br />
+                                            <br />
+                                        </div>
+                                        @foreach (dto_category entry in Model.cats)
+                                        {
+                                            bool isset = Model.booth_dto.category_main.Where(c => c.category_id == entry.category_id).Count() > 0;
+                                            @Html.CheckBox(entry.name, isset, new { @class = "custom-control-input adm_checkbox_category", @value = entry.category_id, @disabled = "disabled" });
+                                            <label class="custom-control-label" for="defaultUnchecked">@entry.name</label>
+                                            <br />
+                                        }
+                                    </div>
+                                </div>
+                                @*<div class="form-group">
+                            <div class="col-xs-12">
+                                <div xclass="col-xs-12 xpanel xpanel-default">
+                                    <div xclass="col-xs-12">
+                                        @{
+                                            if (Model.booth_dto.category_main != null && Model.booth_dto.category_main.Count > 0)
+                                            {
+                                                <span class="adm_span_edit_results">
+                                                    @foreach (biz_category c in Model.booth_dto.category_main)
+                                                    {
+                                                        <input type="button" onclick="removeCategory('@c.category_id')" value="@c.name (X)" class="adm_input_tag_@c.category_id btn btn-default darkgrey_bdr" />
+                                                    }
+                                                </span>
+                                                <hr />
+                                            }
+                                            else
+                                            {
+                                                <span class="adm_span_edit_results">
+                                                </span>
+                                                <hr />
+                                            }
+                                            <span class="adm_div_suggestions">
+                                            </span><br />
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>*@
+                            </div>
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="categorys">
+                            @Html.Partial("~/Views/Partials/_EditBooth_Catelog.cshtml", @Model)
+                        </div>
+                    </div>
+                }
+            </div>
+            <hr class="hr_lightgrey" />
+            <div class="container">
+                <div class="col-xs-12 white_bg darkgrey_bdr">
+                    <table class="table xtable-bordered">
+                        <tr class="adm_th_products" style="background-color: #FFFFFF;">
+                            <th style="width:10%;" class="adm_th_products_image">
+                                @*@Html.DisplayNameFor(model => model.product_dtos.FirstOrDefault().productimage_dtos.FirstOrDefault().name)*@
+                            </th>
+                            <th style="width:20%;" class="hide_phone">
+                                @Html.DisplayNameFor(model => model.booth_dto.product_dtos.FirstOrDefault().name)
+                            </th>
+                            <th style="width:10%;" class="hide_phone">
+                                @Html.DisplayNameFor(model => model.booth_dto.product_dtos.FirstOrDefault().created_on)
+                            </th>
+                            <th style="width:30%;" class="hide_phone">
+                                @Html.DisplayNameFor(model => model.booth_dto.product_dtos.FirstOrDefault().description)
+                            </th>
+                            <th style="width:15%;"></th>
+                            <th style="width:15%;"></th>
+                        </tr>
+                        @{
+                            biz_booth biz = new biz_booth();
+                            List<dto_booth_item> dlist = biz.GetRelevantItems(Model.booth_dto, - 1, -1);
+                            foreach (var item in dlist)
+                            {
+                                <tr>
+                                    <td class="adm_td_products_image">
+                                        @if (item.image_dtos != null && item.image_dtos.Count > 0 && !string.IsNullOrEmpty(item.image_dtos.FirstOrDefault().name))
+                                        {
+                                            if (typeof(dto_product) == item.GetType())
+                                            {
+                                                string thumb = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/products/" + item.sysname + "/t_" + item.image_dtos.FirstOrDefault().name;
+                                                string path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/products/" + item.sysname + "/" + item.image_dtos.FirstOrDefault().name;
+                                                <a href="@Url.RouteUrl("EditProduct1", new { product_id = item.id })">
+                                                    <img alt="Sample Image" class="adm_img_products_productimage loadlater" src="@thumb" data-src="@path">
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                string thumb = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/collections/" + item.sysname + "/t_" + item.image_dtos.FirstOrDefault().name;
+                                                string path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/collections/" + item.sysname + "/" + item.image_dtos.FirstOrDefault().name;
+                                                <a href="@Url.RouteUrl("EditCollection1", new { collection_id = item.id })">
+                                                    <img alt="Sample Image" class="adm_img_products_productimage loadlater" src="@thumb" data-src="@path">
+                                                </a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (typeof(dto_product) == item.GetType())
+                                            {
+                                                var image_path = "/_content/images/site/icons/armchair2_bw.png";
+                                                <a href="@Url.RouteUrl("EditProduct1", new { product_id = @item.id })">
+                                                    <img class="adm_img_image_icon" src="@image_path" alt="Sample Image" />
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                var image_path = "/_content/images/site/icons/sofa_bw.png";
+                                                <a href="@Url.RouteUrl("EditCollection1", new { collection_id = @item.id })">
+                                                    <img class="adm_img_image_icon" src="@image_path" alt="Sample Image" />
+                                                </a>
+                                            }
+                                        }
+                                    </td>
+                                    <td class="hide_phone">
+                                        @if (typeof(dto_collection) == item.GetType())
+                                        {<span class="bold red">Tilbud, </span>}
+                                        <span style="font-weight:bold;">[@Model.booth_dto.category_main.Where(c => c.category_id == item.category_main_id).FirstOrDefault().name] </span><br />
+                                        @item.name
+
+                                    </td>
+                                    <td class="hide_phone">
+                                        @{
+                                            string date = item.created_on.ToString("dd/MM/yyyy");
+                                            @Html.DisplayFor(modelItem => date)
+                                        }
+                                    </td>
+                                    <td class="hide_phone">
+                                        @Html.DisplayWithBreaksFor(item.description_limit)
+                                    </td>
+                                    <td>
+                                        @{
+                                            if (typeof(dto_product) == item.GetType())
+                                            {
+                                                SelectList slist = new SelectList(Model.booth_dtos.Select(x => new SelectListItem() { Text = x.name, Value = "" + x.booth_id }), "Value", "Text", "" + item.booth_id);
+                                                <div>
+                                                    @Html.DropDownListFor(model => item.booth_id, slist, new { @class = "form-control darkgrey_bdr adm_dropdown", data_product = item.id })
+                                                </div>
+                                            }
+                                            @*<br />*@
+                                            string txt = item.active ? "[aktiv]" : "[ikke aktiv]";
+                                            string item_type = typeof(dto_product) == item.GetType() ? "product" : "collection";
+                                            string not_active = item.active ? "false" : "true";
+                                            <div>
+                                                &nbsp;&nbsp;&nbsp;&nbsp;<a href="#/" onclick="setMyActive(this, @item.id, '@item_type');" data-active="@not_active">@txt</a>
+                                            </div>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (typeof(dto_product) == item.GetType())
+                                        {
+                                            @Html.RouteLink("Rediger product", "EditProduct1", new { product_id = (int)item.id }) <br />
+                                            @*using (Html.BeginForm("EditProductRetrieve", "Administration", FormMethod.Post))
+                                                {
+                                                    @Html.Hidden("product_id", (int)item.id);
+                                                    <input type="submit" value="Rediger produkt" style="padding:0px;" class="myfade fakeLink" />
+                                                }*@
+                                            @Html.RouteLink("Vis product", "Product", new { id = (int)item.id }, null) <br />
+                                            <a href="#" onclick="if (!confirm('vil du slette denne post?')) return;location.href='@Url.RouteUrl("DeleteProduct", new { product_id = (int)item.id })'">Slet produkt</a>
+                                        }
+                                        else
+                                        {
+                                            @Html.RouteLink("Rediger sæt", "EditCollection1", new { collection_id = (int)item.id }) <br />
+                                            @*@using (Html.BeginForm("EditCollectionRetrieve", "Administration", FormMethod.Post))
+                                                {
+                                                    @Html.Hidden("collection_id", (int)item.id);
+                                                    <input type="submit" value="Rediger sæt" style="padding:0px;" class="myfade fakeLink" />
+                                                }*@
+                                            @Html.RouteLink("Vis sæt", "Collection", new { id = (int)item.id }, null) <br />
+                                            <a href="#" onclick="if(!confirm('vil du slette denne post?')) return;location.href='@Url.RouteUrl("DeleteCollection", new { collection_id = (int)item.id })'">Slet sæt</a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="xhide_phone remove_tab_block ">
+            @*<div class="loading"><span class="centered" style="font-size: 300%;">loader..</span></div>*@
+            <div class="container">
+                <div class="col-xs-12" xstyle="padding-left:0px;">
+                    <h2>Administrer Stand</h2>
+                    <br />
+                    <input type="button" value="Rediger Profil" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("UserProfile")'" />
+                    <input type="button" value="Opret Produkt" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("CreateProduct", new { booth_id = Model.booth_dto.booth_id })'" />
+                    <input type="button" value="Opret Tilbud" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("CreateCollection", new { booth_id = Model.booth_dto.booth_id })'" />
+                    @*@using (Html.BeginForm("CreateProductRetrieve", "Administration", FormMethod.Post, new { style = "display: inline" }))
+                        {
+                            @Html.Hidden("booth_id", Model.booth_dto.booth_id);
+                            <input type="submit" value="Opret Produkt" class="btn btn-default btn_green myfade" />
+                        }
+                        @using (Html.BeginForm("CreateCollectionRetrieve", "Administration", FormMethod.Post, new { style = "display: inline" }))
+                        {
+                            @Html.Hidden("booth_id", Model.booth_dto.booth_id);
+                            <input type="submit" value="Opret Sæt" class="btn btn-default btn_green myfade" />
+                        }*@
+                    <input type="button" value="Vis stand" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("Booth", new { id = Model.booth_dto.booth_id })'" />
+                    <br class="hide_desk  hide_tab " /><input type="submit" value="Gem" class="btn btn-default green_bg lightgreen_bdr white myfade adm_button_form_submit" />
+                </div>
+            </div>
+            <hr class="hr_lightgrey" />
+            <div class="container">
+                <div class="white_bdr darkgrey_bg removeborder-bottom navigation-top navigation-right addpaddingleft">
+                    @{
+                        string tmodified = Model.booth_dto.modified.ToString("dd/MM/yyyy");
+                    }
+                    Sidst modificeret: @Html.DisplayFor(m => tmodified)
+                </div>
+                @using (Html.BeginRouteForm("EditBooth2", FormMethod.Post, @Model))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.booth_dto.booth_id, new { @class = "adm_hidden_edit_boothid" })
+                    @Html.HiddenFor(model => model.booth_dto.sysname)
+                    @Html.HiddenFor(model => model.booth_dto.frontimage)
+                    @Html.HiddenFor(model => model.booth_dto.country)
+                    <input type="hidden" value="@ViewBag.Tab" class="input_tab" />
+                    <ul class="nav nav-tabs white_bdr darkgrey_bg">
+                        <li><a class="black active" href="#home" data-toggle="tab">Stamdata</a></li>
+                        <li><a class="black" href="#categorys" data-toggle="tab">Mapper</a></li>
+                    </ul>
+                    <div class="tab-content" style="overflow:hidden;">
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="home">
+                            <div class="col-xs-4 form-horizontal" xstyle="padding-left:0px;">
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        @Html.LabelFor(model => model.booth_dto.frontimage, htmlAttributes: new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-xs-12" style="background-color:#FFFFFF;">
+                                        @{
+                                            <div class="container_overlay">
+                                                @{
+                                                    var image_path = !string.IsNullOrEmpty(Model.booth_dto.frontimage) ? "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/" + Model.booth_dto.frontimage : "/_content/images/site/icons/booth_logo.png";
+                                                    <input type="hidden" class="adm_hidden_images_imagename" value="@Model.booth_dto.frontimage">
+                                                    <img class="adm_img_boothimage" src="@image_path" alt="Sample Image" />
+                                                    <div class="overlay">
+                                                        <a href="#" class="icon" title="User Profile">
+                                                            <i class="fa fa-window-close fa-2x" onclick="removeImage(); false;"></i>
+                                                        </a>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            &nbsp;
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            <input type="file" name="product" class="adm_input_boothimage btn btn-default adm_control" />
+                                            <span class="booth_fileupload"></span><br /><span class="booth_uploading"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            <div class="col-xs-12">
+                                                Logoet er dit billed udadtil. Det er med dette, samt en god beskrivelse af standen du skal fange kundernes opmærksomhed.<br /><br />
+                                                <table>
+                                                    <tr>
+                                                        <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                        <td>billedet bør repræsentere din stand</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                        <td>billeddet kan for eksempel være af udvalgte vare</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                        <td>hvis intet billed bliver valgt, vil et standart billed(ovenfor) blive brugt</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                        <td>accepterede fil typer: jpg, jpeg og png</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                        <td>max størrelse: 5MB</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                </div>
+
+                            </div>
+                            <div class="col-xs-4 form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        @Html.LabelFor(model => model.booth_dto.name, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                    </div>
+                                    <div class="col-xs-12">
+                                        @Html.EditorFor(model => model.booth_dto.name, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control" } })
+                                        @Html.ValidationMessageFor(model => model.booth_dto.name, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        @Html.LabelFor(model => model.booth_dto.street_address, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                    </div>
+                                    <div class="col-xs-12">
+                                        @Html.EditorFor(model => model.booth_dto.street_address, new { htmlAttributes = new { @class = "adm_input_street_address form-control darkgrey_bdr adm_control" } })
+                                        @Html.ValidationMessageFor(model => model.booth_dto.street_address, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <table>
+                                            <tr>
+                                                <td style="width:45%">@Html.LabelFor(model => model.booth_dto.region_dto.zip, htmlAttributes: new { @class = "control-label xcol-xs-2" })</td>
+                                                <td style="width:5%"></td>
+                                                <td>@Html.LabelFor(model => model.booth_dto.region_dto.town, htmlAttributes: new { @class = "control-label xcol-xs-2" })</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:45%">
+                                                    @Html.EditorFor(model => model.booth_dto.region_dto.zip, new { htmlAttributes = new { @class = "adm_input_zip form-control darkgrey_bdr adm_control" } })
+                                                    @Html.ValidationMessageFor(model => model.booth_dto.region_dto.zip, "", new { @class = "text-danger" })
+                                                </td>
+                                                <td style="width:5%"></td>
+                                                <td>
+                                                    @Html.EditorFor(model => model.booth_dto.region_dto.town, new { htmlAttributes = new { @readonly = "readonly", @class = "adm_input_town form-control darkgrey_bdr adm_control" } })
+                                                    @Html.ValidationMessageFor(model => model.booth_dto.region_dto.town, "", new { @class = "text-danger" })
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:45%">
+                                                    @{
+                                                        if (@Model.booth_dto.fulladdress)
+                                                        {
+                                                            @Html.RadioButtonFor(m => m.booth_dto.fulladdress_str, "Part", new { @class = "adm_radio_part" }) <span>Kun postnr og by<br /></span>
+                                                            @Html.RadioButtonFor(m => m.booth_dto.fulladdress_str, "Full", new { Checked = "checked", @class = "adm_radio_full" }) <span>Fuld addresse</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.RadioButtonFor(m => m.booth_dto.fulladdress_str, "Part", new { Checked = "checked", @class = "adm_radio_part" }) <span>Kun postnr og by<br /></span>
+                                                            @Html.RadioButtonFor(m => m.booth_dto.fulladdress_str, "Full", new { @class = "adm_radio_full" }) <span>Fuld addresse</span>
+                                                        }
+                                                    }
+                                                </td>
+                                                <td style="width:5%"></td>
+                                                <td>
+                                                    [Note: Her vælges om den fulde addresse skal vises]
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        @Html.Label(@Model.booth_dto.country, new { htmlAttributes = new { @class = "adm_input_name form-control adm_control" } })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        @Html.LabelFor(model => model.booth_dto.description, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                        <span class="desc_msg"></span>
+                                    </div>
+                                    <div class="col-xs-12">
+                                        @Html.TextAreaFor(model => Model.booth_dto.description, new { @class = "adm_input_description form-control darkgrey_bdr adm_control", rows = "11" })
+                                        @Html.ValidationMessageFor(model => model.booth_dto.description, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <hr />
+                            </div>
+                            <div class="col-xs-4 form-horizontal adm_div_group3">
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <div xclass="col-xs-12">
+                                            @Html.Label("Søgeord", htmlAttributes: new { @class = "control-label xcol-xs-2" }) <br class="hide" />
+                                            <br />
+                                            <br />
+                                        </div>
+                                        @foreach (dto_category entry in Model.cats)
+                                        {
+                                            bool isset = Model.booth_dto.category_main.Where(c => c.category_id == entry.category_id).Count() > 0;
+                                            @Html.CheckBox(entry.name, isset, new { @class = "custom-control-input adm_checkbox_category", @value = entry.category_id, @disabled = "disabled" });
+                                            <label class="custom-control-label" for="defaultUnchecked">@entry.name</label>
+                                            <br />
+                                        }
+                                    </div>
+                                </div>
+                                @*<div class="form-group">
+                                        <div class="col-xs-12">
+                                            <div xclass="col-xs-12 xpanel xpanel-default">
+                                                <div xclass="col-xs-12">
+                                                    @{
+                                                        if (Model.booth_dto.category_main != null && Model.booth_dto.category_main.Count > 0)
+                                                        {
+                                                            <span class="adm_span_edit_results">
+                                                                @foreach (biz_category c in Model.booth_dto.category_main)
+                                                                {
+                                                                    <input type="button" onclick="removeCategory('@c.category_id')" value="@c.name (X)" class="adm_input_tag_@c.category_id btn btn-default darkgrey_bdr" />
+                                                                }
+                                                            </span>
+                                                            <hr />
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="adm_span_edit_results">
+                                                            </span>
+                                                            <hr />
+                                                        }
+                                                        <span class="adm_div_suggestions">
+                                                        </span><br />
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>*@
+                            </div>
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="categorys">
+                            @Html.Partial("~/Views/Partials/_EditBooth_Catelog.cshtml", @Model)
+                        </div>
+                    </div>
+                }
+            </div>
+            <hr class="hr_lightgrey" />
+            <div class="container">
+                <div class="col-xs-12 white_bg darkgrey_bdr">
+                    <table class="table xtable-bordered">
+                        <tr class="adm_th_products" style="background-color: #FFFFFF;">
+                            <th style="width:10%;" class="adm_th_products_image">
+                                @*@Html.DisplayNameFor(model => model.product_dtos.FirstOrDefault().productimage_dtos.FirstOrDefault().name)*@
+                            </th>
+                            <th style="width:20%;" class="hide_phone">
+                                @Html.DisplayNameFor(model => model.booth_dto.product_dtos.FirstOrDefault().name)
+                            </th>
+                            <th style="width:10%;" class="hide_phone">
+                                @Html.DisplayNameFor(model => model.booth_dto.product_dtos.FirstOrDefault().created_on)
+                            </th>
+                            <th style="width:30%;" class="hide_phone">
+                                @Html.DisplayNameFor(model => model.booth_dto.product_dtos.FirstOrDefault().description)
+                            </th>
+                            <th style="width:15%;"></th>
+                            <th style="width:15%;"></th>
+                        </tr>
+                        @{
+                            biz_booth biz2 = new biz_booth();
+                            List<dto_booth_item> tlist = biz2.GetRelevantItems(Model.booth_dto, - 1, -1);
+                            foreach (var item in tlist)
+                            {
+                                <tr>
+                                    <td class="adm_td_products_image">
+                                        @if (item.image_dtos != null && item.image_dtos.Count > 0 && !string.IsNullOrEmpty(item.image_dtos.FirstOrDefault().name))
+                                        {
+                                            if (typeof(dto_product) == item.GetType())
+                                            {
+                                                string thumb = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/products/" + item.sysname + "/t_" + item.image_dtos.FirstOrDefault().name;
+                                                string path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/products/" + item.sysname + "/" + item.image_dtos.FirstOrDefault().name;
+                                                <a href="@Url.RouteUrl("EditProduct1", new { product_id = item.id })">
+                                                    <img alt="Sample Image" class="adm_img_products_productimage loadlater" src="@thumb" data-src="@path">
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                string thumb = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/collections/" + item.sysname + "/t_" + item.image_dtos.FirstOrDefault().name;
+                                                string path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/collections/" + item.sysname + "/" + item.image_dtos.FirstOrDefault().name;
+                                                <a href="@Url.RouteUrl("EditCollection1", new { collection_id = item.id })">
+                                                    <img alt="Sample Image" class="adm_img_products_productimage loadlater" src="@thumb" data-src="@path">
+                                                </a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (typeof(dto_product) == item.GetType())
+                                            {
+                                                var image_path = "/_content/images/site/icons/armchair2_bw.png";
+                                                <a href="@Url.RouteUrl("EditProduct1", new { product_id = @item.id })">
+                                                    <img class="adm_img_image_icon" src="@image_path" alt="Sample Image" />
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                var image_path = "/_content/images/site/icons/sofa_bw.png";
+                                                <a href="@Url.RouteUrl("EditCollection1", new { collection_id = @item.id })">
+                                                    <img class="adm_img_image_icon" src="@image_path" alt="Sample Image" />
+                                                </a>
+                                            }
+                                        }
+                                    </td>
+                                    <td class="hide_phone">
+                                        @if (typeof(dto_collection) == item.GetType())
+                                        {<span class="bold red">Tilbud, </span>}
+                                        <span style="font-weight:bold;">[@Model.booth_dto.category_main.Where(c => c.category_id == item.category_main_id).FirstOrDefault().name] </span><br />
+                                        @item.name
+
+                                    </td>
+                                    <td class="hide_phone">
+                                        @{
+                                            string date = item.created_on.ToString("dd/MM/yyyy");
+                                            @Html.DisplayFor(modelItem => date)
+                                        }
+                                    </td>
+                                    <td class="hide_phone">
+                                        @Html.DisplayWithBreaksFor(item.description_limit)
+                                    </td>
+                                    <td>
+                                        @{
+                                            if (typeof(dto_product) == item.GetType())
+                                            {
+                                                SelectList slist = new SelectList(Model.booth_dtos.Select(x => new SelectListItem() { Text = x.name, Value = "" + x.booth_id }), "Value", "Text", "" + item.booth_id);
+                                                <div>
+                                                    @Html.DropDownListFor(model => item.booth_id, slist, new { @class = "form-control darkgrey_bdr adm_dropdown", data_product = item.id })
+                                                </div>
+                                            }
+                                            @*<br />*@
+                                            string txt = item.active ? "[aktiv]" : "[ikke aktiv]";
+                                            string item_type = typeof(dto_product) == item.GetType() ? "product" : "collection";
+                                            string not_active = item.active ? "false" : "true";
+                                            <div>
+                                                &nbsp;&nbsp;&nbsp;&nbsp;<a href="#/" onclick="setMyActive(this, @item.id, '@item_type');" data-active="@not_active">@txt</a>
+                                            </div>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (typeof(dto_product) == item.GetType())
+                                        {
+                                            @Html.RouteLink("Rediger product", "EditProduct1", new { product_id = (int)item.id }) <br />
+                                            @*using (Html.BeginForm("EditProductRetrieve", "Administration", FormMethod.Post))
+                                                {
+                                                    @Html.Hidden("product_id", (int)item.id);
+                                                    <input type="submit" value="Rediger produkt" style="padding:0px;" class="myfade fakeLink" />
+                                                }*@
+                                            @Html.RouteLink("Vis product", "Product", new { id = (int)item.id }, null) <br />
+                                            <a href="#" onclick="if (!confirm('vil du slette denne post?')) return;location.href='@Url.RouteUrl("DeleteProduct", new { product_id = (int)item.id })'">Slet produkt</a>
+                                        }
+                                        else
+                                        {
+                                            @Html.RouteLink("Rediger sæt", "EditCollection1", new { collection_id = (int)item.id }) <br />
+                                            @*@using (Html.BeginForm("EditCollectionRetrieve", "Administration", FormMethod.Post))
+                                                {
+                                                    @Html.Hidden("collection_id", (int)item.id);
+                                                    <input type="submit" value="Rediger sæt" style="padding:0px;" class="myfade fakeLink" />
+                                                }*@
+                                            @Html.RouteLink("Vis sæt", "Collection", new { id = (int)item.id }, null) <br />
+                                            <a href="#" onclick="if(!confirm('vil du slette denne post?')) return;location.href='@Url.RouteUrl("DeleteCollection", new { collection_id = (int)item.id })'">Slet sæt</a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="xhide_desk remove_phone_block ">
+
+            <div class="container">
+                <div class="col-sm-12" xstyle="padding-left:0px;">
+                    <h2>Administrer Bod</h2>
+                    <br />
+                    <input type="button" value="Opret Produkt" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("CreateProduct", new { booth_id = Model.booth_dto.booth_id })'" />
+                    <input type="button" value="Opret Tilbud" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("CreateCollection", new { booth_id = Model.booth_dto.booth_id })'" />
+
+                    <input type="button" value="Rediger Profil" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("UserProfile")'" />
+                    <input type="button" value="Vis Stand" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("Booth", new { id = Model.booth_dto.booth_id })'" />
+                    <br class="hide_desk  hide_tab " /><input type="submit" value="Gem" class="btn btn-default green_bg lightgreen_bdr white myfade adm_button_form_submit" />
+                </div>
+            </div>
+            <hr class="hr_lightgrey" />
+            <div class="container">
+                <div class="white_bdr darkgrey_bg removeborder-bottom navigation-top navigation-right addpaddingleft">
+                    @{
+                        string mmodified = Model.booth_dto.modified.ToString("dd/MM/yyyy");
+                    }
+                    Sidst modificeret: @Html.DisplayFor(m => mmodified)
+                </div>
+                @using (Html.BeginRouteForm("EditBooth2", FormMethod.Post, @Model))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.booth_dto.booth_id, new { @class = "adm_hidden_edit_boothid" })
+                    @Html.HiddenFor(model => model.booth_dto.sysname)
+                    @Html.HiddenFor(model => model.booth_dto.frontimage)
+                    @Html.HiddenFor(model => model.booth_dto.country)
+                    <input type="hidden" value="@ViewBag.Tab" class="input_tab" />
+                    <ul class="nav nav-tabs white_bdr darkgrey_bg">
+                        <li><a class="black active" href="#home" data-toggle="tab">Stamdata</a></li>
+                        <li><a class="black" href="#categorys" data-toggle="tab">Mapper</a></li>
+                    </ul>
+                    <div class="tab-content" style="overflow:hidden;">
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="home">
+                            <div class="col-sm-4 form-horizontal" xstyle="padding-left:0px;">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        @Html.LabelFor(model => model.booth_dto.frontimage, htmlAttributes: new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-sm-12" style="background-color:#FFFFFF;">
+                                        @{
+                                            <div class="container_overlay">
+                                                @{
+                                                    var image_path = !string.IsNullOrEmpty(Model.booth_dto.frontimage) ? "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/" + Model.booth_dto.frontimage : "/_content/images/site/icons/booth_logo.png";
+                                                    <input type="hidden" class="adm_hidden_images_imagename" value="@Model.booth_dto.frontimage">
+                                                    <img class="adm_img_boothimage" src="@image_path" alt="Sample Image" />
+                                                    <div class="overlay">
+                                                        <a href="#" class="icon" title="User Profile">
+                                                            <i class="fa fa-window-close fa-2x" onclick="removeImage(); false;"></i>
+                                                        </a>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            &nbsp;
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <input type="file" name="product" class="adm_input_boothimage btn btn-default adm_control" />
+                                            <span class="booth_fileupload"></span><br /><span class="booth_uploading"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <div class="col-sm-12">
+                                                Logoet er dit billed udadtil. Det er med dette, samt en god beskrivelse af standen du skal fange kundernes opmærksomhed.<br /><br />
+                                                <table>
+                                                    <tr>
+                                                        <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                        <td>billedet bør repræsentere din stand</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                        <td>billeddet kan for eksempel være af udvalgte vare</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                        <td>hvis intet billed bliver valgt, vil et standart billed(ovenfor) blive brugt</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                        <td>accepterede fil typer: jpg, jpeg og png</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                        <td>max størrelse: 5MB</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                </div>
+
+                            </div>
+                            <div class="col-sm-4 form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        @Html.LabelFor(model => model.booth_dto.name, htmlAttributes: new { @class = "control-label xcol-sm-2" })
+                                    </div>
+                                    <div class="col-sm-12">
+                                        @Html.EditorFor(model => model.booth_dto.name, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control" } })
+                                        @Html.ValidationMessageFor(model => model.booth_dto.name, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        @Html.LabelFor(model => model.booth_dto.street_address, htmlAttributes: new { @class = "control-label xcol-sm-2" })
+                                    </div>
+                                    <div class="col-sm-12">
+                                        @Html.EditorFor(model => model.booth_dto.street_address, new { htmlAttributes = new { @class = "adm_input_street_address form-control darkgrey_bdr adm_control" } })
+                                        @Html.ValidationMessageFor(model => model.booth_dto.street_address, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <table>
+                                            <tr>
+                                                <td style="width:45%">@Html.LabelFor(model => model.booth_dto.region_dto.zip, htmlAttributes: new { @class = "control-label xcol-sm-2" })</td>
+                                                <td style="width:5%"></td>
+                                                <td>@Html.LabelFor(model => model.booth_dto.region_dto.town, htmlAttributes: new { @class = "control-label xcol-sm-2" })</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:45%">
+                                                    @Html.EditorFor(model => model.booth_dto.region_dto.zip, new { htmlAttributes = new { @class = "adm_input_zip form-control darkgrey_bdr adm_control" } })
+                                                    @Html.ValidationMessageFor(model => model.booth_dto.region_dto.zip, "", new { @class = "text-danger" })
+                                                </td>
+                                                <td style="width:5%"></td>
+                                                <td>
+                                                    @Html.EditorFor(model => model.booth_dto.region_dto.town, new { htmlAttributes = new { @readonly = "readonly", @class = "adm_input_town form-control darkgrey_bdr adm_control" } })
+                                                    @Html.ValidationMessageFor(model => model.booth_dto.region_dto.town, "", new { @class = "text-danger" })
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:45%">
+                                                    @{
+                                                        if (@Model.booth_dto.fulladdress)
+                                                        {
+                                                            @Html.RadioButtonFor(m => m.booth_dto.fulladdress_str, "Part", new { @class = "adm_radio_part" }) <span>Kun postnr og by<br /></span>
+                                                            @Html.RadioButtonFor(m => m.booth_dto.fulladdress_str, "Full", new { Checked = "checked", @class = "adm_radio_full" }) <span>Fuld addresse</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.RadioButtonFor(m => m.booth_dto.fulladdress_str, "Part", new { Checked = "checked", @class = "adm_radio_part" }) <span>Kun postnr og by<br /></span>
+                                                            @Html.RadioButtonFor(m => m.booth_dto.fulladdress_str, "Full", new { @class = "adm_radio_full" }) <span>Fuld addresse</span>
+                                                        }
+                                                    }
+                                                </td>
+                                                <td style="width:5%"></td>
+                                                <td>
+                                                    [Note: Her vælges om den fulde addresse skal vises]
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        @Html.Label(@Model.booth_dto.country, new { htmlAttributes = new { @class = "adm_input_name form-control adm_control" } })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        @Html.LabelFor(model => model.booth_dto.description, htmlAttributes: new { @class = "control-label xcol-sm-2" })
+                                        <span class="desc_msg"></span>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        @Html.TextAreaFor(model => Model.booth_dto.description, new { @class = "adm_input_description form-control darkgrey_bdr adm_control", rows = "11" })
+                                        @Html.ValidationMessageFor(model => model.booth_dto.description, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <hr />
+                            </div>
+                            <div class="col-sm-4 form-horizontal adm_div_group3">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <div xclass="col-sm-12">
+                                            @Html.Label("Søgeord", htmlAttributes: new { @class = "control-label xcol-sm-2" }) <br class="hide" />
+                                            <br />
+                                            <br />
+                                        </div>
+                                        @foreach (dto_category entry in Model.cats)
+                                        {
+                                            bool isset = Model.booth_dto.category_main.Where(c => c.category_id == entry.category_id).Count() > 0;
+                                            @Html.CheckBox(entry.name, isset, new { @class = "custom-control-input adm_checkbox_category", @value = entry.category_id, @disabled = "disabled" });
+                                            <label class="custom-control-label" for="defaultUnchecked">@entry.name</label>
+                                            <br />
+                                        }
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="categorys">
+                            @Html.Partial("~/Views/Partials/_EditBooth_Catelog.cshtml", @Model)
+                        </div>
+                    </div>
+                }
+            </div>
+            <hr class="hr_lightgrey" />
+            <div class="container">
+                <div class="col-sm-12 white_bg darkgrey_bdr">
+                    <table class="table xtable-bordered">
+                        <tr class="adm_th_products" style="background-color: #FFFFFF;">
+                            <th style="width:10%;" class="adm_th_products_image">
+                                @*@Html.DisplayNameFor(model => model.product_dtos.FirstOrDefault().productimage_dtos.FirstOrDefault().name)*@
+                            </th>
+                            <th style="width:20%;" class="hide_phone">
+                                @Html.DisplayNameFor(model => model.booth_dto.product_dtos.FirstOrDefault().name)
+                            </th>
+                            <th style="width:10%;" class="hide_phone">
+                                @Html.DisplayNameFor(model => model.booth_dto.product_dtos.FirstOrDefault().created_on)
+                            </th>
+                            <th style="width:30%;" class="hide_phone">
+                                @Html.DisplayNameFor(model => model.booth_dto.product_dtos.FirstOrDefault().description)
+                            </th>
+                            <th style="width:15%;"></th>
+                            <th style="width:15%;"></th>
+                        </tr>
+                        @{
+                            biz_booth biz3 = new biz_booth();
+                            List<dto_booth_item> mlist = biz3.GetRelevantItems(Model.booth_dto, - 1, -1);
+                            foreach (var item in mlist)
+                            {
+                                <tr>
+                                    <td class="adm_td_products_image">
+                                        @if (item.image_dtos != null && item.image_dtos.Count > 0 && !string.IsNullOrEmpty(item.image_dtos.FirstOrDefault().name))
+                                        {
+                                            if (typeof(dto_product) == item.GetType())
+                                            {
+                                                string thumb = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/products/" + item.sysname + "/t_" + item.image_dtos.FirstOrDefault().name;
+                                                string path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/products/" + item.sysname + "/" + item.image_dtos.FirstOrDefault().name;
+                                                <a href="@Url.RouteUrl("EditProduct1", new { product_id = item.id })">
+                                                    <img alt="Sample Image" class="adm_img_products_productimage loadlater" src="@thumb" data-src="@path">
+                                                </a>
+
+                                                @*using (Html.BeginForm("EditProductRetrieve", "Administration", FormMethod.Post))
+                                                    {
+                                                        @Html.Hidden("product_id", item.id);
+                                                        <input type="submit" value="..til produkt" style="padding:0px;" class="myfade fakeLink" />
+                                                    }*@
+                                            }
+                                            else
+                                            {
+                                                string thumb = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/collections/" + item.sysname + "/t_" + item.image_dtos.FirstOrDefault().name;
+                                                string path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/collections/" + item.sysname + "/" + item.image_dtos.FirstOrDefault().name;
+                                                <a href="@Url.RouteUrl("EditCollection1", new { collection_id = item.id })">
+                                                    <img alt="Sample Image" class="adm_img_products_productimage loadlater" src="@thumb" data-src="@path">
+                                                </a>
+                                                @*using (Html.BeginForm("EditCollectionRetrieve", "Administration", FormMethod.Post))
+                                                    {
+                                                        @Html.Hidden("collection_id", item.id);
+                                                        <input type="submit" value="..til sæt" style="padding:0px;" class="myfade fakeLink" />
+                                                    }*@
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (typeof(dto_product) == item.GetType())
+                                            {
+                                                var image_path = "/_content/images/site/icons/armchair2_bw.png";
+                                                <a href="@Url.RouteUrl("EditProduct1", new { product_id = @item.id })">
+                                                    <img class="adm_img_image_icon" src="@image_path" alt="Sample Image" />
+                                                </a>
+                                                @*using (Html.BeginForm("EditProductRetrieve", "Administration", FormMethod.Post))
+                                                    {
+                                                        @Html.Hidden("product_id", item.id);
+                                                        <input type="submit" value="..til produkt" style="padding:0px;" class="myfade fakeLink" />
+                                                    }*@
+                                            }
+                                            else
+                                            {
+                                                var image_path = "/_content/images/site/icons/sofa_bw.png";
+                                                <a href="@Url.RouteUrl("EditCollection1", new { collection_id = @item.id })">
+                                                    <img class="adm_img_image_icon" src="@image_path" alt="Sample Image" />
+                                                </a>
+                                                @*using (Html.BeginForm("EditCollectionRetrieve", "Administration", FormMethod.Post))
+                                                    {
+                                                    @Html.Hidden("collection_id", item.id);
+                                                    <input type="submit" value="..til sæt" style="padding:0px;" class="myfade fakeLink" />
+                                                    }*@
+                                            }
+                                        }
+                                    </td>
+                                    <td class="hide_phone">
+                                        @if (typeof(dto_collection) == item.GetType())
+                                        {<span class="bold red">Sæt, </span>}
+                                        <span style="font-weight:bold;">[@Model.booth_dto.category_main.Where(c => c.category_id == item.category_main_id).FirstOrDefault().name] </span><br />
+                                        @item.name
+
+                                    </td>
+                                    <td class="hide_phone">
+                                        @{
+                                            string date = item.created_on.ToString("dd/MM/yyyy");
+                                            @Html.DisplayFor(modelItem => date)
+                                        }
+                                    </td>
+                                    <td class="hide_phone">
+                                        @Html.DisplayWithBreaksFor(item.description_limit)
+                                    </td>
+                                    <td>
+                                        @{
+                                            if (typeof(dto_product) == item.GetType())
+                                            {
+                                                SelectList slist = new SelectList(Model.booth_dtos.Select(x => new SelectListItem() { Text = x.name, Value = "" + x.booth_id }), "Value", "Text", "" + item.booth_id);
+                                                <div>
+                                                    @Html.DropDownListFor(model => item.booth_id, slist, new { @class = "form-control darkgrey_bdr adm_dropdown", data_product = item.id })
+                                                </div>
+                                            }
+                                            @*<br />*@
+                                            string txt = item.active ? "[aktiv]" : "[ikke aktiv]";
+                                            string item_type = typeof(dto_product) == item.GetType() ? "product" : "collection";
+                                            string not_active = item.active ? "false" : "true";
+                                            <div>
+                                                &nbsp;&nbsp;&nbsp;&nbsp;<a href="#/" onclick="setMyActive(this, @item.id, '@item_type');" data-active="@not_active">@txt</a>
+                                            </div>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (typeof(dto_product) == item.GetType())
+                                        {
+                                            @Html.RouteLink("Rediger product", "EditProduct1", new { product_id = (int)item.id }) <br />
+                                            @*using (Html.BeginForm("EditProductRetrieve", "Administration", FormMethod.Post))
+                                                {
+                                                    @Html.Hidden("product_id", (int)item.id);
+                                                    <input type="submit" value="Rediger produkt" style="padding:0px;" class="myfade fakeLink" />
+                                                }*@
+                                            @Html.RouteLink("Vis product", "Product", new { id = (int)item.id }, null) <br />
+                                            <a href="#" onclick="if (!confirm('vil du slette denne post?')) return;location.href='@Url.RouteUrl("DeleteProduct", new { product_id = (int)item.id })'">Slet produkt</a>
+                                        }
+                                        else
+                                        {
+                                            @Html.RouteLink("Rediger sæt", "EditCollection1", new { collection_id = (int)item.id }) <br />
+                                            @*@using (Html.BeginForm("EditCollectionRetrieve", "Administration", FormMethod.Post))
+                                                {
+                                                    @Html.Hidden("collection_id", (int)item.id);
+                                                    <input type="submit" value="Rediger sæt" style="padding:0px;" class="myfade fakeLink" />
+                                                }*@
+                                            @Html.RouteLink("Vis sæt", "Collection", new { id = (int)item.id }, null) <br />
+                                            <a href="#" onclick="if(!confirm('vil du slette denne post?')) return;location.href='@Url.RouteUrl("DeleteCollection", new { collection_id = (int)item.id })'">Slet sæt</a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+                                            }
+                                            catch (Exception e)
+                                            {
+                                                
+                                                string s = ErrorHelper.HandleError(ERROR.EDITBOOTH, e);
+                                                string subject = "Fejl i front, EditBooth(MOB)";
+                                                string body = s;
+                                                AdminHelper.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
+                                            }
+
+}
+@{
+    string err_msg = @Html.Raw(ViewBag.JSON_ERRORS).ToString();
+    string sys_msg = @Html.Raw(ViewBag.JSON_SYSTEM_MESSAGE).ToString();
+    string upload_url = @Url.RouteUrl("UploadImage");
+    string addresstown_url = @Url.RouteUrl("GetAddressTown");
+    string changeboothid_url = @Url.RouteUrl("ChangeBoothId");
+    string active_url = @Url.RouteUrl("SetActive");
+    string tab = @ViewBag.Tab;
+    string createfolder_url = @Url.RouteUrl("CreateFolder");
+    string movefolder_url = @Url.RouteUrl("MoveFolder");
+    string deletefolder_url = @Url.RouteUrl("DeleteFolder");
+    string removeimage_url = @Url.RouteUrl("RemoveImage");
+    <input type="hidden" id="err_msg" value="@err_msg" />
+    <input type="hidden" id="sys_msg" value="@sys_msg" />
+    <input type="hidden" id="upload_url" value="@upload_url" />
+    <input type="hidden" id="addresstown_url" value="@addresstown_url" />
+    <input type="hidden" id="changeboothid_url" value="@changeboothid_url" />
+    <input type="hidden" id="active_url" value="@active_url" />
+    <input type="hidden" id="tab" value="@tab" />
+    <input type="hidden" id="createfolder_url" value="@createfolder_url" />
+    <input type="hidden" id="movefolder_url" value="@movefolder_url" />
+    <input type="hidden" id="deletefolder_url" value="@deletefolder_url" />
+    <input type="hidden" id="removeimage_url" value="@removeimage_url" />
+}
+
+@section scripts {
+    <script>
+        window.onunload = function () { };
+        $(window).on("load", function () {
+            var downloadingImages = [];
+            var counter = 0;
+            $(".loadlater").each(function (index, element) {
+                downloadingImages[counter] = new Image();
+                downloadingImages[counter].onload = function () {
+                    $(element).attr("src", this.src);
+                };
+                downloadingImages[counter].src = $(element).data("src");
+                counter++;
+            });
+        });
+        $(document).ready(function () {
+            fix_mobile();
+            setTab();
+            showErrors();
+            showMessages();
+            setDescription()
+
+            $('.adm_input_description').keyup(function () {
+                setDescription();
+            });
+            $('.adm_button_form_submit').click(function () {
+                $('form').submit();
+            });
+            $('.adm_input_boothimage').change(function () {
+                $('.z-loading').fadeIn(200);
+                var input = this;
+                var path = $('#upload_url').val();;
+                var files = $(".adm_input_boothimage").prop('files');
+                if (files.length > 0) {
+                    var data = new FormData();//der skal bruges FormData til billed, tror jeg har ikke tjekket, men append() virker også i IE
+                    data.append("images", files[0]);
+                    data.append("TypeFile", "BOOTH");
+                    uploadImage_Ajax(path, data, '.booth_uploading', '.booth_upload');
+                }
+            });
+            $(".adm_input_name").focusout(function () {
+                $('.z-loading').fadeIn(200);
+                $('form').submit();
+            });
+            var _tmp_address = '';
+            $(".adm_input_street_address").focusin(function () {
+                _tmp_address = $(this).val();
+            });
+            $(".adm_input_street_address").focusout(function () {
+                if ($(this).val() == '' && $('.adm_radio_full').prop('checked') == true) {
+                    $(this).val(_tmp_address);
+                    return;
+                }
+                $('.z-loading').fadeIn(200);
+                $('form').submit();
+            });
+            $(".adm_input_zip").focusout(function () {
+                $('.z-loading').fadeIn(200);
+                var zip = $(".adm_input_zip").val();
+                if (zip.length == 4 && zip != '(ugyldig!)')
+                    $('form').submit();
+                else
+                    $('.z-loading').fadeOut(200);
+            });
+            $(".adm_input_town").focusout(function () {
+                ;
+            });
+            $(".adm_radio_part").change(function () {
+                $('.z-loading').fadeIn(200);
+                $('form').submit();
+            });
+            $(".adm_radio_full").change(function () {
+                var zip = $(".adm_input_zip").val();
+                if (zip.length != 4 && zip == '(ugyldig!)') {
+                    $('.adm_radio_part').prop('checked', true);
+                    $('.adm_radio_full').prop('checked', false);
+                    return;
+                }
+                if ($('.adm_input_street_address').val() == '') {
+                    $('.adm_radio_part').prop('checked', true);
+                    $('.adm_radio_full').prop('checked', false);
+                    return;
+                }
+                if ($('.adm_input_town').val() == '') {
+                    $('.adm_radio_part').prop('checked', true);
+                    $('.adm_radio_full').prop('checked', false);
+                    return;
+                }
+
+                $('.z-loading').fadeIn(200);
+                $('form').submit();
+            });
+            $(".adm_input_description").focusout(function () {
+                $('.z-loading').fadeIn(200);
+                $('form').submit();
+            });
+            $('.adm_input_zip').keyup(function () {
+                var zip = $('.adm_input_zip').val();
+                if (!isInt(zip)) {
+                    $('.adm_input_zip').val('');
+                    $('.adm_input_town').val('(ugyldig!)');
+                }
+                else if (zip.length == 4) {
+                    //var zip = $('.adm_input_zip').val();
+                    var path = $('#addresstown_url').val();
+                    var data = {};
+                    data.Zip = zip;
+
+                    if (zip != '')
+                        getAddressTown_Ajax(path, data, '.adm_input_town');
+                }
+                else if (zip.length > 4) {
+                    //alert('hep');
+                    zip = zip.substring(0, 4);
+                    $('.adm_input_zip').val(zip);
+                }
+                else {
+                    $('.adm_input_town').val('(ugyldig!)');
+                }
+            });
+            var previous;
+            $(".adm_dropdown").focus(function () {
+                // Store the current value on focus and on change
+                previous = $(this).val();
+            });
+            $('.adm_dropdown').change(function () {
+                $('.z-loading').fadeIn(200);
+                var booth_id = $(this).val();
+                var product_id = $(this).data('product');
+
+                var path = $('#changeboothid_url').val();
+                var data = { 'BoothId': booth_id, 'ProductId': product_id };
+                if (changeBoothId_Ajax(path, data, this))
+                    ;
+                else {
+                    $(this).val(previous);
+                }
+            });
+            $('.z-myalert-btn').click(function () {
+                $('.z-myalert').fadeOut(200);
+                $('.z-loading').fadeOut(200);
+            });
+        });
+
+        function isInt(value) {
+            return !isNaN(value) && (function (x) { return (x | 0) === x; })(parseFloat(value))
+        }
+        function setMyActive(elem, id, type) {
+            var path = $('#active_url').val();
+            var data = { 'Id': id, 'Value': $(elem).data("active"), 'Type': type };
+            setActive_Ajax(path, data, elem);
+        }
+        function setTab() {
+            var tab = $('#tab').val();
+            if (tab == "home") {
+                $('#home').addClass('active');
+                $('#categorys').removeClass('active');
+            }
+            else if (tab == 'categorys') {
+                $('#home').removeClass('active');
+                $('#categorys').addClass('active');
+            }
+
+        }
+
+        function setDescription() {
+            var str = $('.adm_input_description').val();
+            var res = 500 - str.length;
+            if (res >= 0)
+                $('.desc_msg').text(', tilbage: ' + res);
+            else {
+                $('.adm_input_description').val(str.substring(0, 500));
+                $('.desc_msg').text(', overskredet: ' + (res * -1));
+            }
+        }
+        function createFolder(id, level_type) {
+            $('.z-loading').fadeIn(200);
+            var lev_name = prompt("Indtast navet på kategorien:", "");
+            if (lev_name == null || lev_name == '') {
+                $('.z-loading').fadeOut(400);
+                return;
+            }
+
+            var booth_id = $('.adm_hidden_edit_boothid').val();
+            window.location.href = $('#createfolder_url').val() + '?fld_name=' + lev_name + '&id=' + id + '&type=' + level_type + '&booth_id=' + booth_id;
+        }
+        function moveFolder(lev_id, direction, id/*lev_a eller booth*/, level_type) {
+            $('.z-loading').fadeIn(200);
+            var booth_id = $('.adm_hidden_edit_boothid').val();
+            window.location.href = $('#movefolder_url').val() + '?fld_id=' + lev_id + '&direction=' + direction + '&id=' + id + '&type=' + level_type + '&booth_id=' + booth_id;
+        }
+        function deleteFolder(lev_id, level_type, id) {
+            $('.z-loading').fadeIn(200);
+            var booth_id = $('.adm_hidden_edit_boothid').val();
+            window.location.href = $('#deletefolder_url').val() + '?fld_id=' + lev_id + '&id=' + id + '&type=' + level_type + '&booth_id=' + booth_id;
+
+        }
+
+        function removeImage() {
+            var img_name = $('.adm_hidden_images_imagename').val();
+            var path = $('#removeimage_url').val();
+            var data = {};
+            data.ImageName = img_name;
+            data.BoothId = $('.adm_hidden_edit_boothid').val();
+            data.type = 'BOOTH';
+
+            if (img_name != '') {
+                $('.z-loading').fadeIn(200);
+                removeImage_Ajax(path, data);
+                return;
+            }
+            myalert('Der skete en fejl, beklager.');
+        }
+
+
+        function uploadImage_Ajax(path, data, uploading, fileupload) {
+            $.ajax({
+                url: path,
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: data,
+                xhr: function () {
+                    var xhr = $.ajaxSettings.xhr();
+                    xhr.onprogress = function e() {
+                        // For downloads
+                        if (e.lengthComputable) {
+                            console.log(e.loaded / e.total);
+                        }
+                    };
+                    xhr.upload.onprogress = function (e) {
+                        // For uploads
+                        if (e.lengthComputable) {
+                            $(uploading).text("uploaded: " + e.loaded * 100 / e.total + "% ");
+                        }
+                    };
+                    return xhr;
+                },
+                success: function (data, textStatus, xhr) {
+                    if (xhr.status == 200) {
+                        $(fileupload).text('File Upload: ' + textStatus);
+                        $('form').submit();
+                    }
+                    else {
+
+                        myalert('Der skete en fejl, beklager.');
+                        $('.z-loading').fadeOut(400);
+                    }
+
+                },
+                error: function (er) {
+                    myalert("Der skete en fejl. tjek fil størrelse eller fil type.");
+                    $('.z-loading').fadeOut(400);
+                }
+            });
+        }/**/
+        function removeImage_Ajax(path, data_in) {
+            var data = data_in;
+            $.ajax({
+                url: path,
+                type: "POST",
+                contentType: "application/x-www-form-urlencoded", //"application/json; charset=utf-8",
+                dataType: "json",
+                data: data,//JSON.stringify(data),
+                xhr: function () {
+                    var xhr = $.ajaxSettings.xhr();
+                    xhr.onprogress = function e() {
+                        // For downloads
+                        //if (e.lengthComputable) {
+                        //    console.log(e.loaded / e.total);
+                        //}
+                    };
+                    xhr.upload.onprogress = function (e) {
+                        // For uploads
+                        //if (e.lengthComputable) {
+                        //    $(uploading).text("uploaded: " + e.loaded * 100 / e.total + "% ");
+                        //}
+                    };
+                    return xhr;
+                },
+                success: function (data) {
+                    if (data.success) {
+                        $('form').submit();
+                    }
+                    else {
+                        myalert('Der skete en fejl, beklager.');
+                        $('.z-loading').fadeOut(400);
+                    }
+                },
+                error: function (er) {
+                    myalert("error: " + er);
+                    $('.z-loading').fadeOut(400);
+                }
+            });
+        }
+        function getAddressTown_Ajax(path, data, town) {
+            $.ajax({
+                url: path,
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(data),
+                success: function (result) {
+                    if (result.success) {
+                        $(town).val(result.town);
+                    }
+                    else
+                        myalert('Der skete en fejl, beklager.');
+                },
+                error: function (er) {
+                    myalert("error: " + er);
+                }
+            });
+        }
+        function setActive_Ajax(path, data, elem) {
+            $.ajax({
+                url: path,
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(data),
+                success: function (result) {
+                    if (result.success) {
+                        var active = data.Value == 'true' ? 'false' : 'true';
+                        $(elem).data('active', active);
+                        $(elem).text(result.msg);
+                    }
+                    else {
+                        myalert('Kategorier skal være valgt.');
+                    }
+                },
+                error: function (er) {
+                    myalert("error: " + er);
+                }
+            });
+        }
+        function changeBoothId_Ajax(path, data, elem) {
+            if (!confirm('Vil du flytte vare? \nHusk at kategorier og foldere skal indstilles for den nye bod.')) {
+                $('.z-loading').fadeOut(400);
+                return false;
+            }
+            $.ajax({
+                url: path,
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(data),
+                success: function (result) {
+                    if (result.success) {
+                        $(elem).closest('tr').remove();
+                    }
+                    else
+                        myalert(result.msg);
+                    $('.z-loading').fadeOut(400);
+                    return true;
+                },
+                error: function (er) {
+                    myalert("error: " + er);
+                    $('.z-loading').fadeOut(400);
+                    return true;
+                }
+            });
+        }
+    </script>
+}

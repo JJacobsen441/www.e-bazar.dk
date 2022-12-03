@@ -1,0 +1,589 @@
+﻿@model www.e_bazar.dk.Models.DTOs.dto_booth
+
+<div class="remove_desk_block booth-item">
+
+@if (Model.booth_id != -1)
+{
+    string s = ViewContext.Controller.ViewBag.Search as string;
+    string c = ViewContext.Controller.ViewBag.Cat as string;
+    string z = ViewContext.Controller.ViewBag.Zip as string;
+    string f = ViewContext.Controller.ViewBag.Fra as string;
+    string t = ViewContext.Controller.ViewBag.Til as string;
+    string g = ViewContext.Controller.ViewBag.Gratis as string;
+    string css = "";// ThisSession.IsMobile == "true" ? "removepaddingsides" : "";
+    <div class="b-item l-mp-showcase1 @css">
+        <div class="col-xs-12">
+            @{
+                string navn = Model.salesman_dto.firstname != "" ? Model.salesman_dto.firstname + " siger velkommen!" : "Velkommen til!";
+            }
+            oprettet: <span class="z-color-green">@Model.created_on.ToString("dd/MM/yyyy")</span><br />
+            <span class="z-color-black-1">@Html.DisplayFor(modelItem => navn)</span><br />
+        </div>
+        <div class="col-xs-12 l-mp-showcase2">
+            <span class="z-bold">|&nbsp;@Html.DisplayFor(modelItem => Model.name) &nbsp;|</span>
+        </div>
+        <div class="l-mp-showcase10 z-background-color-darkgrey z-padding-sides-0 @css">
+            <br />
+            <div class="col-xs-12 l-mp-showcase3">
+                @{
+                    var image_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+
+                    string[] classes = { "l-mp-showcase4", "z-background-color-lightgrey", "myfade", "loadlater" };
+                    object route = new { id = @Model.booth_id };
+                    string alt = "/_content/images/site/icons/booth_logo.png";
+                    string style = "";
+                    @Html.RouteImage("Booth", route, image_path, null, alt, classes, null, style, null)
+                }
+            </div>
+            <div class="col-xs-12 z-padding-sides-0">
+                <div class="col-xs-12 z-hover-black z-padding-right-0 z-cursor-pointer z-mp-tooltip2">
+                    <i class="far fa-images"></i>
+                    <span>&nbsp;"Må jeg præsentere!"</span>
+                    <span class="l-mp-showcase5 z-align-left z-mp-content-tooltip">
+                        @{
+                            biz_booth biz = new biz_booth();
+                            foreach (dto_booth_item item in biz.GetRelevantItems(Model, 0, 5))
+                            {
+                                if (item.relevant)
+                                {
+                                    string type = item.GetType() == typeof(biz_product) ? "product" : "collection";
+                                    var image_path_showcase = item.image_dtos.Count() > 0 ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + type + "s/" + item.sysname + "/" + item.image_dtos.FirstOrDefault().name : "/_content/images/site/icons/armchair2_bw.png";
+
+                                    string[] classes_showcase = { "l-mp-showcase6", "", "xz-background-color-lightgrey", "z-z-index-low", "afterlater" };
+                                    object route_showcase = new { id = @Model.booth_id };
+                                    string styleb = "";
+                                    string altb = "";
+                                    @Html.RouteImage("", route_showcase, image_path_showcase, null, altb, classes_showcase, null, styleb, null)
+                                }
+                            }
+                            }
+                        <br /><br />
+                        <a href="/#" class="z-color-white-1 bold tooltip2-close">skjul</a>
+                    </span>
+                    <br />
+                </div>
+            <div class="col-xs-12 z-hover-black z-cursor-pointer z-mp-tooltip3">
+                <i class="far fa-file-alt"></i>
+                <span>&nbsp;Om Standen</span>
+                <span class="l-mp-showcase7 z-mp-content-tooltip xz-background-color-darkgrey xz-border-black xz-color-black-1 z-padding-all-15 z-align-left">
+
+                    @{
+                        biz_booth biz2 = new biz_booth();
+                        foreach (dto_booth_item item in biz2.GetRelevantItems(Model, 0, 5))
+                        {
+                            if (item.relevant)
+                            {
+                                string name = "[" + item.name + "]";
+                            @Html.DisplayFor(m => name) <br />
+                                }
+                            }
+                        }
+                        --------------------------------<br />
+                    @Html.DisplayWithBreaksFor(Model.description_limit)
+                    <br /><br />
+                    <a href="/#" class="z-color-white-1 bold tooltip2-close">skjul</a>
+                </span>
+                <br />
+             </div>
+            
+            </div>
+            
+            <div class="col-xs-12">
+
+                <div class="">
+                    @if (Model.boothrating != null && Model.boothrating != 0.0)
+                    {
+                        <span>
+                            @for (double i = 0; i < 5; i += 0.5)
+                            {
+                                if (i % 1 == 0 && i + 1 <= Model.boothrating)
+                                {
+                                    <i class="fas fa-star"></i>
+                                }
+                                else if (i % 1 == 0 && i + 0.5 <= Model.boothrating)
+                                {
+                                    <i class="fas fa-star-half-alt"></i>
+                                }
+                                else if (i % 1 == 0)
+                                {
+                                    <i class="far fa-star"></i>
+                                }
+                            }
+                        </span>
+                        <span>
+                            (@if (Model.numberofratings == 1)
+                            {
+                                @Model.numberofratings @Html.Raw("&nbsp;stemme")
+                            }
+                            else
+                            {
+                                @Model.numberofratings @Html.Raw("&nbsp;stemmer")
+                            })
+                        </span>
+                    }
+                    else
+                    {
+                        <span>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </span>
+                        <span>
+                            (0&nbsp;stemmer)
+                        </span>
+                    }
+                </div>
+                <div class="">
+                    Antal hits: @Model.hits_items
+                </div>
+                <div class="l-mp-showcase8">
+                    @if (Model.category_main != null)
+                    {
+                        string areas = ViewContext.Controller.ViewBag.AreasChecked as string;
+                        areas = areas.Replace("æ", "ae").Replace("ø", "oe").Replace("å", "aa").Replace(" ", "").ToLower();
+                        foreach (var cat in Model.category_main)
+                        {
+                            if (cat.name == ".ingen")
+                            {
+                                continue;
+                            }
+                            string name = "[" + cat.name + "]";
+                            @Html.RouteLink(name, "Marketplace", new { area = areas, c = SecurityHelper.EncodeCats_MD5(true, cat.name) }, new { @class = "green myfade" })
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+        @*<hr />*@
+    </div>
+
+}
+else
+{
+    <div class="col-xs-4 z-mp-showcase1 z-padding-sides-0">
+        <div class="col-xs-12  ">
+            &nbsp; <br />
+        </div>
+        <div class="col-xs-12 ">
+            &nbsp;
+        </div>
+    </div>
+}
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="remove_tab_block booth-item">
+
+    @if (Model.booth_id != -1)
+    {
+        string s = ViewContext.Controller.ViewBag.Search as string;
+        string c = ViewContext.Controller.ViewBag.Cat as string;
+        string z = ViewContext.Controller.ViewBag.Zip as string;
+        string f = ViewContext.Controller.ViewBag.Fra as string;
+        string t = ViewContext.Controller.ViewBag.Til as string;
+        string g = ViewContext.Controller.ViewBag.Gratis as string;
+        string css = "";// ThisSession.IsMobile == "true" ? "removepaddingsides" : "";
+        <div class="b-item l-mp-showcase1 @css">
+            <div class="col-xs-12">
+                @{
+                    string navn = Model.salesman_dto.firstname != "" ? Model.salesman_dto.firstname + " siger velkommen!" : "Velkommen til!";
+                }
+                oprettet: <span class="z-color-green">@Model.created_on.ToString("dd/MM/yyyy")</span><br />
+                <span class="z-color-black-1">@Html.DisplayFor(modelItem => navn)</span><br />
+            </div>
+            <div class="col-xs-12 l-mp-showcase2">
+                <span class="z-bold">|&nbsp;@Html.DisplayFor(modelItem => Model.name) &nbsp;|</span>
+            </div>
+            <div class="l-mp-showcase10 z-background-color-darkgrey z-padding-sides-0 @css">
+                <br />
+                <div class="col-xs-12 l-mp-showcase3">
+                    @{
+                        var image_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+
+                        string[] classes = { "l-mp-showcase4", "z-background-color-lightgrey", "myfade", "loadlater" };
+                        object route = new { id = @Model.booth_id };
+                        string alt = "/_content/images/site/icons/booth_logo.png";
+                        string style = "";
+                        @Html.RouteImage("Booth", route, image_path, null, alt, classes, null, style, null)
+                    }
+                </div>
+                <div class="col-xs-12 z-padding-sides-0">
+                    <div class="col-xs-12 z-hover-black z-padding-right-0 z-cursor-pointer z-mp-tooltip2">
+                        <i class="far fa-images"></i>
+                        <span>&nbsp;"Må jeg præsentere!"</span>
+                        <span class="l-mp-showcase5 z-align-left z-mp-content-tooltip">
+                            @{
+                                biz_booth biz3 = new biz_booth();
+                                foreach (dto_booth_item item in biz3.GetRelevantItems(Model, 0, 5))
+                                {
+                                    if (item.relevant)
+                                    {
+                                        string type = item.GetType() == typeof(biz_product) ? "product" : "collection";
+                                        var image_path_showcase = item.image_dtos.Count() > 0 ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + type + "s/" + item.sysname + "/" + item.image_dtos.FirstOrDefault().name : "/_content/images/site/icons/armchair2_bw.png";
+
+                                        string[] classes_showcase = { "l-mp-showcase6", "", "xz-background-color-lightgrey", "z-z-index-low", "afterlater" };
+                                        object route_showcase = new { id = @Model.booth_id };
+                                        string styleb = "";
+                                        string altb = "";
+                                        @Html.RouteImage("", route_showcase, image_path_showcase, null, altb, classes_showcase, null, styleb, null)
+                                        }
+                                }
+                                }
+                            <br /><br />
+                            <a href="/#" class="z-color-white-1 bold tooltip2-close">skjul</a>
+                        </span>
+                        <br />
+                    </div>
+                    <div class="col-xs-12 z-hover-black z-cursor-pointer z-mp-tooltip3">
+                        <i class="far fa-file-alt"></i>
+                        <span>&nbsp;Om Standen</span>
+                        <span class="l-mp-showcase7 z-mp-content-tooltip xz-background-color-darkgrey xz-border-black xz-color-black-1 z-padding-all-15 z-align-left">
+                            @{
+                                biz_booth biz4 = new biz_booth();
+                                foreach (dto_booth_item item in biz4.GetRelevantItems(Model, 0, 5))
+                                {
+                                    if (item.relevant)
+                                    {
+                                        string name = "[" + item.name + "]";
+                                        @Html.DisplayFor(m => name) <br />
+                                        }
+                                }
+                                }
+                                --------------------------------<br />
+                            @Html.DisplayWithBreaksFor(Model.description_limit)
+                            <br /><br />
+                            <a href="/#" class="z-color-white-1 bold tooltip3-close">skjul</a>
+                        </span>
+                    </div>
+
+                </div>
+                
+                <div class="col-xs-12">
+
+                    <div class="">
+                        @if (Model.boothrating != null && Model.boothrating != 0.0)
+                        {
+                            <span>
+                                @for (double i = 0; i < 5; i += 0.5)
+                                {
+                                    if (i % 1 == 0 && i + 1 <= Model.boothrating)
+                                    {
+                                        <i class="fas fa-star"></i>
+                                    }
+                                    else if (i % 1 == 0 && i + 0.5 <= Model.boothrating)
+                                    {
+                                        <i class="fas fa-star-half-alt"></i>
+                                    }
+                                    else if (i % 1 == 0)
+                                    {
+                                        <i class="far fa-star"></i>
+                                    }
+                                }
+                            </span>
+                            <span>
+                                (@if (Model.numberofratings == 1)
+                                {
+                                    @Model.numberofratings @Html.Raw("&nbsp;stemme")
+                                }
+                                else
+                                {
+                                    @Model.numberofratings @Html.Raw("&nbsp;stemmer")
+                                })
+                            </span>
+                        }
+                        else
+                        {
+                            <span>
+                                <i class="far fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </span>
+                            <span>
+                                (0&nbsp;stemmer)
+                            </span>
+                        }
+                    </div>
+                    <div class="">
+                        Antal hits: @Model.hits_items
+                    </div>
+                    <div class="l-mp-showcase8">
+                        @if (Model.category_main != null)
+                        {
+                            string areas = ViewContext.Controller.ViewBag.AreasChecked as string;
+                            areas = areas.Replace("æ", "ae").Replace("ø", "oe").Replace("å", "aa").Replace(" ", "").ToLower();
+                            foreach (var cat in Model.category_main)
+                            {
+                                if (cat.name == ".ingen") 
+                                {
+                                    continue;
+                                }
+                                string name = "[" + cat.name + "]";
+                                @Html.RouteLink(name, "Marketplace", new { area = areas, c = SecurityHelper.EncodeCats_MD5(true, cat.name) }, new { @class = "green myfade" })
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+    }
+    else
+    {
+        <div class="col-xs-12 z-mp-showcase1 z-padding-sides-0">
+            <div class="col-xs-12  ">
+                &nbsp; <br />
+            </div>
+            <div class="col-xs-12 ">
+                &nbsp;
+            </div>
+        </div>
+    }
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="remove_phone_block">
+
+    @if (Model.booth_id != -1)
+    {
+        string s = ViewContext.Controller.ViewBag.Search as string;
+        string c = ViewContext.Controller.ViewBag.Cat as string;
+        string z = ViewContext.Controller.ViewBag.Zip as string;
+        string f = ViewContext.Controller.ViewBag.Fra as string;
+        string t = ViewContext.Controller.ViewBag.Til as string;
+        string g = ViewContext.Controller.ViewBag.Gratis as string;
+        string css = "";// ThisSession.IsMobile == "true" ? "removepaddingsides" : "";
+        <div class="col-xs-12 l-mp-showcase1 @css">
+            <div class="col-xs-12">
+                @{
+                    string navn = Model.salesman_dto.firstname != "" ? Model.salesman_dto.firstname + " siger velkommen!" : "Velkommen til!";
+                }
+                oprettet: <span class="z-color-green">@Model.created_on.ToString("dd/MM/yyyy")</span><br />
+                <span class="z-color-black-1">@Html.DisplayFor(modelItem => navn)</span><br />
+            </div>
+            <div class="col-xs-12 l-mp-showcase2">
+                <span class="z-bold">|&nbsp;@Html.DisplayFor(modelItem => Model.name) &nbsp;|</span>
+            </div>
+            <div class="l-mp-showcase10 z-background-color-darkgrey z-padding-sides-0 @css">
+                <br />
+                <div class="col-xs-12 l-mp-showcase3">
+                    @{
+                        var image_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+
+                        string[] classes = { "l-mp-showcase4", "z-background-color-lightgrey", "myfade", "loadlater" };
+                        object route = new { id = @Model.booth_id };
+                        string alt = "/_content/images/site/icons/booth_logo.png";
+                        string style = "";
+                        @Html.RouteImage("Booth", route, image_path, null, alt, classes, null, style, null)
+                    }
+                </div>
+
+                <div class="col-xs-12 z-padding-right-0 xz-only-desk z-cursor-pointer z-mp-tooltip2">
+                    <i class="far fa-images"></i>
+                    <span>&nbsp;"Må jeg præsentere!"</span>
+                    <span class="l-mp-showcase5 z-align-left z-mp-content-tooltip">
+                        @{
+                            biz_booth biz5 = new biz_booth();
+                            foreach (dto_booth_item item in biz5.GetRelevantItems(Model, 0, 5))
+                            {
+                                if (item.relevant)
+                                {
+                                    string type = item.GetType() == typeof(biz_product) ? "product" : "collection";
+                                    var image_path_showcase = item.image_dtos.Count() > 0 ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + type + "s/" + item.sysname + "/" + item.image_dtos.FirstOrDefault().name : "/_content/images/site/icons/armchair2_bw.png";
+
+                                    string[] classes_showcase = { "l-mp-showcase6", "", "xz-background-color-lightgrey", "z-z-index-low", "afterlater" };
+                                    object route_showcase = new { id = @Model.booth_id };
+                                    string styleb = "";
+                                    string altb = "";
+                                    @Html.RouteImage("", route_showcase, image_path_showcase, null, altb, classes_showcase, null, styleb, null)
+                                    }
+                            }
+                            }
+                        <br /><br />
+                        <a href="/#" class="z-color-white-1 bold tooltip2-close">skjul</a>
+                    </span>
+                    <br />
+                </div>
+                <div class="col-xs-12 xz-only-desk z-cursor-pointer z-mp-tooltip3">
+                    <i class="far fa-file-alt"></i>
+                    <span>&nbsp;Om Standen</span>
+                    <span class="l-mp-showcase7 z-mp-content-tooltip xz-background-color-darkgrey xz-border-black xz-color-black-1 z-padding-all-15 z-align-left">
+                        @{
+                            biz_booth biz6 = new biz_booth();
+                            foreach (dto_booth_item item in biz6.GetRelevantItems(Model, 0, 5))
+                            {
+                                if (item.relevant)
+                                {
+                                    string name = "[" + item.name + "]";
+                                    @Html.DisplayFor(m => name) <br />
+                                    }
+                            }
+                            }
+                            --------------------------------<br />
+                        @Html.DisplayWithBreaksFor(Model.description_limit)
+                        <br /><br />
+                        <a href="/#" class="z-color-white-1 bold tooltip3-close">skjul</a>
+                    </span>
+                </div>
+                <div class="col-xs-12">
+
+                    <div class="">
+                        @if (Model.boothrating != null && Model.boothrating != 0.0)
+                        {
+                            <span>
+                                @for (double i = 0; i < 5; i += 0.5)
+                                {
+                                    if (i % 1 == 0 && i + 1 <= Model.boothrating)
+                                    {
+                                        <i class="fas fa-star"></i>
+                                    }
+                                    else if (i % 1 == 0 && i + 0.5 <= Model.boothrating)
+                                    {
+                                        <i class="fas fa-star-half-alt"></i>
+                                    }
+                                    else if (i % 1 == 0)
+                                    {
+                                        <i class="far fa-star"></i>
+                                    }
+                                }
+                            </span>
+                            <span>
+                                (@if (Model.numberofratings == 1)
+                                {
+                                    @Model.numberofratings @Html.Raw("&nbsp;stemme")
+                                }
+                                else
+                                {
+                                    @Model.numberofratings @Html.Raw("&nbsp;stemmer")
+                                })
+                            </span>
+                        }
+                        else
+                        {
+                            <span>
+                                <i class="far fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </span>
+                            <span>
+                                (0&nbsp;stemmer)
+                            </span>
+                        }
+                    </div>
+                    <div class="">
+                        Antal hits: @Model.hits_items
+                    </div>
+                    <div class="l-mp-showcase8">
+                        @if (Model.category_main != null)
+                        {
+                            string areas = ViewContext.Controller.ViewBag.AreasChecked as string;
+                            areas = areas.Replace("æ", "ae").Replace("ø", "oe").Replace("å", "aa").Replace(" ", "").ToLower();
+                            foreach (var cat in Model.category_main)
+                            {
+                                if (cat.name == ".ingen")
+                                {
+                                    continue;
+                                }
+                                string name = "[" + cat.name + "]";
+                                @Html.RouteLink(name, "Marketplace", new { area = areas, c = SecurityHelper.EncodeCats_MD5(true, cat.name) }, new { @class = "green myfade" })
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+    else
+    {
+        <div class="col-xs-6 z-mp-showcase1 z-padding-sides-0">
+            <div class="col-xs-12  ">
+                &nbsp; <br />
+            </div>
+            <div class="col-xs-12 ">
+                &nbsp;
+            </div>
+        </div>
+    }
+</div>

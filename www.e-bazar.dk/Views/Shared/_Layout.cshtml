@@ -1,0 +1,560 @@
+﻿@{
+    string body_bg = "";
+    string show_credits = "";
+    if (ViewBag.Title == "Index" || ViewBag.Title == "Startside" || ViewBag.Title == "Bod" || ViewBag.Title == "Vare" || ViewBag.Title == "Besked" || ViewBag.Title == "ErrorPage" || ViewBag.Title == "LogIn" || ViewBag.Title == "Opret")
+    {
+        show_credits = "z-just-remove";
+        body_bg = "lightgrey_bg";
+    }
+    else
+    {
+        show_credits = "";
+        body_bg = "lightgrey_bg";
+    }
+
+    string no_index = "";
+    if (ViewBag.Title != "Index")
+    {
+        no_index = "<meta name=\"robots\" content=\"noindex\">";
+    }
+    else
+    {
+        no_index = "";
+    }
+    
+    HttpRequestBase httpRequestBase = new HttpRequestWrapper(System.Web.HttpContext.Current.Request);
+    string canonical = RequestHelpers.GetCanonical(httpRequestBase);
+    
+}
+
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @Html.Raw(no_index)
+
+    <link rel="shortcut icon" href="~/Content/images/fav_icon.ico/favicon.ico" type="image/x-icon" />
+    <link rel="canonical" href="@canonical" />
+
+    <title>e-bazar.dk | basar | brugt køb salg | online marked</title>
+    <meta name="description" content="Gå på opdagelse i vores basar eller opret en stand og start dit brugt salg. E-bazar er et online marked for køb og salg af brugte varer." />
+    
+    <meta property="og:title" content="e-bazar.dk | basar | brugt køb salg | online marked" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="@canonical" />
+    <meta property="og:image" content="https://www.e-bazar.dk/_content/images/site/ebazardk.jpg" />
+    <meta property="og:description" content="Gå på opdagelse i vores basar eller opret en stand og start dit brugt salg. E-bazar er et online marked for køb og salg af brugte varer." />
+    <meta property="og:locale" content="da_DK" />
+    <meta property="og:site_name" content="e-bazar" />
+    
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.3.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.3.0/mapbox-gl.js"></script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JKST30SL78"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-JKST30SL78');
+    </script>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/Content/bootstrap.css" />
+    <link rel="stylesheet" href="~/Content/site.css" />
+    <link rel="stylesheet" href="~/Content/bazar.css" />
+    @Scripts.Render("~/bundles/jquery.mobile")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/js/scripts.js" asp-append-version="true"></script>
+    @RenderSection("scripts", required: false)
+
+</head>
+<body class="@body_bg">
+
+    @{
+        string css_back = "z-background-color-green";
+        string css_col = "z-color-lightgreen";
+        string css_btn = "z-background-color-green z-border-lightgreen z-color-white-1";
+        string compname = "e-bazar.dk";
+    }
+    <div class="header container z-container z-padding-sides-150 remove_desk_block z-pos-fix z-top-0 z-width-100-percent z-z-index-infinity-ultra @css_back">
+        <div class="col-xs-12 xl-al-header z-remove-margin-sides z-padding-sides-0">
+            <div class="row">
+                <div class="col-xs-8">
+                    <span class="z-display-inline-block z-padding-bottom-15 z-padding-top-15 z-vertical-align-middle z-hover-white">
+                        @Html.RouteLink(compname, "Home1", new { area = "" }, new { @class = css_col + " z-text-decoration-none l-al-brand myfade" })
+                    </span>
+                    <span class="l-al-slogan z-margin-left-15 z-vertical-align-middle">
+                        Søg en kjole, gå<br />
+                        hjem på et par hæle
+                    </span>
+
+
+                    @if (Request.IsAuthenticated)
+                    {
+                        dto_person current_user = ViewBag.CurrentUser as dto_person;
+
+                        string fname = current_user != null ? current_user.firstname : "";
+                        string name = !string.IsNullOrEmpty(fname) ? "" + fname : current_user != null ? "Hjem"/* + current_user.email*/ : "Hjem";
+                        <span class="btn z-border-lightgreen z-height-26 z-padding-top-2 z-margin-left-15 z-hover-white">
+                            @Html.RouteLink("" + name + "", "UserProfile", null, new { @class = " z-text-decoration-none z-color-white-1 myfade" })
+                        </span>
+                    }
+                    <span class="btn z-border-lightgreen z-height-26 z-padding-top-2 z-margin-left-15 z-hover-white">
+                        @Html.RouteLink("Markedsplads", "Marketplace", new { s = "", c = "" }, new { @class = " z-text-decoration-none z-color-white-1  myfade" })
+                    </span>
+                </div>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="header container z-container z-padding-sides-150 remove_tab_block z-pos-fix z-top-0 z-width-100-percent z-z-index-infinity-ultra @css_back">
+        <div class="col-xs-12 xl-al-header z-remove-margin-sides xz-padding-sides-0">
+            <div class="row">
+                <div class="col-xs-8 z-padding-right-0">
+                    <span class="z-display-inline-block z-padding-bottom-15 z-padding-top-15 z-vertical-align-middle z-hover-white">
+                        @Html.RouteLink(compname, "Home1", new { area = "" }, new { @class = css_col + " z-text-decoration-none l-al-brand myfade" })
+                    </span>
+                    @if (Request.IsAuthenticated)
+                    {
+                        dto_person current_user = ViewBag.CurrentUser as dto_person;
+                        string fname = current_user != null ? current_user.firstname : "";
+                        string name = !string.IsNullOrEmpty(fname) ? "" + fname : current_user != null ? "Hjem"/* + current_user.email*/ : "Hjem";
+                        <span class="btn l-header-hello z-border-lightgreen z-height-26 z-padding-top-2 z-hover-white">
+                            @Html.RouteLink("" + name + "", "UserProfile", null, new { @class = " z-text-decoration-none z-color-white-1 myfade" })
+                        </span>
+                    }
+                    <span class="btn l-header-market z-border-lightgreen z-height-26 z-padding-top-2 z-hover-white">
+                        @Html.RouteLink("Markedsplads", "Marketplace", new { s = "", c = "" }, new { @class = " z-text-decoration-none z-color-white-1  myfade" })
+                    </span>
+                </div>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="header container z-container z-padding-sides-150 remove_phone_block  @css_back">
+        <div class="col-xs-12 z-remove-margin-sides z-padding-sides-0">
+            <div class="container z-container">
+                <div class="z-remove-margin-right z-height-50">
+                    <span class="z-float-left z-margin-top-10">
+                        @Html.RouteLink(compname, "Home1", new { area = "" }, new { @class = css_col + " l-al-brand myfade" })
+                    </span>
+                    @*<span class="z-margin-left-15 z-margin-top-15">
+                            <img src="/_content/images/site/slogan_header.png" alt="Slogan Image" class="z-slogan" />
+                        </span>*@
+
+                    <button type="button" class="navbar-toggle z-navbar-toggle z-margin-right-0 @css_btn">
+                        <span class="icon-bar @css_btn"></span>
+                        <span class="icon-bar @css_btn"></span>
+                        <span class="icon-bar @css_btn"></span>
+                    </button>
+                </div>
+
+                <div class="z-navbar z-background-color-green">
+                    @if (Request.IsAuthenticated)
+                    {
+                        dto_person current_user = ViewBag.CurrentUser as dto_person;
+                        string fname = current_user != null ? current_user.firstname : "";
+                        string name = !string.IsNullOrEmpty(fname) ? "" + fname : current_user != null ? "Hjem"/* + current_user.email*/ : "Hjem";
+
+                        <div class="z-padding-top-15">
+                            <span class="btn z-border-lightgreen z-height-26 z-padding-top-2 z-width-100-percent z-align-left">
+                                @Html.RouteLink("" + name + "", "UserProfile", null, new { @class = "z-color-white-1 myfade" })
+                            </span>
+                        </div>
+
+                    }
+
+                    <div class="z-padding-top-15">
+                        <span class="btn z-border-lightgreen z-height-26 z-padding-top-2 z-width-100-percent z-align-left">
+                            @Html.RouteLink("Markedsplads", "Marketplace", new { s = "", c = "" }, new { @class = "z-color-white-1  myfade" })
+                        </span>
+                    </div>
+
+
+                    @Html.Partial("_LoginPartial")
+
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-10">
+
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @*<div class="mycontainer container redirect redirect_page"><span class="centered" style="font-size: 300%;"></span></div>*@
+    <div class="z-container container z-loading z-loading-page z-z-index-infinity-low"><span class="centered z-font-size-600-percent"></span></div>
+    <div class="z-container container z-myalert z-z-index-infinity-high z-display-none">
+        <div class="z-myalert-div z-top-left">
+            <div class="col-xs-12 z-myalert-txt z-height-140"></div>
+            <input type="button" value="OK" class="btn btn-default z-myalert-btn z-pos-rel z-bottom-5" />
+        </div>
+    </div>
+    <div class="z-container container z-cookie z-bottom-left z-z-index-high">
+        <div class="z-cookie-div z-bottom-left">
+            <div class="col-xs-12 z-height-140">
+                Cookies bliver kun brugt internt på siden.
+                <br />Der bliver brugt cookies når du opretter og logger ind på din profil.
+                <br />Desuden bliver der brugt cookies til at holde styr på søgninger og navigation på siden.
+            </div>
+            Accepter cookies.. &nbsp;&nbsp;&nbsp;<input type="button" value="OK" class="btn btn-default z-cookie-btn z-pos-rel z-bottom-5" />
+        </div>
+    </div>
+    <div class="z-container container z-padding-sides-150 body-content z-remove-padding-phone body_bg">
+        <div class="content-body z-remove-margin-sides z-padding-sides-0">
+            @RenderBody()
+        </div>
+        <div class="col-xs-2 remove_desk_block">
+            @{
+                string[] dclasses_img = { "z-logo-img" };
+                string[] dclasses_a = { "z-logo-a" };
+            }
+            @Html.RouteImage("Register1", null, "~/_content/images/site/reklame_link_300.png", null, "brugt køb salg online marked", dclasses_img, dclasses_a, null, null)
+        </div>
+    </div>
+
+    <div class="z-min-height-350"></div>
+    <div class="z-container container z-padding-sides-150 body-content @show_credits">
+        <div class="col-xs-10 z-remove-margin-sides z-remove-padding-phone">
+            <hr />
+            <div class="col-xs-4">
+                <div>
+                    Icons made by <a href="https://www.flaticon.com/authors/nikita-golubev" title="Nikita Golubev">Nikita Golubev</a>
+                    <br />from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+                </div>
+                <div>
+                    Icons made by <a href="https://www.flaticon.com/authors/eucalyp" title="Eucalyp">Eucalyp</a>
+                    <br />from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+                </div>
+                <div>
+                    Icons made by <a href="https://www.flaticon.com/authors/surang" title="surang">surang</a>
+                    <br />from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <div>
+                    Icons made by <a href="https://www.flaticon.com/authors/pause08" title="Pause08">Pause08</a>
+                    <br />from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+                </div>
+                <div>
+                    Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a>
+                    <br />from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+                </div>
+                <div>
+                    Icons made by <a href="https://www.flaticon.com/authors/good-ware" title="Good Ware">Good Ware</a>
+                    <br />from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <div>
+                    @*Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a>
+                <br />from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>*@
+                </div>
+                <div class="z-only-desk">
+                    &nbsp;
+                    <br />&nbsp;
+                </div>
+                <div class="z-only-desk">
+                    &nbsp;
+                    <br />&nbsp;
+                </div>
+            </div>
+            <div class="col-xs-4 z-padding-sides-0 z-only-desk">
+                <div>
+                    &nbsp;
+                    <br />&nbsp;
+                </div>
+            </div>
+            <div class="col-xs-4 z-padding-sides-0 z-only-desk">
+                <div>
+                    &nbsp;
+                    <br />&nbsp;
+                </div>
+            </div>
+            <div class="col-xs-4 z-padding-sides-0 z-only-desk">
+                <div>
+                    &nbsp;
+                    <br />&nbsp;
+                </div>
+            </div>
+            <hr />
+        </div>
+    </div>
+    <div class="remove_desk_block z-container container z-padding-sides-150 z-remove-margin-sides z-background-color-black-1">
+        <div class="row">
+            <div class="col-xs-4 z-remove-margin-sides">
+                <br />
+                <span class="z-bold z-color-white-1">@SettingsHelper.Basic.SLOGAN()</span><br />
+                <span class="z-color-white-1">- @SettingsHelper.Basic.COMMENT()</span><br />
+                <br />
+                <span class="z-color-white-1">understøttede browsere:</span><br />
+                <span class="z-color-white-1">- desktop: Internet Explorer, Firefox</span><br />
+                <span class="z-color-white-1">- mobil: Chrome, (Safari)</span><br />
+
+                <!--<span class="white">siden benytter:</span><br />
+                <span>
+                    <img style="height:20px;width:80px;" src="~/images/site/nets3_servlet.png" />-->
+                @*<img style="height: 20px;width:80px" alt="" border="0" src="~/images/site/MY_check-out-buttons-png-paypal-button-transparent-png.png" width="1" height="1">*@
+                <!--<img style="height:20px;width:80px;" src="~/images/site/large1x_0.png" />
+                </span><br />-->
+                <br />
+                <div class="z-color-white-1">Vi støtter:</div>
+                <div>
+                    <a target="_blank" href="https://psykiatrifonden.dk/"><img class="z-max-width-150" src="/_content/images/site/psych.jpg" alt="psykiatrifonden"></a>
+                </div>
+                <br />
+                <span class="z-color-white-1">præsenteret af: </span><br />
+                <a href="https://www.gikware.com">gikware.com</a><br />
+                <br />
+                <p class="z-color-white-1">&copy; @DateTime.Now.Year - @SettingsHelper.Basic.SITENAME() | <a class="z-color-white-1" href="https://www.facebook.com/ebazardanmark">Facebook</a></p>
+            </div>
+            <div class="col-xs-6">
+                <br />
+                <span class="z-color-white-1">Adresse:</span><br />
+                <span class="z-color-white-1">@SettingsHelper.Basic.SITENAME_SHORT()</span><br />
+                <span class="z-color-white-1">Søborg Hovedgade 221, 2n</span><br />
+                <span class="z-color-white-1">2860 Søborg</span><br />
+                <span class="z-color-white-1">Danmark</span><br />
+                @*<br />
+        <span class="white">CVR: @Settings.Basic.CVR()</span>*@
+                <br />
+                <span class="z-color-white-1">Kontakt:</span><br />
+                <span class="z-color-white-1"><a href="mailto:@StaticsHelper.FormatMail(SettingsHelper.Basic.EMAIL_ADMIN())">@StaticsHelper.FormatMail(SettingsHelper.Basic.EMAIL_ADMIN())</a></span><br />
+            </div>
+            <div class="col-xs-2">
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+
+                @*@Html.RouteLink("GDPR", "GDPR");<br />*@
+                @Html.RouteLink("Betingelser og privatlivspolitik", "Conditions");
+                <br />
+                @*@Html.RouteLink("Brug og betingelser", "Conditions");*@
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="remove_tab_block z-container container z-padding-sides-150 z-remove-margin-sides z-background-color-black-1">
+        <div class="row">
+            <div class="col-xs-4 z-remove-margin-sides">
+                <br />
+                <span class="z-bold z-color-white-1">@SettingsHelper.Basic.SLOGAN()</span><br />
+                <span class="z-color-white-1">- @SettingsHelper.Basic.COMMENT()</span><br />
+                <br />
+                <span class="z-color-white-1">understøttede browsere:</span><br />
+                <span class="z-color-white-1">- desktop: Internet Explorer, Firefox</span><br />
+                <span class="z-color-white-1">- mobil: Chrome, (Safari)</span><br />
+
+                <!--<span class="white">siden benytter:</span><br />
+                <span>
+                    <img style="height:20px;width:80px;" src="~/images/site/nets3_servlet.png" />-->
+                @*<img style="height: 20px;width:80px" alt="" border="0" src="~/images/site/MY_check-out-buttons-png-paypal-button-transparent-png.png" width="1" height="1">*@
+                <!--<img style="height:20px;width:80px;" src="~/images/site/large1x_0.png" />
+                </span><br />-->
+                <br />
+                <div class="z-color-white-1">Vi støtter:</div>
+                <div>
+                    <a target="_blank" href="https://psykiatrifonden.dk/"><img class="z-max-width-150" src="/_content/images/site/psych.jpg" alt="psykiatrifonden"></a>
+                </div>
+                <br />
+                <span class="z-color-white-1">præsenteret af: </span><br />
+                <a href="https://www.gikware.com">gikware.com</a><br />
+                <br />
+                <p class="z-color-white-1">&copy; @DateTime.Now.Year - @SettingsHelper.Basic.SITENAME() | <a class="z-color-white-1" href="https://www.facebook.com/ebazardanmark">Facebook</a></p>
+            </div>
+            <div class="col-xs-6">
+                <br />
+                <span class="z-color-white-1">Adresse:</span><br />
+                <span class="z-color-white-1">@SettingsHelper.Basic.SITENAME_SHORT()</span><br />
+                <span class="z-color-white-1">Søborg Hovedgade 221, 2n</span><br />
+                <span class="z-color-white-1">2860 Søborg</span><br />
+                <span class="z-color-white-1">Danmark</span><br />
+                <br />
+                @*<span class="white">CVR: @Settings.Basic.CVR()</span>*@
+                <span class="z-color-white-1">Kontakt:</span><br />
+                <span class="z-color-white-1"><a href="mailto:@StaticsHelper.FormatMail(SettingsHelper.Basic.EMAIL_ADMIN())">@StaticsHelper.FormatMail(SettingsHelper.Basic.EMAIL_ADMIN())</a></span><br />
+            </div>
+            <div class="col-xs-2">
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+
+                @*@Html.RouteLink("GDPR", "GDPR");<br />*@
+                @Html.RouteLink("Betingelser og privatlivspolitik", "Conditions");
+                <br />
+                @*@Html.RouteLink("Brug og betingelser", "Conditions");*@
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <div class="remove_phone_block z-padding-left-15 z-padding-right-15 z-background-color-black-1 z-width-100-percent">
+        <div class="">
+            <br />
+            <span class="z-bold z-color-white-1">@SettingsHelper.Basic.SLOGAN()</span><br />
+            <span class="z-color-white-1">- @SettingsHelper.Basic.COMMENT()</span><br />
+            <br />
+            <span class="z-color-white-1">Adresse:</span><br />
+            <span class="z-color-white-1">@SettingsHelper.Basic.SITENAME_SHORT_CAP()</span><br />
+            <span class="z-color-white-1">Søborg Hovedgade 221, 2n</span><br />
+            <span class="z-color-white-1">2860 Søborg</span><br />
+            <span class="z-color-white-1">Danmark</span><br />
+            @*<br />
+                <span class="white">CVR: @Settings.Basic.CVR()</span>*@
+            <br />
+            <span class="z-color-white-1">Kontakt:</span><br />
+            <span class="z-color-white-1"><a href="mailto:@StaticsHelper.FormatMail(SettingsHelper.Basic.EMAIL_ADMIN())">@StaticsHelper.FormatMail(SettingsHelper.Basic.EMAIL_ADMIN())</a></span><br />
+            <br />
+            <span class="z-color-white-1">understøttede browsere:</span><br />
+            <span class="z-color-white-1">- desktop: Internet Explorer, Firefox</span><br />
+            <span class="z-color-white-1">- mobil: Chrome, (Safari)</span><br />
+            @*<br />
+                <span class="white">siden benytter:</span><br />
+                <span>
+                    <img style="height:20px;width:80px;" src="~/images/site/nets3_servlet.png" />
+                    <img style="height:20px;width:80px;" src="~/images/site/large1x_0.png" />
+                </span><br />*@
+            <br />
+            <div class="z-color-white-1">Vi støtter:</div>
+            <div>
+                <a target="_blank" href="https://psykiatrifonden.dk/"><img class="z-max-width-150" src="/_content/images/site/psych.jpg" alt="psykiatrifonden"></a>
+            </div>
+            <br />
+            <span class="z-color-white-1">præsenteret af: </span><br />
+            <a href="https://www.gikware.com">gikware.com</a><br /><br />
+            <br />
+            @Html.RouteLink("Betingelser og privatlivspolitik", "Conditions");
+            <br />
+            <p class="z-color-white-1">&copy; @DateTime.Now.Year - @SettingsHelper.Basic.SITENAME() | <a class="z-color-white-1" href="https://www.facebook.com/ebazardanmark">Facebook</a></p>
+        </div>
+    </div>
+
+
+    @{
+        string cookie = ThisSession.Cookie ? "True" : "False";
+    }
+    @Html.Hidden("cook", cookie)
+
+
+
+
+</body>
+</html>

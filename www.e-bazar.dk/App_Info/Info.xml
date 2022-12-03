@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--<info type="nyudvikling" date="11-07-2021">
+    siden er blevet SEO optimeret.
+  </info>-->
+  <info type="nyudvikling" date="17-12-2020">
+    siden har fået nyt layout.
+  </info>
+  <!--<info type="info" date="12-06-2020">
+    nedetid.
+  </info>-->
+  <!--<info type="vedligehold" date="11-06-2020">
+    system forbedringer.
+  </info>-->
+  <!--<info type="vedligehold" date="04-06-2020">
+    system forbedringer.
+  </info>-->
+  <!--<info type="info" date="03-06-2020">
+    nedetid grundet tekniske problemer.
+  </info>-->
+  <!--<info type="vedligehold" date="22-05-2020">
+    system forbedringer.
+  </info>-->
+  <!--<info type="vedligehold" date="14-05-2020">
+    system forbedringer.
+  </info>-->
+  <!--<info type="vedligehold" date="08-05-2020">
+    system forbedringer.
+  </info>-->
+  <!--<info type="vedligehold" date="03-05-2020">
+    forbedret søge funktion.
+  </info>-->
+  <!--<info type="vedligehold" date="27-04-2020">
+    system forbedringer.
+  </info>-->
+  <!--<info type="vedligehold" date="26-04-2020">
+    system forbedringer.
+  </info>-->
+  <!--<info type="vedligehold" date="25-04-2020">
+    system forbedringer.
+  </info>-->
+  <!--<info type="vedligehold" date="24-04-2020">
+    system forbedringer.
+  </info>-->
+  <!--<info type="vedligehold" date="23-04-2020">
+    system forbedringer.
+  </info>-->
+  <!--<info type="vedligehold" date="19-04-2020">
+    system forbedringer.
+  </info>-->
+  <!--<info type="vedligehold" date="10-04-2020">
+    system forbedringer.
+  </info>-->
+  <!--<info type="vedligehold" date="10-04-2020">
+    tallene ud for kategorier følger nu den aktuelle søgning.
+  </info>-->
+  <!--<info type="vedligehold" date="09-04-2020">
+    system forbedringer.
+  </info>-->
+  <!--<info type="vedligehold" date="04-04-2020">
+    system forbedringer.
+  </info>-->
+  <!--<info type="info" date="03-04-2020">
+    brugere med problemer ved registrering er fjernet, men velkomne til at oprette sig igen.
+  </info>-->
+  <!--<info type="vedligehold" date="03-04-2020">
+    rettelse ved registrering.
+  </info>-->
+  <!--<info type="vedligehold" date="31-03-2020">
+    system forbedringer.
+  </info>-->
+  <!--<info type="nyudvikling" date="27-03-2020">
+    bodens navn tilføjet på administrer vare/sæt.
+  </info>-->
+  <!--<info type="vedligehold" date="27-03-2020">
+    system forbedringer.
+  </info>-->
+  <!--<info type="vedligehold" date="24-03-2020">
+    system forbedringer.
+  </info>-->
+  <!--<info type="vedligehold" date="19-03-2020">
+    system forbedringer.
+  </info>-->
+  <!--<info type="vedligehold" date="18-03-2020">
+    system forbedringer.
+  </info>-->
+  <!--<info type="nyudvikling" date="13-03-2020">
+    tryk "Enter" for søgning.
+  </info>-->
+  <!--<info type="vedligehold" date="13-03-2020">
+    rettelse af underkategorier.
+  </info>-->
+  <!--<info type="vedligehold" date="11-03-2020">
+    rettelse ved valg af specifikke kategorier.
+  </info>-->
+  <!--<info type="info" date="11-02-2020">
+    nedetid, grundet tekniske problemer hos netudbyder.
+  </info>-->
+  <!--<info type="nyudvikling" date="09-01-2020">
+    generel info til brugere.
+  </info>-->
+  <!--<info type="vedligehold" date="08-01-2020">
+    rettelse ved Quick Filter.
+  </info>-->
+  <!--<info type="vedligehold" date="06-01-2020">
+    rettelse ved registrering.
+  </info>-->
+  <info type="info" date="05-01-2020">
+    ny bruger, velkommen til :)
+  </info>
+  <info type="info" date="04-01-2020">
+    promovering ved Kræmmermarked, Bella Center.
+  </info>
+</root>

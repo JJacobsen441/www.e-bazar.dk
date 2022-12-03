@@ -1,0 +1,1642 @@
+﻿@model www.e_bazar.dk.Models.DTOs.dto_product
+
+@{
+    ViewBag.Title = "Administrer Vare";
+}
+@{
+
+    try
+    {
+        <div class="xhide_phone remove_desk_block ">
+            <div class="container">
+                <div class="col-xs-6" xstyle="padding-left:0px;">
+                    <br />
+                    [@Model.booth_dto.name]
+                    <h2>Administrer Vare</h2>
+                    <br />
+                    <input type="button" value="Tilbage til stand" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("EditBooth1", new { booth_id = Model.booth_id })'" />
+                    <input type="button" value="Nyt Produkt" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("CreateProduct", new { booth_id = Model.booth_dto.booth_id })'" />
+                    <input type="button" value="Vis vare" class="btn btn-default green_bg lightgreen_bdr white myfade" onclick="location.href='@Url.RouteUrl("Product", new { id = Model.id })'" />
+                </div>
+            </div>
+            <hr class="hr_lightgrey" />
+            <div class="container">
+                <div class="white_bdr darkgrey_bg removeborder-bottom navigation-top navigation-right addpaddingleft">
+                    @{
+                        string ddate = Model.modified.ToString("dd/MM/yyyy");
+                    }
+                    Sidst modificeret: @Html.DisplayFor(m => ddate)
+                </div>
+                @if (Model.image_dtos != null && Model.image_dtos.Count > 0)
+                {
+                    <input type="hidden" class="adm_hidden_no_product_dtos" value="@Model.image_dtos.Count" />//måske unødvendig
+                }
+
+                @using (Html.BeginRouteForm("EditProduct2", FormMethod.Post, @Model))
+                {
+
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.booth_id, new { @class = "adm_hidden_edit_boothid" })
+                    @Html.HiddenFor(model => model.id, new { @class = "adm_hidden_edit_productid" })
+                    @Html.HiddenFor(model => model.sysname)
+                    @Html.HiddenFor(model => model.created_on)
+
+                    <div class="white_bg darkgrey_bdr" style="overflow:hidden;">
+                        <div class="col-xs-12 removepaddingsides">
+                            <div class="col-xs-4 form-horizontal" xstyle="padding-left:0px;">
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        @{
+                                            <div class="col-xs-12 z-cursor-pointer z-tooltip8">
+                                                @Html.LabelFor(model => model.image_dtos, htmlAttributes: new { @class = "control-label" })
+                                                <span class="z-desc-tooltip8 z-padding-all-15 z-align-left">
+                                                    Her er det muligt at uploade billeder.<br />
+                                                    *&nbsp;&nbsp;&nbsp;&nbsp;billedet bør repræsentere dit produkt<br />
+                                                    *&nbsp;&nbsp;&nbsp;&nbsp;hvis intet billed bliver valgt, bruges et standart<br />
+                                                    *&nbsp;&nbsp;&nbsp;&nbsp;accepterede fil typer: jpg, jpeg og png<br />
+                                                    *&nbsp;&nbsp;&nbsp;&nbsp;max størrelse: 5MB<br />
+                                                </span>
+                                                <br />
+                                            </div>
+
+
+
+
+                                            int i = 0;
+                                            if (Model.image_dtos != null && Model.image_dtos.Count > 0 && !string.IsNullOrEmpty(Model.image_dtos.FirstOrDefault().name))
+                                            {
+                                                foreach (dto_image img in Model.image_dtos)
+                                                {
+                                                    <div class="container_overlay">
+                                                        @{
+                                                            var image_path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/products/" + Model.sysname + "/" + img.name;
+                                                            <input type="hidden" class="adm_hidden_images_imagename_@i" value="@img.name">
+                                                            <img class="adm_img_productimage_@i adm_img_productimage" src="@image_path" alt="Sample Image" />
+                                                            <div class="overlay">
+                                                                <a href="#" class="icon" title="User Profile">
+                                                                    <i class="fa fa-window-close fa-2x" onclick="removeImage(@i);"></i>
+                                                                </a>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                    i++;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                var image_path = "/_content/images/site/icons/armchair2_bw.png";
+                                                <img class="adm_img_collectionimage" src="@image_path" alt="Sample Image" />
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12 adm_div_images_thumbnail">
+                                        @{
+                                            if (Model.image_dtos != null && Model.image_dtos.Count > 0)
+                                            {
+                                                i = 0;
+                                                foreach (dto_image img in Model.image_dtos)
+                                                {
+                                                    if (img != null)
+                                                    {
+                                                        var image_path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/products/" + Model.sysname + "/" + img.name;
+                                                        <a href="#">
+                                                            <input type="hidden" class="adm_hidden_images_thumbnail_@i" name="adm_hidden_images_thumbnail_@i" value="@img.name">
+                                                            <img src="@image_path" alt="Sample Image" class="adm_img_images_thumbnail_@i mythumbnail" onclick="setFront(@i);">&nbsp;&nbsp;&nbsp;
+                                                            @*<img src="@image_path" alt="Sample Image" class="adm_img_images_thumbnail_@i mythumbnail" onclick="removeThumbnail(@i, '@Model.name', 'No');">&nbsp;&nbsp;&nbsp;*@
+                                                        </a>
+                                                    }
+                                                    i++;
+                                                }
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <input type="file" name="product" class="adm_input_productimage btn btn-default adm_control" />
+                                        <span class="product_fileupload"></span><br /><span class="product_uploading"></span>
+                                    </div>
+                                </div>                                
+                                @*<hr />*@
+                            </div>
+                            <div class="col-xs-8">
+                                <div class="col-xs-12">
+                                    @{
+                                        string sels = "";
+                                        string spans = "<table><tr>";
+                                        int counter_span = 0;
+                                        List<dto_params> list = ViewBag.Params as List<dto_params>;
+                                        //list = list.OrderBy(l=>l.type)
+                                        foreach (dto_params par in list)
+                                        {
+                                            if (par.type == "M" || par.type == "MS")
+                                            {
+                                                string type = par.type == "MS" ? "ms" : "";
+                                                sels += "<table><tr><td valign=\"top\"><span class=\"bold\" style=\"display: inline-block;width:100px;\">" + par.name.ToUpper() + ":&nbsp;&nbsp;&nbsp;</span></td><td>";
+                                                foreach (dto_value v in par.values_daos)
+                                                {
+                                                    string check = "";
+                                                    if (Model.param_dtos != null)
+                                                    {
+
+                                                        dto_params tmp = Model.param_dtos.Where(x => x.name == par.name).FirstOrDefault();
+                                                        if (tmp != null)
+                                                        {
+                                                            foreach (dto_value va in tmp.values_daos)
+                                                            {
+                                                                if (va.Id == v.Id && va.value == v.value)
+                                                                {
+                                                                    check = "checked=\"checked\"";
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    sels += "<span style=\"display: inline-block;width:145px;\">";
+                                                    sels += "<input type=\"checkbox\" " + check + " class=\"" + type + "\" data-param=\"" + par.Id + "\" onclick=\"toggleParam(" + v.Id + ", this)\" />&nbsp;&nbsp;&nbsp;<span>" + v.value + "</span>";
+                                                    sels += "</span>";
+                                                }
+                                                sels += "</td></tr></table><br />";
+                                            }
+                                            else if (par.type == "S")
+                                            {
+                                                string check = "";
+                                                if (Model.param_dtos != null)
+                                                {
+                                                    dto_params tmp = Model.param_dtos.Where(x => x.name == par.name).FirstOrDefault();
+                                                    if (tmp != null)
+                                                    {
+                                                        check = "checked=\"checked\"";
+                                                    }
+                                                }
+                                                if (counter_span % 6 == 0)
+                                                {
+                                                    spans += "</tr><tr>";
+                                                }
+
+                                                spans += "<td><input type=\"checkbox\" " + check + " data-param=\"" + par.Id + "\" onclick=\"toggleParam(" + -1 + ", this)\" />&nbsp;&nbsp;" + par.name + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>";
+                                                counter_span++;
+                                            }
+                                        }
+                                        spans += "</tr></table>";
+                                        <span class="white_bg black bold" style="padding:5px;margin-right:10px;">Tilvalg: </span><span>(disse parametre skifter med valg af kategorier)</span><br /><br />
+                                        if (spans != "<table><tr></tr></table>")
+                                        {
+                                            @Html.Raw(spans); <br /><br />
+                                        }
+                                        @Html.Raw(sels);
+
+                                    }
+                                </div>
+
+                                <div class="col-xs-6 form-horizontal">
+
+                                    <div class="form-group">
+                                        <div class="col-xs-6">
+                                            @Html.LabelFor(model => model.name, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                            @Html.EditorFor(model => model.name, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control", placeholder = "navn.." } })
+                                            @Html.ValidationMessageFor(model => model.name, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-xs-6" style="padding-top:25px;">
+
+                                            @Html.CheckBoxFor(model => model.active, new { @class = "adm_check_active" }) Produkt aktiv.
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-6">
+                                            @Html.Label("Hovedkategori", htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                            @Html.DropDownListFor(model => model.category_main_id, ViewBag.ProductCategoryMain as SelectList, new { @class = "form-control darkgrey_bdr" })
+                                        </div>
+                                        <div class="col-xs-6">
+                                            @Html.Label("Bikategori", htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                            @Html.DropDownListFor(model => model.category_second_id, ViewBag.ProductCategorySecond as SelectList, new { @class = "form-control darkgrey_bdr" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-6">
+                                            @Html.Label("Mappe A", htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                            @Html.DropDownList("foldera_select", ViewBag.LevelA as SelectList, new { @class = "form-control dropdown_levela darkgrey_bdr" })
+                                        </div>
+                                        <div class="col-xs-6">
+                                            @Html.Label("Mappe B", htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                            @Html.DropDownList("folderb_select", ViewBag.LevelB as SelectList, new { @class = "form-control dropdown_levelb darkgrey_bdr" })
+                                        </div>
+                                    </div>
+                                    @*<div class="form-group">
+                                        <div class="col-xs-8">
+                                            <div>
+                                                @Html.LabelFor(model => model.status_delivery, htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div>
+                                                <span>@Model.status_delivery</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <input type="submit" value="@Model.status_delivery_next" style="margin-top:10px;width:100%;" class="btn btn-default btn-warning" disabled />
+                                        </div>
+                                        </div>*@
+                                    <div class="form-group">
+                                        <div class="col-xs-6">
+                                            @Html.LabelFor(model => model.status_condition_selectlist, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                            @Html.DropDownList("status_condition_select", ViewBag.StatusCondition as SelectList, new { @class = "form-control darkgrey_bdr" })
+                                        </div>
+                                        <div class="col-xs-6">
+                                            @{
+                                                string no_of_units = "" + Model.no_of_units;
+                                                
+                                            }
+                                            @Html.LabelFor(model => model.no_of_units, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                            @Html.EditorFor(model => no_of_units, new { htmlAttributes = new { @class = "adm_input_noofunits form-control adm_control darkgrey_bdr" } })
+                                            @Html.ValidationMessageFor(model => model.no_of_units, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    
+
+                                    <div class="form-group">
+                                        <div class="col-xs-6">
+                                            @{
+                                                string price = Model.price == NOP.INGEN_PRIS.ToString() ? NOP.INGEN_PRIS.ToString() : Model.price;
+                                                //string tag = Model.price == NOP.INGEN_PRIS.ToString() ? "" : ", 00 kr";
+                                            }
+                                            @Html.LabelFor(model => model.price, htmlAttributes: new { @class = "control-label" })<br />
+                                            @Html.EditorFor(model => price, new { htmlAttributes = new { @class = "adm_input_price form-control xadm_control darkgrey_bdr" } }),00 kr
+                                            @*@Html.Label(tag, htmlAttributes: new { @class = "adm_input_cents" })*@
+                                            @Html.ValidationMessageFor(model => model.price, "", new { @class = "text-danger" })
+                                        </div>
+                                        @*<div class="col-xs-6" style="padding-top:25px;">
+                                            @Html.CheckBox(NOP.INGEN_PRIS.ToString(), Model.price == NOP.INGEN_PRIS.ToString(), new { @class = "adm_checkbox_price_free" }) Ikke oplyst.
+                                        </div>*@
+                                        <div class="col-xs-6" style="padding-top:25px; height:30px;">
+                                            @if (Model.collection != null || Model.only_collection)
+                                            {
+                                                <table>
+                                                    <tr>
+                                                        <td valign="top">
+                                                            @Html.CheckBoxFor(model => model.only_collection, new { @class = "adm_input_onlycollection" })
+                                                        </td>
+                                                        <td>
+                                                            Indgår kun i sæt.
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            }
+                                        </div>
+                                    </div>
+                                    <hr />
+                                </div>
+
+                                <div class="col-xs-6 form-horizontal adm_div_group3">
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            @Html.LabelFor(model => model.note, htmlAttributes: new { @class = "control-label" })
+                                            @Html.EditorFor(model => Model.note, new { htmlAttributes = new { @class = "adm_input_note form-control adm_control darkgrey_bdr" } })
+                                            @Html.ValidationMessageFor(model => model.note, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-xs-12">
+                                            @Html.LabelFor(model => model.description, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                            <span class="desc_msg"></span>
+                                        </div>
+                                        <div class="col-xs-12">
+                                            @Html.TextAreaFor(model => Model.description, new { @class = "adm_input_description form-control adm_control", rows = "5" })
+                                            @Html.ValidationMessageFor(model => model.description, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            <div class="col-xs-12 panel panel-default black_bdr darkgrey_bg">
+                                                <div xclass="col-xs-12">
+                                                    @Html.LabelFor(model => model.tag_dtos_nop, htmlAttributes: new { @class = "control-label xcol-xs-2" })<br class="hide" />
+                                                    @{
+                                                        if (Model.tag_dtos != null && Model.tag_dtos.Count > 0)
+                                                        {
+                                                            string msg = "";
+                                                            @Html.EditorFor(model => msg, new { htmlAttributes = new { @class = "adm_input_edit_tagname form-control adm_control black_bdr", placeholder = "indtast søgeterm.." } })
+                                                            <br />
+
+                                                            <span class="adm_span_edit_results">
+                                                                @foreach (dto_tag t in Model.tag_dtos)
+                                                                {
+                                                                    <input type="button" onclick="removeTag('@t.tag_id')" value="@t.name (X)" class="adm_input_tag_@t.tag_id btn btn-default black_bdr" />
+                                                                }
+                                                            </span>
+                                                            <hr />
+                                                        }
+                                                        else
+                                                        {
+                                                            string msg = "";
+                                                            @Html.EditorFor(model => msg, new { htmlAttributes = new { @class = "adm_input_edit_tagname form-control adm_control black_bdr", placeholder = "[max 3 søgeord]" } })
+                                                            <br />
+                                                            <span class="adm_span_edit_results">
+                                                            </span>
+                                                            <hr />
+                                                        }
+                                                        <span class="adm_div_suggestions">
+                                                        </span><br />
+
+                                                    }
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <hr class="hr_lightgrey" />
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="xhide_phone remove_tab_block ">
+            <div class="container">
+                <div class="col-xs-6" xstyle="padding-left:0px;">
+                    <br />
+                    [@Model.booth_dto.name]
+                    <h2>Administrer Vare</h2>
+                    <br />
+                    <input type="button" value="Tilbage til stand" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("EditBooth1", new { booth_id = Model.booth_id })'" />
+                    <input type="button" value="Nyt Produkt" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("CreateProduct", new { booth_id = Model.booth_dto.booth_id })'" />
+                    <input type="button" value="Vis vare" class="btn btn-default green_bg lightgreen_bdr white myfade" onclick="location.href='@Url.RouteUrl("Product", new { id = Model.id })'" />
+                </div>
+            </div>
+            <hr class="hr_lightgrey" />
+            <div class="container">
+                <div class="white_bdr darkgrey_bg removeborder-bottom navigation-top navigation-right addpaddingleft">
+                    @{
+                        string tdate = Model.modified.ToString("dd/MM/yyyy");
+                    }
+                    Sidst modificeret: @Html.DisplayFor(m => tdate)
+                </div>
+                @if (Model.image_dtos != null && Model.image_dtos.Count > 0)
+                {
+                    <input type="hidden" class="adm_hidden_no_product_dtos" value="@Model.image_dtos.Count" />//måske unødvendig
+                }
+
+                @using (Html.BeginRouteForm("EditProduct2", FormMethod.Post, @Model))
+                {
+
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.booth_id, new { @class = "adm_hidden_edit_boothid" })
+                    @Html.HiddenFor(model => model.id, new { @class = "adm_hidden_edit_productid" })
+                    @Html.HiddenFor(model => model.sysname)
+                    @Html.HiddenFor(model => model.created_on)
+
+                    <div class="white_bg darkgrey_bdr" style="overflow:hidden;">
+                        <div class="col-xs-12 removepaddingsides">
+                            <div class="col-xs-4 form-horizontal" xstyle="padding-left:0px;">
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        @{
+                                            <div class="col-xs-12 z-cursor-pointer z-tooltip8">
+                                                @Html.LabelFor(model => model.image_dtos, htmlAttributes: new { @class = "control-label" })
+                                                <span class="z-desc-tooltip8 z-padding-all-15 z-align-left">
+                                                    Her er det muligt at uploade billeder.<br />
+                                                    *&nbsp;&nbsp;&nbsp;&nbsp;billedet bør repræsentere dit produkt<br />
+                                                    *&nbsp;&nbsp;&nbsp;&nbsp;hvis intet billed bliver valgt, bruges et standart<br />
+                                                    *&nbsp;&nbsp;&nbsp;&nbsp;accepterede fil typer: jpg, jpeg og png<br />
+                                                    *&nbsp;&nbsp;&nbsp;&nbsp;max størrelse: 5MB<br />
+                                                </span>
+                                                <br />
+                                            </div>
+
+
+
+
+
+                                            int i = 0;
+                                            if (Model.image_dtos != null && Model.image_dtos.Count > 0 && !string.IsNullOrEmpty(Model.image_dtos.FirstOrDefault().name))
+                                            {
+                                                foreach (dto_image img in Model.image_dtos)
+                                                {
+                                                    <div class="container_overlay">
+                                                        @{
+                                                            var image_path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/products/" + Model.sysname + "/" + img.name;
+                                                            <input type="hidden" class="adm_hidden_images_imagename_@i" value="@img.name">
+                                                            <img class="adm_img_productimage_@i adm_img_productimage" src="@image_path" alt="Sample Image" />
+                                                            <div class="overlay">
+                                                                <a href="#" class="icon" title="User Profile">
+                                                                    <i class="fa fa-window-close fa-2x" onclick="removeImage(@i);"></i>
+                                                                </a>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                    i++;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                var image_path = "/_content/images/site/icons/armchair2_bw.png";
+                                                <img class="adm_img_collectionimage" src="@image_path" alt="Sample Image" />
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12 adm_div_images_thumbnail">
+                                        @{
+                                            if (Model.image_dtos != null && Model.image_dtos.Count > 0)
+                                            {
+                                                i = 0;
+                                                foreach (dto_image img in Model.image_dtos)
+                                                {
+                                                    if (img != null)
+                                                    {
+                                                        var image_path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/products/" + Model.sysname + "/" + img.name;
+                                                        <a href="#">
+                                                            <input type="hidden" class="adm_hidden_images_thumbnail_@i" name="adm_hidden_images_thumbnail_@i" value="@img.name">
+                                                            <img src="@image_path" alt="Sample Image" class="adm_img_images_thumbnail_@i mythumbnail" onclick="setFront(@i);">&nbsp;&nbsp;&nbsp;
+                                                            @*<img src="@image_path" alt="Sample Image" class="adm_img_images_thumbnail_@i mythumbnail" onclick="removeThumbnail(@i, '@Model.name', 'No');">&nbsp;&nbsp;&nbsp;*@
+                                                        </a>
+                                                    }
+                                                    i++;
+                                                }
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <input type="file" name="product" class="adm_input_productimage btn btn-default adm_control" />
+                                        <span class="product_fileupload"></span><br /><span class="product_uploading"></span>
+                                    </div>
+                                </div>                                
+                                @*<hr />*@
+                            </div>
+                            <div class="col-xs-8">
+                                <div class="col-xs-12">
+                                    @{
+                                        string sels = "";
+                                        string spans = "<table><tr>";
+                                        int counter_span = 0;
+                                        List<dto_params> list = ViewBag.Params as List<dto_params>;
+                                        //list = list.OrderBy(l=>l.type)
+                                        foreach (dto_params par in list)
+                                        {
+                                            if (par.type == "M" || par.type == "MS")
+                                            {
+                                                string type = par.type == "MS" ? "ms" : "";
+                                                sels += "<table><tr><td valign=\"top\"><span class=\"bold\" style=\"display: inline-block;width:100px;\">" + par.name.ToUpper() + ":&nbsp;&nbsp;&nbsp;</span></td><td>";
+                                                foreach (dto_value v in par.values_daos)
+                                                {
+                                                    string check = "";
+                                                    if (Model.param_dtos != null)
+                                                    {
+
+                                                        dto_params tmp = Model.param_dtos.Where(x => x.name == par.name).FirstOrDefault();
+                                                        if (tmp != null)
+                                                        {
+                                                            foreach (dto_value va in tmp.values_daos)
+                                                            {
+                                                                if (va.Id == v.Id && va.value == v.value)
+                                                                {
+                                                                    check = "checked=\"checked\"";
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    sels += "<span style=\"display: inline-block;width:145px;\">";
+                                                    sels += "<input type=\"checkbox\" " + check + " class=\"" + type + "\" data-param=\"" + par.Id + "\" onclick=\"toggleParam(" + v.Id + ", this)\" />&nbsp;&nbsp;&nbsp;<span>" + v.value + "</span>";
+                                                    sels += "</span>";
+                                                }
+                                                sels += "</td></tr></table><br />";
+                                            }
+                                            else if (par.type == "S")
+                                            {
+                                                string check = "";
+                                                if (Model.param_dtos != null)
+                                                {
+                                                    dto_params tmp = Model.param_dtos.Where(x => x.name == par.name).FirstOrDefault();
+                                                    if (tmp != null)
+                                                    {
+                                                        check = "checked=\"checked\"";
+                                                    }
+                                                }
+                                                if (counter_span % 6 == 0)
+                                                {
+                                                    spans += "</tr><tr>";
+                                                }
+
+                                                spans += "<td><input type=\"checkbox\" " + check + " data-param=\"" + par.Id + "\" onclick=\"toggleParam(" + -1 + ", this)\" />&nbsp;&nbsp;" + par.name + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>";
+                                                counter_span++;
+                                            }
+                                        }
+                                        spans += "</tr></table>";
+                                        <span class="white_bg black bold" style="padding:5px;margin-right:10px;">Tilvalg: </span><span>(disse parametre skifter med valg af kategorier)</span><br /><br />
+                                        if (spans != "<table><tr></tr></table>")
+                                        {
+                                            @Html.Raw(spans); <br /><br />
+                                        }
+                                        @Html.Raw(sels);
+
+                                    }
+                                </div>
+
+                                <div class="col-xs-6 form-horizontal">
+
+                                    <div class="form-group">
+                                        <div class="col-xs-6">
+                                            @Html.LabelFor(model => model.name, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                            @Html.EditorFor(model => model.name, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control", placeholder = "navn.." } })
+                                            @Html.ValidationMessageFor(model => model.name, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-xs-6" style="padding-top:25px;">
+
+                                            @Html.CheckBoxFor(model => model.active, new { @class = "adm_check_active" }) Produkt aktiv.
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-6">
+                                            @Html.Label("Hovedkategori", htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                            @Html.DropDownListFor(model => model.category_main_id, ViewBag.ProductCategoryMain as SelectList, new { @class = "form-control darkgrey_bdr" })
+                                        </div>
+                                        <div class="col-xs-6">
+                                            @Html.Label("Bikategori", htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                            @Html.DropDownListFor(model => model.category_second_id, ViewBag.ProductCategorySecond as SelectList, new { @class = "form-control darkgrey_bdr" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-6">
+                                            @Html.Label("Mappe A", htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                            @Html.DropDownList("foldera_select", ViewBag.LevelA as SelectList, new { @class = "form-control dropdown_levela darkgrey_bdr" })
+                                        </div>
+                                        <div class="col-xs-6">
+                                            @Html.Label("Mappe B", htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                            @Html.DropDownList("folderb_select", ViewBag.LevelB as SelectList, new { @class = "form-control dropdown_levelb darkgrey_bdr" })
+                                        </div>
+                                    </div>
+                                    @*<div class="form-group">
+                                        <div class="col-xs-8">
+                                            <div>
+                                                @Html.LabelFor(model => model.status_delivery, htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div>
+                                                <span>@Model.status_delivery</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <input type="submit" value="@Model.status_delivery_next" style="margin-top:10px;width:100%;" class="btn btn-default btn-warning" disabled />
+                                        </div>
+                                        </div>*@
+                                    <div class="form-group">
+                                        <div class="col-xs-6">
+                                            @Html.LabelFor(model => model.status_condition_selectlist, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                            @Html.DropDownList("status_condition_select", ViewBag.StatusCondition as SelectList, new { @class = "form-control darkgrey_bdr" })
+                                        </div>
+                                        <div class="col-xs-6">
+                                            @{
+                                                string no_of_units = "" + Model.no_of_units;
+                                                
+                                            }
+                                            @Html.LabelFor(model => model.no_of_units, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                            @Html.EditorFor(model => no_of_units, new { htmlAttributes = new { @class = "adm_input_noofunits form-control xadm_control darkgrey_bdr" } })
+                                            @Html.ValidationMessageFor(model => model.no_of_units, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <div class="col-xs-6">
+                                            @{
+                                                string price = Model.price == NOP.INGEN_PRIS.ToString() ? NOP.INGEN_PRIS.ToString() : Model.price;
+                                                //string tag = Model.price == NOP.INGEN_PRIS.ToString() ? "" : ", 00 kr";
+                                            }
+                                            @Html.LabelFor(model => model.price, htmlAttributes: new { @class = "control-label" })<br />
+                                            @Html.EditorFor(model => price, new { htmlAttributes = new { @class = "adm_input_price form-control xadm_control darkgrey_bdr" } }),00 kr
+                                            @*@Html.Label(tag, htmlAttributes: new { @class = "adm_input_cents" })*@
+                                            @Html.ValidationMessageFor(model => model.price, "", new { @class = "text-danger" })
+                                        </div>
+                                        @*<div class="col-xs-6" style="padding-top:25px;">
+                                            @Html.CheckBox(NOP.INGEN_PRIS.ToString(), Model.price == NOP.INGEN_PRIS.ToString(), new { @class = "adm_checkbox_price_free" }) Ikke oplyst.
+                                        </div>*@
+                                        <div class="col-xs-6" style="padding-top:25px; height:30px;">
+                                            @if (Model.collection != null || Model.only_collection)
+                                            {
+                                                <table>
+                                                    <tr>
+                                                        <td valign="top">
+                                                            @Html.CheckBoxFor(model => model.only_collection, new { @class = "adm_input_onlycollection" })
+                                                        </td>
+                                                        <td>
+                                                            Indgår kun i sæt.
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            }
+                                        </div>
+                                    </div>
+                                    <hr />
+                                </div>
+
+                                <div class="col-xs-6 form-horizontal adm_div_group3">
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            @Html.LabelFor(model => model.note, htmlAttributes: new { @class = "control-label" })
+                                            @Html.EditorFor(model => Model.note, new { htmlAttributes = new { @class = "adm_input_note form-control adm_control darkgrey_bdr" } })
+                                            @Html.ValidationMessageFor(model => model.note, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-xs-12">
+                                            @Html.LabelFor(model => model.description, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                            <span class="desc_msg"></span>
+                                        </div>
+                                        <div class="col-xs-12">
+                                            @Html.TextAreaFor(model => Model.description, new { @class = "adm_input_description form-control adm_control", rows = "5" })
+                                            @Html.ValidationMessageFor(model => model.description, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            <div class="col-xs-12 panel panel-default black_bdr darkgrey_bg">
+                                                <div xclass="col-xs-12">
+                                                    @Html.LabelFor(model => model.tag_dtos_nop, htmlAttributes: new { @class = "control-label xcol-xs-2" })<br class="hide" />
+                                                    @{
+                                                        if (Model.tag_dtos != null && Model.tag_dtos.Count > 0)
+                                                        {
+                                                            string msg = "";
+                                                            @Html.EditorFor(model => msg, new { htmlAttributes = new { @class = "adm_input_edit_tagname form-control adm_control black_bdr", placeholder = "indtast søgeterm.." } })
+                                                            <br />
+
+                                                            <span class="adm_span_edit_results">
+                                                                @foreach (dto_tag t in Model.tag_dtos)
+                                                                {
+                                                                    <input type="button" onclick="removeTag('@t.tag_id')" value="@t.name (X)" class="adm_input_tag_@t.tag_id btn btn-default black_bdr" />
+                                                                }
+                                                            </span>
+                                                            <hr />
+                                                        }
+                                                        else
+                                                        {
+                                                            string msg = "";
+                                                            @Html.EditorFor(model => msg, new { htmlAttributes = new { @class = "adm_input_edit_tagname form-control adm_control black_bdr", placeholder = "[max 3 søgeord]" } })
+                                                            <br />
+                                                            <span class="adm_span_edit_results">
+                                                            </span>
+                                                            <hr />
+                                                        }
+                                                        <span class="adm_div_suggestions">
+                                                        </span><br />
+
+                                                    }
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <hr class="hr_lightgrey" />
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="xhide_desk remove_phone_block ">
+
+            <div class="container">
+                <div class="col-xs-6" xstyle="padding-left:0px;">
+                    <br />
+                    [@Model.booth_dto.name]
+                    <h2>Administrer Vare</h2>
+                    <br />
+                    <input type="button" value="Tilbage til stand" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("EditBooth1", new { booth_id = Model.booth_id })'" />
+                    <input type="button" value="Nyt Produkt" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("CreateProduct", new { booth_id = Model.booth_dto.booth_id })'" />
+                    <input type="button" value="Vis vare" class="btn btn-default green_bg lightgreen_bdr white myfade" onclick="location.href='@Url.RouteUrl("Product", new { id = Model.id })'" />
+                </div>
+            </div>
+            <hr class="hr_lightgrey" />
+            <div class="container">
+                <div class="white_bdr darkgrey_bg removeborder-bottom navigation-top navigation-right addpaddingleft">
+                    @{
+                        string mdate = Model.modified.ToString("dd/MM/yyyy");
+                    }
+                    Sidst modificeret: @Html.DisplayFor(m => mdate)
+                </div>
+                @if (Model.image_dtos != null && Model.image_dtos.Count > 0)
+                {
+                    <input type="hidden" class="adm_hidden_no_product_dtos" value="@Model.image_dtos.Count" />//måske unødvendig
+                }
+
+                @using (Html.BeginRouteForm("EditProduct2", FormMethod.Post, @Model))
+                {
+
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.booth_id, new { @class = "adm_hidden_edit_boothid" })
+                    @Html.HiddenFor(model => model.id, new { @class = "adm_hidden_edit_productid" })
+                    @Html.HiddenFor(model => model.sysname)
+                    @Html.HiddenFor(model => model.created_on)
+
+                    <div class="white_bg darkgrey_bdr" style="overflow:hidden;">
+                        <div class="col-sm-12 removepaddingsides">
+                            <div class="col-sm-4 form-horizontal" xstyle="padding-left:0px;">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        @{
+                                            <div>
+                                                @Html.LabelFor(model => model.image_dtos, htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            int i = 0;
+                                            if (Model.image_dtos != null && Model.image_dtos.Count > 0 && !string.IsNullOrEmpty(Model.image_dtos.FirstOrDefault().name))
+                                            {
+                                                foreach (dto_image img in Model.image_dtos)
+                                                {
+                                                    <div class="container_overlay">
+                                                        @{
+                                                            var image_path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/products/" + Model.sysname + "/" + img.name;
+                                                            <input type="hidden" class="adm_hidden_images_imagename_@i" value="@img.name">
+                                                            <img class="adm_img_productimage_@i adm_img_productimage" src="@image_path" alt="Sample Image" />
+                                                            <div class="overlay">
+                                                                <a href="#" class="icon" title="User Profile">
+                                                                    <i class="fa fa-window-close fa-2x" onclick="removeImage(@i);"></i>
+                                                                </a>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                    i++;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                var image_path = "/_content/images/site/icons/armchair2_bw.png";
+                                                <img class="adm_img_collectionimage" src="@image_path" alt="Sample Image" />
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12 adm_div_images_thumbnail">
+                                        @{
+                                            if (Model.image_dtos != null && Model.image_dtos.Count > 0)
+                                            {
+                                                i = 0;
+                                                foreach (dto_image img in Model.image_dtos)
+                                                {
+                                                    if (img != null)
+                                                    {
+                                                        var image_path = "/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/products/" + Model.sysname + "/" + img.name;
+                                                        <a href="#">
+                                                            <input type="hidden" class="adm_hidden_images_thumbnail_@i" name="adm_hidden_images_thumbnail_@i" value="@img.name">
+                                                            <img src="@image_path" alt="Sample Image" class="adm_img_images_thumbnail_@i mythumbnail" onclick="setFront(@i);">&nbsp;&nbsp;&nbsp;
+                                                            @*<img src="@image_path" alt="Sample Image" class="adm_img_images_thumbnail_@i mythumbnail" onclick="removeThumbnail(@i, '@Model.name', 'No');">&nbsp;&nbsp;&nbsp;*@
+                                                        </a>
+                                                    }
+                                                    i++;
+                                                }
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <input type="file" name="product" class="adm_input_productimage btn btn-default adm_control" />
+                                        <span class="product_fileupload"></span><br /><span class="product_uploading"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <div class="col-sm-12">
+                                            Her er det muligt at uploade billeder.<br /><br />
+                                            <table>
+                                                <tr>
+                                                    <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                    <td>billedet bør repræsentere dit produkt</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                    <td>hvis intet billed bliver valgt, vil et standart billed(ovenfor) blive brugt</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                    <td>accepterede fil typer: jpg, jpeg og png</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                    <td>max størrelse: 5MB</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                @*<hr />*@
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="col-sm-12">
+                                    @{
+                                        string sels = "";
+                                        string spans = "<table><tr>";
+                                        int counter_span = 0;
+                                        List<dto_params> list = ViewBag.Params as List<dto_params>;
+                                        //list = list.OrderBy(l=>l.type)
+                                        foreach (dto_params par in list)
+                                        {
+                                            if (par.type == "M" || par.type == "MS")
+                                            {
+                                                string type = par.type == "MS" ? "ms" : "";
+                                                sels += "<table><tr><td valign=\"top\"><span class=\"bold\" style=\"display: inline-block;width:100px;\">" + par.name.ToUpper() + ":&nbsp;&nbsp;&nbsp;</span></td><td>";
+                                                foreach (dto_value v in par.values_daos)
+                                                {
+                                                    string check = "";
+                                                    if (Model.param_dtos != null)
+                                                    {
+
+                                                        dto_params tmp = Model.param_dtos.Where(x => x.name == par.name).FirstOrDefault();
+                                                        if (tmp != null)
+                                                        {
+                                                            foreach (dto_value va in tmp.values_daos)
+                                                            {
+                                                                if (va.Id == v.Id && va.value == v.value)
+                                                                {
+                                                                    check = "checked=\"checked\"";
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    sels += "<span style=\"display: inline-block;width:145px;\">";
+                                                    sels += "<input type=\"checkbox\" " + check + " class=\"" + type + "\" data-param=\"" + par.Id + "\" onclick=\"toggleParam(" + v.Id + ", this)\" />&nbsp;&nbsp;&nbsp;<span>" + v.value + "</span>";
+                                                    sels += "</span>";
+                                                }
+                                                sels += "</td></tr></table><br />";
+                                            }
+                                            else if (par.type == "S")
+                                            {
+                                                string check = "";
+                                                if (Model.param_dtos != null)
+                                                {
+                                                    dto_params tmp = Model.param_dtos.Where(x => x.name == par.name).FirstOrDefault();
+                                                    if (tmp != null)
+                                                    {
+                                                        check = "checked=\"checked\"";
+                                                    }
+                                                }
+                                                if (counter_span % 6 == 0)
+                                                {
+                                                    spans += "</tr><tr>";
+                                                }
+
+                                                spans += "<td><input type=\"checkbox\" " + check + " data-param=\"" + par.Id + "\" onclick=\"toggleParam(" + -1 + ", this)\" />&nbsp;&nbsp;" + par.name + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>";
+                                                counter_span++;
+                                            }
+                                        }
+                                        spans += "</tr></table>";
+                                        <span class="white_bg black bold" style="padding:5px;margin-right:10px;">Tilvalg: </span><span>(disse parametre skifter med valg af kategorier)</span><br /><br />
+                                        if (spans != "<table><tr></tr></table>")
+                                        {
+                                            @Html.Raw(spans); <br /><br />
+                                        }
+                                        @Html.Raw(sels);
+
+                                    }
+                                </div>
+
+                                <div class="col-sm-6 form-horizontal">
+
+                                    <div class="form-group">
+                                        <div class="col-sm-6">
+                                            @Html.LabelFor(model => model.name, htmlAttributes: new { @class = "control-label xcol-sm-2" })
+                                            @Html.EditorFor(model => model.name, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control", placeholder = "navn.." } })
+                                            @Html.ValidationMessageFor(model => model.name, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-sm-6" style="padding-top:25px;">
+
+                                            @Html.CheckBoxFor(model => model.active, new { @class = "adm_check_active" }) Produkt aktiv.
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-6">
+                                            @Html.Label("Hovedkategori", htmlAttributes: new { @class = "control-label xcol-sm-2" })
+                                            @Html.DropDownListFor(model => model.category_main_id, ViewBag.ProductCategoryMain as SelectList, new { @class = "form-control darkgrey_bdr" })
+                                        </div>
+                                        <div class="col-sm-6">
+                                            @Html.Label("Bikategori", htmlAttributes: new { @class = "control-label xcol-sm-2" })
+                                            @Html.DropDownListFor(model => model.category_second_id, ViewBag.ProductCategorySecond as SelectList, new { @class = "form-control darkgrey_bdr" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-6">
+                                            @Html.Label("Mappe A", htmlAttributes: new { @class = "control-label xcol-sm-2" })
+                                            @Html.DropDownList("foldera_select", ViewBag.LevelA as SelectList, new { @class = "form-control dropdown_levela darkgrey_bdr" })
+                                        </div>
+                                        <div class="col-sm-6">
+                                            @Html.Label("Mappe B", htmlAttributes: new { @class = "control-label xcol-sm-2" })
+                                            @Html.DropDownList("folderb_select", ViewBag.LevelB as SelectList, new { @class = "form-control dropdown_levelb darkgrey_bdr" })
+                                        </div>
+                                    </div>
+                                    @*<div class="form-group">
+                                        <div class="col-sm-8">
+                                            <div>
+                                                @Html.LabelFor(model => model.status_delivery, htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div>
+                                                <span>@Model.status_delivery</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <input type="submit" value="@Model.status_delivery_next" style="margin-top:10px;width:100%;" class="btn btn-default btn-warning" disabled />
+                                        </div>
+                                        </div>*@
+                                    <div class="form-group">
+                                        <div class="col-sm-6">
+                                            @Html.LabelFor(model => model.status_condition_selectlist, htmlAttributes: new { @class = "control-label xcol-sm-2" })
+                                            @Html.DropDownList("status_condition_select", ViewBag.StatusCondition as SelectList, new { @class = "form-control darkgrey_bdr" })
+                                        </div>
+                                        @*<div class="col-sm-6">
+                                            @Html.LabelFor(model => model.status_stock_selectlist, htmlAttributes: new { @class = "control-label xcol-sm-2" })
+                                            @Html.DropDownList("status_stock_select", ViewBag.StatusStock as SelectList, new { @class = "form-control darkgrey_bdr" })
+                                        </div>*@
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-6">
+                                            @{
+                                                string no_of_units = "" + Model.no_of_units;
+                                            }
+                                            @Html.LabelFor(model => model.no_of_units, htmlAttributes: new { @class = "control-label xcol-sm-2" })
+                                            @Html.EditorFor(model => no_of_units, new { htmlAttributes = new { @class = "adm_input_noofunits form-control adm_control darkgrey_bdr" } })
+                                            @Html.ValidationMessageFor(model => model.no_of_units, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-sm-6" style="padding-top:25px; height:30px;">
+                                            @if (Model.collection != null || Model.only_collection)
+                                            {
+                                                <table>
+                                                    <tr>
+                                                        <td valign="top">
+                                                            @Html.CheckBoxFor(model => model.only_collection, new { @class = "adm_input_onlycollection" })
+                                                        </td>
+                                                        <td>
+                                                            Indgår kun i sæt.
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-6">
+                                            @{
+                                                string price = Model.price == NOP.INGEN_PRIS.ToString() ? NOP.INGEN_PRIS.ToString() : Model.price;
+                                                //string tag = Model.price == NOP.INGEN_PRIS.ToString() ? "" : ", 00 kr";
+                                            }
+                                            @Html.LabelFor(model => model.price, htmlAttributes: new { @class = "control-label" })<br />
+                                            @Html.EditorFor(model => price, new { htmlAttributes = new { @class = "adm_input_price form-control xadm_control darkgrey_bdr" } }),00 kr
+                                            @*@Html.Label(tag, htmlAttributes: new { @class = "adm_input_cents" })*@
+                                            @Html.ValidationMessageFor(model => model.price, "", new { @class = "text-danger" })
+                                        </div>
+                                        @*<div class="col-sm-6" style="padding-top:25px;">
+                                                @Html.CheckBox(NOP.INGEN_PRIS.ToString(), Model.price == NOP.INGEN_PRIS.ToString(), new { @class = "adm_checkbox_price_free" }) Ikke oplyst.
+                                            </div>*@
+                                    </div>
+                                    <hr />
+                                </div>
+
+                                <div class="col-sm-6 form-horizontal adm_div_group3">
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            @Html.LabelFor(model => model.note, htmlAttributes: new { @class = "control-label" })
+                                            @Html.EditorFor(model => Model.note, new { htmlAttributes = new { @class = "adm_input_note form-control adm_control darkgrey_bdr" } })
+                                            @Html.ValidationMessageFor(model => model.note, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-sm-12">
+                                            @Html.LabelFor(model => model.description, htmlAttributes: new { @class = "control-label xcol-sm-2" })
+                                            <span class="desc_msg"></span>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            @Html.TextAreaFor(model => Model.description, new { @class = "adm_input_description form-control adm_control", rows = "5" })
+                                            @Html.ValidationMessageFor(model => model.description, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <div class="col-sm-12 panel panel-default black_bdr darkgrey_bg">
+                                                <div xclass="col-sm-12">
+                                                    @Html.LabelFor(model => model.tag_dtos_nop, htmlAttributes: new { @class = "control-label xcol-sm-2" })<br class="hide" />
+                                                    @{
+                                                        if (Model.tag_dtos != null && Model.tag_dtos.Count > 0)
+                                                        {
+                                                            string msg = "";
+                                                            @Html.EditorFor(model => msg, new { htmlAttributes = new { @class = "adm_input_edit_tagname form-control adm_control black_bdr", placeholder = "indtast søgeterm.." } })
+                                                            <br />
+
+                                                            <span class="adm_span_edit_results">
+                                                                @foreach (dto_tag t in Model.tag_dtos)
+                                                                {
+                                                                    <input type="button" onclick="removeTag('@t.tag_id')" value="@t.name (X)" class="adm_input_tag_@t.tag_id btn btn-default black_bdr" />
+                                                                }
+                                                            </span>
+                                                            <hr />
+                                                        }
+                                                        else
+                                                        {
+                                                            string msg = "";
+                                                            @Html.EditorFor(model => msg, new { htmlAttributes = new { @class = "adm_input_edit_tagname form-control adm_control black_bdr", placeholder = "indtast søgeterm.." } })
+                                                            <br />
+                                                            <span class="adm_span_edit_results">
+                                                            </span>
+                                                            <hr />
+                                                        }
+                                                        <span class="adm_div_suggestions">
+                                                        </span><br />
+
+                                                    }
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <hr class="hr_lightgrey" />
+        </div>
+                                                        }
+                                                        catch (Exception e)
+                                                        {
+                                                            string s = ErrorHelper.HandleError(ERROR.EDITBOOTH, e);
+                                                            string subject = "Fejl i front, EditProduct(MOB)";
+                                                            string body = s;
+                                                            AdminHelper.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
+                                                        }
+
+}
+@{
+    string ingenpris = @NOP.INGEN_PRIS.ToString();
+    string err_msg = @Html.Raw(ViewBag.JSON_ERRORS).ToString();
+    string uploadimage_url = @Url.RouteUrl("UploadImage");
+    string setfolder_url = @Url.RouteUrl("SetFolder");
+    string tags_url = @Url.RouteUrl("GetTags");
+    string savetag_url = @Url.RouteUrl("SaveTag");
+    string removetag_url = @Url.RouteUrl("RemoveTag");
+    string removeimage_url = @Url.RouteUrl("RemoveImage");
+    <input type="hidden" id="ingenpris" value="@ingenpris" />
+    <input type="hidden" id="err_msg" value="@err_msg" />
+    <input type="hidden" id="uploadimage_url" value="@uploadimage_url" />
+    <input type="hidden" id="setfolder_url" value="@setfolder_url" />
+    <input type="hidden" id="tags_url" value="@tags_url" />
+    <input type="hidden" id="savetag_url" value="@savetag_url" />
+    <input type="hidden" id="removetag_url" value="@removetag_url" />
+    <input type="hidden" id="removeimage_url" value="@removeimage_url" />
+}
+
+
+@section scripts {
+    <script>
+        window.onunload = function () { };
+        var price;
+        $(document).ready(function () {
+            fix_mobile();
+            $('.z-loading').css('display', 'none');
+            setFront(0);
+            setFree();
+            showErrors();
+            setDescription();
+
+            $('.adm_input_description').keyup(function () {
+                setDescription();
+            });
+            $('.adm_button_form_submit').click(function () {
+                $('form').submit();
+            });
+            $('.adm_input_productimage').change(function () {
+                $('.z-loading').fadeIn(200);
+                var path = $('#uploadimage_url').val();
+                var data = new FormData();
+                var files = $(".adm_input_productimage").prop('files');
+                if (files.length > 0) {
+                    data.append("images", files[0]);
+                    data.append("TypeFile", "PRODUCT");
+                    uploadImage_Ajax(path, data, '.product_uploading', '.product_upload');
+                }
+            });
+            $("#category_main_id").change(function () {
+                $('.z-loading').fadeIn(200);
+                $('form').submit();
+            });
+            $("#category_second_id").change(function () {
+                $('.z-loading').fadeIn(200);
+                $('form').submit();
+            });
+            $("#foldera_select").change(function () {
+                $('.z-loading').fadeIn(200);
+                var product_id = $('.adm_hidden_edit_productid').val();
+                var lev_a_id = $(this).val();
+                window.location.href = $('#setfolder_url').val() + '?fld_id=' + lev_a_id + '&id=' + product_id + '&type=FOLDER_A' + '&is_product=true';
+            });
+            $("#folderb_select").change(function () {
+                $('.z-loading').fadeIn(200);
+                var product_id = $('.adm_hidden_edit_productid').val();
+                var lev_b_id = $(this).val();
+                window.location.href = $('#setfolder_url').val() + '?fld_id=' + lev_b_id + '&id=' + product_id + '&type=FOLDER_B' + '&is_product=true';
+            });
+            $("#status_condition_select").change(function () {
+                $('.z-loading').fadeIn(200);
+                $('form').submit();
+            });
+            $("#status_stock_select").change(function () {
+                $('.z-loading').fadeIn(200);
+                $('form').submit();
+            });
+            $(".adm_input_name").focusout(function () {
+                $('.z-loading').fadeIn(200);
+                $('form').submit();
+            });
+            $(".adm_check_active").change(function () {
+                $('.z-loading').fadeIn(200);
+                $('form').submit();
+            });
+            $(".adm_input_noofunits").focusout(function () {
+                var no_of_unit = $(".adm_input_noofunits");
+                if (no_of_unit.val() == '')
+                    no_of_unit.val('0');
+                //alert('yex ' + no_of_unit.val());
+                $('.z-loading').fadeIn(200);
+                $('form').submit();
+            });
+            //$(".adm_input_price").focusout(function () {
+            //    var price = $(".adm_input_price");
+            //    if (price.val() == '')
+            //        price.val($('#ingenpris').val());
+            //    $('.z-loading').fadeIn(200);
+            //    $('form').submit();
+
+            //});
+            $(".adm_input_price").focusout(function () {
+                var price = $(".adm_input_price");
+                if (price.val() == '')
+                    price.val('0');
+                $('.z-loading').fadeIn(200);
+                $('form').submit();
+
+            });
+            //$(".adm_checkbox_price_free").focusout(function () {
+            //    ///
+            //});
+            $(".adm_input_note").focusout(function () {
+                $('.z-loading').fadeIn(200);
+                $('form').submit();
+            });
+            $(".adm_input_description").focusout(function () {
+                $('.z-loading').fadeIn(200);
+                $('form').submit();
+            });
+            $(".adm_input_onlycollection").change(function () {
+                $('.z-loading').fadeIn(200);
+                $('form').submit();
+            });
+
+            $('.adm_input_edit_tagname').keyup(function (e) {
+                var tag_name = $('.adm_input_edit_tagname').val();
+                var path = $('#tags_url').val();
+                var data = { 'TagName': tag_name };
+                clearSuggestions();
+                if (contains(tag_name, '\'') || contains(tag_name, '\"'))
+                    return;
+                if (e.which == 13)
+                    saveTag(tag_name);
+                else if (tag_name != '')
+                    getTags_Ajax(path, data);
+            });
+            //$('.adm_checkbox_price_free').click(function () {
+            //    $('.z-loading').fadeIn(200);
+            //    var input = $('.adm_input_price');
+            //    var cents = $('.adm_input_cents');
+            //    var check = $('.adm_checkbox_price_free');
+            //    if (check.prop('checked')) {
+            //        price = input.val();
+            //        input.val($('#ingenpris').val());
+            //        cents.text('');
+            //    }
+            //    else {
+            //        price = price != '' && typeof price != 'undefined' ? price: '0';
+            //        input.val(price);
+            //        cents.text(',00 kr');
+            //    }
+            //    $('form').submit();
+            //});
+            //$('.adm_input_price').keyup(function () {
+            //    var input = $('.adm_input_price');
+            //    var cents = $('.adm_input_cents');
+            //    var check = $('.adm_checkbox_price_free');
+            //    if (input.val() != '' && input.val() != $('#ingenpris').val()) {
+            //        check.prop('checked', false);
+            //        cents.text(',00 kr');
+            //    }
+            //    else {
+            //        check.prop('checked', true);
+            //        cents.text('');
+            //    }
+            //});
+            $('.z-myalert-btn').click(function () {
+                $('.z-myalert').fadeOut(200);
+                $('.z-loading').fadeOut(200);
+            });
+        });
+
+        function contains(str, char) {
+            for (var i = 0; i < str.length; i++) {
+                if (str.charAt(i) == char)
+                    return true;
+            }
+            return false;
+        }
+
+
+        function setFront(nr) {
+            var no_thumbnails = $('.adm_hidden_no_product_dtos').val();
+            if (no_thumbnails != undefined) {
+                for (var i = 0; i < no_thumbnails; i++) {
+
+                    if (i == nr) {
+                        $('.adm_img_productimage_' + i).show();
+                    }
+                    else
+                        $('.adm_img_productimage_' + i).hide();
+                }
+            }
+        }
+        function setFree() {
+            var input = $('.adm_input_price');
+            var cents = $('.adm_input_cents');
+            var check = $('.adm_checkboc_price_free');
+            if (input.val() == 'INGEN_PRIS') {
+                check.prop('checked', true);
+                cents.text('');
+            }
+            else {
+                check.prop('checked', false);
+                cents.text(',00 kr');
+            }
+        }
+
+        function setDescription() {
+            var str = $('.adm_input_description').val();
+            var res = 500 - str.length;
+            if (res >= 0)
+                $('.desc_msg').text(', tilbage: ' + res);
+            else {
+                $('.adm_input_description').val(str.substring(0, 500));
+                $('.desc_msg').text(', overskredet: ' + (res * -1));
+            }
+        }
+        function saveTag(tag_name) {
+            $('.z-loading').fadeIn(200);
+            var product_id = $('.adm_hidden_edit_productid').val();
+            var path = $('#savetag_url').val();
+            var data = { 'tag_name': tag_name, 'id': product_id, 'type': 'PRODUCT' };
+            if (tag_name != '')
+                saveTag_Ajax(path, data, '.adm_span_edit_results');
+            else
+                myalert('Udfyld venligst.');
+        }
+        function removeTag(tag_id) {
+            $('.z-loading').fadeIn(200);
+            var product_id = $('.adm_hidden_edit_productid').val();
+            var path = $('#removetag_url').val();
+            var data = { 'TagId': tag_id, 'Id': product_id, 'type': 'PRODUCT' };
+            if (tag_id != '')
+                removeTag_Ajax(path, data);
+            else
+                myalert('Der skete en fejl, beklager.');
+        }
+        function toggleParam(val_id, me) {
+            $('.z-loading').fadeIn(200);
+
+            var product_id = $('.adm_hidden_edit_productid').val();
+
+            var data = {};
+            data.id = product_id;
+            data.type = 'PRODUCT';
+
+            if ($(me).prop('checked')) {
+                var param_id = $(me).data('param');
+                data.param_id = param_id;
+                data.val_id = val_id;
+                var path = '/Administration/_SaveParam';
+
+                saveParam_Ajax(path, data, me);
+            }
+            else {
+                var param_id = $(me).data('param');
+                data.param_id = param_id;
+                var path = '/Administration/_RemoveParam';
+
+                removeParam_Ajax(path, data, me);
+            }
+        }
+        function removeImage(param) {
+            var img_name = $('.adm_hidden_images_imagename_' + param).val();
+            var path = $('#removeimage_url').val();
+            var data = { 'ImageName': img_name, 'BoothId': $('.adm_hidden_edit_boothid').val(), 'ItemId': $('.adm_hidden_edit_productid').val(), 'type': 'PRODUCT' };
+
+            if (img_name != '') {
+                $('.z-loading').fadeIn(200);
+                removeImage_Ajax(path, data);
+                return;
+            }
+            myalert('Der skete en fejl, beklager.');
+        }
+        function clearSuggestions() {
+            $('.adm_div_suggestions').empty();
+        }
+        function contains(array, comp) {
+            for (var i = 0; i < array.length; i++) {
+                if (array[i].name == comp)
+                    return true;
+            }
+            return false;
+        }
+        function getTags_Ajax(path, data) {
+
+            $.ajax({
+                url: path,
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(data),
+                success: function (results) {
+                    if (results.success) {
+                        var i = 0;
+                        $('.adm_div_suggestions').append('<div">Foreslag:</div>');
+                        if (!contains(results.tags, data.TagName)) {
+                            $('.adm_div_suggestions').append('<div xstyle="height:40px;" class="adm_div_suggestions_inner' + i + '"></div>');
+                            $('.adm_div_suggestions_inner' + i).append('<a href="#" onclick="saveTag(\'' + data.TagName + '\')">\'' + data.TagName + '\'</a> - 0 hits, tilføj alligevel?');
+                        }
+                        i++;
+                        if (results.tags.length > 0) {
+                            for (var arr_index = 0; arr_index < results.tags.length; arr_index++) {
+                                $('.adm_div_suggestions').append('<div xstyle="height:40px;" class="adm_div_suggestions_inner' + i + '"></div>');
+                                $('.adm_div_suggestions_inner' + i).append('<a href="#" onclick="saveTag(\'' + results.tags[arr_index].name + '\')">\'' + results.tags[arr_index].name + '\'</a> - ' + results.tags[arr_index].numberofhits + ' hits');
+
+                                i++;
+                            }
+                        }
+                    }
+                    else
+                        myalert('Der skete en fejl, beklager.');
+                    $('.z-loading').fadeOut(400);
+                },
+                error: function (er) {
+                    myalert("error: " + er);
+                    $('.z-loading').fadeOut(400);
+                }
+            });
+        }
+
+        function saveTag_Ajax(path, data_in, tag_span) {
+            $.ajax({
+                url: path,
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(data_in),
+                success: function (result) {
+                    if (result.success) {
+                        if (result.msg == 'ok') {
+                            $('.adm_input_edit_tagname').val('');
+                            $(tag_span).append('<input type="button" onclick="removeTag(\'' + result.tag_id + '\')" value="' + result.tag_name + ' (X)" class="adm_input_tag_' + result.tag_id + ' btn btn-default" />');
+                            $('.adm_input_tag_' + result.tag_id).addClass('btn btn-default black_bdr');
+                        }
+                        else
+                            myalert(result.msg);
+                    }
+                    else
+                        myalert("Der skete en fejl, beklager.");
+                    $('.z-loading').fadeOut(400);
+                },
+                error: function (er) {
+                    myalert("error: " + er);
+                    $('.z-loading').fadeOut(400);
+                }
+            });
+        }
+        function removeTag_Ajax(path, data) {
+            $.ajax({
+                url: path,
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(data),
+                success: function (result) {
+                    if (result.success) {
+                        try {
+                            $(".adm_input_tag_" + result.tag_id).remove();
+                        }
+                        catch (e) { myalert('catch'); }
+                    }
+                    else {
+                        myalert("Dette tag kan ikke slettes.");
+                    }
+                    $('.z-loading').fadeOut(400);
+                },
+                error: function (er) {
+                    myalert("error: " + er);
+                    $('.z-loading').fadeOut(400);
+                }
+            });
+        }
+        function saveParam_Ajax(path, data_in, me) {
+            var data = data_in; //JSON.stringify(data_in)
+            $.ajax({
+                url: path,
+                type: "POST",
+                contentType: "application/json; charset=utf-8", //"application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(data),
+                success: function (result) {
+                    if (result.success) {
+                        $(me).prop('checked', true);
+                    }
+                    else {
+                        $(me).prop('checked', false);
+                    }
+                    $('.z-loading').fadeOut(400);
+                },
+                error: function (er) {
+                    $(me).prop('checked', false);
+                    myalert("error: " + er.responseText, true);
+                    $('.z-loading').fadeOut(400);
+                }
+            });
+        }
+        function removeParam_Ajax(path, data_in, me) {
+            var data = data_in;//JSON.stringify(data_in)
+            $.ajax({
+                url: path,
+                type: "POST",
+                contentType: "application/json; charset=utf-8", //"application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(data),
+                success: function (result) {
+                    if (result.success) {
+                        $(me).prop('checked', false);
+                    }
+                    else {
+                        $(me).prop('checked', true);
+                    }
+                    $('.z-loading').fadeOut(400);
+                },
+                error: function (er) {
+                    myalert("error: " + er, true);
+                    $('.z-loading').fadeOut(400);
+                }
+            });
+        }
+        function uploadImage_Ajax(path, data_in, uploading, fileupload) {
+            $.ajax({
+                url: path,
+                type: "POST",
+                //enctype: 'multipart/form-data',
+                processData: false,
+                contentType: false,
+                data: data_in,
+                xhr: function () {
+                    var xhr = $.ajaxSettings.xhr();
+                    xhr.onprogress = function e() {
+                        // For downloads
+                        if (e.lengthComputable) {
+                            console.log(e.loaded / e.total);
+                        }
+                    };
+                    xhr.upload.onprogress = function (e) {
+                        // For uploads
+                        if (e.lengthComputable) {
+                            $(uploading).text("uploaded: " + e.loaded * 100 / e.total + "% ");
+                        }
+                    };
+                    return xhr;
+                },
+                success: function (data, textStatus, xhr) {
+                    if (xhr.status == 200) {
+                        $(fileupload).text('File Upload: ' + textStatus);
+                        /*if (input.files && input.files[0]) {
+                            var reader = new FileReader();
+                            reader.onload = function (e) {
+                                $(img).attr('src', e.target.result)
+                                    .width(300);
+                            };
+                            reader.readAsDataURL(input.files[0]);
+                        }*/
+
+                        $('form').submit();
+                    }
+                    else {
+                        $('.z-loading').fadeOut(400);
+                        myalert('Der skete en fejl, beklager.');
+                    }
+                },
+                error: function (er) {
+                    myalert("Der skete en fejl. tjek fil størrelse eller fil type.");
+                    $('.z-loading').fadeOut(400);
+                }
+            });
+        }
+        function removeImage_Ajax(path, data) {
+            $.ajax({
+                url: path,
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(data),
+                xhr: function () {
+                    var xhr = $.ajaxSettings.xhr();
+                    xhr.onprogress = function e() {
+                        // For downloads
+                        //if (e.lengthComputable) {
+                        //    console.log(e.loaded / e.total);
+                        //}
+                    };
+                    xhr.upload.onprogress = function (e) {
+                        // For uploads
+                        //if (e.lengthComputable) {
+                        //    $(uploading).text("uploaded: " + e.loaded * 100 / e.total + "% ");
+                        //}
+                    };
+                    return xhr;
+                },
+                success: function (data) {
+                    //alert('status: ' + xhr.status);
+                    if (data.success) {
+                        $('form').submit();
+                        //$('.adm_img_images_thumbnail_' + param).closest('a').remove();
+                    }
+                    else {
+                        myalert('Der skete en fejl, beklager.');
+                        $('.z-loading').fadeOut(400);
+                    }
+                },
+                error: function (er) {
+                    myalert("error: " + er);
+                }
+            });
+        }
+
+    </script>
+}

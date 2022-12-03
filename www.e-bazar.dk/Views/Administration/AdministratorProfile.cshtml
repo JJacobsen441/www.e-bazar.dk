@@ -1,0 +1,87 @@
+﻿@model www.e_bazar.dk.Models.DTOs.col_userprofile
+@{
+    ViewBag.Title = "AdministratorProfile";
+}
+
+<h2>AdminstratorProfile</h2>
+
+<div class="container" style="background-color:#FFFFFF;">
+    <div class="col-md-12">
+        <table class="table xtable-bordered">
+            <tr class="adm_th_products" style="background-color: #FFFFFF;">
+                <th style="width:15%;" class="hide_phone">
+                    @Html.DisplayNameFor(model => model.salesmen.FirstOrDefault().email)
+                </th>
+                <th style="width:15%;" class="hide_phone">
+                    @Html.DisplayNameFor(model => model.salesmen.FirstOrDefault().created_on)
+                </th>
+                <th style="width:20%;"></th>
+            </tr>
+            @foreach (var item in Model.salesmen)
+            {
+                <tr>
+                    <td class="hide_phone">
+                        @{
+                            @Html.DisplayFor(modelItem => item.email)
+                        }
+                    </td>
+                    <td class="hide_phone">
+                        @{
+                            string date = item.created_on.ToString("dd/MM/yyyy");
+                            @Html.DisplayFor(modelItem => date)
+                        }
+                    </td>
+                    <td>
+                        @Html.RouteLink("Vis", "UserProfile") |
+                        @Html.RouteLink("Slet", "", new { id = item.person_id }) |
+                        @Html.RouteLink("Deaktiver", "", new { id = item.person_id }) |
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+<hr />
+<div class="container" style="background-color:#FFFFFF;">
+    <div class="col-md-12">
+        <table class="table xtable-bordered">
+            <tr class="adm_th_products" style="background-color: #FFFFFF;">
+                <th style="width:15%;" class="hide_phone">
+                    @Html.DisplayNameFor(model => model.customers.FirstOrDefault().email)
+                </th>
+                <th style="width:15%;" class="hide_phone">
+                    @Html.DisplayNameFor(model => model.customers.FirstOrDefault().created_on)
+                </th>
+                <th style="width:20%;"></th>
+            </tr>
+            @foreach (var item in Model.customers)
+            {
+                <tr>
+                    <td class="hide_phone">
+                        @{
+                            @Html.DisplayFor(modelItem => item.email)
+                        }
+                    </td>
+                    <td class="hide_phone">
+                        @{
+                            string date = item.created_on.ToString("dd/MM/yyyy");
+                            @Html.DisplayFor(modelItem => date)
+                        }
+                    </td>
+                    <td>
+                        @Html.RouteLink("Vis", "UserProfile") |
+                        @Html.RouteLink("Slet", "", new { id = item.person_id }) |
+                        @Html.RouteLink("Deaktiver", "", new { id = item.person_id }) |
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('.z-myalert').hide();
+        });
+    </script>
+}

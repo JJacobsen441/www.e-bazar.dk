@@ -1,0 +1,51 @@
+﻿@model www.e_bazar.dk.Models.DTOs.col_booth
+    <div class="white_bg" style="width:400px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mapper: <a href="#" onclick="createFolder(@Model.booth_dto.booth_id, 'FOLDER_A')">Opret</a>
+        <ul style="list-style: none;">
+            @{
+
+                if (Model.folders.flda_dtos != null)
+                {
+                    foreach (dto_folder foldera in Model.folders.flda_dtos)
+                    {
+                        <li>
+                            <div style="text-align:right;">
+                                <span style="float:left;">
+                                    <i class="far fa-folder"></i><span class="bold">&nbsp;@foldera.name</span> (@foldera.count varer)
+                                </span>
+                                @{
+                                    string delete = foldera.count == 0 ? "deleteFolder(" + @foldera.id + ", 'FOLDER_A', " + @Model.booth_dto.booth_id + ")" : "alert('Denne folder indeholder stadig varer.')";
+                                }
+                                <a href="#" onclick="moveFolder(@foldera.id, 'up', @Model.booth_dto.booth_id, 'FOLDER_A')">&nbsp;<i class="fas fa-angle-double-up"></i></a>
+                                <a href="#" onclick="moveFolder(@foldera.id, 'down', @Model.booth_dto.booth_id, 'FOLDER_A')"><i class="fas fa-angle-double-down"></i>&nbsp;</a>
+                                <a href="#" onclick="@delete">Fjern</a>
+                                <a href="#" onclick="createFolder( @foldera.id, 'FOLDER_B')">Opret</a>
+                            </div>
+                            @*<br />*@
+                            <ul style="list-style: none;">
+                                @if (foldera.children != null)
+                                {
+                                    foreach (dto_folder folderb in foldera.children)
+                                    {
+                                        <li>
+                                            <div style="text-align:right;">
+                                                <span style="float:left;">
+                                                    <i class="far fa-folder"></i><span class="bold">&nbsp;@folderb.name</span> (@folderb.count varer)
+                                                </span>
+                                                @{
+                                                    string delete2 = folderb.count == 0 ? "deleteFolder(" + @folderb.id + ", 'FOLDER_B', " + @foldera.id + ")" : "alert('Denne folder indeholder stadig varer.')";
+                                                }
+                                                <a href="#" onclick="moveFolder(@folderb.id, 'up', @foldera.id, 'FOLDER_B')">&nbsp;<i class="fas fa-angle-double-up"></i></a>
+                                                <a href="#" onclick="moveFolder(@folderb.id, 'down', @foldera.id, 'FOLDER_B')"><i class="fas fa-angle-double-down"></i>&nbsp;</a>
+                                                <a href="#" onclick="@delete2"> Fjern</a>
+                                            </div>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </li>
+                    }
+                }
+            }
+        </ul>
+    </div>

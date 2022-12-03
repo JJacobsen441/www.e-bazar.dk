@@ -1,0 +1,121 @@
+﻿@model www.e_bazar.dk.Models.DTOs.col_userprofile
+@{ 
+    dto_person person = Model.salesman_dto != null ? (dto_person)Model.salesman_dto : (dto_person)Model.customer_dto;
+}
+<div class="col-md-4 form-horizontal addpaddingtop" xstyle="padding-left:0px;">
+
+    @if (person.following != null)
+    {
+        <table class="table xtable-bordered">
+            <tr class="adm_th_products" style="background-color: #FFFFFF;">
+                <th style="xwidth:10%;" class="adm_th_products_image">
+                    @Html.DisplayName("Boder")
+                </th>
+                <th style="xwidth:25%;" class="hide_phone">
+
+                </th>
+
+            </tr>
+            @foreach (dto_booth boo in person.following)
+            {
+
+                <tr>
+                    <td>@boo.name</td>
+                    <td>&nbsp;&nbsp;&nbsp;@Html.RouteLink("Slet", "RemoveFollowing2", new { booth_id = boo.booth_id }, new { @class = "myfade" })</td>
+                </tr>
+
+            }
+        </table>
+    }
+</div>
+<div class="col-md-8 form-horizontal addpaddingtop" xstyle="padding-left:0px;">
+    @if (person.following != null)
+    {
+
+        <table class="table xtable-bordered">
+            <tr class="adm_th_products" style="background-color: #FFFFFF;">
+                <th style="width:10%;" class="adm_th_products_image">
+                    @*@Html.DisplayNameFor(model => model.product_pocos.FirstOrDefault().productimage_pocos.FirstOrDefault().name)*@
+                </th>
+                <th style="width:25%;" class="hide_phone">
+                    @Html.DisplayName("Vare")
+                </th>
+                <th style="width:45%;" class="hide_phone">
+                    @Html.DisplayName("Beskrivelse")
+                </th>
+            </tr>
+            @{
+                List<dto_booth_item> list = Model.follower_news;
+                foreach (var item in list)
+                {
+                    dto_booth booth_poco = null;
+                    if (item.GetType() == typeof(dto_product))
+                    {
+                        biz_booth_item biz = new biz_product();
+                        booth_poco = biz.GetBoothDTO<dto_product>((dto_product)item);
+                    }
+                    else
+                    {
+                        biz_booth_item biz = new biz_collection();
+                        booth_poco = biz.GetBoothDTO<dto_collection>((dto_collection)item);
+                    }
+
+                    if (booth_poco == null)
+                    {
+                        continue;
+                    }
+                    <tr>
+                        <td class="adm_td_products_image">
+                            @if (item.image_dtos != null && item.image_dtos.Count > 0 && !string.IsNullOrEmpty(item.image_dtos.FirstOrDefault().name))
+                            {
+                                if (typeof(biz_product) == item.GetType())
+                                {
+                                    string thumb = "/_content/images/profiles/" + booth_poco.salesman_dto.sysname + "/booths/" + booth_poco.sysname + "/products/" + item.sysname + "/t_" + item.image_dtos.FirstOrDefault().name;
+                                    string path = "/_content/images/profiles/" + booth_poco.salesman_dto.sysname + "/booths/" + booth_poco.sysname + "/products/" + item.sysname + "/" + item.image_dtos.FirstOrDefault().name;
+                                    <a class="myfade" href="@Url.RouteUrl("Product", new { id = @item.id })">
+                                        <img alt="Sample Image" class="adm_img_products_productimage loadlater" src="@thumb" data-src="@path">
+                                    </a>
+                                }
+                                else
+                                {
+                                    string thumb = "/_content/images/profiles/" + booth_poco.salesman_dto.sysname + "/booths/" + booth_poco.sysname + "/collections/" + item.sysname + "/t_" + item.image_dtos.FirstOrDefault().name;
+                                    string path = "/_content/images/profiles/" + booth_poco.salesman_dto.sysname + "/booths/" + booth_poco.sysname + "/collections/" + item.sysname + "/" + item.image_dtos.FirstOrDefault().name;
+                                    <a class="myfade" href="@Url.RouteUrl("Collection", new { id = @item.id })">
+                                        <img alt="Sample Image" class="adm_img_products_productimage loadlater" src="@thumb" data-src="@path">
+                                    </a>
+                                }
+                            }
+                            else
+                            {
+                                if (typeof(biz_product) == item.GetType())
+                                {
+                                    var image_path = "/_content/images/site/icons/armchair2_bw.png";
+                                    <a class="myfade" href="@Url.RouteUrl("Product", new { id = @item.id })">
+                                        <img class="adm_img_image_icon" src="@image_path" alt="Sample Image" />
+                                    </a>
+                                }
+                                else
+                                {
+                                    var image_path = "/_content/images/site/icons/sofa_bw.png";
+                                    <a class="myfade" href="@Url.RouteUrl("Collection", new { id = @item.id })">
+                                        <img class="adm_img_image_icon" src="@image_path" alt="Sample Image" />
+                                    </a>
+                                }
+                            }
+                        </td>
+                        <td class="hide_phone">
+                            @if (typeof(biz_collection) == item.GetType())
+                            {<span class="bold red">Sæt, </span>}
+                            <span style="font-weight:bold;">[@booth_poco.name] </span><br />
+                            @item.name
+
+                        </td>
+                        <td class="hide_phone">
+                            @Html.DisplayWithBreaksFor(item.description_limit)
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    }
+</div>

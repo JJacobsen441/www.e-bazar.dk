@@ -1,0 +1,62 @@
+﻿<!--- Sidemenu -->
+@model col_folders
+<fieldset class="z-background-color-darkgrey z-padding-all-15 z-border-bottom-left-radius-10 z-border-top-left-radius-10">
+    <legend class="z-bold z-font-text z-background-color-lightgrey z-padding-all-15 z-width-auto">Katalog</legend>
+    <div class="">
+        
+        <br />
+        <ul class="z-list-style-none">
+            <li>
+                @Html.RouteLink("Alle", "SelectCatelog", new { id = @Model.flda_dtos[0].booth_id }, new { @class = "custom-control-label z-bold z-black-link myfade" })
+            </li>
+            @foreach (dto_folder flda in @Model.flda_dtos)
+            {
+                <li>
+                    @{
+                        bool isset = Model.selected.Contains(flda.name.Replace(" ", "_"));
+                        
+                        if (flda.children.Count() > 0)
+                        {
+                            string fa_class = !isset ? "fas fa-plus-square" : "fas fa-minus-square";
+                            <a href="#/"><i class="@fa_class cata z-color-lightgreen"></i></a>
+                        }
+                        else
+                        {
+                            <i class="far fa-square z-color-lightgreen"></i>
+                        }
+                        @Html.RouteLink(flda.name, "SelectCatelog", new { id = @Model.flda_dtos[0].booth_id, a_sub = flda.name.Replace(" ", "_"), catelog = flda.name.Replace(" ", "_") }, new { @class = "custom-control-label z-bold z-black-link myfade" })
+                        if (flda.children.Count() > 0)
+                        {
+                            string style = @Model.selected.Contains(flda.name.Replace(" ", "_")) ? "z-display-block  z-list-style-none" : "z-display-none z-list-style-none";
+                            <ul class="@style">
+
+                                @foreach (dto_folder fldb in flda.children)
+                                {
+                                    bool check = isset && Model.selected.Contains(fldb.name);
+                                    object routes = check ? new {
+                                                                id = flda.booth_id, 
+                                                                a_sub = flda.name.Replace(" ", "_"), 
+                                                                b_sub = fldb.name.Replace(" ", "_"), 
+                                                                catelog = flda.name.Replace(" ", "_") + "-" + Model.selected.Replace(fldb.name + "-", "") 
+                                                            } : 
+                                                            new { 
+                                                                id = flda.booth_id, 
+                                                                a_sub = flda.name.Replace(" ", "_"), 
+                                                                b_sub = fldb.name.Replace(" ", "_"), 
+                                                                catelog = flda.name.Replace(" ", "_") + "-" + Model.selected.Replace(fldb.name + "-", "") + fldb.name.Replace(" ", "_") 
+                                                            };
+                                    <li>
+                                        <i class="far fa-square z-color-lightgreen"></i>
+                                        @Html.RouteLink(fldb.name, "SelectCatelog", routes, new { @class = "custom-control-label z-bold z-black-link myfade" })
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    }
+                </li>
+            }
+        </ul>
+        <br />
+    </div>
+</fieldset>
+<!-- Sidebar -->

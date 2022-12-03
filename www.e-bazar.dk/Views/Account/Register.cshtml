@@ -1,0 +1,140 @@
+﻿@model www.e_bazar.dk.Models.Identity.RegisterViewModel
+@{
+    ViewBag.Title = "Opret";
+}
+@try
+{
+    <script type="text/javascript">
+    var onloadCallback = function () {
+        //alert("reCaptcha is ready !!!");
+        grecaptcha.render('html_element', {
+            'sitekey': '@StaticsHelper.AppSettings("CaptchaPublic")'
+        });
+    };
+    </script>
+    <h2>Opret ny bruger.</h2>
+
+    using (Html.BeginRouteForm("Register1", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="col-md-12 z-padding-sides-0 z-width-100-percent z-overflow-hidden">
+            <div class="col-md-6 z-padding-sides-0">
+                Velkommen til e-bazar.dk.<br /><br />
+                * Siden er GRATIS.<br />
+                * Siden er uden annoncering.<br />
+                * Siden vil blive drevet af donationer fra sælgerne.<br /><br />
+            </div>
+            <div class="col-md-6 z-padding-sides-0">
+                <div id="html_element"></div>
+            </div>
+        </div>
+        <hr />
+
+        @Html.ValidationSummary("", new { @class = "text-danger" })
+        <div class="form-group">
+            <div class="col-md-2" style="float:left;">
+                @Html.LabelFor(m => m.Email, new { @class = "control-label" })
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control width100" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-2" style="float:left;">
+                @Html.LabelFor(m => m.Password, new { @class = "control-label" })
+            </div>
+            <div class="col-md-2">
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control width100" })
+            </div>
+            <div class="col-md-2">
+                [Note: Skal indeholde store og små bogstaver, mindst et tal og 8 karakterer.]
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-2" style="float:left;">
+                @Html.LabelFor(m => m.ConfirmPassword, new { @class = "control-label" })
+            </div>
+            <div class="col-md-2">
+                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control width100" })
+            </div>
+        </div>
+        <div class="form-group">
+            @{
+                string user_type = "Bruger Type";
+                <div class="col-md-2" style="float:left;">
+                    @Html.Label(user_type, new { @class = "control-label" })
+                </div>
+                <div class="col-md-2">
+                    @Html.RadioButtonFor(m => m.user_type, "Customer", new { @class = "radio1" }) Køber<br />
+                    @Html.RadioButtonFor(m => m.user_type, "Salesman", new { @class = "radio2" }) Sælger&nbsp;&nbsp;&nbsp;
+                </div>
+                <div class="col-md-2">
+                    [Note: Her vælges om profil skal bruges som køber eller sælger]
+                </div>
+                <div class="col-md-6">
+                    @*[Note: Her vælges om profil skal bruges som køber eller sælger]*@
+                </div>
+            }
+        </div>
+        <br />
+
+        <div class="form-group">
+            <div class="xcol-md-offset-2 col-md-2">
+                <input type="submit" class="register btn btn-default" value="Registrer" />
+            </div>
+
+        </div>
+        <br />
+        <div>
+            Opstår problemer kontakt venligst: admin@e-bazar.dk<br /><br />
+            Med venlig hilsen<br />
+            e-bazar.dk
+        </div>
+        <br />
+        <div class="xcol-md-6">
+            <span class="bold">Husk at tjekke din spam folder for emails!</span>
+        </div>
+    }
+    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
+            async defer>
+    </script>
+
+}
+catch (Exception e)
+{
+
+    string s = ErrorHelper.FormatError(e);
+    string subject = "Fejl i front, Registrer";
+    string body = s;
+    AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script>
+    $(document).ready(function () {
+        $('.z-myalert').hide();
+        $('.register').click(function () {
+            var val1 = $('.radio1').is(":checked");
+            var val2 = $('.radio2').is(":checked");
+            //alert(val1 + " " + val2);
+            if (!val1 && !val2) {
+                myalert("Udfyld venligst informationer");
+                return false;
+            }
+            else
+                return true;
+            });
+        HandleCaptcha();
+    });
+    function HandleCaptcha()
+    {
+        @{
+            if (@ViewBag.Captcha != null && !ViewBag.Captcha)
+            {
+                @Html.Raw("myalert('Angiv Captcha.');");
+            }
+        }
+    }
+</script>

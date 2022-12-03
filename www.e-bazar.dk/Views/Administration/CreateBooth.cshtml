@@ -1,0 +1,515 @@
+﻿@model www.e_bazar.dk.Models.DTOs.dto_booth
+
+@{
+    ViewBag.Title = "Administrer Bod";
+}
+
+@{
+
+    try
+    {
+
+        <div class="xhide_phone remove_desk_block ">
+            <div class="container">
+                <div class="col-xs-12" xstyle="padding-left:0px;">
+                    <h2>Administrer Bod</h2>
+                    <br />
+                    <input type="button" value="Rediger Profil" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("UserProfile", new { comingform = "CreateBooth" } )'" />
+                    <input type="button" value="Gem" class="btn btn-default green_bg lightgreen_bdr white adm_button_form_submit" />
+                </div>
+            </div>
+            <hr class="hr_lightgrey" />
+            <div class="container">
+                <div class="white_bdr darkgrey_bg removeborder-bottom navigation-top navigation-right">
+                    &nbsp;
+                </div>
+                @using (Html.BeginRouteForm("CreateBooth", FormMethod.Post, @Model))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.booth_id, new { @class = "adm_hidden_edit_boothid" })
+                    @Html.HiddenFor(model => model.salesman_id, new { @class = "adm_hidden_edit_salesmanid" })
+                    @Html.HiddenFor(model => model.country)
+
+                    <div class="tab-content white_bg darkgrey_bdr" style="overflow:hidden;">
+                        @*<div class="col-xs-4 form-horizontal" xstyle="padding-left:0px;">
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    @Html.LabelFor(model => model.frontimage, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-12" style="background-color:#FFFFFF;">
+                                    @{
+                                        var image_path = !string.IsNullOrEmpty(Model.frontimage) ? "/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+                                        <img class="adm_img_boothimage" src="@image_path" alt="Sample Image" />
+                                    }
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    &nbsp;
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    <div class="col-xs-12">
+                                        Når produktet er blevet oprettet(Tryk Gem), vil det være muligt at uploade billeder.<br /><br />
+                                        <table>
+                                            <tr>
+                                                <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                <td>billedet bør repræsentere dit produkt</td>
+                                            </tr>
+                                            <tr>
+                                                <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                <td>hvis intet billed bliver valgt, vil et standart billed(ovenfor) blive brugt</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                        </div>*@
+                        <div class="col-xs-4 form-horizontal">
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    @Html.LabelFor(model => model.name, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                </div>
+                                <div class="col-xs-12">
+                                    @Html.EditorFor(model => model.name, new { htmlAttributes = new { @class = "adm_input_name form-control adm_control darkgrey_bdr" } })
+                                    @Html.ValidationMessageFor(model => model.name, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    @Html.LabelFor(model => model.street_address, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                </div>
+                                <div class="col-xs-12">
+                                    @Html.EditorFor(model => model.street_address, new { htmlAttributes = new { @class = "adm_input_name form-control adm_control darkgrey_bdr" } })
+                                    @Html.ValidationMessageFor(model => model.street_address, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.region_dto.zip, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.region_dto.town, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.EditorFor(model => model.region_dto.zip, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control adm_input_address_zip" } })
+                                    @Html.ValidationMessageFor(model => model.region_dto.zip, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.EditorFor(model => model.region_dto.town, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control adm_text_address_town" } })
+                                    @Html.ValidationMessageFor(model => model.region_dto.town, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @{
+                                    <div class="col-xs-6">
+                                        @Html.RadioButtonFor(m => m.fulladdress_str, "Part", new { Checked = "checked" }) Kun postnr og by<br />
+                                        @Html.RadioButtonFor(m => m.fulladdress_str, "Full") Fuld addresse
+                                    </div>
+                                    <div class="col-xs-6">
+                                        [Note: Her vælges om den fulde addresse skal vises]
+                                    </div>
+                                }
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    @Html.Label(@Model.country, new { htmlAttributes = new { @class = "adm_input_name form-control adm_control" } })
+                                </div>
+                            </div>
+                            <hr />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="xhide_phone remove_tab_block ">
+            <div class="container">
+                <div class="col-xs-12" xstyle="padding-left:0px;">
+                    <h2>Administrer Bod</h2>
+                    <br />
+                    <input type="button" value="Rediger Profil" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("UserProfile", new { comingform = "CreateBooth" } )'" />
+                    <input type="button" value="Gem" class="btn btn-default green_bg lightgreen_bdr white adm_button_form_submit" />
+                </div>
+            </div>
+            <hr class="hr_lightgrey" />
+            <div class="container">
+                <div class="white_bdr darkgrey_bg removeborder-bottom navigation-top navigation-right">
+                    &nbsp;
+                </div>
+                @using (Html.BeginRouteForm("CreateBooth", FormMethod.Post, @Model))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.booth_id, new { @class = "adm_hidden_edit_boothid" })
+                    @Html.HiddenFor(model => model.salesman_id, new { @class = "adm_hidden_edit_salesmanid" })
+                    @Html.HiddenFor(model => model.country)
+
+                    <div class="tab-content white_bg darkgrey_bdr" style="overflow:hidden;">
+                        @*<div class="col-xs-4 form-horizontal" xstyle="padding-left:0px;">
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    @Html.LabelFor(model => model.frontimage, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-12" style="background-color:#FFFFFF;">
+                                    @{
+                                        var image_path = !string.IsNullOrEmpty(Model.frontimage) ? "/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+                                        <img class="adm_img_boothimage" src="@image_path" alt="Sample Image" />
+                                    }
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    &nbsp;
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    <div class="col-xs-12">
+                                        Når produktet er blevet oprettet(Tryk Gem), vil det være muligt at uploade billeder.<br /><br />
+                                        <table>
+                                            <tr>
+                                                <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                <td>billedet bør repræsentere dit produkt</td>
+                                            </tr>
+                                            <tr>
+                                                <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                <td>hvis intet billed bliver valgt, vil et standart billed(ovenfor) blive brugt</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                        </div>*@
+                        <div class="col-xs-4 form-horizontal">
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    @Html.LabelFor(model => model.name, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                </div>
+                                <div class="col-xs-12">
+                                    @Html.EditorFor(model => model.name, new { htmlAttributes = new { @class = "adm_input_name form-control adm_control darkgrey_bdr" } })
+                                    @Html.ValidationMessageFor(model => model.name, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    @Html.LabelFor(model => model.street_address, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                </div>
+                                <div class="col-xs-12">
+                                    @Html.EditorFor(model => model.street_address, new { htmlAttributes = new { @class = "adm_input_name form-control adm_control darkgrey_bdr" } })
+                                    @Html.ValidationMessageFor(model => model.street_address, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.region_dto.zip, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.region_dto.town, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.EditorFor(model => model.region_dto.zip, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control adm_input_address_zip" } })
+                                    @Html.ValidationMessageFor(model => model.region_dto.zip, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.EditorFor(model => model.region_dto.town, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control adm_text_address_town" } })
+                                    @Html.ValidationMessageFor(model => model.region_dto.town, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @{
+                                    <div class="col-xs-6">
+                                        @Html.RadioButtonFor(m => m.fulladdress_str, "Part", new { Checked = "checked" }) Kun postnr og by<br />
+                                        @Html.RadioButtonFor(m => m.fulladdress_str, "Full") Fuld addresse
+                                    </div>
+                                    <div class="col-xs-6">
+                                        [Note: Her vælges om den fulde addresse skal vises]
+                                    </div>
+                                }
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    @Html.Label(@Model.country, new { htmlAttributes = new { @class = "adm_input_name form-control adm_control" } })
+                                </div>
+                            </div>
+                            <hr />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="xhide_desk remove_phone_block ">
+
+
+            <div class="container">
+                <div class="col-sm-12" xstyle="padding-left:0px;">
+                    <h2>Administrer Bod</h2>
+                    <br />
+                    <input type="button" value="Rediger Profil" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("UserProfile", new { comingform = "CreateBooth" } )'" />
+                    <input type="button" value="Gem" class="btn btn-default green_bg lightgreen_bdr white adm_button_form_submit" />
+                </div>
+            </div>
+            <hr class="hr_lightgrey" />
+            <div class="container">
+                <div class="white_bdr darkgrey_bg removeborder-bottom navigation-top navigation-right">
+                    &nbsp;
+                </div>
+                @using (Html.BeginRouteForm("CreateBooth", FormMethod.Post, @Model))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.booth_id, new { @class = "adm_hidden_edit_boothid" })
+                    @Html.HiddenFor(model => model.salesman_id, new { @class = "adm_hidden_edit_salesmanid" })
+                    @Html.HiddenFor(model => model.country)
+
+                    <div class="tab-content white_bg darkgrey_bdr" style="overflow:hidden;">
+                        @*<div class="col-sm-4 form-horizontal" xstyle="padding-left:0px;">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    @Html.LabelFor(model => model.frontimage, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-sm-12" style="background-color:#FFFFFF;">
+                                    @{
+                                        var image_path = !string.IsNullOrEmpty(Model.frontimage) ? "/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+                                        <img class="adm_img_boothimage" src="@image_path" alt="Sample Image" />
+                                    }
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    &nbsp;
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <div class="col-sm-12">
+                                        Når produktet er blevet oprettet(Tryk Gem), vil det være muligt at uploade billeder.<br /><br />
+                                        <table>
+                                            <tr>
+                                                <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                <td>billedet bør repræsentere dit produkt</td>
+                                            </tr>
+                                            <tr>
+                                                <td>*&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                <td>hvis intet billed bliver valgt, vil et standart billed(ovenfor) blive brugt</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                        </div>*@
+                        <div class="col-sm-4 form-horizontal">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    @Html.LabelFor(model => model.name, htmlAttributes: new { @class = "control-label xcol-sm-2" })
+                                </div>
+                                <div class="col-sm-12">
+                                    @Html.EditorFor(model => model.name, new { htmlAttributes = new { @class = "adm_input_name form-control adm_control darkgrey_bdr" } })
+                                    @Html.ValidationMessageFor(model => model.name, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    @Html.LabelFor(model => model.street_address, htmlAttributes: new { @class = "control-label xcol-sm-2" })
+                                </div>
+                                <div class="col-sm-12">
+                                    @Html.EditorFor(model => model.street_address, new { htmlAttributes = new { @class = "adm_input_name form-control adm_control darkgrey_bdr" } })
+                                    @Html.ValidationMessageFor(model => model.street_address, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    @Html.LabelFor(model => model.region_dto.zip, htmlAttributes: new { @class = "control-label xcol-sm-2" })
+                                </div>
+                                <div class="col-sm-6">
+                                    @Html.LabelFor(model => model.region_dto.town, htmlAttributes: new { @class = "control-label xcol-sm-2" })
+                                </div>
+                                <div class="col-sm-6">
+                                    @Html.EditorFor(model => model.region_dto.zip, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control adm_input_address_zip" } })
+                                    @Html.ValidationMessageFor(model => model.region_dto.zip, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="col-sm-6">
+                                    @Html.EditorFor(model => model.region_dto.town, new { htmlAttributes = new { @class = "adm_input_name form-control darkgrey_bdr adm_control adm_text_address_town" } })
+                                    @Html.ValidationMessageFor(model => model.region_dto.town, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @{
+                                    <div class="col-sm-6">
+                                        @Html.RadioButtonFor(m => m.fulladdress_str, "Part", new { Checked = "checked" }) Kun postnr og by<br />
+                                        @Html.RadioButtonFor(m => m.fulladdress_str, "Full") Fuld addresse
+                                    </div>
+                                    <div class="col-sm-6">
+                                        [Note: Her vælges om den fulde addresse skal vises]
+                                    </div>
+                                }
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    @Html.Label(@Model.country, new { htmlAttributes = new { @class = "adm_input_name form-control adm_control" } })
+                                </div>
+                            </div>
+                            <hr />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        string s = ErrorHelper.HandleError(ERROR.CREATEBOOTH, e);
+                                        string subject = "Fejl i front, CreateBooth(MOB)";
+                                        string body = s;
+                                        AdminHelper.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
+                                    }
+
+}
+@{
+    string err_msg = @Html.Raw(ViewBag.JSON_ERRORS).ToString();
+    string addresstown_url = @Url.RouteUrl("GetAddressTown");
+    <input type="hidden" id="err_msg" value="@err_msg" />
+    <input type="hidden" id="addresstown_url" value="@addresstown_url" />
+}
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            fix_mobile();
+            showErrors();
+            $('.adm_button_form_submit').click(function () {
+                $('.z-loading').fadeIn(200);
+                $('form').submit();
+            });
+            $('.adm_submit_create').prop('disabled', true);
+            $('.adm_input_name').keyup(function () {
+                if ($('.adm_input_name').val() != '')
+                    $('.adm_submit_create').prop('disabled', false);
+                else
+                    $('.adm_submit_create').prop('disabled', true);
+            });
+
+            $('.adm_input_address_zip').keyup(function () {
+                var zip = $('.adm_input_address_zip').val();
+                if (zip.length == 4) {
+                    var zip = $('.adm_input_address_zip').val();
+                    var path = $('#addresstown_url').val();
+
+                    var data = { 'Zip': zip };
+                    if (zip != '')
+                        getAddressTown_Ajax(path, data, '.adm_text_address_town');
+                }
+                else if (zip.length > 4) {
+                    zip = zip.substring(0, 4);
+                    $('.adm_input_address_zip').val(zip);
+                }
+                else {
+                    $('.adm_text_address_town').val('(ugyldig!)');
+                }
+            });
+            $('.z-myalert-btn').click(function () {
+                $('.z-myalert').fadeOut(200);
+                $('.z-loading').fadeOut(200);
+            });
+        });
+
+        function getAddressTown_Ajax(path, data, town) {
+            $('.z-loading').fadeIn(200);
+            $.ajax({
+                url: path,
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(data),
+                success: function (result) {
+                    if (result.success) {
+                        $(town).val(result.town);
+                    }
+                    else
+                        myalert('Der skete en fejl, beklager.');
+                    $('.z-loading').fadeOut(400);
+                },
+                error: function (er) {
+                    myalert("error: " + er);
+                    $('.z-loading').fadeOut(400);
+                }
+            });
+        }
+    </script>
+}

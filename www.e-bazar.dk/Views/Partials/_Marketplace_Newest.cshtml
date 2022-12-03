@@ -1,0 +1,107 @@
+﻿@model www.e_bazar.dk.Models.DTOs.dto_booth
+@{
+    string s = ViewContext.Controller.ViewBag.Search as string;
+    string c = ViewContext.Controller.ViewBag.Cat as string;
+}
+
+<div class="remove_desk_block col-xs-3 l-mp-newest1">
+    <div class="col-xs-12 l-mp-newest2">
+        <span class="z-font-info z-bold">|&nbsp;@Html.DisplayFor(modelItem => Model.name) &nbsp;|</span><br />
+    </div>
+    <div class="col-xs-12 z-background-color-lightgrey z-border-darkgrey z-padding-top-15 l-mp-newest3">
+        <div class="col-xs-12 z-padding-sides-0 l-mp-newest4">
+
+            @{
+                var dthumb_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/t_" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+                var dimage_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+
+                string[] dclasses = { "l-mp-newest5", "", "myfade", "loadlater" };
+
+                object droute = new { id = @Model.booth_id };
+                @Html.RouteImage("Booth", droute, dthumb_path, dimage_path, "/_content/images/site/icons/booth_logo.png", dclasses, null, null, null)
+            }
+        </div>
+        <div class="col-xs-12 z-tooltip4 z-padding-sides-0 z-font-info">
+            <i class="far fa-file-alt"></i>&nbsp;Om Standen
+            <span class="z-center2 z-align-left z-desc-tooltip4">@Html.DisplayWithBreaksFor(Model.description_limit)</span>
+            <br /><br />
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="remove_tab_block col-xs-6 l-mp-newest1">
+    <div class="col-xs-12 l-mp-newest2">
+        <span class="z-font-info z-bold">|&nbsp;@Html.DisplayFor(modelItem => Model.name) &nbsp;|</span><br />
+    </div>
+    <div class="col-xs-12 z-background-color-lightgrey z-border-darkgrey z-padding-top-15 l-mp-newest3">
+        <div class="col-xs-12 z-padding-sides-0 l-mp-newest4">
+
+            @{
+                var tthumb_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/t_" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+                var timage_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+
+                string[] tclasses = { "l-mp-newest5", "", "myfade", "loadlater" };
+
+                object troute = new { id = @Model.booth_id };
+                @Html.RouteImage("Booth", troute, tthumb_path, timage_path, "/_content/images/site/icons/booth_logo.png", tclasses, null, null, null)
+            }
+        </div>
+        <div class="col-xs-12 z-tooltip4 z-padding-sides-0 z-font-info">
+            <i class="far fa-file-alt"></i>&nbsp;Om Standen
+            <span class="z-center2 z-align-left z-desc-tooltip4">@Html.DisplayWithBreaksFor(Model.description_limit)</span>
+            <br /><br />
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="remove_phone_block col-xs-3 l-mp-newest1">
+    <div class="col-xs-12 l-mp-newest2">
+        <span class="z-font-info z-bold">|&nbsp;@Html.DisplayFor(modelItem => Model.name) &nbsp;|</span><br />
+    </div>
+    <div class="col-xs-12 z-background-color-lightgrey z-border-darkgrey z-padding-top-15 l-mp-newest3">
+        <div class="col-xs-12 z-padding-sides-0 l-mp-newest4">
+
+            @{
+                var mthumb_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/t_" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+                var mimage_path = !string.IsNullOrEmpty(Model.frontimage) ? @"/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + Model.sysname + "/" + Model.frontimage : "/_content/images/site/icons/booth_logo.png";
+
+                string[] mclasses = { "l-mp-newest5", "", "myfade", "loadlater" };
+
+                object mroute = new { id = @Model.booth_id };
+                @Html.RouteImage("Booth", mroute, mthumb_path, mimage_path, "/_content/images/site/icons/booth_logo.png", mclasses, null, null, null)
+            }
+        </div>
+        <div class="col-xs-12 z-tooltip4 z-padding-sides-0 z-font-info">
+            <i class="far fa-file-alt"></i>&nbsp;Om Standen
+            <span class="z-center2 z-align-left z-desc-tooltip4">@Html.DisplayWithBreaksFor(Model.description_limit)</span>
+            <br /><br />
+        </div>
+    </div>
+</div>
+

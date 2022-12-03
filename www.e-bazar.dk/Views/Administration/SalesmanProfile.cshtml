@@ -1,0 +1,1181 @@
+﻿@model www.e_bazar.dk.Models.DTOs.col_userprofile
+
+@{
+    ViewBag.Title = "Administrer Profil";
+}
+
+@{
+
+    try
+    {
+        <div class="xhide_phone remove_desk_block ">
+            <div class="container">
+                <div class="col-xs-12" xstyle="padding-left:0px;">
+                    <h2>Administrer Profil</h2>
+                    <br />
+                    <input type="button" value="Opret Stand" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("CreateBooth")'" />
+                    <input type="submit" value="Gem" class="btn btn-default green_bg lightgreen_bdr white adm_button_form_submit" />
+                </div>
+            </div>
+            <hr />
+            <div class="container" style="overflow:hidden;">
+                <div class="white_bdr darkgrey_bg removeborder-bottom navigation-top navigation-right">
+                    &nbsp;
+                </div>
+                @{
+                    bool dviewed = true;
+                    biz_conversation biz = new biz_conversation();
+                    foreach (dto_conversation conn in Model.conversations_dto.booths)
+                    {
+                        if (!biz.Viewed(conn, true))
+                        {
+                            dviewed = false;
+                        }
+                    }
+                    foreach (dto_conversation conn in Model.conversations_dto.items)
+                    {
+                        if (!biz.Viewed(conn, true))
+                        {
+                            dviewed = false;
+                        }
+                    }
+                    foreach (dto_conversation conn in Model.conversations_dto.own)
+                    {
+                        if (!biz.Viewed(conn, false))
+                        {
+                            dviewed = false;
+                        }
+                    }
+
+                    <ul class="nav nav-tabs white_bdr darkgrey_bg">
+                        <li><a href="#stamdata" class="black" data-toggle="tab">Stamdata</a></li>
+                        <li>
+                            <a href="#beskeder" class="black" id="besked" data-toggle="tab">
+                                @if (!dviewed)
+                                {<i class="fas fa-envelope xtop-right realred"></i>}Beskeder
+                            </a>
+                        </li>
+                        <li><a href="#favoriter" class="black" data-toggle="tab">Favoriter</a></li>
+                        <li><a href="#følger" class="black" data-toggle="tab">Følger</a></li>
+                        <li><a href="#feedback" class="black" data-toggle="tab">Feedback</a></li>
+                    </ul>
+                    <div class="tab-content" style="overflow:hidden;">
+                        <div class="tab-pane active white_bg darkgrey_bdr" style="overflow:hidden;" id="stamdata">
+                            @using (Html.BeginRouteForm("SalesmanProfile", FormMethod.Post, new { @class = "main_form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(model => model.salesman_dto.person_id, new { @class = "adm_hidden_profileid" });
+                                @Html.HiddenFor(model => model.salesman_dto.profileimage, new { @class = "adm_hidden_profileimage" });
+                                @Html.HiddenFor(model => model.salesman_dto.sysname);
+                                @Html.HiddenFor(model => model.salesman_dto.email);
+                                <div class="col-xs-4 form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            @Html.LabelFor(model => model.salesman_dto.profileimage, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-xs-12">
+                                            <div class="container_overlay">
+                                                @if (!string.IsNullOrEmpty(Model.salesman_dto.profileimage))
+                                                {
+                                                    var image_path = "/_content/images/profiles/" + Model.salesman_dto.sysname + "/profile/" + Model.salesman_dto.profileimage;
+                                                    <img class="adm_img_profileimage" src="@image_path" style="background-color:#EEEEEE" alt="Sample Image" />
+                                                    <input type="hidden" class="adm_hidden_images_imagename" value="@Model.salesman_dto.profileimage">
+                                                    <div class="overlay">
+                                                        <a href="#" class="icon" title="User Profile">
+                                                            <i class="fa fa-window-close fa-2x myfade" onclick="removeImage();"></i>
+                                                        </a>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    var image_path = "/_content/images/site/icons/businessman2_bw.png";
+                                                    <img class="adm_img_profileimage" src="@image_path" style="background-color:#EEEEEE" alt="Sample Image" />
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12">
+                                            <br />
+                                            <input type="file" name="profile" class="adm_input_profileimage btn btn-default adm_control" />
+                                            <span class="profile_fileupload"></span><br /><span class="profile_uploading"></span>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                </div>
+                                <div class="col-xs-4 form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            @Html.LabelFor(model => model.salesman_dto.firstname, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-xs-12">
+                                            @{
+                                                string css = Model.salesman_dto.firstname == "" ? " realred_bdr" : "";
+                                                string placeholder = "..hvis ikke udfyldt, vil email blive brugt på siden";
+                                            }
+                                            @Html.EditorFor(model => model.salesman_dto.firstname, new { htmlAttributes = new { @class = "adm_input_firstname form-control darkgrey_bdr adm_control" + css, placeholder = placeholder } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.firstname, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            @Html.LabelFor(model => model.salesman_dto.lastname, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-xs-12">
+                                            @{
+                                                css = Model.salesman_dto.lastname == "" ? " realred_bdr" : "";
+                                            }
+                                            @Html.EditorFor(model => model.salesman_dto.lastname, new { htmlAttributes = new { @class = "adm_input_lastname form-control darkgrey_bdr adm_control" + css } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.lastname, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            @Html.LabelFor(model => model.salesman_dto.phonenumber, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-xs-8">
+                                            @{
+                                                css = Model.salesman_dto.phonenumber == null ? " realred_bdr" : "";
+                                            }
+                                            @Html.EditorFor(model => model.salesman_dto.phonenumber, new { htmlAttributes = new { @class = "adm_input_phone form-control darkgrey_bdr adm_control" + css } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.phonenumber, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-xs-4" style="padding-top:5px; height:30px;">
+                                            <table>
+                                                <tr>
+                                                    <td valign="top">
+                                                        @Html.CheckBoxFor(model => model.salesman_dto.show_phone, new { @class = "adm_input_show_phone darkgrey_bdr" })
+                                                    </td>
+                                                    <td>
+                                                        Vis Nr.
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-8">
+                                            @Html.LabelFor(model => model.salesman_dto.email, htmlAttributes: new { @class = "control-label" })
+                                            @{
+                                                css = Model.salesman_dto.email == "" ? " realred_bdr" : "";
+                                            }
+                                        </div>
+                                        <div class="col-xs-4" style="padding-top:5px; height:30px;">
+                                            <table>
+                                                <tr>
+                                                    <td valign="top">
+                                                        @Html.CheckBoxFor(model => model.salesman_dto.request_email, new { @class = "adm_input_request_email black_bdr" })
+                                                    </td>
+                                                    <td>
+                                                        Tillad E-mail.
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="col-xs-8">
+                                            @Html.DisplayFor(model => model.salesman_dto.email, new { htmlAttributes = new { @class = "adm_input_email form-control adm_control darkgrey_bdr " + css } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.email, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                string dplaceholder_desk = "";
+                                if (string.IsNullOrEmpty(Model.salesman_dto.description))
+                                {
+                                    dplaceholder_desk = TextHelper.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                                }
+
+
+                                <div class="col-xs-4 form-horizontal adm_div_group3">
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            @Html.LabelFor(model => model.salesman_dto.description, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                            <span class="desc_msg"></span>
+                                        </div>
+                                        <div class="col-xs-12">
+                                            @Html.TextAreaFor(model => Model.salesman_dto.description, new { @placeholder = @dplaceholder_desk, @class = "adm_input_description form-control adm_control darkgrey_bdr", rows = "16" })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.description, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="beskeder">
+                            @Html.Partial("~/Views/Partials/_Profile_Conversations.cshtml", @Model.conversations_dto)
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="favoriter">
+                            @Html.Partial("~/Views/Partials/_Profile_Favorites.cshtml", @Model)
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="følger">
+                            @Html.Partial("~/Views/Partials/_Profile_Following.cshtml", @Model)
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="feedback">
+                            @Html.Partial("~/Views/Partials/_Profile_Feedback.cshtml", new col_email())
+                        </div>
+                    </div>
+                }
+            </div>
+            <hr />
+            <div class="container">
+                <div class="col-xs-12 white_bg darkgrey_bdr">
+                    <table class="table">
+                        <tr class="adm_th_products" style="background-color: #FFFFFF;">
+                            <th style="width:10%;" class="adm_th_booths_image">
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().frontimage)
+                            </th>
+                            <th style="width:15%;" class="adm_th_booths_name">
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().name)
+                            </th>
+                            <th style="width:15%;" class="adm_th_booths_createdon">
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().created_on)
+                            </th>
+                            <th style="width:50%;" class="adm_th_booths_description">
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().description)
+                            </th>
+                            <th style="width:10%;"></th>
+                        </tr>
+                        @foreach (var item in Model.booth_dtos)
+                        {
+                            <tr>
+                                <td class="adm_td_booths_image">
+                                    @if (!string.IsNullOrEmpty(item.frontimage))
+                                    {
+                                        string thumb = "/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + item.sysname + "/t_" + item.frontimage;
+                                        string path = "/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + item.sysname + "/" + item.frontimage;
+                                        @*@Html.ActionImage("EditBooth", "Administration", new { booth_id = item.booth_id }, path, "Sample Image", new string[] { "adm_img_booths_boothimage" })*@
+                                        <a href="@Url.RouteUrl("EditBooth1", new { booth_id=@item.booth_id})">
+                                            <img alt="Sample Image" class="adm_img_booths_boothimage loadlater" src="@thumb" data-src="@path">
+                                        </a>
+                                        @*using (Html.BeginForm("EditBoothRetrieve", "Administration", FormMethod.Post))
+                                            {
+                                                @Html.Hidden("booth_id", item.booth_id);
+                                                <input type="submit" value="..til bod" style="padding:0px;" class="myfade fakeLink" />
+                                            }*@
+                                    }
+                                    else
+                                    {
+                                        var image_path = "/_content/images/site/icons/booth_logo.png";
+                                        <a href="@Url.RouteUrl("EditBooth1", new { booth_id=@item.booth_id})">
+                                            <img class="adm_img_booths_boothimage" src="@image_path" alt="Sample Image" />
+                                        </a>
+                                        @*using (Html.BeginForm("EditBoothRetrieve", "Administration", FormMethod.Post))
+                                            {
+                                                @Html.Hidden("booth_id", item.booth_id);
+                                                <input type="submit" value="..til bod" style="padding:0px;" class="myfade fakeLink" />
+                                            }*@
+                                    }
+                                </td>
+                                <td class="adm_td_booths_name">
+                                    @Html.DisplayFor(modelItem => item.name)
+                                </td>
+                                <td class="adm_td_booths_createdon">
+                                    @{
+                                        string date = item.created_on.ToString("dd/MM/yyyy");
+                                        @Html.DisplayFor(modelItem => date)
+                                    }
+                                </td>
+                                <td class="adm_td_booths_description">
+                                    @Html.DisplayWithBreaksFor(item.description_limit)
+                                </td>
+                                <td>
+                                    @Html.RouteLink("Rediger stand", "EditBooth1", new { booth_id = item.booth_id }, new { @class = "myfade" }) <br />
+                                    @*@using (Html.BeginForm("EditBoothRetrieve", "Administration", FormMethod.Post))
+                                        {
+                                            @Html.Hidden("booth_id", item.booth_id);
+                                            <input type="submit" value="Rediger bod" style="padding:0px;" class="myfade fakeLink" />
+                                        }*@
+                                    @Html.RouteLink("Vis stand", "Booth", new { id = item.booth_id }, new { @class = "myfade" }) <br />
+                                    @*@Html.ActionLink("Slet bod", "DeleteBooth", new { booth_id = item.booth_id })*@
+                                    <a href="#" onclick="if (!confirm('vil du slette denne post?')) return; $('.z-loading').fadeIn(200); location.href='@Url.RouteUrl("DeleteBooth", new { booth_id = item.booth_id } )'">Slet stand</a>
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="xhide_phone remove_tab_block ">
+            <div class="container">
+                <div class="col-xs-12" xstyle="padding-left:0px;">
+                    <h2>Administrer Profil</h2>
+                    <br />
+                    <input type="button" value="Opret Stand" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("CreateBooth")'" />
+                    <input type="submit" value="Gem" class="btn btn-default green_bg lightgreen_bdr white adm_button_form_submit" />
+                </div>
+            </div>
+            <hr />
+            <div class="container" style="overflow:hidden;">
+                <div class="white_bdr darkgrey_bg removeborder-bottom navigation-top navigation-right">
+                    &nbsp;
+                </div>
+                @{
+                    bool tviewed = true;
+                    biz_conversation biz2 = new biz_conversation();
+                    foreach (dto_conversation conn in Model.conversations_dto.booths)
+                    {
+                        if (!biz2.Viewed(conn, true))
+                        {
+                            tviewed = false;
+                        }
+                    }
+                    foreach (dto_conversation conn in Model.conversations_dto.items)
+                    {
+                        if (!biz2.Viewed(conn, true))
+                        {
+                            tviewed = false;
+                        }
+                    }
+                    foreach (dto_conversation conn in Model.conversations_dto.own)
+                    {
+                        if (!biz2.Viewed(conn, false))
+                        {
+                            tviewed = false;
+                        }
+                    }
+
+                    <ul class="nav nav-tabs white_bdr darkgrey_bg">
+                        <li><a href="#stamdata" class="black" data-toggle="tab">Stamdata</a></li>
+                        <li>
+                            <a href="#beskeder" class="black" id="besked" data-toggle="tab">
+                                @if (!tviewed)
+                                {<i class="fas fa-envelope xtop-right realred"></i>}Beskeder
+                            </a>
+                        </li>
+                        <li><a href="#favoriter" class="black" data-toggle="tab">Favoriter</a></li>
+                        <li><a href="#følger" class="black" data-toggle="tab">Følger</a></li>
+                        <li><a href="#feedback" class="black" data-toggle="tab">Feedback</a></li>
+                    </ul>
+                    <div class="tab-content" style="overflow:hidden;">
+                        <div class="tab-pane active white_bg darkgrey_bdr" style="overflow:hidden;" id="stamdata">
+                            @using (Html.BeginRouteForm("SalesmanProfile", FormMethod.Post, new { @class = "main_form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(model => model.salesman_dto.person_id, new { @class = "adm_hidden_profileid" });
+                                @Html.HiddenFor(model => model.salesman_dto.profileimage, new { @class = "adm_hidden_profileimage" });
+                                @Html.HiddenFor(model => model.salesman_dto.sysname);
+                                @Html.HiddenFor(model => model.salesman_dto.email);
+                                <div class="col-xs-4 form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            @Html.LabelFor(model => model.salesman_dto.profileimage, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-xs-12">
+                                            <div class="container_overlay">
+                                                @if (!string.IsNullOrEmpty(Model.salesman_dto.profileimage))
+                                                {
+                                                    var image_path = "/_content/images/profiles/" + Model.salesman_dto.sysname + "/profile/" + Model.salesman_dto.profileimage;
+                                                    <img class="adm_img_profileimage" src="@image_path" style="background-color:#EEEEEE" alt="Sample Image" />
+                                                    <input type="hidden" class="adm_hidden_images_imagename" value="@Model.salesman_dto.profileimage">
+                                                    <div class="overlay">
+                                                        <a href="#" class="icon" title="User Profile">
+                                                            <i class="fa fa-window-close fa-2x myfade" onclick="removeImage();"></i>
+                                                        </a>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    var image_path = "/_content/images/site/icons/businessman2_bw.png";
+                                                    <img class="adm_img_profileimage" src="@image_path" style="background-color:#EEEEEE" alt="Sample Image" />
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12">
+                                            <br />
+                                            <input type="file" name="profile" class="adm_input_profileimage btn btn-default adm_control" />
+                                            <span class="profile_fileupload"></span><br /><span class="profile_uploading"></span>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                </div>
+                                <div class="col-xs-4 form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            @Html.LabelFor(model => model.salesman_dto.firstname, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-xs-12">
+                                            @{
+                                                string css = Model.salesman_dto.firstname == "" ? " realred_bdr" : "";
+                                                string placeholder = "..hvis ikke udfyldt, vil email blive brugt på siden";
+                                            }
+                                            @Html.EditorFor(model => model.salesman_dto.firstname, new { htmlAttributes = new { @class = "adm_input_firstname form-control darkgrey_bdr adm_control" + css, placeholder = placeholder } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.firstname, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            @Html.LabelFor(model => model.salesman_dto.lastname, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-xs-12">
+                                            @{
+                                                css = Model.salesman_dto.lastname == "" ? " realred_bdr" : "";
+                                            }
+                                            @Html.EditorFor(model => model.salesman_dto.lastname, new { htmlAttributes = new { @class = "adm_input_lastname form-control darkgrey_bdr adm_control" + css } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.lastname, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            @Html.LabelFor(model => model.salesman_dto.phonenumber, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-xs-8">
+                                            @{
+                                                css = Model.salesman_dto.phonenumber == null ? " realred_bdr" : "";
+                                            }
+                                            @Html.EditorFor(model => model.salesman_dto.phonenumber, new { htmlAttributes = new { @class = "adm_input_phone form-control darkgrey_bdr adm_control" + css } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.phonenumber, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-xs-4" style="padding-top:5px; height:30px;">
+                                            <table>
+                                                <tr>
+                                                    <td valign="top">
+                                                        @Html.CheckBoxFor(model => model.salesman_dto.show_phone, new { @class = "adm_input_show_phone darkgrey_bdr" })
+                                                    </td>
+                                                    <td>
+                                                        Vis.
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-8">
+                                            @Html.LabelFor(model => model.salesman_dto.email, htmlAttributes: new { @class = "control-label" })
+                                            @{
+                                                css = Model.salesman_dto.email == "" ? " realred_bdr" : "";
+                                            }
+                                        </div>
+                                        <div class="col-xs-4" style="padding-top:5px; height:30px;">
+                                            <table>
+                                                <tr>
+                                                    <td valign="top">
+                                                        @Html.CheckBoxFor(model => model.salesman_dto.request_email, new { @class = "adm_input_request_email black_bdr" })
+                                                    </td>
+                                                    <td>
+                                                        Tillad.
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="col-xs-8">
+                                            @Html.DisplayFor(model => model.salesman_dto.email, new { htmlAttributes = new { @class = "adm_input_email form-control adm_control darkgrey_bdr " + css } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.email, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                string tplaceholder_desk = "";
+                                if (string.IsNullOrEmpty(Model.salesman_dto.description))
+                                {
+                                    tplaceholder_desk = TextHelper.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                                }
+
+
+                                <div class="col-xs-4 form-horizontal adm_div_group3">
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            @Html.LabelFor(model => model.salesman_dto.description, htmlAttributes: new { @class = "control-label xcol-xs-2" })
+                                            <span class="desc_msg"></span>
+                                        </div>
+                                        <div class="col-xs-12">
+                                            @Html.TextAreaFor(model => Model.salesman_dto.description, new { @placeholder = @tplaceholder_desk, @class = "adm_input_description form-control adm_control darkgrey_bdr", rows = "16" })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.description, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="beskeder">
+                            @Html.Partial("~/Views/Partials/_Profile_Conversations.cshtml", @Model.conversations_dto)
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="favoriter">
+                            @Html.Partial("~/Views/Partials/_Profile_Favorites.cshtml", @Model)
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="følger">
+                            @Html.Partial("~/Views/Partials/_Profile_Following.cshtml", @Model)
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="feedback">
+                            @Html.Partial("~/Views/Partials/_Profile_Feedback.cshtml", new col_email())
+                        </div>
+                    </div>
+                }
+            </div>
+            <hr />
+            <div class="container">
+                <div class="col-xs-12 white_bg darkgrey_bdr">
+                    <table class="table">
+                        <tr class="adm_th_products" style="background-color: #FFFFFF;">
+                            <th style="width:10%;" class="adm_th_booths_image">
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().frontimage)
+                            </th>
+                            <th style="width:15%;" class="adm_th_booths_name">
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().name)
+                            </th>
+                            <th style="width:15%;" class="adm_th_booths_createdon">
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().created_on)
+                            </th>
+                            <th style="width:50%;" class="adm_th_booths_description">
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().description)
+                            </th>
+                            <th style="width:10%;"></th>
+                        </tr>
+                        @foreach (var item in Model.booth_dtos)
+                        {
+                            <tr>
+                                <td class="adm_td_booths_image">
+                                    @if (!string.IsNullOrEmpty(item.frontimage))
+                                    {
+                                        string thumb = "/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + item.sysname + "/t_" + item.frontimage;
+                                        string path = "/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + item.sysname + "/" + item.frontimage;
+                                        @*@Html.ActionImage("EditBooth", "Administration", new { booth_id = item.booth_id }, path, "Sample Image", new string[] { "adm_img_booths_boothimage" })*@
+                                        <a href="@Url.RouteUrl("EditBooth1", new { booth_id=@item.booth_id})">
+                                            <img alt="Sample Image" class="adm_img_booths_boothimage loadlater" src="@thumb" data-src="@path">
+                                        </a>
+                                        @*using (Html.BeginForm("EditBoothRetrieve", "Administration", FormMethod.Post))
+                                            {
+                                                @Html.Hidden("booth_id", item.booth_id);
+                                                <input type="submit" value="..til bod" style="padding:0px;" class="myfade fakeLink" />
+                                            }*@
+                                    }
+                                    else
+                                    {
+                                        var image_path = "/_content/images/site/icons/booth_logo.png";
+                                        <a href="@Url.RouteUrl("EditBooth1", new { booth_id=@item.booth_id})">
+                                            <img class="adm_img_booths_boothimage" src="@image_path" alt="Sample Image" />
+                                        </a>
+                                        @*using (Html.BeginForm("EditBoothRetrieve", "Administration", FormMethod.Post))
+                                            {
+                                                @Html.Hidden("booth_id", item.booth_id);
+                                                <input type="submit" value="..til bod" style="padding:0px;" class="myfade fakeLink" />
+                                            }*@
+                                    }
+                                </td>
+                                <td class="adm_td_booths_name">
+                                    @Html.DisplayFor(modelItem => item.name)
+                                </td>
+                                <td class="adm_td_booths_createdon">
+                                    @{
+                                        string date = item.created_on.ToString("dd/MM/yyyy");
+                                        @Html.DisplayFor(modelItem => date)
+                                    }
+                                </td>
+                                <td class="adm_td_booths_description">
+                                    @Html.DisplayWithBreaksFor(item.description_limit)
+                                </td>
+                                <td>
+                                    @Html.RouteLink("Rediger stand", "EditBooth1", new { booth_id = item.booth_id }, new { @class = "myfade" }) <br />
+                                    @*@using (Html.BeginForm("EditBoothRetrieve", "Administration", FormMethod.Post))
+                                        {
+                                            @Html.Hidden("booth_id", item.booth_id);
+                                            <input type="submit" value="Rediger bod" style="padding:0px;" class="myfade fakeLink" />
+                                        }*@
+                                    @Html.RouteLink("Vis stand", "Booth", new { id = item.booth_id }, new { @class = "myfade" }) <br />
+                                    @*@Html.ActionLink("Slet bod", "DeleteBooth", new { booth_id = item.booth_id })*@
+                                    <a href="#" onclick="if (!confirm('vil du slette denne post?')) return; $('.z-loading').fadeIn(200); location.href='@Url.RouteUrl("DeleteBooth", new { booth_id = item.booth_id } )'">Slet stand</a>
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="xhide_desk remove_phone_block ">
+
+            <div class="container">
+                <div class="col-sm-12" xstyle="padding-left:0px;">
+                    <h2>Administrer Profil</h2>
+                    <br />
+                    <input type="button" value="Opret Stand" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("CreateBooth")'" />
+                    <input type="submit" value="Gem" class="btn btn-default green_bg lightgreen_bdr white adm_button_form_submit" />
+                </div>
+            </div>
+            <hr />
+            <div class="container" style="overflow:hidden;">
+                <div class="white_bdr darkgrey_bg removeborder-bottom navigation-top navigation-right">
+                    &nbsp;
+                </div>
+                @{
+                    bool mviewed = true;
+                    biz_conversation biz3 = new biz_conversation();
+                    foreach (dto_conversation conn in Model.conversations_dto.booths)
+                    {
+                        if (!biz3.Viewed(conn, true))
+                        {
+                            mviewed = false;
+                        }
+                    }
+                    foreach (dto_conversation conn in Model.conversations_dto.items)
+                    {
+                        if (!biz.Viewed(conn, true))
+                        {
+                            mviewed = false;
+                        }
+                    }
+                    foreach (dto_conversation conn in Model.conversations_dto.own)
+                    {
+                        if (!biz.Viewed(conn, false))
+                        {
+                            mviewed = false;
+                        }
+                    }
+
+                    <ul class="nav nav-tabs white_bdr darkgrey_bg">
+                        <li><a href="#stamdata" class="black" data-toggle="tab">Stamdata</a></li>
+                        <li>
+                            <a href="#beskeder" class="black" id="besked" data-toggle="tab">
+                                @if (!mviewed)
+                                {<i class="fas fa-envelope xtop-right realred"></i>}Beskeder
+                            </a>
+                        </li>
+                        <li><a href="#favoriter" class="black" data-toggle="tab">Favoriter</a></li>
+                        <li><a href="#følger" class="black" data-toggle="tab">Følger</a></li>
+                        <li><a href="#feedback" class="black" data-toggle="tab">Feedback</a></li>
+                    </ul>
+                    <div class="tab-content" style="overflow:hidden;">
+                        <div class="tab-pane active white_bg darkgrey_bdr" style="overflow:hidden;" id="stamdata">
+                            @using (Html.BeginRouteForm("SalesmanProfile", FormMethod.Post, new { @class = "main_form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(model => model.salesman_dto.person_id, new { @class = "adm_hidden_profileid" });
+                                @Html.HiddenFor(model => model.salesman_dto.profileimage, new { @class = "adm_hidden_profileimage" });
+                                @Html.HiddenFor(model => model.salesman_dto.sysname);
+                                @Html.HiddenFor(model => model.salesman_dto.email);
+                                <div class="col-sm-4 form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            @Html.LabelFor(model => model.salesman_dto.profileimage, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="container_overlay">
+                                                @if (!string.IsNullOrEmpty(Model.salesman_dto.profileimage))
+                                                {
+                                                    var image_path = "/_content/images/profiles/" + Model.salesman_dto.sysname + "/profile/" + Model.salesman_dto.profileimage;
+                                                    <img class="adm_img_profileimage" src="@image_path" style="background-color:#EEEEEE" alt="Sample Image" />
+                                                    <input type="hidden" class="adm_hidden_images_imagename" value="@Model.salesman_dto.profileimage">
+                                                    <div class="overlay">
+                                                        <a href="#" class="icon" title="User Profile">
+                                                            <i class="fa fa-window-close fa-2x myfade" onclick="removeImage();"></i>
+                                                        </a>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    var image_path = "/_content/images/site/icons/businessman2_bw.png";
+                                                    <img class="adm_img_profileimage" src="@image_path" style="background-color:#EEEEEE" alt="Sample Image" />
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <br />
+                                            <input type="file" name="profile" class="adm_input_profileimage btn btn-default adm_control" />
+                                            <span class="profile_fileupload"></span><br /><span class="profile_uploading"></span>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                </div>
+                                <div class="col-sm-4 form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            @Html.LabelFor(model => model.salesman_dto.firstname, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-sm-12">
+                                            @{
+                                                string css = Model.salesman_dto.firstname == "" ? " realred_bdr" : "";
+                                                string placeholder = "..hvis ikke udfyldt, vil email blive brugt på siden";
+                                            }
+                                            @Html.EditorFor(model => model.salesman_dto.firstname, new { htmlAttributes = new { @class = "adm_input_firstname form-control darkgrey_bdr adm_control" + css, placeholder = placeholder } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.firstname, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            @Html.LabelFor(model => model.salesman_dto.lastname, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-sm-12">
+                                            @{
+                                                css = Model.salesman_dto.lastname == "" ? " realred_bdr" : "";
+                                            }
+                                            @Html.EditorFor(model => model.salesman_dto.lastname, new { htmlAttributes = new { @class = "adm_input_lastname form-control darkgrey_bdr adm_control" + css } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.lastname, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            @Html.LabelFor(model => model.salesman_dto.phonenumber, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-sm-8">
+                                            @{
+                                                css = Model.salesman_dto.phonenumber == null ? " realred_bdr" : "";
+                                            }
+                                            @Html.EditorFor(model => model.salesman_dto.phonenumber, new { htmlAttributes = new { @class = "adm_input_phone form-control darkgrey_bdr adm_control" + css } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.phonenumber, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-sm-4" style="padding-top:5px; height:30px;">
+                                            <table>
+                                                <tr>
+                                                    <td valign="top">
+                                                        @Html.CheckBoxFor(model => model.salesman_dto.show_phone, new { @class = "adm_input_show_phone darkgrey_bdr" })
+                                                    </td>
+                                                    <td>
+                                                        Vis fuld Nr.
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-8">
+                                            @Html.LabelFor(model => model.salesman_dto.email, htmlAttributes: new { @class = "control-label" })
+                                            @{
+                                                css = Model.salesman_dto.email == "" ? " realred_bdr" : "";
+                                            }
+                                        </div>
+                                        <div class="col-sm-4" style="padding-top:5px; height:30px;">
+                                            <table>
+                                                <tr>
+                                                    <td valign="top">
+                                                        @Html.CheckBoxFor(model => model.salesman_dto.request_email, new { @class = "adm_input_request_email black_bdr" })
+                                                    </td>
+                                                    <td>
+                                                        Tillad E-mail.
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            @Html.DisplayFor(model => model.salesman_dto.email, new { htmlAttributes = new { @class = "adm_input_email form-control adm_control darkgrey_bdr " + css } })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.email, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                string mplaceholder_desk = "";
+                                if (string.IsNullOrEmpty(Model.salesman_dto.description))
+                                {
+                                    mplaceholder_desk = TextHelper.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                                }
+                                <div class="col-sm-4 form-horizontal adm_div_group3">
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            @Html.LabelFor(model => model.salesman_dto.description, htmlAttributes: new { @class = "control-label xcol-sm-2" })
+                                            <span class="desc_msg"></span>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            @Html.TextAreaFor(model => Model.salesman_dto.description, new { placeholder = mplaceholder_desk, @class = "adm_input_description form-control adm_control darkgrey_bdr", rows = "16" })
+                                            @Html.ValidationMessageFor(model => model.salesman_dto.description, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="beskeder">
+                            @Html.Partial("~/Views/Partials/_Profile_Conversations.cshtml", @Model.conversations_dto)
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="favoriter">
+                            @Html.Partial("~/Views/Partials/_Profile_Favorites.cshtml", @Model)
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="følger">
+                            @Html.Partial("~/Views/Partials/_Profile_Following.cshtml", @Model)
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="feedback">
+                            @Html.Partial("~/Views/Partials/_Profile_Feedback.cshtml", new col_email())
+                        </div>
+                    </div>
+                }
+            </div>
+            <hr />
+            <div class="container">
+                <div class="col-sm-12 white_bg darkgrey_bdr">
+                    <table class="table">
+                        <tr class="adm_th_products" style="background-color: #FFFFFF;">
+                            <th style="width:10%;" class="adm_th_booths_image">
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().frontimage)
+                            </th>
+                            <th style="width:15%;" class="adm_th_booths_name">
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().name)
+                            </th>
+                            <th style="width:15%;" class="adm_th_booths_createdon">
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().created_on)
+                            </th>
+                            <th style="width:50%;" class="adm_th_booths_description">
+                                @Html.DisplayNameFor(model => model.booth_dtos.FirstOrDefault().description)
+                            </th>
+                            <th style="width:10%;"></th>
+                        </tr>
+                        @foreach (var item in Model.booth_dtos)
+                        {
+                            <tr>
+                                <td class="adm_td_booths_image">
+                                    @if (!string.IsNullOrEmpty(item.frontimage))
+                                    {
+                                        string thumb = "/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + item.sysname + "/t_" + item.frontimage;
+                                        string path = "/_content/images/profiles/" + Model.salesman_dto.sysname + "/booths/" + item.sysname + "/" + item.frontimage;
+                                        @*@Html.ActionImage("EditBooth", "Administration", new { booth_id = item.booth_id }, path, "Sample Image", new string[] { "adm_img_booths_boothimage" })*@
+                                        <a href="@Url.RouteUrl("EditBooth1", new { booth_id=@item.booth_id})">
+                                            <img alt="Sample Image" class="adm_img_booths_boothimage loadlater" src="@thumb" data-src="@path">
+                                        </a>
+                                        @*using (Html.BeginForm("EditBoothRetrieve", "Administration", FormMethod.Post))
+                                            {
+                                                @Html.Hidden("booth_id", item.booth_id);
+                                                <input type="submit" value="..til bod" style="padding:0px;" class="myfade fakeLink" />
+                                            }*@
+                                    }
+                                    else
+                                    {
+                                        var image_path = "/_content/images/site/icons/booth_logo.png";
+                                        <a href="@Url.RouteUrl("EditBooth1", new { booth_id=@item.booth_id})">
+                                            <img class="adm_img_booths_boothimage" src="@image_path" alt="Sample Image" />
+                                        </a>
+                                        @*using (Html.BeginForm("EditBoothRetrieve", "Administration", FormMethod.Post))
+                                            {
+                                                @Html.Hidden("booth_id", item.booth_id);
+                                                <input type="submit" value="..til bod" style="padding:0px;" class="myfade fakeLink" />
+                                            }*@
+                                    }
+                                </td>
+                                <td class="adm_td_booths_name">
+                                    @Html.DisplayFor(modelItem => item.name)
+                                </td>
+                                <td class="adm_td_booths_createdon">
+                                    @{
+                                        string date = item.created_on.ToString("dd/MM/yyyy");
+                                        @Html.DisplayFor(modelItem => date)
+                                    }
+                                </td>
+                                <td class="adm_td_booths_description">
+                                    @Html.DisplayWithBreaksFor(item.description_limit)
+                                </td>
+                                <td>
+                                    @Html.RouteLink("Rediger stand", "EditBooth1", new { booth_id = item.booth_id }, new { @class = "myfade" }) <br />
+                                    @*@using (Html.BeginForm("EditBoothRetrieve", "Administration", FormMethod.Post))
+                                        {
+                                            @Html.Hidden("booth_id", item.booth_id);
+                                            <input type="submit" value="Rediger bod" style="padding:0px;" class="myfade fakeLink" />
+                                        }*@
+                                    @Html.RouteLink("Vis stand", "Booth", new { id = item.booth_id }, new { @class = "myfade" }) <br />
+                                    @*@Html.ActionLink("Slet bod", "DeleteBooth", new { booth_id = item.booth_id })*@
+                                    <a href="#" onclick="if (!confirm('vil du slette denne post?')) return; $('.z-loading').fadeIn(200); location.href='@Url.RouteUrl("DeleteBooth", new { booth_id = item.booth_id } )'">Slet stand</a>
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            
+                                            string s = ErrorHelper.HandleError(ERROR.SALESMANPROFILE, e);
+                                            string subject = "Fejl i front, Salesmanfile(MOB)";
+                                            string body = s;
+                                            AdminHelper.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
+                                        }
+
+}
+
+@{
+    string upload_url = @Url.RouteUrl("UploadImage");
+    string remove_url = @Url.RouteUrl("RemoveImage");
+    string err_msg = @Html.Raw(ViewBag.JSON_ERRORS).ToString();
+    string sys_msg = @Html.Raw(ViewBag.JSON_SYSTEM_MESSAGE).ToString();
+    string delete_url = @Url.RouteUrl("DeleteConversation");
+    <input type="hidden" id="upload_url" value="@upload_url" />
+    <input type="hidden" id="err_msg" value="@err_msg" />
+    <input type="hidden" id="sys_msg" value="@sys_msg" />
+    <input type="hidden" id="remove_url" value="@remove_url" />
+    <input type="hidden" id="delete_url" value="@delete_url" />
+}
+
+@section scripts {
+    <script>
+        window.onunload = function () { };
+        $(window).on("load", function () {
+            var downloadingImages = [];
+
+            var counter = 0;
+            $(".loadlater").each(function (index, element) {
+                downloadingImages[counter] = new Image();
+                downloadingImages[counter].onload = function () {
+
+                    $(element).attr("src", this.src);
+                };
+                downloadingImages[counter].src = $(element).data("src");
+                counter++;
+
+            });
+        });
+        $(document).ready(function () {
+            //alert('hepa');
+            fix_mobile();
+            //alert('hepb');
+            if (!showErrors())
+                showMessages();
+
+            setDescription();
+            $('.adm_input_description').keyup(function () {
+                setDescription();
+            });
+            $('#besked').click(function () {
+                $(this).closest('li').find('i').css('display', 'none');
+            });
+            $('.adm_button_form_submit').click(function () {
+                $('.z-loading').fadeIn(200);
+                $('.main_form').submit();
+            });
+            $(".adm_input_firstname").change(function () {
+                $('.z-loading').fadeIn(200);
+                $('.main_form').submit();
+            });
+            $(".adm_input_lastname").change(function () {
+                $('.z-loading').fadeIn(200);
+                $('.main_form').submit();
+            });
+            $(".adm_input_phone").focusout(function () {
+                $('.z-loading').fadeIn(200);
+                $('.main_form').submit();
+            });
+            $(".adm_input_show_phone").change(function () {
+                $('.z-loading').fadeIn(200);
+                $('.main_form').submit();
+            });
+            $(".adm_input_email").focusout(function () {
+                $('.z-loading').fadeIn(200);
+                $('.main_form').submit();
+            });
+            $(".adm_input_request_email").change(function () {
+                $('.z-loading').fadeIn(200);
+                $('.main_form').submit();
+            });
+            $(".adm_input_description").focusout(function () {
+                $('.z-loading').fadeIn(200);
+                $('.main_form').submit();
+            });
+            $('.adm_input_profileimage').change(function () {
+
+                $('.z-loading').fadeIn(200);
+                var input = this;
+                var path = $('#upload_url').val();
+                var data = new FormData();
+                var files = $(".adm_input_profileimage").prop('files');
+                if (files.length > 0) {
+                    data.append("images", files[0]);
+                    data.append("TypeFile", "PROFILE");
+                    uploadimage_Ajax(path, data, input, '.profile_uploading', '.profile_upload', '.adm_img_profileimage');
+                }
+            });
+            $('.z-myalert-btn').click(function () {
+
+                $('.z-myalert').fadeOut(200);
+                $('.z-loading').fadeOut(200);
+            });
+
+        });
+
+        function setDescription() {
+            var str = $('.adm_input_description').val();
+            var res = 500 - str.length;
+            if (res >= 0)
+                $('.desc_msg').text(', tilbage: ' + res);
+            else {
+                $('.adm_input_description').val(str.substring(0, 500));
+                $('.desc_msg').text(', overskredet: ' + (res * -1));
+            }
+        }
+        function removeImage() {
+
+            var img_name = $('.adm_hidden_images_imagename').val();
+            var path = $('#remove_url').val();
+
+            var data = { 'ImageName': img_name, 'type': 'PROFILE' };
+
+            if (img_name != '') {
+
+                removeImage_Ajax(path, data);
+
+                return;
+            }
+            myalert('Der skete en fejl, beklager.');
+        }
+        function deleteConversation(elem, con_id) {
+            $('.z-loading').fadeIn(200);
+            var path = $('#delete_url').val();
+            var data = { 'conversation_id': con_id };
+            if (!confirm('Vil du slette denne samtale?')) {
+                $('.z-loading').fadeOut(400);
+                return;
+            }
+            deleteConversation_Ajax(path, data, elem);
+        }
+        function uploadimage_Ajax(path, data, input, uploading, fileupload, img) {
+            $.ajax({
+                url: path,
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: data,
+                xhr: function () {
+                    var xhr = $.ajaxSettings.xhr();
+                    xhr.onprogress = function e() {
+                        // For downloads
+                        if (e.lengthComputable) {
+                            console.log(e.loaded / e.total);
+                        }
+                    };
+                    xhr.upload.onprogress = function (e) {
+                        // For uploads
+                        if (e.lengthComputable) {
+                            $(uploading).text("uploaded: " + e.loaded * 100 / e.total + "% ");
+                        }
+                    };
+                    return xhr;
+                },
+                success: function (data, textStatus, xhr) {
+                    if (xhr.status == 200) {
+                        $(fileupload).text('File Upload: ' + textStatus);
+
+                        $('.main_form').submit();
+                    }
+                    else
+                        myalert('Der skete en fejl, beklager.');
+                },
+                error: function (er) {
+                    myalert("error: " + er);
+                }
+            });
+        }/**/
+        function removeImage_Ajax(path, data) {
+            $.ajax({
+                url: path,
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(data),
+                xhr: function () {
+                    var xhr = $.ajaxSettings.xhr();
+                    xhr.onprogress = function e() {
+                        // For downloads
+                        //if (e.lengthComputable) {
+                        //    console.log(e.loaded / e.total);
+                        //}
+                    };
+                    xhr.upload.onprogress = function (e) {
+                        // For uploads
+                        //if (e.lengthComputable) {
+                        //    $(uploading).text("uploaded: " + e.loaded * 100 / e.total + "% ");
+                        //}
+                    };
+                    return xhr;
+                },
+                success: function (data) {
+
+                    if (data.success) {
+                        $('.adm_hidden_profileimage').val('');
+                        $('.main_form').submit();
+
+                    }
+                    else {
+                        myalert('Der skete en fejl, beklager.');
+                    }
+                },
+                error: function (er) {
+                    myalert("error: " + er);
+                }
+            });
+        }
+        function deleteConversation_Ajax(path, data, elem) {
+            $.ajax({
+                url: path,
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(data),
+                success: function (data) {
+
+                    if (data.success) {
+                        $(elem).closest('li').remove();
+                        $('.z-loading').fadeOut(400);
+                    }
+                    else {
+                        myalert('Der skete en fejl, beklager.');
+                        $('.z-loading').fadeOut(400);
+                    }
+                },
+                error: function (er) {
+                    myalert("error: " + er);
+                    $('.z-loading').fadeOut(400);
+                }
+            });
+        }
+    </script>
+}
+
+
+

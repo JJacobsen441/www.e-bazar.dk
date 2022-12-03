@@ -1,0 +1,690 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<newupper name="inventar" id="" category="FURNITURE">
+		<newdesc>og møbler</newdesc>
+		<newlower name="borde" id="">
+			<param type="M" name="type">
+				<value val="spisebord" />
+				<value val="sofabord" />
+				<value val="skrivebord" />
+				<value val="havebord" />
+			</param>
+			<param type="M" name="materiale">
+				<value val="træ" />
+				<value val="metal" />
+				<value val="glas" />
+			</param>
+			<param type="M" name="brug">
+				<value val="udendørs" />
+				<value val="indendørs" />
+			</param>
+		</newlower>
+		<newlower name="stole" id="">
+			<param type="M" name="type">
+				<value val="spisebordsstole" />
+				<value val="lænestole" />
+				<value val="kontorstole" />
+			</param>
+			<param type="M" name="materiale">
+				<value val="træ" />
+				<value val="metal" />
+				<value val="stof" />
+				<value val="læder" />
+			</param>
+			<param type="M" name="farve">
+				<value val="rød" />
+				<value val="grøn" />
+				<value val="blå" />
+				<value val="gul" />
+				<value val="orange" />
+				<value val="pink" />
+				<value val="brun" />				
+				<value val="grå" />
+				<value val="sort" />
+				<value val="hvid" />
+				<value val="stribet" />
+				<value val="ternet" />
+				<value val="fler farvet" />
+				<value val="*metal" />
+			</param>
+			<param type="M" name="brug">
+				<value val="udendørs" />
+				<value val="indendørs" />
+			</param>
+		</newlower>
+		<newlower name="sofaer" id="">
+			<param type="M" name="type">
+				<value val="sofaer" />
+				<value val="hjørnesofaer" />
+				<value val="chaiselon" />
+			</param>
+			<param type="M" name="personer">
+				<value val="2 pers" />
+				<value val="2 1/2 pers" />
+				<value val="3 pers" />
+				<value val="4 pers" />
+			</param>
+			<param type="M" name="materiale">
+				<value val="træ" />
+				<value val="metal" />
+				<value val="stof" />
+				<value val="læder" />
+			</param>
+			<param type="M" name="farve">
+				<value val="rød" />
+				<value val="grøn" />
+				<value val="blå" />
+				<value val="gul" />
+				<value val="orange" />
+				<value val="pink" />
+				<value val="brun" />
+				<value val="grå" />
+				<value val="sort" />
+				<value val="hvid" />
+				<value val="stribet" />
+				<value val="ternet" />
+				<value val="fler farvet" />
+				<value val="*metal" />
+			</param>
+		</newlower>
+		<newlower name="skabe" id="">
+			<param type="M" name="type">
+				<value val="køkken" />
+				<value val="kontor" />
+				<value val="arkiv" />
+				<value val="vitrin" />
+				<value val="barskab" />
+				<value val="pengeskab" />
+				<value val="komode" />
+				<value val="vægskab" />
+				<value val="reol" />
+			</param>
+			<param type="M" name="materiale">
+				<value val="træ" />
+				<value val="metal" />
+			</param>
+			<param type="M" name="farve">
+				<value val="rød" />
+				<value val="grøn" />
+				<value val="blå" />
+				<value val="gul" />
+				<value val="orange" />
+				<value val="pink" />
+				<value val="brun" />
+				<value val="grå" />
+				<value val="sort" />
+				<value val="hvid" />
+				<value val="stribet" />
+				<value val="ternet" />
+				<value val="fler farvet" />
+				<value val="*metal" />
+			</param>
+		</newlower>
+		<newlower name="senge" id="" >
+			<param type="M" name="type">
+				<value val="enkelt" />
+				<value val="dobbelt" />
+			</param>
+		</newlower>
+		<newlower name="hylder" id="">
+			<param type="M" name="type">
+				<value val="stue" />
+				<value val="køkken" />
+			</param>
+			<param type="M" name="materiale">
+				<value val="træ" />
+				<value val="metal" />
+			</param>
+		</newlower>
+		<newlower name="lamper" id="">
+			<param type="M" name="type">
+				<value val="bordlamper" />
+				<value val="standerlamper" />
+				<value val="hængelamper" />
+				<value val="væglamper" />
+			</param>
+		</newlower>
+		<newlower name="øvrige" id="">
+		</newlower>
+	</newupper>
+	<newupper name="beklædning" id="" category="CLOTHES">
+		<newdesc>og tilbehør</newdesc>
+		<param type="M" name="farve">
+			<value val="rød" />
+			<value val="grøn" />
+			<value val="blå" />
+			<value val="gul" />
+			<value val="orange" />
+			<value val="pink" />
+			<value val="brun" />
+			<value val="grå" />
+			<value val="sort" />
+			<value val="hvid" />
+			<value val="stribet" />
+			<value val="ternet" />
+			<value val="fler farvet" />
+		</param>
+		<newlower name="damer" id="">
+			<param type="MS" name="tøjdel" >
+				<value val="skjorter" />
+				<value val="bluser" />
+				<value val="trøjer" />
+				<value val="cardigans" />
+				<value val="tunikaer" />
+				<value val="kjoler" />
+				<value val="nederdele" />
+				<value val="bukser" />
+				<value val="jeans" />
+				<value val="toppe" />
+				<value val="frakker" />
+				<value val="leggings" />
+				<value val="blazere" />
+				<value val="veste" />
+				<value val="shorts" />
+				<value val="jumpsuits" />
+				<value val="nattøj" />
+			</param>
+		</newlower>
+		<newlower name="herrer" id="">
+			<param type="MS" name="tøjdel" >
+				<value val="skjorter" />
+				<value val="bluser" />
+				<value val="trøjer" />
+				<value val="bukser" />
+				<value val="jeans" />
+				<value val="t-shirts" />
+				<value val="shorts" />
+				<value val="jakker" />
+				<value val="blazere" />
+				<value val="veste" />
+				<value val="nattøj" />
+			</param>
+		</newlower>
+		<newlower name="børnetøj" id="">
+			<param type="MS" name="tøjdel" >
+				<value val="skjorter" />
+				<value val="bluser" />
+				<value val="kjoler" />
+				<value val="bukser" />
+				<value val="jakker" />
+				<value val="blazere" />
+				<value val="veste" />
+				<value val="shorts" />
+				<value val="heldragter" />
+				<value val="nattøj" />
+			</param>
+		</newlower>
+		<newlower name="hovedbeklædning" id="">
+			<param type="MS" name="type" >
+				<value val="hatte" />
+				<value val="huer" />
+				<value val="sixpence" />
+				<value val="kasketter" />
+			</param>
+			<param type="MS" name="køn">
+				<value val="herre" />
+				<value val="dame" />
+			</param>
+		</newlower>
+		<newlower name="fodtøj" id="">
+			<param type="MS" name="type" >
+				<value val="sneakers" />
+				<value val="støvler" />
+				<value val="træningssko" />
+				<value val="flade sko" />
+				<value val="gummistøvler" />
+				<value val="vinterfodtøj" />
+				<value val="lærredssko" />
+				<value val="hjemmesko" />
+				<value val="sandaler" />
+			</param>
+			<param type="MS" name="køn">
+				<value val="herre" />
+				<value val="dame" />
+			</param>
+		</newlower>
+		<newlower name="tilbehør" id="">
+			<param type="MS" name="type" >
+				<value val="handsker" />
+				<value val="vanter" />
+				<value val="tørklæder" />
+				<value val="bælter" />
+			</param>
+			<param type="MS" name="køn">
+				<value val="herre" />
+				<value val="dame" />
+			</param>
+		</newlower>
+		<newlower name="øvrige" id="" >		
+		</newlower>
+	</newupper>
+	<newupper name="smykker" id="" category="JEWELRY">
+		<newdesc>og tilbehør</newdesc>
+		<param type="MS" name="køn">
+			<value val="dame" />
+			<value val="herre" />
+		</param>
+		<param type="M" name="materiale" >
+			<value val="guld" />
+			<value val="hvidguld" />
+			<value val="sølv" />
+			<value val="diamant" />
+			<value val="ædelsten" />
+			<value val="metal" />
+			<value val="træ" />
+		</param>
+		<newlower name="ringe" id="">
+			<param type="MS" name="type">
+				<value val="fingerringe" />
+				<value val="forlovelsesringe" />
+				<value val="vielsesringe" />
+			</param>
+		</newlower>
+		<newlower name="kæder" id="">
+			<param type="MS" name="type">
+				<value val="halskæde" />
+				<value val="armbånd" />
+				<value val="ankelkæde" />
+			</param>
+		</newlower>
+		<newlower name="øreringe" id="">
+			<param type="MS" name="type">
+				<value val="ørestikker" />
+				<value val="ørehængere" />
+				<value val="ørekroge" />
+				<value val="ørekæder" />
+				<value val="øreclips" />
+			</param>
+		</newlower>
+		<newlower name="broscher" id="">
+		</newlower>
+		<newlower name="ure" id="">
+		</newlower>
+		<newlower name="øvrige" id="">			
+		</newlower>
+	</newupper>
+	<newupper name="kunst" id="" category="ART">
+    <newdesc>og kunstgenstande</newdesc>
+		<newlower name="malerier" id="">
+			<param type="M" name="genre">
+				<value val="moderne" />
+				<value val="klassisk" />
+				<value val="realisme" />
+				<value val="abstrakt" />				
+				<value val="surrealistisk" />
+				<value val="æstetisk" />
+				<value val="ekspressionistisk" />
+				<value val="minimalistisk" />
+			</param>
+			<param type="M" name="type">
+				<value val="lærred" />
+				<value val="plakater" />
+				<value val="kunsttryk" />
+				<value val="metal" />
+				<value val="tegninger" />
+				<value val="malerier" />
+				<value val="linoleumstryk" />
+				<value val="silketryk" />
+				<value val="fotokunst" />
+				<value val="litografier" />
+				<value val="akvarel" />
+				<value val="collager" />
+				<value val="indgraveringer" />
+				<value val="stof" />
+				<value val="papir" />
+				<value val="plexiglas" />
+				<value val="pap" />
+				<value val="træ" />
+			</param>
+			<param type="M" name="materiale">
+				<value val="akryl" />
+				<value val="kuglepen" />
+				<value val="kul" />
+				<value val="kridt" />
+				<value val="blæk" />
+				<value val="lak" />
+				<value val="tusch" />
+				<value val="olie" />
+				<value val="blyant" />
+				<value val="spraymaling" />
+				<value val="akvarel" />				
+			</param>
+		</newlower>
+		<newlower name="skulpturer" id="">
+			<param type="M" name="genre">
+				<value val="moderne" />
+				<value val="klassisk" />
+				<value val="realisme" />
+				<value val="abstrakt" />				
+				<value val="surrealistisk" />
+				<value val="æstetisk" />
+				<value val="ekspressionistisk" />
+				<value val="minimalistisk" />
+			</param>
+			<param type="M" name="materiale">
+				<value val="træ" />
+				<value val="metal" />
+				<value val="plastik" />
+			</param>
+			<param type="M" name="brug">
+				<value val="indendørs" />
+				<value val="udendørs"/>
+			</param>
+		</newlower>
+		<newlower name="stentøj" id="">
+			<param type="M" name="genre">
+				<value val="moderne" />
+				<value val="klassisk" />
+				<value val="realisme" />
+				<value val="abstrakt" />				
+				<value val="surrealistisk" />
+				<value val="æstetisk" />
+				<value val="ekspressionistisk" />
+				<value val="minimalistisk" />
+			</param>
+			<param type="M" name="brug">
+				<value val="indendørs" />
+				<value val="udendørs"/>
+			</param>
+		</newlower>
+		<newlower name="keramik" id="">
+			<param type="M" name="genre">
+				<value val="moderne" />
+				<value val="klassisk" />
+				<value val="realisme" />
+				<value val="abstrakt" />				
+				<value val="surrealistisk" />
+				<value val="æstetisk" />
+				<value val="ekspressionistisk" />
+				<value val="minimalistisk" />
+			</param>
+			<param type="M" name="brug">
+				<value val="indendørs" />
+				<value val="udendørs"/>
+			</param>
+		</newlower>
+		<newlower name="plakater" id="">
+			<param type="S" name="med ramme" id="" />
+			<param type="M" name="genre">
+				<value val="moderne" />
+				<value val="klassisk" />
+				<value val="realisme" />
+				<value val="abstrakt" />				
+				<value val="surrealistisk" />
+				<value val="sort hvid" />
+				<value val="science fiction" />
+				<value val="fantasy" />
+				<value val="citater" />
+				<value val="humor" />
+			</param>
+		</newlower>
+		<newlower name="brugskunst" id="">
+			<param type="M" name="type" >
+				<value val="tallerkner" />
+				<value val="vaser" />
+				<value val="krukker" />
+			</param>
+			<param type="M" name="brug" >
+				<value val="indendørs" />
+				<value val="udendørs" />
+			</param>
+		</newlower>
+		<newlower name="øvrige" id="" >		
+		</newlower>
+	</newupper>
+	<newupper name="brugsgenstande" id="" category="EVERYDAYOBJECTS">
+    <newdesc>og nips</newdesc>
+		<newlower name="genstande" id="">
+			<param type="M" name="type" >
+				<value val="glas" />
+				<value val="service" />
+				<value val="bestik" />
+				<value val="køkkengrej" />
+				<value val="stiger" />
+				<value val="skamler" />
+			</param>
+		</newlower>
+		<newlower name="nips" id="">
+			<param type="M" name="type" >
+				<value val="nåle" />
+				<value val="nålepuder" />
+				<value val="figurer" />
+				<value val="julepynt" />
+			</param>
+		</newlower>
+	</newupper>
+	<newupper name="hobby" id="" category="HOBBY">
+    <newdesc>og samlerobjekter</newdesc>
+		<newlower name="plader og cder" id="">
+			<param type="M" name="genre" >
+				<value val="rock" />
+				<value val="pop" />
+				<value val="klassisk" />
+				<value val="dansk pop" />
+				<value val="hiphop" />
+				<value val="elektronisk" />
+				<value val="world" />
+				<value val="folkemusik" />
+			</param>
+		</newlower>
+		<newlower name="bøger og blade" id="">
+			<param type="M" name="genre" >
+				<value val="krimi" />
+				<value val="romantik" />
+				<value val="spænding" />
+				<value val="realistisk" />
+			</param>
+		</newlower>
+		<newlower name="samleobjekter" id="">
+			<param type="S" name="samlinger" />
+			<param type="S" name="modeller" />
+			<param type="S" name="dukker" />
+			<param type="S" name="figurer" />
+		</newlower>
+		<newlower name="øvrige" id="">
+		</newlower>
+	</newupper>  
+	<newupper name="legetøj" id="">
+	<newdesc>til børn</newdesc>
+		<param type="M" name="brug" >
+			<value val="udendørs" />
+			<value val="indendørs" />
+		</param>
+    <param type="M" name="køn" >
+      <value val="drenge" />
+      <value val="piger" />
+		</param>
+    <newlower name="biler og dukker" id="">
+		</newlower>
+    <newlower name="cykler og gokarts" id="">
+		</newlower>
+    <newlower name="røvere og soldater" id="">
+		</newlower>
+    <newlower name="udklædning" id="">
+		</newlower>
+    <newlower name="til værelset" id="">
+		</newlower>
+    <newlower name="til sandkassen" id="">
+		</newlower>
+    <newlower name="boldspil" id="">
+		</newlower>
+	</newupper>
+  <newupper name="instrumenter" id="" category="INSTRUMENTS">
+    <newdesc>og musik</newdesc>
+		<param type="M" name="materiale" >
+			<value val="træ" />
+			<value val="metal" />
+		</param>
+		<param type="M" name="farve">
+				<value val="rød" />
+				<value val="grøn" />
+				<value val="blå" />
+				<value val="gul" />
+				<value val="orange" />
+				<value val="pink" />
+				<value val="brun" />
+				<value val="grå" />
+				<value val="sort" />
+				<value val="hvid" />
+				<value val="stribet" />
+				<value val="ternet" />
+				<value val="fler farvet" />
+				<value val="*metal" />
+		</param>
+		<newlower name="slagtøj" id="">
+			<param type="S" name="trommesæt" />
+			<param type="S" name="trommer" />
+			<param type="S" name="percusion" />
+			<param type="S" name="steeldrum" />
+			<param type="S" name="marimba" />
+			<param type="S" name="tilbehør" />
+		</newlower>
+		<newlower name="tangentinstrumenter" id="">
+			<param type="S" name="flygel" />
+			<param type="S" name="klaver" />
+			<param type="S" name="tilbehør" />
+		</newlower>
+		<newlower name="strenginstrumenter" id="">
+			<param type="S" name="guitar" />
+			<param type="S" name="violin" />
+			<param type="S" name="cello" />
+			<param type="S" name="bas" />
+			<param type="S" name="tilbehør" />
+		</newlower>
+		<newlower name="blæseinstrumenter" id="">
+			<param type="S" name="trumpet" />
+			<param type="S" name="trombone" />
+			<param type="S" name="tuba" />
+			<param type="S" name="saxofon" />
+			<param type="S" name="klarinet" />
+			<param type="S" name="fløjte" />
+			<param type="S" name="tilbehør" />
+		</newlower>
+		<newlower name="øvrige" id="">
+		</newlower>
+	</newupper>
+	<newupper name="elektronik" id="" category="ELECTRONICS">
+	<newdesc>billed og lyd</newdesc>
+		<newlower name="computere" id="">
+			<param type="M" name="type" >
+				<value val="desktop" />
+        <value val="laptop" />
+        <value val="spillekonsol" />
+			</param>
+			<param type="M" name="mærke" >
+				<value val="lenovo" />
+				<value val="asus" />
+				<value val="øvrige" />
+			</param>
+		</newlower>
+		<newlower name="telefoner" id="">
+			<param type="M" name="mærke" >
+				<value val="apple" />
+				<value val="samsung" />
+				<value val="huywai" />
+				<value val="nokia" />
+				<value val="øvrige" />
+			</param>
+		</newlower>
+		<newlower name="tv" id="">
+			<param type="M" name="mærke" >
+        <value val="samsung" />
+        <value val="phillips" />
+        <value val="øvrige" />
+			</param>
+		</newlower>
+		<newlower name="lyd" id="">
+			<param type="M" name="type" >
+				<value val="højtaler" />
+        <value val="surround" />
+        <value val="pladespiller" />
+        <value val="cd afspiller" />
+				<value val="øvrige" />
+			</param>
+		</newlower>
+		<newlower name="foto" id="">
+			<param type="M" name="type" >
+				<value val="digital" />
+				<value val="analog" />
+			</param>
+		</newlower>
+		<newlower name="øvrige" id="">
+		</newlower>
+	</newupper>
+	<newupper name="sport og fritid" id="" category="SPORT">
+	<newdesc>friluft</newdesc>
+		<newlower name="tøj" id="">
+			<param type="M" name="type" >
+				<value val="badetøjtøj" />
+				<value val="skitøj" />
+				<value val="hovedbeklædning" />
+				<value val="fodtøj" />
+				<value val="tilbehør" />
+			</param>
+		</newlower>
+		<newlower name="udstyr" id="">
+			<param type="M" name="type" >
+				<value val="cykler" />
+				<value val="skateboards" />
+			</param>
+		</newlower>
+		<newlower name="camping" id="">
+			<param type="M" name="type" >
+				<value val="telte" />
+				<value val="soveposer" />
+			</param>
+		</newlower>
+		<newlower name="øvrige" id="">
+		</newlower>
+	</newupper>
+	<newupper name="værkstedet" id="" category="WORKPLACE">
+	<newdesc>og værktøj</newdesc>
+		<newlower name="værktøj" id="">
+			<param type="M" name="type" >
+				<value val="hammer" />
+				<value val="sav" />
+				<value val="skruetrækker" />
+				<value val="pensler" />
+			</param>
+		</newlower>
+		<newlower name="maskiner" id="">
+			<param type="M" name="type" >
+				<value val="boremaskine" />
+				<value val="drejebænk" />
+			</param>
+		</newlower>
+		<newlower name="materialer" id="">
+			<param type="M" name="type" >
+				<value val="træ" />
+				<value val="metal" />
+				<value val="papir" />
+				<value val="maling" />
+			</param>
+		</newlower>
+		<newlower name="øvrige" id="">
+		</newlower>
+	</newupper>
+	<newupper name="haven" id="" category="GARDEN">
+	<newdesc>og maskiner</newdesc>
+		<newlower name="maskiner" id="">
+			<param type="M" name="type" >
+				<value val="plæneklipper" />
+				<value val="hæksaks" />
+			</param>
+		</newlower>
+		<newlower name="udstyr" id="">
+				<param type="M" name="type" >
+				<value val="skovle" />
+				<value val="spader" />
+			</param>
+		</newlower>
+		<newlower name="materialer" id="">
+			<param type="M" name="type" >
+				<value val="fliser" />
+				<value val="grus" />
+			</param>
+		</newlower>
+		<newlower name="øvrige" id="">
+		</newlower>
+	</newupper>
+</root>

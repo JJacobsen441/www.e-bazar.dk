@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "www.e-bazar.dk", "www.e-bazar.dk\www.e-bazar.dk.csproj", "{87E53953-18ED-4765-8B40-24B05949FE95}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostgreSQL.AspNet.Identity.EntityFramework", "PostgreSQL.AspNet.Identity.EntityFramework\PostgreSQL.AspNet.Identity.EntityFramework.csproj", "{FA718219-F0D7-4E24-855F-3CB01C2A857E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestEbazarDK", "UnitTestEbazarDK\UnitTestEbazarDK.csproj", "{233A7AFD-418B-43D6-8757-21D2D677AFB3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{87E53953-18ED-4765-8B40-24B05949FE95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87E53953-18ED-4765-8B40-24B05949FE95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87E53953-18ED-4765-8B40-24B05949FE95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87E53953-18ED-4765-8B40-24B05949FE95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA718219-F0D7-4E24-855F-3CB01C2A857E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA718219-F0D7-4E24-855F-3CB01C2A857E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA718219-F0D7-4E24-855F-3CB01C2A857E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA718219-F0D7-4E24-855F-3CB01C2A857E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{233A7AFD-418B-43D6-8757-21D2D677AFB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{233A7AFD-418B-43D6-8757-21D2D677AFB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{233A7AFD-418B-43D6-8757-21D2D677AFB3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7118DB7B-FDC5-47D6-9073-0D378C38D277}
+	EndGlobalSection
+EndGlobal

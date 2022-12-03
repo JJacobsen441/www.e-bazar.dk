@@ -1,0 +1,382 @@
+﻿@model www.e_bazar.dk.Models.DTOs.dto_booth_item
+@if (Model != null)
+{
+    dto_booth booth = ViewContext.Controller.ViewBag.Booth as dto_booth;
+    string cssdiv = Model.relevant ? "col-xs-12" : "col-xs-12";
+    string cssspan = Model.relevant ? "z-color-black-1" : "z-color-black-1";
+<div class="remove_desk_block col-xs-6 l-bt-showcase2">
+    <div class="@cssdiv z-height-80">
+        @{
+            //string ditem_name = Model.name.Count() <= 16 ? Model.name : Model.name.Substring(0, 16) + "...";
+            string ditem_name = Model.name;
+        }
+        oprettet: <span class="z-color-green">@Model.created_on.ToString("dd/MM/yyyy")</span><br />
+        <span class="@cssspan z-bold" title="@ditem_name">@ditem_name</span>
+        @if (Model.relevant)
+        {
+            <span><i class="fas fa-check-square"></i></span>
+        }
+    </div>
+    <div class="col-xs-12 l-bt-showcase3 z-background-color-darkgrey">
+        <br />
+        <div class="l-bt-showcase4">
+            @{
+                string dfolder = typeof(dto_product) == Model.GetType() ? "/products/" : "/collections/";
+                string dtype = typeof(dto_product) == Model.GetType() ? "Product" : "Collection";
+                var dalt_image = typeof(dto_product) == Model.GetType() ? @"/_content/images/site/icons/armchair2_bw.png" : @"/_content/images/site/icons/sofa_bw.png";
+                if (Model.image_dtos != null && Model.image_dtos.Count > 0)
+                {
+                    var dthumb_pathB = @"/_content/images/profiles/" + booth.salesman_dto.sysname + "/booths/" + booth.sysname + dfolder + Model.sysname + "/t_" + Model.image_dtos.FirstOrDefault().name;
+                    var dimage_pathB = @"/_content/images/profiles/" + booth.salesman_dto.sysname + "/booths/" + booth.sysname + dfolder + Model.sysname + "/" + Model.image_dtos.FirstOrDefault().name;
+
+                    string[] dclasses = { "l-bt-showcase5", "myfade", "loadlater" };
+                    object droute = new { id = @Model.id };
+                    string dstyle = "";
+                    @Html.RouteImage(dtype, droute, dthumb_pathB, dimage_pathB, null, dclasses, null, dstyle, null)
+                }
+                else
+                {
+                    @Html.RouteImage(dtype, new { id = Model.id }, dalt_image, null, "Sample Image", new string[] { "l-bt-showcase5" }, null, null, null)
+                }
+            }
+        </div>
+        <div class="l-bt-showcase6">
+            <div class="z-tooltip7  z-cursor-pointer xz-only-desk">
+                <i class="far fa-file-alt"></i>&nbsp;Om produktet..
+                <span class="z-center2 z-desc-tooltip7 z-align-left">
+                    @Html.DisplayWithBreaksFor(Model.description_limit)
+                    <br /><br />
+                    <a href="/#" class="z-color-white-1 bold tooltip7-close">skjul</a>
+                </span>
+            </div>
+            <div class="">
+                <div class="">
+                    @{
+                        string dprice = Model.price == NOP.INGEN_PRIS.ToString() ? TextHelper.GetNopValue(Model.price) : Model.price + " kr";
+                    }
+                    <span class="z-bold bold">Pris:&nbsp;&nbsp;&nbsp;</span>
+                    <span>@dprice</span>
+                </div>
+                <div class="">
+                    @if (booth != null && Model.category_main_id != null)
+                    {
+                        dto_category cat = booth.category_main.Where(c => c.category_id == Model.category_main_id).FirstOrDefault();
+                        if (cat != null) 
+                        {
+                            
+                        string dmain_name = cat.name;
+
+                        @Html.RouteLink("[" + dmain_name + "]", "Marketplace", new { c = SecurityHelper.Format(dmain_name, "_", false) }, new { @class = "z-color-green myfade" })
+                        if (booth != null && Model.category_second_id != null)
+                        {
+
+                            dto_category dsecond = booth.category_main.Where(c => c.category_id == Model.category_main_id).FirstOrDefault().children.Where(c => c.category_id == Model.category_second_id).FirstOrDefault();
+                            string dname = "";
+                            if (dsecond != null)
+                            {
+                                dname = dsecond.name;
+
+                                @Html.RouteLink("[" + dname + "]", "Marketplace", new { c = SecurityHelper.Format(SecurityHelper.EncodeCats_MD5(false, dmain_name, dname), "_", false) }, new { @class = "z-color-green myfade" });
+                            }
+                        }
+                        }
+                    }
+
+                    @if (Model.tag_dtos != null)
+                    {
+
+                        foreach (var tag in Model.tag_dtos)
+                        {
+                            <a href="#" role="search" name="@tag.name" class="tag_btn myfade">[@tag.name]</a>
+
+                        }
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr class="z-only-desk" />
+    <br class="z-hide-only-phone" />
+    <br class="z-hide-only-phone" />
+    <br class="z-hide-only-phone" />
+    <br class="z-hide-only-phone" />
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="remove_tab_block col-xs-6 l-bt-showcase2">
+    <div class="@cssdiv z-height-80">
+        @{
+            //string titem_name = Model.name.Count() <= 16 ? Model.name : Model.name.Substring(0, 16) + "...";
+            string titem_name = Model.name;
+        }
+        oprettet: <span class="z-color-green">@Model.created_on.ToString("dd/MM/yyyy")</span><br />
+        <span class="@cssspan z-bold" title="@titem_name">@titem_name</span>
+        @if (Model.relevant)
+        {
+            <span><i class="fas fa-check-square"></i></span>
+        }
+    </div>
+    <div class="col-xs-12 l-bt-showcase3 z-background-color-darkgrey">
+        <br />
+        <div class="l-bt-showcase4">
+            @{
+                string tfolder = typeof(biz_product) == Model.GetType() ? "/products/" : "/collections/";
+                string ttype = typeof(biz_product) == Model.GetType() ? "Product" : "Collection";
+                var talt_image = typeof(biz_product) == Model.GetType() ? @"/_content/images/site/icons/armchair2_bw.png" : @"/_content/images/site/icons/sofa_bw.png";
+                if (Model.image_dtos != null && Model.image_dtos.Count > 0)
+                {
+                    var tthumb_pathB = @"/_content/images/profiles/" + booth.salesman_dto.sysname + "/booths/" + booth.sysname + tfolder + Model.sysname + "/t_" + Model.image_dtos.FirstOrDefault().name;
+                    var timage_pathB = @"/_content/images/profiles/" + booth.salesman_dto.sysname + "/booths/" + booth.sysname + tfolder + Model.sysname + "/" + Model.image_dtos.FirstOrDefault().name;
+
+                    string[] tclasses = { "l-bt-showcase5", "myfade", "loadlater" };
+                    object troute = new { id = @Model.id };
+                    string style = "";
+                    @Html.RouteImage(ttype, troute, tthumb_pathB, timage_pathB, null, tclasses, null, style, null)
+                }
+                else
+                {
+                    @Html.RouteImage(ttype, new { id = Model.id }, talt_image, null, "Sample Image", new string[] { "l-bt-showcase5" }, null, null, null)
+                }
+            }
+        </div>
+        <div class="l-bt-showcase6">
+            <div class="z-tooltip7 z-cursor-pointer xz-only-desk">
+                <i class="far fa-file-alt"></i>&nbsp;Om produktet..
+                <span class="z-center2 z-desc-tooltip7 z-align-left">
+                    @Html.DisplayWithBreaksFor(Model.description_limit)
+                    <br /><br />
+                    <a href="/#" class="z-color-white-1 bold tooltip7-close">skjul</a>
+                </span>
+                
+            </div>
+            <div class="">
+                <div class="">
+                    @{
+                        string tprice = Model.price == NOP.INGEN_PRIS.ToString() ? TextHelper.GetNopValue(Model.price) : Model.price + " kr";
+                    }
+                    <span class="z-bold bold">Pris:&nbsp;&nbsp;&nbsp;</span>
+                    <span>@tprice</span>
+                </div>
+                <div class="">
+                    @if (booth != null && Model.category_main_id != null)
+                    {
+                        dto_category cat = booth.category_main.Where(c => c.category_id == Model.category_main_id).FirstOrDefault();
+                        if(cat != null)
+                        {
+
+                        string tmain_name = cat.name;
+
+                        @Html.RouteLink("[" + tmain_name + "]", "Marketplace", new { c = SecurityHelper.Format(tmain_name, "_", false) }, new { @class = "z-color-green myfade" })
+                        if (booth != null && Model.category_second_id != null)
+                        {
+
+                            dto_category tsecond = booth.category_main.Where(c => c.category_id == Model.category_main_id).FirstOrDefault().children.Where(c => c.category_id == Model.category_second_id).FirstOrDefault();
+                            string tname = "";
+                            if (tsecond != null)
+                            {
+                                tname = tsecond.name;
+
+                                @Html.RouteLink("[" + tname + "]", "Marketplace", new { c = SecurityHelper.Format(SecurityHelper.EncodeCats_MD5(false, tmain_name, tname), "_", false) }, new { @class = "z-color-green myfade" });
+                            }
+                        }
+                        }
+                    }
+
+                    @if (Model.tag_dtos != null)
+                    {
+
+                        foreach (var tag in Model.tag_dtos)
+                        {
+                            <a href="#" role="search" name="@tag.name" class="tag_btn myfade">[@tag.name]</a>
+
+                        }
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr class="z-only-desk" />
+    <br class="z-hide-only-phone" />
+    <br class="z-hide-only-phone" />
+    <br class="z-hide-only-phone" />
+    <br class="z-hide-only-phone" />
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="remove_phone_block col-sm-6 l-bt-showcase2">
+    <div class="@cssdiv z-height-80">
+        @{
+            //string mitem_name = Model.name.Count() <= 16 ? Model.name : Model.name.Substring(0, 16) + "...";
+            string mitem_name = Model.name;
+        }
+        oprettet: <span class="z-color-green">@Model.created_on.ToString("dd/MM/yyyy")</span><br />
+        <span class="@cssspan z-bold" title="@mitem_name">@mitem_name</span>
+        @if (Model.relevant)
+        {
+            <span><i class="fas fa-check-square"></i></span>
+        }
+    </div>
+    <div class="col-sm-12 l-bt-showcase3 z-background-color-darkgrey z-padding-bottom-15">
+        <br />
+        <div class="l-bt-showcase4">
+            @{
+                string mfolder = typeof(biz_product) == Model.GetType() ? "/products/" : "/collections/";
+                string mtype = typeof(biz_product) == Model.GetType() ? "Product" : "Collection";
+                var malt_image = typeof(biz_product) == Model.GetType() ? @"/_content/images/site/icons/armchair2_bw.png" : @"/_content/images/site/icons/sofa_bw.png";
+                if (Model.image_dtos != null && Model.image_dtos.Count > 0)
+                {
+                    var mthumb_pathB = @"/_content/images/profiles/" + booth.salesman_dto.sysname + "/booths/" + booth.sysname + mfolder + Model.sysname + "/t_" + Model.image_dtos.FirstOrDefault().name;
+                    var mimage_pathB = @"/_content/images/profiles/" + booth.salesman_dto.sysname + "/booths/" + booth.sysname + mfolder + Model.sysname + "/" + Model.image_dtos.FirstOrDefault().name;
+
+                    string[] mclasses = { "l-bt-showcase5", "myfade", "loadlater" };
+                    object mroute = new { id = @Model.id };
+                    string mstyle = "";
+                    @Html.RouteImage(mtype, mroute, mthumb_pathB, mimage_pathB, null, mclasses, null, mstyle, null)
+                }
+                else
+                {
+                    @Html.RouteImage(mtype, new { id = Model.id }, malt_image, null, "Sample Image", new string[] { "l-bt-showcase5" }, null, null, null)
+                }
+            }
+        </div>
+        <div class="l-bt-showcase6">
+            <div class="z-only-phone-block xz-only-tab-block ">
+                <br />
+                @Html.DisplayWithBreaksFor(Model.description_limit)
+            </div><br />
+            <div class="">
+                <div class="">
+                    @{
+                        string mprice = Model.price == NOP.INGEN_PRIS.ToString() ? TextHelper.GetNopValue(Model.price) : Model.price + " kr";
+                    }
+                    <span class="z-bold bold">Pris:&nbsp;&nbsp;&nbsp;</span>
+                    <span>@mprice</span>
+                </div>
+                <div class="">
+                    @if (booth != null && Model.category_main_id != null)
+                    {
+                        dto_category cat = booth.category_main.Where(c => c.category_id == Model.category_main_id).FirstOrDefault();
+                    if (cat != null)
+                    {
+
+                        string mmain_name = cat.name;
+
+                        @Html.RouteLink("[" + mmain_name + "]", "Marketplace", new { c = SecurityHelper.Format(mmain_name, "_", false) }, new { @class = "z-color-green myfade" })
+                        if (booth != null && Model.category_second_id != null)
+                        {
+
+                            dto_category msecond = booth.category_main.Where(c => c.category_id == Model.category_main_id).FirstOrDefault().children.Where(c => c.category_id == Model.category_second_id).FirstOrDefault();
+                            string mname = "";
+                            if (msecond != null)
+                            {
+                                mname = msecond.name;
+
+                                @Html.RouteLink("[" + mname + "]", "Marketplace", new { c = SecurityHelper.Format(SecurityHelper.EncodeCats_MD5(false, mmain_name, mname), "_", false) }, new { @class = "z-color-green myfade" });
+                            }
+                        }
+                    }
+                    }
+
+                    @if (Model.tag_dtos != null)
+                    {
+
+                        foreach (var tag in Model.tag_dtos)
+                        {
+                            <a href="#" role="search" name="@tag.name" class="tag_btn myfade">[@tag.name]</a>
+
+                        }
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr class="z-only-desk" />
+    <br class="z-hide-only-phone" />
+    <br class="z-hide-only-phone" />
+    <br class="z-hide-only-phone" />
+    <br class="z-hide-only-phone" />
+</div>
+}
+else
+{
+    <div class="col-sm-6 l-bt-showcase2 z-padding-sides-0">
+        <div class="col-sm-12 ">
+            &nbsp;
+        </div>
+    </div>
+}

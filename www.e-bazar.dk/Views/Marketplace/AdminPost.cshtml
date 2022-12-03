@@ -1,0 +1,15 @@
+﻿@model int
+@{
+    ViewBag.Title = "AdminPost";
+}
+
+<h1>AdminPost</h1>
+<br />
+<br />
+@{
+    string res = @Model + ", " + ((HttpStatusCode)@Model).ToString();
+}
+<span>Result: @res</span>
+<br />. . . . . . . . . . .
+<br />
+@Html.RouteLink("To Admin", "AdminGet")

@@ -1,0 +1,37 @@
+﻿<!--- Sidemenu -->
+<br />
+<div class="z-background-color-lightgrey z-border-darkgrey z-margin-sides-15">
+    <div class="">
+        <br />
+            @{
+                string s = ViewContext.Controller.ViewBag.AreasChecked as string;
+                
+                int counter = 1;
+                <ul class="z-list-style-none">
+                    <li>
+                        <span class="z-bold">Område:</span>
+                    </li>
+                    <li>
+                        @foreach (Area area in AreasHelper.GetAreas())
+                        {
+                            if (area.area != "dk")
+                            {
+                                bool check = !string.IsNullOrEmpty(s) ? s.Split('-').Contains(area.area.Replace(" ", "").ToLower()) : false;
+                                    
+                                <span class="z-color-green z-margin-bottom-0 z-white-space-nowrap z-display-inline-block l-mp-areas1">
+                                    @Html.CheckBox("check", check, new { @class = "area_check myfade" })
+                                    &nbsp;
+                                    <span>@Html.Raw(area.area.Replace(" ", "&nbsp;"))</span>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                </span>
+                                counter++;
+                            }
+                        }               
+                    </li>
+                </ul>
+                <br />
+            }        
+    </div>
+</div>
+<br />
+<!-- Sidebar -->

@@ -1,0 +1,542 @@
+﻿@model www.e_bazar.dk.Models.DTOs.col_message
+
+@{
+    ViewBag.Title = "Skriv besked";
+
+    dto_person current_user = ViewBag.CurrentUser as dto_person;
+    /*CurrentUser user = ViewBag.User as CurrentUser;*/
+    if (Model.conversation.conversation_id != null)
+    {
+        biz_conversation biz = new biz_conversation();
+        biz.SetViewed(Model.conversation, Model.product_owner_id == CurrentUser.Inst().CurrentUserID);
+    }
+}
+@{
+    try
+    {
+        <div class="remove_desk_block">
+            <div class="container" style="max-width:600px;">
+                <div class="col-md-12 removepaddingsides" xstyle="padding-left:0px;">
+                    @{
+                        string dname = Model.type == TYPE.PRODUCT ? Model.conversation.product_dto.name : Model.type == TYPE.COLLECTION ? Model.conversation.collection_dto.name : Model.conversation.booth_dto.name;
+                    }
+                    <h2>@ViewBag.Title</h2>
+                    <h4>- @dname -</h4>
+                    <br />
+                    @if (Model.product_owner_id == current_user.person_id)
+                    {
+                        string text1 = Model.type == TYPE.PRODUCT ? "Rediger Vare" : Model.type == TYPE.COLLECTION ? "Rediger Sæt" : "Rediger Bod";
+                        if (Model.type == TYPE.PRODUCT)
+                        {
+                            <input type="button" value="@text1" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("EditProduct1", new { product_id = Model.id })'" />
+                        }
+                        else if (Model.type == TYPE.COLLECTION)
+                        {
+                            <input type="button" value="@text1" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("EditCollection1", new { collection_id = Model.id })'" />
+                        }
+                        else
+                        {
+                            <input type="button" value="@text1" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("EditBooth1", new { booth_id = Model.id })'" />
+                        }
+
+                    }
+                    @{
+                        string dtext3 = "Rediger Profil";
+                        <input type="button" value="@dtext3" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("UserProfile", null)'" />
+                    }
+
+                    @if (Model.type == TYPE.PRODUCT || Model.type == TYPE.COLLECTION)
+                    {
+                        string dtext2 = Model.type == TYPE.PRODUCT ? "Vis Vare" : "Vis Sæt";
+                        <input type="button" value="@dtext2" class="btn btn-default btn_green hintofgreen_bdr myfade" onclick="location.href='@Url.RouteUrl(Model.type == TYPE.PRODUCT ? "Product" : "Collection", new { id = Model.id })'" />
+                    }
+                    else
+                    {
+                        <input type="button" value="Vis Bod" class="btn btn-default btn_green hintofgreen_bdr myfade" onclick="location.href='@Url.RouteUrl("Booth", new { id = Model.id })'" />
+                    }
+                </div>
+                <hr />
+            </div>
+            <div class="container" style="padding-top:15px; max-width:600px;">
+                <div class="white_bdr darkgrey_bg removeborder-bottom navigation-top navigation-right">
+                    &nbsp;
+                </div>
+                <div class="col-md-12 white_bg darkgrey_bdr msg_div_header removepaddingsides">
+                    <br />
+                    <div class="xcol-md-12">
+                        <div class="col-md-4">
+                            @{
+                                string dpath = "";
+                                dpath = !string.IsNullOrEmpty(Model.other.profileimage) ? "/_content/images/profiles/" + Model.other.sysname + "/profile/" + Model.other.profileimage : "/_content/images/site/icons/athlete_bw.png";
+                                <a href="#"><img src="@dpath" alt="Sample Image" class="msg_img_header"></a>
+                            }
+                        </div>
+                        <div class="col-md-8">
+                            @{
+                                string dfirstname = Model.other.firstname != "" ? Model.other.firstname : Model.other.email;
+                                string dlastname = Model.other.lastname != "" ? Model.other.firstname : Model.other.email;
+
+                                <div class="xpr_div_profile_data_name">
+                                    @Html.Label("Navn") <br />
+                                    <span>
+                                        @Html.DisplayFor(n => dfirstname)
+                                        &nbsp;
+                                        @Html.DisplayFor(n => dlastname)
+                                    </span>
+                                </div>
+                                <br />
+                                biz_person biz2 = new biz_salesman();
+                                string ddescription = biz2.IsType<dto_salesman>(Model.other.GetType()) ? ((dto_salesman)Model.other).description : "";
+
+                                <div class="xpr_div_profile_description">
+                                    @Html.Label("Beskrivelse") <br />
+                                    <span>@ddescription</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="col-md-12 removepaddingsides">
+                    @using (Html.BeginRouteForm("Message", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(model => model.other_id);
+                        @Html.HiddenFor(model => model.product_owner_id);
+                        @Html.HiddenFor(model => model.other_email);
+                        @Html.HiddenFor(model => model.other_firstname);
+                        @Html.HiddenFor(model => model.id);
+                        @Html.HiddenFor(model => model.type);
+                        @Html.HiddenFor(model => model.conversation_id, new { id = "conversation_id", Value = Model.conversation_id });
+                        <div class="col-md-12 removepaddingsides">
+                            <div class="col-md-12 white_bg darkgrey_bdr xpanel xpanel-default msg_output" style="overflow-y: scroll; height:150px;">
+                                <div>
+                                    <span>[samtale]</span>
+                                </div>
+                                @if (Model.conversation.conversation_id != null)
+                                {
+                                    foreach (dto_comment comment in Model.conversation.comment_dtos.OrderByDescending(x => x.created_on))
+                                    {
+                                        string person = (comment.person_id == Model.product_owner_id) ? "Sælger" : "Køber";
+                                        <div>
+                                            <div class="col-md-2 removepaddingleft">
+                                                <span style="font-weight:bold;"> @person:&nbsp;</span>
+                                            </div>
+                                            <div class="col-md-10">@Html.DisplayWithBreaksFor(comment.text)</div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-12 removepaddingsides ">
+                            <div class="col-md-12 removepaddingsides">
+                                <div class="col-md-10 removepaddingleft" style="padding-top:8px">
+                                    <span class="bold">
+                                        skriv en besked..
+                                    </span>
+                                    @*<span style="float:right;">
+                                            @Html.CheckBox("enter_sendmessage") &nbsp;'enter' sender besked.
+                                        </span>*@
+                                    <br />
+                                    @{
+                                        string dplaceholder = "Skriv her..";
+                                        string dmsg = Model.message;
+                                        @*@Html.TextAreaFor(model => Model.message, new { @class = "msg_txt_comment form-control black_bdr width100", placeholder = placeholder, rows = "2" })*@
+                                        <textarea id="message" class="msg_txt_comment form-control black_bdr width100" cols="20" rows="2" name="message" placeholder="Skriv her..">@Model.message</textarea>
+                                    }
+                                </div>
+                                <div class="col-md-2 removepaddingright" style="padding-top:8px">
+                                    &nbsp;<br />
+                                    <button type="submit" id="submit" class="btn btn-default btn_green width100 myfade">
+                                        <i class="fas fa-reply"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="remove_tab_block">
+            <div class="container" style="max-width:600px;">
+                <div class="col-md-12 removepaddingsides" xstyle="padding-left:0px;">
+                    @{
+                        string tname = Model.type == TYPE.PRODUCT ? Model.conversation.product_dto.name : Model.type == TYPE.COLLECTION ? Model.conversation.collection_dto.name : Model.conversation.booth_dto.name;
+                    }
+                    <h2>@ViewBag.Title</h2>
+                    <h4>- @tname -</h4>
+                    <br />
+                    @if (Model.product_owner_id == current_user.person_id)
+                    {
+                        string ttext1 = Model.type == TYPE.PRODUCT ? "Rediger Vare" : Model.type == TYPE.COLLECTION ? "Rediger Sæt" : "Rediger Bod";
+                        if (Model.type == TYPE.PRODUCT)
+                        {
+                            <input type="button" value="@ttext1" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("EditProduct1", new { product_id = Model.id })'" />
+                        }
+                        else if (Model.type == TYPE.COLLECTION)
+                        {
+                            <input type="button" value="@ttext1" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("EditCollection1", new { collection_id = Model.id })'" />
+                        }
+                        else
+                        {
+                            <input type="button" value="@ttext1" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("EditBooth1", new { booth_id = Model.id })'" />
+                        }
+
+                    }
+                    @{
+                        string ttext3 = "Rediger Profil";
+                        <input type="button" value="@ttext3" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("UserProfile", null)'" />
+                    }
+
+                    @if (Model.type == TYPE.PRODUCT || Model.type == TYPE.COLLECTION)
+                    {
+                        string ttext2 = Model.type == TYPE.PRODUCT ? "Vis Vare" : "Vis Sæt";
+                        <input type="button" value="@ttext2" class="btn btn-default btn_green hintofgreen_bdr myfade" onclick="location.href='@Url.RouteUrl(Model.type == TYPE.PRODUCT ? "Product" : "Collection", new { id = Model.id })'" />
+                    }
+                    else
+                    {
+                        <input type="button" value="Vis Bod" class="btn btn-default btn_green hintofgreen_bdr myfade" onclick="location.href='@Url.RouteUrl("Booth", new { id = Model.id })'" />
+                    }
+                </div>
+                <hr />
+            </div>
+            <div class="container" style="padding-top:15px; max-width:600px;">
+                <div class="white_bdr darkgrey_bg removeborder-bottom navigation-top navigation-right">
+                    &nbsp;
+                </div>
+                <div class="col-md-12 white_bg darkgrey_bdr msg_div_header removepaddingsides">
+                    <br />
+                    <div class="xcol-md-12">
+                        <div class="col-md-4">
+                            @{
+                                string tpath = "";
+                                tpath = !string.IsNullOrEmpty(Model.other.profileimage) ? "/_content/images/profiles/" + Model.other.sysname + "/profile/" + Model.other.profileimage : "/_content/images/site/icons/athlete_bw.png";
+                                <a href="#"><img src="@tpath" alt="Sample Image" class="msg_img_header"></a>
+                            }
+                        </div>
+                        <div class="col-md-8">
+                            @{
+                                string tfirstname = Model.other.firstname != "" ? Model.other.firstname : Model.other.email;
+                                string tlastname = Model.other.lastname != "" ? Model.other.firstname : Model.other.email;
+
+                                <div class="xpr_div_profile_data_name">
+                                    @Html.Label("Navn") <br />
+                                    <span>
+                                        @Html.DisplayFor(n => tfirstname)
+                                        &nbsp;
+                                        @Html.DisplayFor(n => tlastname)
+                                    </span>
+                                </div>
+                                <br />
+                                biz_person biz3 = new biz_salesman();
+                                string tdescription = biz3.IsType<dto_salesman>(Model.other.GetType()) ? ((dto_salesman)Model.other).description : "";
+
+                                <div class="xpr_div_profile_description">
+                                    @Html.Label("Beskrivelse") <br />
+                                    <span>@tdescription</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="col-md-12 removepaddingsides">
+                    @using (Html.BeginRouteForm("Message", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(model => model.other_id);
+                        @Html.HiddenFor(model => model.product_owner_id);
+                        @Html.HiddenFor(model => model.other_email);
+                        @Html.HiddenFor(model => model.other_firstname);
+                        @Html.HiddenFor(model => model.id);
+                        @Html.HiddenFor(model => model.type);
+                        @Html.HiddenFor(model => model.conversation_id, new { id = "conversation_id", Value = Model.conversation_id });
+                        <div class="col-md-12 removepaddingsides">
+                            <div class="col-md-12 white_bg darkgrey_bdr xpanel xpanel-default msg_output" style="overflow-y: scroll; height:150px;">
+                                <div>
+                                    <span>[samtale]</span>
+                                </div>
+                                @if (Model.conversation.conversation_id != null)
+                                {
+                                    foreach (dto_comment comment in Model.conversation.comment_dtos.OrderByDescending(x => x.created_on))
+                                    {
+                                        string person = (comment.person_id == Model.product_owner_id) ? "Sælger" : "Køber";
+                                        <div>
+                                            <div class="col-md-2 removepaddingleft">
+                                                <span style="font-weight:bold;"> @person:&nbsp;</span>
+                                            </div>
+                                            <div class="col-md-10">@Html.DisplayWithBreaksFor(comment.text)</div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-12 removepaddingsides ">
+                            <div class="col-md-12 removepaddingsides">
+                                <div class="col-md-10 removepaddingleft" style="padding-top:8px">
+                                    <span class="bold">
+                                        skriv en besked..
+                                    </span>
+                                    @*<span style="float:right;">
+                                            @Html.CheckBox("enter_sendmessage") &nbsp;'enter' sender besked.
+                                        </span>*@
+                                    <br />
+                                    @{
+                                        string tplaceholder = "Skriv her..";
+                                        string tmsg = Model.message;
+                                        @*@Html.TextAreaFor(model => Model.message, new { @class = "msg_txt_comment form-control black_bdr width100", placeholder = placeholder, rows = "2" })*@
+                                        <textarea id="message" class="msg_txt_comment form-control black_bdr width100" cols="20" rows="2" name="message" placeholder="Skriv her..">@Model.message</textarea>
+                                    }
+                                </div>
+                                <div class="col-md-2 removepaddingright" style="padding-top:8px">
+                                    &nbsp;<br />
+                                    <button type="submit" id="submit" class="btn btn-default btn_green width100 myfade">
+                                        <i class="fas fa-reply"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="remove_phone_block ">
+
+            <div class="container" style="max-width:600px;">
+                <div class="col-md-12 removepaddingsides" xstyle="padding-left:0px;">
+                    @{
+                        string mname = Model.type == TYPE.PRODUCT ? Model.conversation.product_dto.name : Model.type == TYPE.COLLECTION ? Model.conversation.collection_dto.name : Model.conversation.booth_dto.name;
+                    }
+                    <h2>@ViewBag.Title</h2>
+                    <h4>- @mname -</h4>
+                    <br />
+                    @if (Model.product_owner_id == current_user.person_id)
+                    {
+                        string mtext1 = Model.type == TYPE.PRODUCT ? "Rediger Vare" : Model.type == TYPE.COLLECTION ? "Rediger Sæt" : "Rediger Bod";
+                        if (Model.type == TYPE.PRODUCT)
+                        {
+                            <input type="button" value="@mtext1" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("EditProduct1", new { product_id = Model.id })'" />
+                        }
+                        else if (Model.type == TYPE.COLLECTION)
+                        {
+                            <input type="button" value="@mtext1" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("EditCollection1", new { collection_id = Model.id })'" />
+                        }
+                        else
+                        {
+                            <input type="button" value="@mtext1" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("EditBooth1", new { booth_id = Model.id })'" />
+                        }
+
+                    }
+                    @{
+                        string mtext3 = "Rediger Profil";
+                        <input type="button" value="@mtext3" class="btn btn-default btn_green myfade" onclick="location.href='@Url.RouteUrl("UserProfile", null)'" />
+                    }
+
+                    @if (Model.type == TYPE.PRODUCT || Model.type == TYPE.COLLECTION)
+                    {
+                        string mtext2 = Model.type == TYPE.PRODUCT ? "Vis Vare" : "Vis Sæt";
+                        <input type="button" value="@mtext2" class="btn btn-default btn_green hintofgreen_bdr myfade" onclick="location.href='@Url.RouteUrl(Model.type == TYPE.PRODUCT ? "Product" : "Collection", new { id = Model.id })'" />
+                    }
+                    else
+                    {
+                        <input type="button" value="Vis Bod" class="btn btn-default btn_green hintofgreen_bdr myfade" onclick="location.href='@Url.RouteUrl("Booth", new { id = Model.id })'" />
+                    }
+                </div>
+                <hr />
+            </div>
+            <div class="container" style="padding-top:15px; max-width:600px;">
+                <div class="white_bdr darkgrey_bg removeborder-bottom navigation-top navigation-right">
+                    &nbsp;
+                </div>
+                <div class="col-md-12 white_bg darkgrey_bdr msg_div_header removepaddingsides">
+                    <br />
+                    <div class="xcol-md-12">
+                        <div class="col-md-4">
+                            @{
+                                string mpath = "";
+                                mpath = !string.IsNullOrEmpty(Model.other.profileimage) ? "/_content/images/profiles/" + Model.other.sysname + "/profile/" + Model.other.profileimage : "/_content/images/site/icons/athlete_bw.png";
+                                <a href="#"><img src="@mpath" alt="Sample Image" class="msg_img_header"></a>
+                            }
+                        </div>
+                        <div class="col-md-8">
+                            @{
+                                string mfirstname = Model.other.firstname != "" ? Model.other.firstname : Model.other.email;
+                                string mlastname = Model.other.lastname != "" ? Model.other.firstname : Model.other.email;
+
+                                <div class="xpr_div_profile_data_name">
+                                    @Html.Label("Navn") <br />
+                                    <span>
+                                        @Html.DisplayFor(n => mfirstname)
+                                        &nbsp;
+                                        @Html.DisplayFor(n => mlastname)
+                                    </span>
+                                </div>
+                                <br />
+                                biz_person biz4 = new biz_salesman();
+                                string mdescription = biz4.IsType<dto_salesman>(Model.other.GetType()) ? ((dto_salesman)Model.other).description : "";
+
+                                <div class="xpr_div_profile_description">
+                                    @Html.Label("Beskrivelse") <br />
+                                    <span>@mdescription</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="col-md-12 removepaddingsides">
+                    @using (Html.BeginRouteForm("Message", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(model => model.other_id);
+                        @Html.HiddenFor(model => model.product_owner_id);
+                        @Html.HiddenFor(model => model.other_email);
+                        @Html.HiddenFor(model => model.other_firstname);
+                        @Html.HiddenFor(model => model.id);
+                        @Html.HiddenFor(model => model.type);
+                        @Html.HiddenFor(model => model.conversation_id, new { id = "conversation_id", Value = Model.conversation_id });
+                        <div class="col-md-12 removepaddingsides">
+                            <div class="col-md-12 white_bg darkgrey_bdr xpanel xpanel-default msg_output" style="overflow-y: scroll; height:150px;">
+                                <div>
+                                    <span>[samtale]</span>
+                                </div>
+                                @if (Model.conversation.conversation_id != null)
+                                {
+                                    foreach (dto_comment comment in Model.conversation.comment_dtos.OrderByDescending(x=>x.created_on))
+                                    {
+                                        string person = (comment.person_id == Model.product_owner_id) ? "Sælger" : "Køber";
+                                        <div>
+                                            <div class="col-md-2 removepaddingleft">
+                                                <span style="font-weight:bold;"> @person:&nbsp;</span>
+                                            </div>
+                                            <div class="col-md-10">@Html.DisplayWithBreaksFor(comment.text)</div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-12 removepaddingsides ">
+                            <div class="col-md-12 removepaddingsides">
+                                <div class="col-md-10 removepaddingsides" style="padding-top:8px">
+                                    <span class="bold">
+                                        skriv en besked..
+                                    </span>
+                                    @*<span style="float:right;">
+                                            @Html.CheckBox("enter_sendmessage") &nbsp;'enter' sender besked.
+                                        </span>*@
+                                    <br />
+                                    @{
+                                        string mplaceholder2 = "Skriv her..";
+                                        string mmsg = Model.message;
+                                        @*@Html.TextAreaFor(model => Model.message, new { @class = "msg_txt_comment form-control black_bdr width100", placeholder = placeholder, rows = "2" })*@
+                                        <textarea id="message" class="msg_txt_comment form-control black_bdr width100" cols="20" rows="2" name="message" placeholder="Skriv her..">@Model.message</textarea>
+                                    }
+                                </div>
+                                <div class="col-md-2 removepaddingsides" style="padding-top:8px">
+                                    &nbsp;<br />
+                                    <button type="submit" id="submit" class="btn btn-default btn_green width100 myfade">
+                                        <i class="fas fa-reply"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            string s = ErrorHelper.HandleError(ERROR.CONDITIONS, e);
+                                            string subject = "Fejl i front, MessageView(MOB)";
+                                            string body = s;
+                                            AdminHelper.Notification.Run(SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), SettingsHelper.Basic.EMAIL_MAIL(), subject, body);
+                                        }
+
+}
+<script>
+    window.onunload = function () { };
+    $(document).ready(function () {
+        $('.z-myalert').hide();
+        //$("#msg_output").scrollTop(999999);
+        var d = $('.msg_output');
+        d.scrollTop(d.prop("scrollHeight"));
+        //var objDiv = document.getElementById("msg_output");
+        //objDiv.scrollTop = 999999;
+        //$('.msg_txt_comment').keydown(function (e) {
+        //    if ((e.keyCode == 13) && $('#enter_sendmessage').prop('checked')) {
+        //        e.preventDefault();
+        //        return false;
+        //    }
+        //});
+        //$(window).keypress(function (e) {
+        //    if ((e.which == 13)  && !e.shiftKey) {
+        //        //$('.loading').fadeIn(200);
+        //        //$(this).closest("form").submit();
+        //        if ($('msg_txt_comment').val() != '') {
+        //            alert('submit');
+        //            $('form').submit();
+        //            e.preventDefault();
+        //            return false;
+        //        }
+        //        //return false;
+        //    }
+        //});
+
+    });
+</script>

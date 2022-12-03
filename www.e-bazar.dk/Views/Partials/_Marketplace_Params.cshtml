@@ -1,0 +1,407 @@
+﻿@using www.e_bazar.dk.Models.DTOs
+
+
+<div class="remove_desk_block ">
+    @{
+        string dcata_sel = ViewBag.CatA;
+        string dcatb_sel = ViewBag.CatB;
+        
+        Dictionary<string, Dictionary<string, List<dto_params>>> dcat_a = ViewBag.Subs as Dictionary<string, Dictionary<string, List<dto_params>>>;
+        foreach (KeyValuePair<string, Dictionary<string, List<dto_params>>> da in dcat_a)
+        {
+            string durl_param = ViewBag.Param != null ? (string)ViewBag.Param as string : "";
+            string dcatb = "";
+            string dcatb_oe = "";
+            foreach (KeyValuePair<string, List<dto_params>> db in da.Value)
+            {
+                string dspans_first = "<table><tr>";
+                string dspans_sec = "<table><tr>";
+                string dsels = "";
+                int dcounter_span_single = 0;
+                int dcounter_span_first = 0;
+                int dcounter_span_sec = 0;
+                
+                dcatb = db.Key;
+                dcatb_oe = SecurityHelper.Format(db.Key, "_", false);
+                bool dcheck = ((string)Model.isset_top) != "alle" ? (string)Model.isset_bottom == SecurityHelper.Format(dcatb, "_", true) : false;
+                
+                string dstyle = "l-mp-param1";
+                <div class="params_content z-bottom-left z-z-index-infinity-high @dstyle" data-cata="@da.Key" data-catb="@dcatb">
+                    @{
+                        int dcounter_chk = 0;
+                        string[] dcheck2 = durl_param.Split('_').ToArray();
+                        List<dto_params> dlist = db.Value.OrderBy(x => x.prio).OrderByDescending(x => x.type).ToList();
+                        foreach (dto_params dpar in dlist)
+                        {
+                            if (dpar.type == "M" || dpar.type == "MS")
+                            {
+                                int dcounter_sels = 0;
+                                dsels += "<table><tr><td valign=\"top\"><span class=\"l-mp-param2\">" + dpar.name.ToUpper() + ":&nbsp;&nbsp;&nbsp;</span></td><td>";
+                                foreach (dto_value dv in dpar.values_daos)
+                                {
+                                    string db_check = "";
+                                    if (dcatb_sel == dcatb && dcounter_chk < dcheck2.Length && dpar.values_daos.Count() == dcheck2[dcounter_chk].Split(':').Count())
+                                    {
+                                        string vals = dcheck2[dcounter_chk];
+                                        if (dcatb_sel == dcatb && vals.Split(':')[dcounter_sels] == "1")
+                                        {
+                                            db_check = "checked=\"checked\"";
+                                        }
+                                    }
+                                    dsels += "<span class=\"l-mp-param3\">";
+                                    dsels += "<input type=\"checkbox\" onclick=\"setupSearch();actionFunc();\" class=\"myfade m param_chk " + @dcatb_oe + "\"" + db_check + " /><span class=\"z-color-white-1\">&nbsp;&nbsp;" + dv.value + "</span>";
+                                    dsels += "</span>";
+                                    dcounter_sels++;
+                                }
+                                dsels += "</td></tr></table><br />";
+                                dcounter_chk++;
+                            }
+                            else if (dpar.category_dao.is_parent && dpar.type == "S")
+                            {
+                                string db_check = "";
+                                if (dcatb_sel == dcatb && dcheck2.Where(s2 => !s2.Contains(':')).Count() > 0 && dcheck2[dcounter_span_first] == "1")
+                                {
+                                    db_check = "checked=\"checked\"";
+                                }
+                                if (dcounter_span_first % 6 == 0)
+                                {
+                                    dspans_first += "</tr><tr>";
+                                }
+                                dspans_first += "<td><input type=\"checkbox\" onclick=\"setupSearch();actionFunc();\" class=\"myfade s param_chk " + @dcatb_oe + "\"" + db_check + " /><span class=\"z-color-white-1\">&nbsp;&nbsp;" + dpar.name + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td>";
+                                dcounter_chk++;
+                                dcounter_span_first++;
+                                dcounter_span_single++;
+                            }
+                            else if (!dpar.category_dao.is_parent && dpar.type == "S")
+                            {
+                                List<dto_params> dl = dlist.Where(x => x.category_dao.name == da.Key && x.category_dao.is_parent && x.type == "S").ToList();
+                                int dcount = dl.Count();
+                                string db_check = "";
+                                if (dcatb_sel == dcatb && dcheck2.Where(s2 => !s2.Contains(':')).Count() > 0 && dcheck2[dcount + dcounter_span_sec] == "1")
+                                {
+                                    db_check = "checked=\"checked\"";
+                                }
+                                if (dcounter_span_sec % 6 == 0)
+                                {
+                                    dspans_sec += "</tr><tr>";
+                                }
+                                dspans_sec += "<td><input type=\"checkbox\" onclick=\"setupSearch();actionFunc();\" class=\"myfade s param_chk " + @dcatb_oe + "\"" + db_check + " /><span class=\"z-color-white-1\">&nbsp;&nbsp;" + dpar.name + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td>";
+                                dcounter_chk++;
+                                dcounter_span_sec++;
+                                dcounter_span_single++;
+                            }
+                        }
+                        dspans_first += "</tr></table>";
+                        dspans_sec += "</tr></table>";
+                        
+                    dspans_first = dspans_first == "<table><tr></tr></table>" ? "" : dspans_first;
+                    dspans_sec = dspans_sec == "<table><tr></tr></table>" ? "" : dspans_sec;
+
+
+                        @Html.Raw(dspans_first);
+                        @Html.Raw(dspans_sec);
+                        @Html.Raw(dsels);                        
+                    }
+                    <br />
+
+                    <a href="/#" class="z-color-white-1 z-bold" onclick="setupSearch();actionFunc(); return false;">udfør søgning</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="/#" class="z-color-white-1 bold" onclick="params_hide(); return false;">skjul</a>
+                </div>
+                            }
+                        }
+    }
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="remove_tab_block ">
+    @{
+        string tcata_sel = ViewBag.a_sel;
+        string tcatb_sel = ViewBag.b_sel;
+
+        Dictionary<string, Dictionary<string, List<dto_params>>> tcat_a = ViewBag.Subs as Dictionary<string, Dictionary<string, List<dto_params>>>;
+        foreach (KeyValuePair<string, Dictionary<string, List<dto_params>>> ta in tcat_a)
+        {
+            string turl_param = ViewBag.Param != null ? (string)ViewBag.Param as string : "";
+            string tcatb = "";
+            string tcatb_oe = "";
+            foreach (KeyValuePair<string, List<dto_params>> tb in ta.Value)
+            {
+                string tspans_first = "<table><tr>";
+                string tspans_sec = "<table><tr>";
+                string tsels = "";
+                int tcounter_span_single = 0;
+                int tcounter_span_first = 0;
+                int tcounter_span_sec = 0;
+
+                tcatb = tb.Key;
+                tcatb_oe = SecurityHelper.Format(tb.Key, "_", false);
+                bool tcheck = ((string)Model.isset_top) != "alle" ? (string)Model.isset_bottom == SecurityHelper.Format(tcatb, "_", true) : false;
+
+                string tstyle = "l-mp-param1";
+                <div class="params_content z-bottom-left z-z-index-infinity-high @tstyle" data-cata="@ta.Key" data-catb="@tcatb">
+                    @{
+                        int tcounter_chk = 0;
+                        string[] tcheck2 = turl_param.Split('_').ToArray();
+                        List<dto_params> tlist = tb.Value.OrderBy(x => x.prio).OrderByDescending(x => x.type).ToList();
+                        foreach (dto_params tpar in tlist)
+                        {
+                            if (tpar.type == "M" || tpar.type == "MS")
+                            {
+                                int tcounter_sels = 0;
+                                tsels += "<table><tr><td valign=\"top\"><span class=\"l-mp-param2\">" + tpar.name.ToUpper() + ":&nbsp;&nbsp;&nbsp;</span></td><td>";
+                                foreach (dto_value tv in tpar.values_daos)
+                                {
+                                    string tb_check = "";
+                                    if (tcatb_sel == tcatb && tcounter_chk < tcheck2.Length && tpar.values_daos.Count() == tcheck2[tcounter_chk].Split(':').Count())
+                                    {
+                                        string vals = tcheck2[tcounter_chk];
+                                        if (tcatb_sel == tcatb && vals.Split(':')[tcounter_sels] == "1")
+                                        {
+                                            tb_check = "checked=\"checked\"";
+                                        }
+                                    }
+                                    tsels += "<span class=\"l-mp-param3\">";
+                                    tsels += "<input type=\"checkbox\" xonclick=\"setupSearch();actionFunc();\" class=\"myfade m param_chk " + @tcatb_oe + "\"" + tb_check + " /><span class=\"z-color-white-1\">&nbsp;&nbsp;" + tv.value + "</span>";
+                                    tsels += "</span>";
+                                    tcounter_sels++;
+                                }
+                                tsels += "</td></tr></table><br />";
+                                tcounter_chk++;
+                            }
+                            else if (tpar.category_dao.is_parent && tpar.type == "S")
+                            {
+                                string tb_check = "";
+                                if (tcatb_sel == tcatb && tcheck2.Where(s2 => !s2.Contains(':')).Count() > 0 && tcheck2[tcounter_span_first] == "1")
+                                {
+                                    tb_check = "checked=\"checked\"";
+                                }
+                                if (tcounter_span_first % 6 == 0)
+                                {
+                                    tspans_first += "</tr><tr>";
+                                }
+                                tspans_first += "<td><input type=\"checkbox\" xonclick=\"setupSearch();actionFunc();\" class=\"myfade s param_chk " + @tcatb_oe + "\"" + tb_check + " /><span class=\"z-color-white-1\">&nbsp;&nbsp;" + tpar.name + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td>";
+                                tcounter_chk++;
+                                tcounter_span_first++;
+                                tcounter_span_single++;
+                            }
+                            else if (!tpar.category_dao.is_parent && tpar.type == "S")
+                            {
+                                List<dto_params> tl = tlist.Where(x => x.category_dao.name == ta.Key && x.category_dao.is_parent && x.type == "S").ToList();
+                                int tcount = tl.Count();
+                                string tb_check = "";
+                                if (tcatb_sel == tcatb && tcheck2.Where(s2 => !s2.Contains(':')).Count() > 0 && tcheck2[tcount + tcounter_span_sec] == "1")
+                                {
+                                    tb_check = "checked=\"checked\"";
+                                }
+                                if (tcounter_span_sec % 6 == 0)
+                                {
+                                    tspans_sec += "</tr><tr>";
+                                }
+                                tspans_sec += "<td><input type=\"checkbox\" xonclick=\"setupSearch();actionFunc();\" class=\"myfade s param_chk " + @tcatb_oe + "\"" + tb_check + " /><span class=\"z-color-white-1\">&nbsp;&nbsp;" + tpar.name + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td>";
+                                tcounter_chk++;
+                                tcounter_span_sec++;
+                                tcounter_span_single++;
+                            }
+                        }
+                        tspans_first += "</tr></table>";
+                        tspans_sec += "</tr></table>";
+
+                        tspans_first = tspans_first == "<table><tr></tr></table>" ? "" : tspans_first;
+                        tspans_sec = tspans_sec == "<table><tr></tr></table>" ? "" : tspans_sec;
+
+
+                        @Html.Raw(tspans_first);
+                        @Html.Raw(tspans_sec);
+                        @Html.Raw(tsels);
+                    }
+                    <br />
+
+                    <a href="/#" class="z-color-white-1 z-bold" onclick="setupSearch();actionFunc(); return false;">udfør søgning</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="/#" class="z-color-white-1 bold" onclick="params_hide(); return false;">skjul</a>
+                </div>
+            }
+        }
+    }
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="remove_phone_block ">
+
+
+
+    @{
+
+        string mcata_sel2 = ViewBag.a_sel;
+        string mcatb_sel2 = ViewBag.b_sel;
+
+        Dictionary<string, Dictionary<string, List<dto_params>>> mcat_a2 = ViewBag.Subs as Dictionary<string, Dictionary<string, List<dto_params>>>;
+        foreach (KeyValuePair<string, Dictionary<string, List<dto_params>>> ma in mcat_a2)
+        {
+            string murl_param = ViewBag.Param != null ? (string)ViewBag.Param as string : "";
+            string mcatb = "";
+            string mcatb_oe = "";
+            foreach (KeyValuePair<string, List<dto_params>> mb in ma.Value)
+            {
+                string mspans_first = "<table><tr>";
+                string mspans_sec = "<table><tr>";
+                string msels = "";
+                int mcounter_span_single = 0;
+                int mcounter_span_first = 0;
+                int mcounter_span_sec = 0;
+
+                mcatb = mb.Key;
+                mcatb_oe = SecurityHelper.Format(mb.Key, "_", false);
+                bool mcheck = ((string)Model.isset_top) != "alle" ? (string)Model.isset_bottom == SecurityHelper.Format(mcatb, "_", true) : false;
+
+                string mstyle = "m-l-mp-param1";
+        <div class="params_content @mstyle" data-cata="@ma.Key" data-catb="@mcatb">
+            <a href="/#" class="z-color-white-1" onclick="setupSearch();actionFunc(); return false;">udfør søgning</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="/#" class="z-color-white-1" onclick="params_hide(); return false;">skjul</a>
+            <br />
+            <br />
+            @{
+                int mcounter_chk = 0;
+                string[] mcheck2 = murl_param.Split('_').ToArray();
+                List<dto_params> mlist = mb.Value.OrderBy(x => x.prio).OrderByDescending(x => x.type).ToList();
+                foreach (dto_params mpar in mlist)
+                {
+                    if (mpar.type == "M" || mpar.type == "MS")
+                    {
+                        int mcounter_sels = 0;
+                        msels += "<table><tr><td colspan=\"2\" valign=\"top\"><span class=\"m-l-mp-param2\">" + mpar.name.ToUpper() + ":&nbsp;&nbsp;&nbsp;</span></td></tr><tr><td>";
+                        foreach (dto_value mv in mpar.values_daos)
+                        {
+                            string mb_check = "";
+                            if (mcatb_sel2 == mcatb && mcounter_chk < mcheck2.Length && mpar.values_daos.Count() == mcheck2[mcounter_chk].Split(':').Count())
+                            {
+                                string mvals = mcheck2[mcounter_chk];
+                                if (mcatb_sel2 == mcatb && mvals.Split(':')[mcounter_sels] == "1")
+                                {
+                                    mb_check = "checked=\"checked\"";
+                                }
+                            }
+                            msels += "<span class=\"m-l-mp-param3\">";
+                            msels += "<input type=\"checkbox\" class=\"xmyfade m param_chk " + @mcatb_oe + "\"" + mb_check + " /><span class=\"z-color-white-1\">&nbsp;&nbsp;" + mv.value + "</span>";
+                            msels += "</span>";
+                            mcounter_sels++;
+                        }
+                        msels += "</td></tr></table><br />";
+                        mcounter_chk++;
+                    }
+                    else if (mpar.category_dao.is_parent && mpar.type == "S")
+                    {
+                        string mb_check = "";
+                        if (mcatb_sel2 == mcatb && mcheck2.Where(s2 => !s2.Contains(':')).Count() > 0 && mcheck2[mcounter_span_first] == "1")
+                        {
+                            mb_check = "checked=\"checked\"";
+                        }
+                        if (mcounter_span_first % 6 == 0)
+                        {
+                            mspans_first += "</tr><tr>";
+                        }
+                        mspans_first += "<td><input type=\"checkbox\" class=\"xmyfade s param_chk " + @mcatb_oe + "\"" + mb_check + " /><span class=\"z-color-white-1\">&nbsp;&nbsp;" + mpar.name + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td>";
+                        mcounter_chk++;
+                        mcounter_span_first++;
+                        mcounter_span_single++;
+                    }
+                    else if (!mpar.category_dao.is_parent && mpar.type == "S")
+                    {
+                        List<dto_params> ml = mlist.Where(x => x.category_dao.name == ma.Key && x.category_dao.is_parent && x.type == "S").ToList();
+                        int mcount = ml.Count();
+                        string mb_check = "";
+                        if (mcatb_sel2 == mcatb && mcheck2.Where(s2 => !s2.Contains(':')).Count() > 0 && mcheck2[mcount + mcounter_span_sec] == "1")
+                        {
+                            mb_check = "checked=\"checked\"";
+                        }
+                        if (mcounter_span_sec % 6 == 0)
+                        {
+                            mspans_sec += "</tr><tr>";
+                        }
+                        mspans_sec += "<td><input type=\"checkbox\" class=\"xmyfade s param_chk " + @mcatb_oe + "\"" + mb_check + " /><span class=\"z-color-white-1\">&nbsp;&nbsp;" + mpar.name + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td>";
+                        mcounter_chk++;
+                        mcounter_span_sec++;
+                        mcounter_span_single++;
+                    }
+                }
+                mspans_first += "</tr></table>";
+                mspans_sec += "</tr></table>";
+                
+                mspans_first = mspans_first == "<table><tr></tr></table>" ? "" : mspans_first;
+                mspans_sec = mspans_sec == "<table><tr></tr></table>" ? "" : mspans_sec;
+
+
+                @Html.Raw(mspans_first);
+                @Html.Raw(mspans_sec);
+                @Html.Raw(msels);
+                
+            }
+            <br />
+
+            <a href="/#" class="z-color-white-1" onclick="setupSearch();actionFunc(); return false;">udfør søgning</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="/#" class="z-color-white-1" onclick="params_hide(); return false;">skjul</a>
+        </div>
+                                }
+                            }
+                        }
+
+</div>
+        

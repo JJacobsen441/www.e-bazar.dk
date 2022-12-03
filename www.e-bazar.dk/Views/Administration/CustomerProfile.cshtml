@@ -1,0 +1,680 @@
+﻿
+@model www.e_bazar.dk.Models.DTOs.col_userprofile
+
+@{
+    ViewBag.Title = "Administrer Profil";
+}
+
+@{
+
+    try
+    {
+        <div class="xhide_phone remove_desk_block ">
+            <div class="container">
+                <div class="col-xs-12" xstyle="padding-left:0px;">
+                    <h2>Administrer Profil</h2>
+                    <br />
+                    @*<input type="submit" value="Gem" class="btn btn-default green_bg lightgreen_bdr white adm_button_form_submit" />*@
+                </div>
+            </div>
+            <hr />
+            <div class="container" style="overflow:hidden;">
+                <div class="white_bdr darkgrey_bg removeborder-bottom navigation-top navigation-right">
+                    &nbsp;
+                </div>
+                @{
+
+                    bool dviewed = true;
+                    foreach (dto_conversation conn in Model.conversations_dto.own)
+                    {
+                        biz_conversation biz = new biz_conversation();
+                        if (!biz.Viewed(conn, false))
+                        {
+                            dviewed = false;
+                        }
+                    }
+                    <ul class="nav nav-tabs white_bdr darkgrey_bg">
+                        <li><a class="black" href="#stamdata" data-toggle="tab">Stamdata</a></li>
+                        <li>
+                            <a class="black" href="#beskeder" id="besked" data-toggle="tab">
+                                @if (!dviewed)
+                                {<i class="fas fa-envelope xtop-right realred"></i>}Beskeder
+                            </a>
+                        </li>
+                        <li><a class="black" href="#favoriter" data-toggle="tab">Favoriter</a></li>
+                        <li><a class="black" href="#følger" data-toggle="tab">Følger</a></li>
+                        <li><a href="#feedback" class="black" data-toggle="tab">Feedback</a></li>
+                    </ul>
+                    <div class="tab-content" style="overflow:hidden;">
+                        <div class="tab-pane active white_bg darkgrey_bdr" style="overflow:hidden;" id="stamdata">
+                            @using (Html.BeginRouteForm("CustomerProfile", FormMethod.Post, new { @id = "test", @class = "main_form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(model => model.customer_dto.person_id, new { @class = "adm_hidden_profileid" });
+                                @Html.HiddenFor(model => model.customer_dto.profileimage, new { @class = "adm_hidden_profileimage" });
+                                @Html.HiddenFor(model => model.customer_dto.sysname);
+                                @Html.HiddenFor(model => model.customer_dto.email);
+                                <div class="col-xs-4 form-horizontal" xstyle="padding-left:0px;">
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            @Html.LabelFor(model => model.customer_dto.profileimage, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-xs-12">
+                                            <div class="container_overlay">
+                                                @if (!string.IsNullOrEmpty(Model.customer_dto.profileimage))
+                                                {
+                                                    var image_path = "/_content/images/profiles/" + Model.customer_dto.sysname + "/profile/" + Model.customer_dto.profileimage;
+                                                    <img class="adm_img_profileimage" src="@image_path" style="background-color:#EEEEEE" alt="Sample Image" />
+                                                    <input type="hidden" class="adm_hidden_images_imagename" value="@Model.customer_dto.profileimage">
+                                                    <div class="overlay">
+                                                        <a href="#" class="icon" title="User Profile">
+                                                            <i class="fa fa-window-close fa-2x" onclick="removeImage();"></i>
+                                                        </a>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    var image_path = "/_content/images/site/icons/athlete_bw.png";
+                                                    <img class="adm_img_profileimage" src="@image_path" style="background-color:#EEEEEE" alt="Sample Image" />
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12">
+                                            <br />
+                                            <input type="file" name="profile" class="adm_input_profileimage btn btn-default adm_control" />
+                                            <span class="profile_fileupload"></span><br /><span class="profile_uploading"></span>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                </div>
+                                <div class="col-xs-4 form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            @Html.LabelFor(model => model.customer_dto.firstname, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-xs-12">
+                                            @{
+                                                string css = Model.customer_dto.firstname == "" ? " realred_bdr" : "";
+                                                string placeholder = "..hvis ikke udfyldt, vil email blive brugt på siden";
+                                            }
+                                            @Html.EditorFor(model => model.customer_dto.firstname, new { htmlAttributes = new { @class = "adm_input_firstname form-control darkgrey_bdr adm_control" + css, placeholder = placeholder } })
+                                            @Html.ValidationMessageFor(model => model.customer_dto.firstname, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            @Html.LabelFor(model => model.customer_dto.lastname, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-xs-12">
+                                            @{
+                                                css = Model.customer_dto.lastname == "" ? " realred_bdr" : "";
+                                            }
+                                            @Html.EditorFor(model => model.customer_dto.lastname, new { htmlAttributes = new { @class = "adm_input_lastname form-control darkgrey_bdr adm_control" + css } })
+                                            @Html.ValidationMessageFor(model => model.customer_dto.lastname, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            @Html.LabelFor(model => model.customer_dto.email, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-xs-12">
+                                            @{
+                                                css = Model.customer_dto.email == "" ? " realred_bdr" : "";
+                                            }
+                                            @Html.DisplayFor(model => model.customer_dto.email, new { htmlAttributes = new { @class = "adm_input_email form-control darkgrey_bdr adm_control" + css } })
+                                            @Html.ValidationMessageFor(model => model.customer_dto.email, "", new { @class = "text-danger" })
+                                        </div>
+
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="beskeder">
+                            @Html.Partial("~/Views/Partials/_Profile_Conversations.cshtml", @Model.conversations_dto)
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="favoriter">
+                            @Html.Partial("~/Views/Partials/_Profile_Favorites.cshtml", @Model)
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="følger">
+                            @Html.Partial("~/Views/Partials/_Profile_Following.cshtml", @Model)
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="feedback">
+                            @Html.Partial("~/Views/Partials/_Profile_Feedback.cshtml", new col_email())
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="xhide_phone remove_tab_block ">
+            <div class="container">
+                <div class="col-xs-12" xstyle="padding-left:0px;">
+                    <h2>Administrer Profil</h2>
+                    <br />
+                    @*<input type="submit" value="Gem" class="btn btn-default green_bg lightgreen_bdr white adm_button_form_submit" />*@
+                </div>
+            </div>
+            <hr />
+            <div class="container" style="overflow:hidden;">
+                <div class="white_bdr darkgrey_bg removeborder-bottom navigation-top navigation-right">
+                    &nbsp;
+                </div>
+                @{
+
+                    bool tviewed = true;
+                    foreach (dto_conversation conn in Model.conversations_dto.own)
+                    {
+                        biz_conversation biz2 = new biz_conversation();
+                        if (!biz2.Viewed(conn, false))
+                        {
+                            tviewed = false;
+                        }
+                    }
+                    <ul class="nav nav-tabs white_bdr darkgrey_bg">
+                        <li><a class="black" href="#stamdata" data-toggle="tab">Stamdata</a></li>
+                        <li>
+                            <a class="black" href="#beskeder" id="besked" data-toggle="tab">
+                                @if (!tviewed)
+                                {<i class="fas fa-envelope xtop-right realred"></i>}Beskeder
+                            </a>
+                        </li>
+                        <li><a class="black" href="#favoriter" data-toggle="tab">Favoriter</a></li>
+                        <li><a class="black" href="#følger" data-toggle="tab">Følger</a></li>
+                        <li><a href="#feedback" class="black" data-toggle="tab">Feedback</a></li>
+                    </ul>
+                    <div class="tab-content" style="overflow:hidden;">
+                        <div class="tab-pane active white_bg darkgrey_bdr" style="overflow:hidden;" id="stamdata">
+                            @using (Html.BeginRouteForm("CustomerProfile", FormMethod.Post, new { @id = "test", @class = "main_form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(model => model.customer_dto.person_id, new { @class = "adm_hidden_profileid" });
+                                @Html.HiddenFor(model => model.customer_dto.profileimage, new { @class = "adm_hidden_profileimage" });
+                                @Html.HiddenFor(model => model.customer_dto.sysname);
+                                @Html.HiddenFor(model => model.customer_dto.email);
+                                <div class="col-xs-4 form-horizontal" xstyle="padding-left:0px;">
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            @Html.LabelFor(model => model.customer_dto.profileimage, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-xs-12">
+                                            <div class="container_overlay">
+                                                @if (!string.IsNullOrEmpty(Model.customer_dto.profileimage))
+                                                {
+                                                    var image_path = "/_content/images/profiles/" + Model.customer_dto.sysname + "/profile/" + Model.customer_dto.profileimage;
+                                                    <img class="adm_img_profileimage" src="@image_path" style="background-color:#EEEEEE" alt="Sample Image" />
+                                                    <input type="hidden" class="adm_hidden_images_imagename" value="@Model.customer_dto.profileimage">
+                                                    <div class="overlay">
+                                                        <a href="#" class="icon" title="User Profile">
+                                                            <i class="fa fa-window-close fa-2x" onclick="removeImage();"></i>
+                                                        </a>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    var image_path = "/_content/images/site/icons/athlete_bw.png";
+                                                    <img class="adm_img_profileimage" src="@image_path" style="background-color:#EEEEEE" alt="Sample Image" />
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12">
+                                            <br />
+                                            <input type="file" name="profile" class="adm_input_profileimage btn btn-default adm_control" />
+                                            <span class="profile_fileupload"></span><br /><span class="profile_uploading"></span>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                </div>
+                                <div class="col-xs-4 form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            @Html.LabelFor(model => model.customer_dto.firstname, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-xs-12">
+                                            @{
+                                                string css = Model.customer_dto.firstname == "" ? " realred_bdr" : "";
+                                                string placeholder = "..hvis ikke udfyldt, vil email blive brugt på siden";
+                                            }
+                                            @Html.EditorFor(model => model.customer_dto.firstname, new { htmlAttributes = new { @class = "adm_input_firstname form-control darkgrey_bdr adm_control" + css, placeholder = placeholder } })
+                                            @Html.ValidationMessageFor(model => model.customer_dto.firstname, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            @Html.LabelFor(model => model.customer_dto.lastname, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-xs-12">
+                                            @{
+                                                css = Model.customer_dto.lastname == "" ? " realred_bdr" : "";
+                                            }
+                                            @Html.EditorFor(model => model.customer_dto.lastname, new { htmlAttributes = new { @class = "adm_input_lastname form-control darkgrey_bdr adm_control" + css } })
+                                            @Html.ValidationMessageFor(model => model.customer_dto.lastname, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            @Html.LabelFor(model => model.customer_dto.email, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-xs-12">
+                                            @{
+                                                css = Model.customer_dto.email == "" ? " realred_bdr" : "";
+                                            }
+                                            @Html.DisplayFor(model => model.customer_dto.email, new { htmlAttributes = new { @class = "adm_input_email form-control darkgrey_bdr adm_control" + css } })
+                                            @Html.ValidationMessageFor(model => model.customer_dto.email, "", new { @class = "text-danger" })
+                                        </div>
+
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="beskeder">
+                            @Html.Partial("~/Views/Partials/_Profile_Conversations.cshtml", @Model.conversations_dto)
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="favoriter">
+                            @Html.Partial("~/Views/Partials/_Profile_Favorites.cshtml", @Model)
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="følger">
+                            @Html.Partial("~/Views/Partials/_Profile_Following.cshtml", @Model)
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="feedback">
+                            @Html.Partial("~/Views/Partials/_Profile_Feedback.cshtml", new col_email())
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="xhide_desk remove_phone_block ">
+            <div class="container">
+                <div class="col-sm-12" xstyle="padding-left:0px;">
+                    <h2>Administrer Profil</h2>
+                    <br />
+                    @*<input type="submit" value="Gem" class="btn btn-default green_bg lightgreen_bdr white adm_button_form_submit" />*@
+                </div>
+            </div>
+            <hr />
+            <div class="container" style="overflow:hidden;">
+                <div class="white_bdr darkgrey_bg removeborder-bottom navigation-top navigation-right">
+                    &nbsp;
+                </div>
+                @{
+
+                    bool mviewed = true;
+                    foreach (dto_conversation conn in Model.conversations_dto.own)
+                    {
+                        biz_conversation biz3 = new biz_conversation();
+                        if (!biz3.Viewed(conn, false))
+                        {
+                            mviewed = false;
+                        }
+                    }
+                    <ul class="nav nav-tabs white_bdr darkgrey_bg">
+                        <li><a class="black" href="#stamdata" data-toggle="tab">Stamdata</a></li>
+                        <li>
+                            <a class="black" href="#beskeder" id="besked" data-toggle="tab">
+                                @if (!mviewed)
+                                {<i class="fas fa-envelope xtop-right realred"></i>}Beskeder
+                            </a>
+                        </li>
+                        <li><a class="black" href="#favoriter" data-toggle="tab">Favoriter</a></li>
+                        <li><a class="black" href="#følger" data-toggle="tab">Følger</a></li>
+                        <li><a href="#feedback" class="black" data-toggle="tab">Feedback</a></li>
+                    </ul>
+                    <div class="tab-content" style="overflow:hidden;">
+                        <div class="tab-pane active white_bg darkgrey_bdr" style="overflow:hidden;" id="stamdata">
+                            @using (Html.BeginRouteForm("CustomerProfile", FormMethod.Post, new { @class = "main_form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(model => model.customer_dto.person_id, new { @class = "adm_hidden_profileid" });
+                                @Html.HiddenFor(model => model.customer_dto.profileimage, new { @class = "adm_hidden_profileimage" });
+                                @Html.HiddenFor(model => model.customer_dto.sysname);
+                                @Html.HiddenFor(model => model.customer_dto.email);
+                                <div class="col-sm-4 form-horizontal" xstyle="padding-left:0px;">
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            @Html.LabelFor(model => model.customer_dto.profileimage, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="container_overlay">
+                                                @if (!string.IsNullOrEmpty(Model.customer_dto.profileimage))
+                                                {
+                                                    var image_path = "/_content/images/profiles/" + Model.customer_dto.sysname + "/profile/" + Model.customer_dto.profileimage;
+                                                    <img class="adm_img_profileimage" src="@image_path" style="background-color:#EEEEEE" alt="Sample Image" />
+                                                    <input type="hidden" class="adm_hidden_images_imagename" value="@Model.customer_dto.profileimage">
+                                                    <div class="overlay">
+                                                        <a href="#" class="icon" title="User Profile">
+                                                            <i class="fa fa-window-close fa-2x" onclick="removeImage();"></i>
+                                                        </a>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    var image_path = "/_content/images/site/icons/athlete_bw.png";
+                                                    <img class="adm_img_profileimage" src="@image_path" style="background-color:#EEEEEE" alt="Sample Image" />
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <br />
+                                            <input type="file" name="profile" class="adm_input_profileimage btn btn-default adm_control" />
+                                            <span class="profile_fileupload"></span><br /><span class="profile_uploading"></span>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                </div>
+                                <div class="col-sm-4 form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            @Html.LabelFor(model => model.customer_dto.firstname, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-sm-12">
+                                            @{
+                                                string css = Model.customer_dto.firstname == "" ? " realred_bdr" : "";
+                                                string placeholder = "..hvis ikke udfyldt, vil email blive brugt på siden";
+                                            }
+                                            @Html.EditorFor(model => model.customer_dto.firstname, new { htmlAttributes = new { @class = "adm_input_firstname form-control darkgrey_bdr adm_control" + css, placeholder = placeholder } })
+                                            @Html.ValidationMessageFor(model => model.customer_dto.firstname, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            @Html.LabelFor(model => model.customer_dto.lastname, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-sm-12">
+                                            @{
+                                                css = Model.customer_dto.lastname == "" ? " realred_bdr" : "";
+                                            }
+                                            @Html.EditorFor(model => model.customer_dto.lastname, new { htmlAttributes = new { @class = "adm_input_lastname form-control darkgrey_bdr adm_control" + css } })
+                                            @Html.ValidationMessageFor(model => model.customer_dto.lastname, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            @Html.LabelFor(model => model.customer_dto.email, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-sm-12">
+                                            @{
+                                                css = Model.customer_dto.email == "" ? " realred_bdr" : "";
+                                            }
+                                            @Html.DisplayFor(model => model.customer_dto.email, new { htmlAttributes = new { @class = "adm_input_email form-control darkgrey_bdr adm_control" + css } })
+                                            @Html.ValidationMessageFor(model => model.customer_dto.email, "", new { @class = "text-danger" })
+                                        </div>
+
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="beskeder">
+                            @Html.Partial("~/Views/Partials/_Profile_Conversations.cshtml", @Model.conversations_dto)
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="favoriter">
+                            @Html.Partial("~/Views/Partials/_Profile_Favorites.cshtml", @Model)
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="følger">
+                            @Html.Partial("~/Views/Partials/_Profile_Following.cshtml", @Model)
+                        </div>
+                        <div class="tab-pane white_bg darkgrey_bdr" style="overflow:hidden;" id="feedback">
+                            @Html.Partial("~/Views/Partials/_Profile_Feedback.cshtml", new col_email())
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+                                                }
+                                                catch (Exception e)
+                                                {
+                                                    
+                                                    string s = ErrorHelper.HandleError(ERROR.CUSTOMERPROFILE, e);
+                                                    string subject = "Fejl i front, CustomerProfile(MOB)";
+                                                    string body = s;
+                                                    AdminHelper.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
+                                                }
+
+}
+@{
+    string upload_url = @Url.RouteUrl("UploadImage");
+    string remove_url = @Url.RouteUrl("RemoveImage");
+    string err_msg = @Html.Raw(ViewBag.JSON_ERRORS).ToString();
+    string sys_msg = @Html.Raw(ViewBag.JSON_SYSTEM_MESSAGE).ToString();
+    <input type="hidden" id="upload_url" value="@upload_url" />
+    <input type="hidden" id="err_msg" value="@err_msg" />
+    <input type="hidden" id="sys_msg" value="@sys_msg" />
+    <input type="hidden" id="remove_url" value="@remove_url" />
+}
+
+@section scripts {
+    <script>
+        window.onunload = function () { };
+        $(document).ready(function () {
+            fix_mobile();
+
+            $('.z-loading').css('display', 'none');
+
+            if (!showErrors())
+                showMessages();
+
+            $('#besked').click(function () {
+                $(this).closest('li').find('i').css('display', 'none');
+            });
+            $('.adm_button_form_submit').click(function () {
+                $('.z-loading').fadeIn(200);
+                $('.main_form').submit();
+            });
+            $(".adm_input_firstname").change(function () {
+                $('.z-loading').fadeIn(200);
+                var form = $('.main_form');
+                $(form).submit();
+            });
+            $(".adm_input_lastname").change(function () {
+                $('.z-loading').fadeIn(200);
+                $('.main_form').submit();
+            });
+            $(".adm_input_phone").focusout(function () {
+                $('.z-loading').fadeIn(200);
+                $('.main_form').submit();
+            });
+            $(".adm_input_show_phone").change(function () {
+                $('.z-loading').fadeIn(200);
+                $('.main_form').submit();
+            });
+            $(".adm_input_email").focusout(function () {
+                $('.z-loading').fadeIn(200);
+                $('.main_form').submit();
+            });
+            $(".adm_input_request_email").change(function () {
+                $('.z-loading').fadeIn(200);
+                $('.main_form').submit();
+            });
+            $(".adm_input_description").focusout(function () {
+                $('.z-loading').fadeIn(200);
+                $('.main_form').submit();
+            });
+            $('.adm_input_profileimage').change(function () {
+                $('.z-loading').fadeIn(200);
+                var input = this;
+                var path = $('#upload_url').val();
+                var data = new FormData();
+                var files = $(".adm_input_profileimage").prop('files');
+                if (files.length > 0) {
+                    data.append("images", files[0]);
+                    data.append("TypeFile", "PROFILE");
+                    uploadimage_Ajax(path, data, input, '.profile_uploading', '.profile_upload', '.adm_img_profileimage');
+                }
+            });
+            $('.z-myalert-btn').click(function () {
+                $('.z-myalert').fadeOut(200);
+                $('.z-loading').fadeOut(200);
+            });
+        });
+
+
+        function removeImage() {
+            var img_name = $('.adm_hidden_images_imagename').val();
+            var path = $('#remove_url').val();
+            var data = { 'ImageName': img_name, 'type': 'PROFILE' };
+
+            if (img_name != '') {
+                $('.z-loading').css('display', 'block');
+                removeImage_Ajax(path, data);
+                return;
+            }
+            myalert('Der skete en fejl, beklager.');
+        }
+        function uploadimage_Ajax(path, data, input, uploading, fileupload, img) {
+            $.ajax({
+                url: path,
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: data,
+                xhr: function () {
+                    var xhr = $.ajaxSettings.xhr();
+                    xhr.onprogress = function e() {
+                        // For downloads
+                        if (e.lengthComputable) {
+                            console.log(e.loaded / e.total);
+                        }
+                    };
+                    xhr.upload.onprogress = function (e) {
+                        // For uploads
+                        if (e.lengthComputable) {
+                            $(uploading).text("uploaded: " + e.loaded * 100 / e.total + "% ");
+                        }
+                    };
+                    return xhr;
+                },
+                success: function (data, textStatus, xhr) {
+                    if (xhr.status == 200) {
+                        $(fileupload).text('File Upload: ' + textStatus);
+                        /*if (input.files && input.files[0]) {
+                            var reader = new FileReader();
+                            reader.onload = function (e) {
+                                $(img).attr('src', e.target.result)
+                                    .width(300);
+                            };
+                            reader.readAsDataURL(input.files[0]);
+                        }*/
+                        $('.main_form').submit();
+                    }
+                    else
+                        myalert('Der skete en fejl, beklager.');
+                },
+                error: function (er) {
+                    myalert("error: " + er);
+                }
+            });
+        }/**/
+        function removeImage_Ajax(path, data) {
+            $.ajax({
+                url: path,
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(data),
+                xhr: function () {
+                    var xhr = $.ajaxSettings.xhr();
+                    xhr.onprogress = function e() {
+                        // For downloads
+                        //if (e.lengthComputable) {
+                        //    console.log(e.loaded / e.total);
+                        //}
+                    };
+                    xhr.upload.onprogress = function (e) {
+                        // For uploads
+                        //if (e.lengthComputable) {
+                        //    $(uploading).text("uploaded: " + e.loaded * 100 / e.total + "% ");
+                        //}
+                    };
+                    return xhr;
+                },
+                success: function (data) {
+                    if (data.success) {
+                        $('.adm_hidden_profileimage').val('');
+                        $('.main_form').submit();
+                    }
+                    else {
+                        myalert('Der skete en fejl, beklager.');
+                    }
+                },
+                error: function (er) {
+                    myalert("error: " + er);
+                }
+            });
+        }
+    </script>
+}
+
+
+

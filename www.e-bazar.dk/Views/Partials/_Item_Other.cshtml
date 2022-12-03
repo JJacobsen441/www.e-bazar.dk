@@ -1,0 +1,54 @@
+﻿@model www.e_bazar.dk.Models.DTOs.dto_booth_item
+@{
+    string s = ViewContext.Controller.ViewBag.Search as string;
+    string c = ViewContext.Controller.ViewBag.Cat as string;
+}
+<div class="col-md-6 lightgrey_bg removepaddingsides">
+    @{ 
+        string type = Model.GetType() == typeof(dto_product) ? "product" : "collection";
+        string type_name = Model.GetType() == typeof(dto_product) ? "Product" : "Collection";
+    }
+    <div class="lightgrey_bg">
+        <br />
+        @{
+            string dots = Model.name.Count()<15 ? "" : "...";
+        }
+        <span style="font-weight: bold">@Html.RouteLink(type_name, new { id = Model.id }, new { @class = "black_link myfade" })</span><br />
+        <div class="mytooltip">
+            <i class="far fa-file-alt"></i>&nbsp;Om product..
+            <span class="centered mp_div_content_description_tooltip" style="text-align:left;width:150px;">@Html.DisplayWithBreaksFor(Model.description_limit)</span>
+        </div>
+    </div>
+    <div class="xlightgrey_bg">
+
+        <div class="">
+            @{
+                var thumb_path = Model.image_dtos.Count() > 0 && !string.IsNullOrEmpty(Model.image_dtos.FirstOrDefault().name) ? @"/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/" + type + "s/" +Model.sysname + "/t_" + Model.image_dtos.FirstOrDefault().name : "/_content/images/site/icons/armchair2_bw.png";
+                var image_path = Model.image_dtos.Count() > 0 && !string.IsNullOrEmpty(Model.image_dtos.FirstOrDefault().name) ? @"/_content/images/profiles/" + Model.booth_dto.salesman_dto.sysname + "/booths/" + Model.booth_dto.sysname + "/" + type + "s/" +Model.sysname + "/" + Model.image_dtos.FirstOrDefault().name : "/_content/images/site/icons/armchair2_bw.png";
+                
+                string[] classes = { "pr_productimage_other", "lightgrey_bg", "myfade", "loadlater" };
+                
+                object route = new { id = @Model.id };
+                @Html.RouteImage(type_name, route, thumb_path, image_path, null, classes, null, null, null)
+            }
+        </div><br />
+            
+        @*<div class="col-md-12 mytooltip removepaddingsides">
+                <i class="far fa-file-alt"></i>&nbsp;Om boden..
+                <span class="centered mp_div_content_description_tooltip" style="text-align:left;">
+                    @Html.DisplayWithBreaksFor(modelItem => Model.description_limit)<br /><br />
+                    @if (Model.category_main != null)
+                    {
+                        @: Kategorier:
+                        <br />
+                        foreach (var cat in Model.category_main)
+                        {
+                            @: @cat.name,
+                        }
+                    }
+                </span>
+            </div>*@
+        
+    </div>
+</div>
+

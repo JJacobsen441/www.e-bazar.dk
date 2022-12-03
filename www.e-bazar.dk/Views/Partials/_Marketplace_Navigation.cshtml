@@ -1,0 +1,415 @@
+﻿@model col_categories
+
+@{
+    string r = "arkaden";// ("" + ViewBag.Room).ToLower() == "arcade" ? "arkaden" : "udstilling";
+    List<Dictionary<string, object>> bsrc = new List<Dictionary<string, object>>();
+}
+@{
+    string _cata_sel = "";
+    string _catb_sel = "";
+
+
+    <div class="remove_desk_block ">
+        @{
+
+                <fieldset class="z-background-color-darkgrey z-border-darkgrey z-border-top-left-radius-10 z-border-bottom-left-radius-10 z-padding-all-15">
+                    <legend class="z-bold z-font-text z-background-color-lightgrey z-padding-all-15 z-width-auto">Kategorier</legend>
+                    <div class="">
+                        @*<br />
+            <ul>
+                <li class="">
+                    <label class="custom-control-label" for="defaultUnchecked">Kategorier</label>
+                    <br />
+                </li>
+            </ul>*@
+
+                        <br />
+                        <div class="cat_main z-padding-left-15 xz-list-style-none">
+                            @{
+                                string dareas = ViewContext.Controller.ViewBag.AreasChecked as string;
+                                dareas = SecurityHelper.Format(dareas, "", true);
+
+                                string dsea = !string.IsNullOrEmpty(ThisSession.Search) ? ThisSession.Search : null;
+                                string droom = "arcade";// ViewBag.Room;
+                                int? dz = ThisSession.Zip != 0 ? (int)ThisSession.Zip : (int?)null;
+                                int? df = ThisSession.Fra != 0 ? (int)ThisSession.Fra : (int?)null;
+                                int? dt = ThisSession.Til != 999999 ? (int)ThisSession.Til : (int?)null;
+
+                                <div class="myfade l-mp-navi1 z-float-none">
+                                    <div class="z-display-block">
+                                        <a class="l-mp-navi2 z-float-left" href="/front/markedsplads"><i class="far fa-square "></i></a>
+                                        <a class="l-mp-navi2 z-float-left" href="/front/markedsplads"><span class="show custom-control-label z-bold z-color-black-1">&nbsp;alle</span></a>
+                                        <br />
+                                        <br />
+                                    </div>
+                                </div>
+                                int dcounter = 0;
+
+                                foreach (dto_category dentry in Model.cats)
+                                {
+                                    if (dentry.name == "alle")
+                                    {
+                                        continue;
+                                    }
+                                    string dname1 = SecurityHelper.Format(dentry.name, "_", false);
+                                    bool dtop_isset = false;
+
+                                    if (Model.isset_top == dname1)
+                                    {
+                                        dtop_isset = true;
+                                        _cata_sel = dentry.name;
+                                    }
+
+                                    string bfa_class = dentry.name == "alle" ? "far fa-square" : !dtop_isset ? "fas fa-plus-square" : "fas fa-minus-square";
+                                    string bcssclass = dentry.name == "alle" ? " checkbox_category_all" : " checkbox_category";
+                                    string btitle = dentry.name == "alle" ? "alle butikker" : dentry.description;
+                                    string bcount = dentry.name == "alle" ? "" : droom.ToLower() == "arcade" ? "(" + (dentry.booths_with_category_count) + ")" : "";
+
+                                    <div class="cat_main l-mp-navi3 z-hover-black" title="@dentry.description" onclick="cata($(this).find('i'), false)">
+                                        <div class="z-display-block">
+                                            <a class="z-float-left" href="#/"><i class="@bfa_class cata " data-cata="@dentry.name"></i></a>
+                                            <a class="z-float-left" href="#/">
+                                                <span class="show custom-control-label z-float-left z-bold z-color-black-1">&nbsp;@dentry.name</span>
+                                            </a>
+                                            <span class="z-float-left z-font-info">&nbsp;@bcount</span><br />
+                                            <span class="z-float-left z-font-info">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@dentry.description</span><br />
+                                        </div>
+                                        @{
+                                            string dcssclass_lower = dtop_isset ? "z-list-style-none" : "z-display-none z-list-style-none";
+                                            <ul class="cat_sec catb @dcssclass_lower" data-catb="@dentry.name">
+                                                @foreach (dto_category dentry2 in dentry.children)
+                                                {
+                                                    string dname2 = SecurityHelper.Format(dentry2.name, "_", false);
+                                                    string dcount2 = droom.ToLower() == "arcade" ? "(" + (dentry2.booths_with_category_count) + ")" : "";
+                                                    bool dcheck = Model.isset_top != "alle" ? Model.isset_bottom == dname2 : false;
+                                                    string dstyle_lower = "";
+                                                    if (dcheck)
+                                                    {
+                                                        _catb_sel = dentry2.name;
+                                                        dstyle_lower = "z-bold";
+                                                    }
+
+                                                    object broutes_check = new { c = SecurityHelper.EncodeCats_MD5(false, dentry.name, dentry2.name) };
+
+                                                    <li class="cat_sec myfade l-mp-navi4" data-cata="@dentry.name" data-catb="@dentry2.name" onclick="catb(this, false);">
+                                                        <div>
+                                                            <a class="z-float-left z-text-decoration-none" href="#/">
+                                                                <span class="catb mygray @dstyle_lower z-color-black-1 z-float-left">@dentry2.name</span>
+                                                            </a>
+                                                            <a class="z-float-left z-text-decoration-none" href="#/">
+                                                                <span class="cat_sec z-float-left z-font-info z-color-black-1">@dcount2</span>
+                                                            </a>
+                                                        </div>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        }
+                                    </div>
+                                    dcounter++;
+                                }
+                            }
+                        </div>
+                    </div>
+                </fieldset>
+        }
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="remove_tab_block ">
+        @{
+
+                <fieldset class="z-background-color-darkgrey z-border-darkgrey z-border-top-left-radius-10 z-border-bottom-left-radius-10 z-padding-all-15">
+                    <legend class="z-bold z-font-text z-background-color-lightgrey z-padding-all-15 z-width-auto">Kategorier</legend>
+                    <div class="">
+                        @*<br />
+            <ul>
+                <li class="">
+                    <label class="custom-control-label" for="defaultUnchecked">Kategorier</label>
+                    <br />
+                </li>
+            </ul>*@
+
+                        <br />
+                        <div class="cat_main z-padding-left-15 xz-list-style-none">
+                            @{
+                                string tareas = ViewContext.Controller.ViewBag.AreasChecked as string;
+                                tareas = SecurityHelper.Format(tareas, "", true);
+
+                                string tsea = !string.IsNullOrEmpty(ThisSession.Search) ? ThisSession.Search : null;
+                                string troom = "arcade";// ViewBag.Room;
+                                int? tz = ThisSession.Zip != 0 ? (int)ThisSession.Zip : (int?)null;
+                                int? tf = ThisSession.Fra != 0 ? (int)ThisSession.Fra : (int?)null;
+                                int? tt = ThisSession.Til != 999999 ? (int)ThisSession.Til : (int?)null;
+
+                                <div class="myfade l-mp-navi1 z-float-none">
+                                    <div class="z-display-block">
+                                        <a class="l-mp-navi2 z-float-left" href="/front/markedsplads"><i class="far fa-square "></i></a>
+                                        <a class="l-mp-navi2 z-float-left" href="/front/markedsplads"><span class="show custom-control-label z-bold z-color-black-1">&nbsp;alle</span></a>
+                                        <br />
+                                        <br />
+                                    </div>
+                                </div>
+                                int tcounter = 0;
+
+                                foreach (dto_category tentry in Model.cats)
+                                {
+                                    if (tentry.name == "alle")
+                                    {
+                                        continue;
+                                    }
+                                    string tname1 = SecurityHelper.Format(tentry.name, "_", false);
+                                    bool ttop_isset = false;
+
+                                    if (Model.isset_top == tname1)
+                                    {
+                                        ttop_isset = true;
+                                        _cata_sel = tentry.name;
+                                    }
+
+                                    string tfa_class = tentry.name == "alle" ? "far fa-square" : !ttop_isset ? "fas fa-plus-square" : "fas fa-minus-square";
+                                    string tcssclass = tentry.name == "alle" ? " checkbox_category_all" : " checkbox_category";
+                                    string ttitle = tentry.name == "alle" ? "alle butikker" : tentry.description;
+                                    string tcount = tentry.name == "alle" ? "" : troom.ToLower() == "arcade" ? "(" + (tentry.booths_with_category_count) + ")" : "";
+
+                                    <div class="cat_main l-mp-navi3 z-hover-black" title="@tentry.description" onclick="cata($(this).find('i'), false)">
+                                        <div class="z-display-block">
+                                            <a class="z-float-left" href="#/"><i class="@tfa_class cata " data-cata="@tentry.name"></i></a>
+                                            <a class="z-float-left" href="#/">
+                                                <span class="show custom-control-label z-float-left z-bold z-color-black-1">&nbsp;@tentry.name</span>
+                                            </a>
+                                            <span class="z-float-left z-font-info">&nbsp;@tcount</span><br />
+                                            <span class="z-float-left z-font-info">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@tentry.description</span><br />
+                                        </div>
+                                        @{
+                                            string tcssclass_lower = ttop_isset ? "z-list-style-none" : "z-display-none z-list-style-none";
+                                            <ul class="cat_sec catb @tcssclass_lower" data-catb="@tentry.name">
+                                                @foreach (dto_category tentry2 in tentry.children)
+                                                {
+                                                    string tname2 = SecurityHelper.Format(tentry2.name, "_", false);
+                                                    string tcount2 = troom.ToLower() == "arcade" ? "(" + (tentry2.booths_with_category_count) + ")" : "";
+                                                    bool tcheck = Model.isset_top != "alle" ? Model.isset_bottom == tname2 : false;
+                                                    string tstyle_lower = "";
+                                                    if (tcheck)
+                                                    {
+                                                        _catb_sel = tentry2.name;
+                                                        tstyle_lower = "z-bold";
+                                                    }
+
+                                                    object broutes_check = new { c = SecurityHelper.EncodeCats_MD5(false, tentry.name, tentry2.name) };
+
+                                                    <li class="cat_sec myfade l-mp-navi4" data-cata="@tentry.name" data-catb="@tentry2.name" onclick="catb(this, false);">
+                                                        <div>
+                                                            <a class="z-float-left z-text-decoration-none" href="#/">
+                                                                <span class="catb mygray @tstyle_lower z-color-black-1 z-float-left">@tentry2.name</span>
+                                                            </a>
+                                                            <a class="z-float-left z-text-decoration-none" href="#/">
+                                                                <span class="cat_sec z-float-left z-font-info z-color-black-1">@tcount2</span>
+                                                            </a>
+                                                        </div>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        }
+                                    </div>
+                                    tcounter++;
+                                }
+                            }
+                        </div>
+                    </div>
+                </fieldset>
+        }
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="remove_phone_block ">
+        @{
+
+            <div class="box2 z-nav z-background-color-darkgrey z-border-darkgrey z-padding-sides-0 m-l-mp-navi1">
+                <div class="">
+                    <ul class="cat_main z-list-style-none">
+                        @{
+                            string mareas2 = ViewContext.Controller.ViewBag.AreasChecked as string;
+                            mareas2 = SecurityHelper.Format(mareas2, "", true);
+
+                            string msea2 = !string.IsNullOrEmpty(ThisSession.Search) ? ThisSession.Search : null;
+                            string mroom2 = "arcade";// ViewBag.Room;
+                            int? mz2 = ThisSession.Zip != 0 ? (int)ThisSession.Zip : (int?)null;
+                            int? mf2 = ThisSession.Fra != 0 ? (int)ThisSession.Fra : (int?)null;
+                            int? mt2 = ThisSession.Til != 999999 ? (int)ThisSession.Til : (int?)null;
+
+                            int mcounter2 = 0;
+
+                            foreach (dto_category mentry in Model.cats)
+                            {
+                                if (mentry.name == "alle")
+                                {
+                                    continue;
+                                }
+                                string mname1 = SecurityHelper.Format(mentry.name, "_", false);
+                                bool mtop_isset = false;
+
+                                if (Model.isset_top == mname1)
+                                {
+                                    mtop_isset = true;
+                                    _cata_sel = mentry.name;
+                                }
+
+                                string mfa_class = mentry.name == "alle" ? "far fa-square" : !mtop_isset ? "fas fa-plus-square" : "fas fa-minus-square";
+                                string mcssclass = mentry.name == "alle" ? "checkbox_category_all" : "checkbox_category";
+                                string mtitle = mentry.name == "alle" ? "alle butikker" : mentry.description;
+                                string mcount = mentry.name == "alle" ? "" : mroom2.ToLower() == "arcade" ? "(" + (mentry.booths_with_category_count) + ")" : "";// "(" + (bentry.items_with_category_count) + ")";
+
+                                <li class="cat_main z-float-none m-l-mp-navi2" title="@mentry.description" onclick="cata($(this).find('i'), true)">
+                                    <div class="z-display-block">
+                                        <a class="z-float-left" href="#/"><i class="@mfa_class cata black" data-cata="@mentry.name"></i></a>
+                                        <a class="z-float-left" href="#/">
+                                            <span class="show custom-control-label z-float-left z-bold z-color-black-1">&nbsp;@mentry.name</span>
+                                        </a>
+                                        <span class="z-color-white-1 z-float-left z-font-info">&nbsp;@mcount</span><br />
+                                    </div>
+                                    @{
+                                        string mcssclass_lower = mtop_isset ? "z-list-style-none" : "z-display-none z-list-style-none";
+                                        <ul class="cat_sec catb @mcssclass_lower" data-catb="@mentry.name">
+                                            @foreach (dto_category mentry2 in mentry.children)
+                                            {
+                                                string mname2 = SecurityHelper.Format(mentry2.name, "_", false);
+                                                string mcount2 = mroom2.ToLower() == "arcade" ? "(" + (mentry2.booths_with_category_count) + ")" : "";// "(" + (bentry2.items_with_category_count) + ")";
+                                                bool mcheck = Model.isset_top != "alle" ? Model.isset_bottom == mname2 : false;
+                                                string mstyle_lower = "";
+                                                if (mcheck)
+                                                {
+                                                    _catb_sel = mentry2.name;
+                                                    mstyle_lower = "z-bold";
+                                                }
+
+                                                object broutes_check = new { c = SecurityHelper.EncodeCats_MD5(false, mentry.name, mentry2.name) };
+
+                                                <li class="cat_sec m-l-mp-navi3" data-cata="@mentry.name" data-catb="@mentry2.name" onclick="catb(this, true);">
+                                                    <div>
+                                                        <a class="z-float-left z-text-decoration-none" href="#/">
+                                                            <span class="catb z-float-left @mstyle_lower z-black-link">@mentry2.name</span>
+                                                        </a>
+                                                        <a class="z-float-left z-text-decoration-none" href="#/">
+                                                            <span class="cat_sec z-float-left z-font-info z-black-link">@mcount2</span>
+                                                        </a>
+                                                    </div>
+                                                </li>
+                                            }
+                                        </ul>
+                                    }
+                                </li>
+                                mcounter2++;
+                            }
+                        }
+                    </ul>
+                    <br />
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<br />
+@*@{
+    ViewBag.a_sel = _cata_sel;
+    ViewBag.b_sel = _catb_sel;
+}*@
+
+@{
+    string s = "Marketplace";// (room.ToLower() == "arcade") ? "Arcade" : "TheShowRoom";
+    <input type="hidden" id="nav_lnk1" value="@Url.RouteUrl(s)" />
+    <input type="hidden" id="cata_sel" value="@_cata_sel" />
+    <input type="hidden" id="catb_sel" value="@_catb_sel" />
+}

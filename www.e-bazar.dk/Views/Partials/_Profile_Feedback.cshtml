@@ -1,0 +1,59 @@
+﻿@model www.e_bazar.dk.Models.DTOs.col_email
+
+@{
+    ViewBag.Title = "Feedback";
+}
+
+@*<div class="container" style="max-width:600px;">
+    <div class="col-md-12 removepaddingsides" xstyle="padding-left:0px;">
+        <h2>@ViewBag.Title</h2>
+        <br />
+    </div>
+</div>
+<hr />*@
+<div class="container" style="padding-top:15px; max-width:600px;">
+    @*<div class="white_bdr darkgrey_bg removeborder-bottom navigation-top navigation-right">
+        Feedback
+    </div>*@
+    <div class="col-md-12 white_bg darkgrey_bdr adm_feed_div_header addpaddingall" style="overflow:hidden">
+        <div class="col-md-4">
+            @{
+                string path = "";
+                path = "/_content/images/site/icons/athlete_bw.png";
+                <a href="#"><img src="@path" alt="Sample Image" class="adm_feed_img"></a>
+            }
+        </div>
+        <div class="col-md-8">                
+            Hvis der er nye features du gerne ser på siden, features der kan forbedres eller bare generel feedback, så skriv endelig.<br /><br />
+            Med venlig hilsen<br />
+            e-bazar.dk                
+        </div>
+    </div>
+    <hr />
+    <div class="col-md-12 white_bg xdarkgrey_bdr removepaddingsides">
+        @using (Html.BeginRouteForm("Feedback", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="col-md-12 removepaddingsides">
+                @{
+                    dto_person pers = CurrentUser.Inst().GetDTO(SETUP.FFF);
+                    string placeholder = "Udfyld venligst.";
+                }
+                <span class="bold">Til: </span>&nbsp;admin@e-bazar.dk<br />
+                <span class="bold">Fra: </span>@pers.email<br /><br />
+                <span class="bold">Emne</span><br />
+                @Html.EditorFor(m => Model.Subject, new { htmlAttributes = new { @class = "form-control black_bdr width100", placeholder = placeholder } })
+                <br />
+                <span class="bold">Besked</span><br />
+                <textarea id="message" class="msg_txt_comment form-control black_bdr width100" cols="20" rows="10" name="message" placeholder="Skriv her..">@Model.Message</textarea>
+
+                &nbsp;<br />
+                <input type="submit" id="xsubmit" class="btn btn-default width100 myfade" value="Send" />
+                &nbsp;<br />
+
+            </div>
+        }
+    </div>
+</div>
+

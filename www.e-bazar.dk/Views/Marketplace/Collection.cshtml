@@ -1,0 +1,1223 @@
+﻿@model www.e_bazar.dk.Models.DTOs.col_collection
+@{
+    ViewBag.Title = "Vare";
+
+    dto_person current_user = ViewBag.CurrentUser as dto_person;
+}
+@{
+
+    try
+    {
+        <div class="remove_desk_block ">
+            <div class="l-pd-filler"></div>
+
+
+
+            <div class="col-xs-12 z-padding-right-0 z-overflow-hidden">
+                @if (Model.collection_dto.image_dtos != null && Model.collection_dto.image_dtos.Count > 0)
+                {
+                    <input type="hidden" class="pr_hidden_no_product_dtos" value="@Model.collection_dto.image_dtos.Count" />//måske unødvendig
+                }
+                <div class="">
+                    <div class="col-xs-8 z-padding-sides-0">
+                        <div class="col-xs-12 l-pd-header1 xz-only-desk xnavigation-top z-padding-sides-0">
+                           
+                                <div class="col-xs-4 l-pd-header2">
+
+                                    @if (!string.IsNullOrEmpty(Model.collection_dto.booth_dto.frontimage))
+                                    {
+                                        var image_pathA = @"/_content/images/profiles/" + Model.collection_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.collection_dto.booth_dto.sysname + "/" + Model.collection_dto.booth_dto.frontimage;
+                                        string[] classes = { "l-pd-header3", "", "z-padding-all-15" };
+                                        string[] classes_a = { "navbar-left" };
+                                        object route = new { };
+                                        string style = "";
+                                        string alt = "/_content/images/site/icons/sofa_bw.png";
+                                        @Html.RouteImage("Product", route, image_pathA, null, alt, classes, classes_a, style, null)
+                                    }
+                                </div>
+                                <div class="col-xs-4">
+
+                                    <table class="">
+                                        <tr>
+                                            <td class="z-color-green z-padding-all-15 z-padding-bottom-0 ">
+                                                [@Html.RouteLink(@Model.collection_dto.booth_dto.name, "Booth", new { id = Model.collection_dto.booth_dto.booth_id }, new { @class = "z-color-green z-padding-right-0" })]<br />
+                                            </td>
+                                            <td class="l-pd-textB z-padding-all-15 z-padding-bottom-0">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="l-pd-textA z-padding-left-15">@Model.collection_dto.name</td>
+                                            <td class="z-padding-left-15" valign="top"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-xs-4 z-padding-all-15">
+                                        <span>
+                                            <input type="button" value="Vis Stand" class="btn z-background-color-black-1 z-color-white-1 z-hover-white2 xz-float-right myfade" onclick="location.href='@Url.RouteUrl("Booth", new { id = Model.collection_dto.booth_dto.booth_id/*, c = ViewBag.Cat*/ })'" />
+                                        </span>
+                                    <br />
+                                        @*<span class="z-float-right">&nbsp;&nbsp;&nbsp;&nbsp;</span>*@
+                                        @if (current_user != null && Model.is_owner)
+                                        {
+                                            <span class="z-float-right">
+                                                <input type="button" value="Rediger vare" class="btn z-background-color-black-1 z-color-white-1 z-hover-white2 myfade" onclick="location.href='@Url.RouteUrl("EditCollection1", new { collection_id = Model.collection_dto.id })'" />
+
+                                            </span>
+                                        }
+                                    @if (current_user != null && (current_user.favorites_product != null || current_user.favorites_collection != null))
+                                    {
+                                        <button class="btn xz-float-right z-col-fol-toggle z-background-color-black-1 z-color-white-1 z-hover-white2 z-margin-top-8 z-margin-right-15" type="button">
+                                            Favoriter
+                                            <span class="caret l-pd-caret-white"></span>
+                                        </button>
+                                        <div class="z-col-fol l-pd-fav z-padding-all-15 z-z-index-infinity-high z-background-color-black-2 z-color-white-1">
+                                            <ul class="">
+                                                <li>@Html.RouteLink("Tilføj", "AddFavorite", new { product_id = -1, collection_id = Model.collection_dto.id }, new { @class = "z-color-white-1 myfade" })</li>
+                                                <li>@Html.RouteLink("Fjern", "RemoveFavorite1", new { product_id = -1, collection_id = Model.collection_dto.id }, new { @class = "z-color-white-1 myfade" })</li>
+
+                                            </ul>
+                                        </div>
+                                    }
+
+                                    
+                                    
+
+                                
+                            </div>
+                            
+                        </div>
+                        <hr class="" />
+                        <div class="z-background-color-darkgrey z-border-white">
+                            <div>
+                                @{
+                                    int di = 0;
+                                    if (@Model.collection_dto.image_dtos != null && @Model.collection_dto.image_dtos.Count > 0)
+                                    {
+                                        foreach (dto_image col in Model.collection_dto.image_dtos)
+                                        {
+                                            if (!string.IsNullOrEmpty(col.name))
+                                            {
+                                                var image_pathB = "/_content/images/profiles/" + Model.collection_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.collection_dto.booth_dto.sysname + "/collections/" + Model.collection_dto.sysname + "/" + col.name;
+                                                <a href="#/"><img src="@image_pathB" alt="Sample Image" class="pr_img_content_productimage_@di l-pd-productimage"></a>
+                                            }
+                                            di++;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var path = "/_content/images/site/icons/sofa_bw.png";
+                                        <a href="#/"><img src="@path" alt="Sample Image" class="l-pd-productimage"></a>
+                                    }
+                                }
+                            </div>
+                            <div class="z-border-white">
+                                @{
+                                    di = 0;
+                                    foreach (dto_image img in Model.collection_dto.image_dtos)
+                                    {
+                                        if (img != null)
+                                        {
+                                            var thumb_pathC = "/_content/images/profiles/" + Model.collection_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.collection_dto.booth_dto.sysname + "/collections/" + Model.collection_dto.sysname + "/t_" + img.name;
+                                            var image_pathC = "/_content/images/profiles/" + Model.collection_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.collection_dto.booth_dto.sysname + "/collections/" + Model.collection_dto.sysname + "/" + img.name;
+                                            <a href="#/">
+                                                <img src="@thumb_pathC" data-src="@image_pathC" alt="Sample Image" class="pr_img_content_thumbnail_@di l-pd-thumbnail loadlater" onclick="setFront(@di);">&nbsp;&nbsp;&nbsp;
+                                            </a>
+                                        }
+                                        di++;
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-4 z-padding-right-0 z-padding-sides-0-phone">
+                        <div class="col-xs-12 l-pd-profile1 z-border-bottom-0 z-padding-sides-0 pr_div_profile_top">
+                            <div class="col-xs-4 z-padding-sides-0">
+                                @if (!string.IsNullOrEmpty(Model.collection_dto.booth_dto.salesman_dto.profileimage))
+                                {
+                                    var path = "/_content/images/profiles/" + Model.collection_dto.booth_dto.salesman_dto.sysname + "/profile/" + Model.collection_dto.booth_dto.salesman_dto.profileimage;
+
+                                    string[] classes = { "l-pd-profile2" };
+                                    string[] classes_a = { "" };
+                                    object route = new { };
+                                    string style = "";
+                                    string alt = "/_content/images/site/icons/businessman2_bw.png";
+                                    @Html.RouteImage("Product", route, path, null, alt, classes, classes_a, style, null)
+                                }
+                            </div>
+                            <div class="col-xs-8 z-padding-sides-0-phone">
+                                <div class="col-xs-12 z-bold z-padding-sides-0">
+                                    @{
+                                        string dname = @Model.collection_dto.booth_dto.salesman_dto.firstname != "" ? @Model.collection_dto.booth_dto.salesman_dto.firstname + " " + @Model.collection_dto.booth_dto.salesman_dto.lastname : "Sælger";
+                                    }
+                                    <span>@dname</span>
+
+                                </div>
+                                <table class="col-xs-12">
+                                    @if (@Model.collection_dto.booth_dto.fulladdress)
+                                    {
+                                        <tr>
+                                            @*<td class="z-color-green z-padding-left-15">Adresse:</td>*@
+                                            <td>@Model.collection_dto.booth_dto.street_address</td>
+                                        </tr>
+                                        <tr>
+                                            @*<td class="z-padding-left-15">&nbsp;</td>*@
+                                            <td>@Model.collection_dto.booth_dto.region_dto.zip</td>
+                                        </tr>
+                                        <tr>
+                                            @*<td class="z-padding-left-15">&nbsp;</td>*@
+                                            <td>@Model.collection_dto.booth_dto.region_dto.town</td>
+                                        </tr>
+                                        <tr>
+                                            @*<td class="z-padding-left-15">&nbsp;</td>*@
+                                            <td>@Model.collection_dto.booth_dto.country <br /><br /></td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+
+                                        <tr>
+                                            @*<td class="z-color-green z-padding-left-15">Adresse:</td>*@
+                                            <td>@Model.collection_dto.booth_dto.region_dto.zip</td>
+                                        </tr>
+                                        <tr>
+                                            @*<td class="z-padding-left-15">&nbsp;</td>*@
+                                            <td>@Model.collection_dto.booth_dto.region_dto.town<br /><br /></td>
+                                        </tr>
+                                    }
+                                </table>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="col-xs-12 z-border-darkgrey z-background-color-white">
+                            <div>
+                                <br />
+                                <table>
+
+                                    @if (@Model.collection_dto.booth_dto.salesman_dto.created_on != null)
+                                    {
+                                        <tr>
+                                            <td class="z-color-green">Oprettet:</td>
+                                            <td>
+                                                @Model.collection_dto.booth_dto.salesman_dto.created_on.ToString("dd/MM/yyyy")
+                                            </td>
+                                        </tr>
+                                    }
+                                    @{
+                                        string dnr = Model.collection_dto.booth_dto.salesman_dto.phonenumber != null ? Model.collection_dto.booth_dto.salesman_dto.phonenumber.ToString() : "**** ****";
+                                        string dphone = Model.collection_dto.booth_dto.salesman_dto.show_phone ? dnr : dnr != "**** ****" ? dnr.Substring(0, 4) + " ****" : TextHelper.GetNopValue(NOP.NO_PHONENUMBER.ToString());
+
+                                        <tr>
+                                            <td class="z-color-green">Tlf Nr.:<br /><br /></td>
+                                            <td>@dphone<br /><br /></td>
+                                        </tr>
+
+                                    }
+
+                                    <tr>
+                                        <td colspan="2">
+                                            <a class="pr_btn_requestemail" onclick="requestEmail('.pr_btn_requestemail', '.pr_span_email')">>> Anmod Email <<</a>
+                                        </td>
+                                    </tr>
+                                    <tr><td colspan="2" class=""><span class="pr_span_email"></span></td></tr>
+                                </table>
+
+                            </div>
+                            <br />
+                            <div>
+                                <span class="z-bold">Om sælger</span>
+                            </div>
+                            <div>
+                                @{
+                                    string ddesc = !string.IsNullOrEmpty(Model.collection_dto.booth_dto.salesman_dto.description) ? Model.collection_dto.booth_dto.salesman_dto.description : TextHelper.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                                }
+                                @Html.DisplayWithBreaksFor(ddesc)
+                            </div>
+                            <br />
+                        </div>
+                        <br />
+                        @if (current_user == null || !Model.is_owner)
+                        {
+                            <div class="col-xs-12">
+                                @*<input type="button" class="btn white green_bg lightgreen_bdr adm_control myfade" value="Skriv til sælger" onclick="@("window.location.href='" + @Url.Action("Message", "Marketplace", new { id = (int)Model.collection_dto.id, owner_id = CurrentUser.GetInstance().UserID, type = "COLLECTION" }) + "'");" />*@
+                                @using (Html.BeginRouteForm("MessageA", new { type = "collection", id = Model.collection_dto.id }, FormMethod.Get, null))
+                                {
+                                    //@Html.Hidden("id", (int)Model.collection_dto.id);
+                                    //@Html.Hidden("owner_id", CurrentUser.GetInstance().UserID);
+                                    //@Html.Hidden("type", "COLLECTION");
+                                    <input type="submit" value="Skriv til sælger" class="btn z-background-color-black-1 z-color-white-1 z-adm-control z-hover-white2 myfade" />
+                                }
+                            </div>
+                        }
+                        <br />
+                        <div class="col-xs-12 z-background-color-white z-border-darkgrey">
+                            <br />
+                            <div class=""><span class="z-bold">Vare Beskrivelse</span></div>
+                            <div class="">
+                                @*@Html.DisplayWithBreaksFor(modelItem => @Model.collection_dto.description)*@
+                                @{
+                                    string ddescA = !string.IsNullOrEmpty(Model.collection_dto.description) ? Model.collection_dto.description : TextHelper.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                                }
+                                @Html.DisplayWithBreaksFor(ddescA)
+                            </div>
+                            <div class="">
+                                <span class="z-bold">Note:&nbsp;</span>
+                                <span class="">
+                                    @*@Html.DisplayFor(modelItem => @Model.collection_dto.note)*@
+                                    @{
+                                        string dnote = !string.IsNullOrEmpty(Model.collection_dto.note) ? Model.collection_dto.note : TextHelper.GetNopValue(NOP.NO_NOTE.ToString());
+                                    }
+                                    @Html.DisplayFor(m => dnote)
+                                </span>
+                            </div>
+                            <hr />
+                            <table>
+                                <tr>
+                                    <td><span class="z-bold">Pris:&nbsp;&nbsp;&nbsp;</span></td>
+                                    <td>
+                                        @{
+                                            string dprice = Model.collection_dto.price == NOP.INGEN_PRIS.ToString() ? TextHelper.GetNopValue(Model.collection_dto.price) : Model.collection_dto.price + " kr";
+                                        }
+                                        <span>@dprice</span>
+                                    </td>
+                                </tr>
+                                @*<tr>
+                                    <td><span class="z-bold">Status:&nbsp;&nbsp;&nbsp;</span></td>
+                                    <td>
+                                        @if (@Model.collection_dto.status_stock != null)
+                                        {
+                                            <span>@Texts.GetStockValue(Model.collection_dto.status_stock)</span>
+                                        }
+                                    </td>
+                                </tr>*@
+                            </table>
+                            <hr />
+                            <div>
+                                <span class="z-bold">Søgeord - &nbsp;&nbsp;&nbsp;</span>
+                                @if (Model.collection_dto.booth_dto.category_main != null && Model.collection_dto.category_main_id != null)
+                                {
+                                    dto_category main = Model.collection_dto.booth_dto.category_main.Where(c => c.category_id == Model.collection_dto.category_main_id).FirstOrDefault();
+                                    string main_name = main.name;
+                                    @Html.RouteLink("[" + main_name + "]", "Marketplace", new { c = SecurityHelper.Format(main_name, "_", false) }, new { @class = "z-color-green myfade" })
+                                    if (Model.collection_dto.category_second_id != null)
+                                    {
+                                        if (main.children.Count() > 0)
+                                        {
+                                            dto_category second = main.children.Where(c => c.category_id == Model.collection_dto.category_second_id).FirstOrDefault();
+                                            string second_name = second.name;
+                                            @Html.RouteLink("[" + second_name + "]", "Marketplace", new { c = SecurityHelper.Format(SecurityHelper.EncodeCats_MD5(false, main_name, second_name), "_", false) }, new { @class = "z-color-green myfade" });
+                                        }
+                                    }
+                                }
+                                @if (Model.collection_dto.tag_dtos != null)
+                                {
+                                    foreach (var tag in Model.collection_dto.tag_dtos)
+                                    {
+                                        @Html.Raw(" ")
+                                        @Html.RouteLink("[" + tag.name + "]", "Marketplace", new { s = tag.name }, new { @class = "myfade" })
+                                    }
+                                }
+                            </div>
+                            <br />
+                        </div>
+                        <hr />
+                        <div class="col-xs-12 xz-only-desk z-background-color-darkgrey z-border-darkgrey">
+                            <span class="z-bold">Andre produkter i standen</span>
+                        </div>
+                        <div class="col-xs-12 l-pd-others1 xz-only-desk z-background-color-lightgrey z-border-darkgrey">
+                            @{
+                                int dcounter = 0;
+                                foreach (dto_booth_item item in Model.other)
+                                {
+                                    if (dcounter == 2)
+                                    {
+                                        ;
+                                    }
+                                    @Html.Partial("~/Views/Partials/_Item_Other.cshtml", item)
+                                    dcounter++;
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr class="z-hr-lightgrey" />
+            <div class="col-xs-12 z-background-color-white">
+                <div class="col-xs-12">
+                    <table class="xxtable">
+                        <tr class="z-background-color-white xadm_th_products">
+                            <th class="z-width-10-percent xadm_th_products_image">
+                            </th>
+                            <th class="z-width-15-percent xz-only-desk">
+                                @Html.DisplayNameFor(model => model.collection_dto.product_dtos.FirstOrDefault().name)
+                            </th>
+                            <th class="z-width-15-percent xz-only-desk">
+                                @Html.DisplayNameFor(model => model.collection_dto.product_dtos.FirstOrDefault().created_on)
+                            </th>
+                            <th class="z-width-45-percent xz-only-desk">
+                                @Html.DisplayNameFor(model => model.collection_dto.product_dtos.FirstOrDefault().description)
+                            </th>
+                            <th class="z-width-10-percent"></th>
+                        </tr>
+                        @foreach (var item in Model.collection_dto.product_dtos)
+                        {
+                            <tr>
+                                <td class="xadm_td_products_image">
+                                    @if (item.image_dtos != null && item.image_dtos.Count > 0 && !string.IsNullOrEmpty(item.image_dtos.FirstOrDefault().name))
+                                    {
+                                        string path = "/_content/images/profiles/" + Model.collection_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.collection_dto.booth_dto.sysname + "/products/" + item.sysname + "/" + item.image_dtos.FirstOrDefault().name;
+                                        @Html.RouteImage("Product", new { id = item.id }, path, null, "Sample Image", new string[] { "l-pd-pimage" }, null, null, null)
+                                    }
+                                    else
+                                    {
+                                        var path = "/_content/images/site/icons/armchair2_bw.png";
+                                        @Html.RouteImage("Product", new { id = item.id }, path, null, "Sample Image", new string[] { "l-pd-pimage" }, null, null, null)
+                                    }
+                                </td>
+                                <td class="xz-only-desk">
+                                    @Html.DisplayFor(modelItem => item.name)
+                                </td>
+                                <td class="xz-only-desk">
+                                    @Html.DisplayFor(modelItem => item.created_on)
+                                </td>
+                                <td class="xz-only-desk">
+                                    @Html.DisplayFor(modelItem => item.description_limit)
+                                </td>
+                                <td>
+                                    @Html.RouteLink("Vis", "Product", new { id = item.id }, null)
+                                </td>
+                            </tr>
+                        }
+
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="remove_tab_block ">
+            <div class="l-pd-filler"></div>
+
+
+
+            <div class="col-xs-12 xz-padding-right-0 z-overflow-hidden">
+                @if (Model.collection_dto.image_dtos != null && Model.collection_dto.image_dtos.Count > 0)
+                {
+                    <input type="hidden" class="pr_hidden_no_product_dtos" value="@Model.collection_dto.image_dtos.Count" />//måske unødvendig
+                }
+                <div class="">
+                    <div class="col-xs-8 z-padding-left-0">
+                        <div class="col-xs-12 l-pd-header1 xz-only-desk xnavigation-top z-padding-sides-0">
+
+                            <div class="col-xs-4 l-pd-header2">
+
+                                @if (!string.IsNullOrEmpty(Model.collection_dto.booth_dto.frontimage))
+                                {
+                                    var image_pathA = @"/_content/images/profiles/" + Model.collection_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.collection_dto.booth_dto.sysname + "/" + Model.collection_dto.booth_dto.frontimage;
+                                    string[] classes = { "l-pd-header3", "", "z-padding-all-15" };
+                                    string[] classes_a = { "navbar-left" };
+                                    object route = new { };
+                                    string style = "";
+                                    string alt = "/_content/images/site/icons/sofa_bw.png";
+                                    @Html.RouteImage("Product", route, image_pathA, null, alt, classes, classes_a, style, null)
+                                }
+                            </div>
+                            <div class="col-xs-4">
+
+                                <table class="">
+                                    <tr>
+                                        <td class="z-color-green z-padding-all-15 z-padding-bottom-0 ">
+                                            [@Html.RouteLink(@Model.collection_dto.booth_dto.name, "Booth", new { id = Model.collection_dto.booth_dto.booth_id }, new { @class = "z-color-green z-padding-right-0" })]<br />
+                                        </td>
+                                        <td class="l-pd-textB z-padding-all-15 z-padding-bottom-0">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="l-pd-textA z-padding-left-15">@Model.collection_dto.name</td>
+                                        <td class="z-padding-left-15" valign="top"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-xs-4 z-padding-all-15">
+                                <span>
+                                    <input type="button" value="Vis Stand" class="btn z-background-color-black-1 z-color-white-1 z-hover-white2 xz-float-right myfade" onclick="location.href='@Url.RouteUrl("Booth", new { id = Model.collection_dto.booth_dto.booth_id/*, c = ViewBag.Cat*/ })'" />
+                                </span>
+                                <br />
+                                @*<span class="z-float-right">&nbsp;&nbsp;&nbsp;&nbsp;</span>*@
+                                @if (current_user != null && Model.is_owner)
+                                {
+                                    <span class="z-float-right">
+                                        <input type="button" value="Rediger vare" class="btn z-background-color-black-1 z-color-white-1 z-hover-white2 myfade" onclick="location.href='@Url.RouteUrl("EditCollection1", new { collection_id = Model.collection_dto.id })'" />
+
+                                    </span>
+                                }
+                                @if (current_user != null && (current_user.favorites_product != null || current_user.favorites_collection != null))
+                                {
+                                    <button class="btn xz-float-right z-col-fol-toggle z-background-color-black-1 z-color-white-1 z-hover-white2 z-margin-top-8 z-margin-right-15" type="button">
+                                        Favoriter
+                                        <span class="caret l-pd-caret-white"></span>
+                                    </button>
+                                    <div class="z-col-fol l-pd-fav z-padding-all-15 z-z-index-infinity-high z-background-color-black-2 z-color-white-1">
+                                        <ul class="">
+                                            <li>@Html.RouteLink("Tilføj", "AddFavorite", new { product_id = -1, collection_id = Model.collection_dto.id }, new { @class = "z-color-white-1 myfade" })</li>
+                                            <li>@Html.RouteLink("Fjern", "RemoveFavorite1", new { product_id = -1, collection_id = Model.collection_dto.id }, new { @class = "z-color-white-1 myfade" })</li>
+
+                                        </ul>
+                                    </div>
+                                }
+
+
+
+
+
+                            </div>
+
+                        </div>
+                        <hr class="" />
+                        <div class="z-background-color-darkgrey z-border-white">
+                            <div>
+                                @{
+                                    int ti = 0;
+                                    if (@Model.collection_dto.image_dtos != null && @Model.collection_dto.image_dtos.Count > 0)
+                                    {
+                                        foreach (dto_image col in Model.collection_dto.image_dtos)
+                                        {
+                                            if (!string.IsNullOrEmpty(col.name))
+                                            {
+                                                var image_pathB = "/_content/images/profiles/" + Model.collection_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.collection_dto.booth_dto.sysname + "/collections/" + Model.collection_dto.sysname + "/" + col.name;
+                                                <a href="#/"><img src="@image_pathB" alt="Sample Image" class="pr_img_content_productimage_@ti l-pd-productimage"></a>
+                                            }
+                                            ti++;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var path = "/_content/images/site/icons/sofa_bw.png";
+                                        <a href="#/"><img src="@path" alt="Sample Image" class="l-pd-productimage"></a>
+                                    }
+                                }
+                            </div>
+                            <div class="z-border-white">
+                                @{
+                                    ti = 0;
+                                    foreach (dto_image img in Model.collection_dto.image_dtos)
+                                    {
+                                        if (img != null)
+                                        {
+                                            var thumb_pathC = "/_content/images/profiles/" + Model.collection_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.collection_dto.booth_dto.sysname + "/collections/" + Model.collection_dto.sysname + "/t_" + img.name;
+                                            var image_pathC = "/_content/images/profiles/" + Model.collection_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.collection_dto.booth_dto.sysname + "/collections/" + Model.collection_dto.sysname + "/" + img.name;
+                                            <a href="#/">
+                                                <img src="@thumb_pathC" data-src="@image_pathC" alt="Sample Image" class="pr_img_content_thumbnail_@ti l-pd-thumbnail loadlater" onclick="setFront(@ti);">&nbsp;&nbsp;&nbsp;
+                                            </a>
+                                        }
+                                        ti++;
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-4 z-padding-right-0 z-padding-sides-0-phone">
+                        <div class="col-xs-12 l-pd-profile1 z-border-bottom-0 z-padding-sides-0 pr_div_profile_top">
+                            <div class="col-xs-4 z-padding-sides-0">
+                                @if (!string.IsNullOrEmpty(Model.collection_dto.booth_dto.salesman_dto.profileimage))
+                                {
+                                    var path = "/_content/images/profiles/" + Model.collection_dto.booth_dto.salesman_dto.sysname + "/profile/" + Model.collection_dto.booth_dto.salesman_dto.profileimage;
+
+                                    string[] classes = { "l-pd-profile2" };
+                                    string[] classes_a = { "" };
+                                    object route = new { };
+                                    string style = "";
+                                    string alt = "/_content/images/site/icons/businessman2_bw.png";
+                                    @Html.RouteImage("Product", route, path, null, alt, classes, classes_a, style, null)
+                                }
+                            </div>
+                            <div class="col-xs-8 z-padding-sides-0-phone">
+                                <div class="col-xs-12 z-bold z-padding-sides-0">
+                                    @{
+                                        string tname = @Model.collection_dto.booth_dto.salesman_dto.firstname != "" ? @Model.collection_dto.booth_dto.salesman_dto.firstname + " " + @Model.collection_dto.booth_dto.salesman_dto.lastname : "Sælger";
+                                    }
+                                    <span>@tname</span>
+
+                                </div>
+                                <table class="col-xs-12">
+                                    @if (@Model.collection_dto.booth_dto.fulladdress)
+                                    {
+                                        <tr>
+                                            @*<td class="z-color-green z-padding-left-15">Adresse:</td>*@
+                                            <td>@Model.collection_dto.booth_dto.street_address</td>
+                                        </tr>
+                                        <tr>
+                                            @*<td class="z-padding-left-15">&nbsp;</td>*@
+                                            <td>@Model.collection_dto.booth_dto.region_dto.zip</td>
+                                        </tr>
+                                        <tr>
+                                            @*<td class="z-padding-left-15">&nbsp;</td>*@
+                                            <td>@Model.collection_dto.booth_dto.region_dto.town</td>
+                                        </tr>
+                                        <tr>
+                                            @*<td class="z-padding-left-15">&nbsp;</td>*@
+                                            <td>@Model.collection_dto.booth_dto.country <br /><br /></td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+
+                                        <tr>
+                                            @*<td class="z-color-green z-padding-left-15">Adresse:</td>*@
+                                            <td>@Model.collection_dto.booth_dto.region_dto.zip</td>
+                                        </tr>
+                                        <tr>
+                                            @*<td class="z-padding-left-15">&nbsp;</td>*@
+                                            <td>@Model.collection_dto.booth_dto.region_dto.town<br /><br /></td>
+                                        </tr>
+                                    }
+                                </table>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="col-xs-12 z-border-darkgrey z-background-color-white">
+                            <div>
+                                <br />
+                                <table>
+
+                                    @if (@Model.collection_dto.booth_dto.salesman_dto.created_on != null)
+                                    {
+                                        <tr>
+                                            <td class="z-color-green">Oprettet:</td>
+                                            <td>
+                                                @Model.collection_dto.booth_dto.salesman_dto.created_on.ToString("dd/MM/yyyy")
+                                            </td>
+                                        </tr>
+                                    }
+                                    @{
+                                        string tnr = Model.collection_dto.booth_dto.salesman_dto.phonenumber != null ? Model.collection_dto.booth_dto.salesman_dto.phonenumber.ToString() : "**** ****";
+                                        string tphone = Model.collection_dto.booth_dto.salesman_dto.show_phone ? tnr : tnr != "**** ****" ? tnr.Substring(0, 4) + " ****" : TextHelper.GetNopValue(NOP.NO_PHONENUMBER.ToString());
+
+                                        <tr>
+                                            <td class="z-color-green">Tlf Nr.:<br /><br /></td>
+                                            <td>@tphone<br /><br /></td>
+                                        </tr>
+
+                                    }
+
+                                    <tr>
+                                        <td colspan="2">
+                                            <a class="pr_btn_requestemail" onclick="requestEmail('.pr_btn_requestemail', '.pr_span_email')">>> Anmod Email <<</a>
+                                        </td>
+                                    </tr>
+                                    <tr><td colspan="2" class=""><span class="pr_span_email"></span></td></tr>
+                                </table>
+
+                            </div>
+                            <br />
+                            <div>
+                                <span class="z-bold">Om sælger</span>
+                            </div>
+                            <div>
+                                @{
+                                    string tdesc = !string.IsNullOrEmpty(Model.collection_dto.booth_dto.salesman_dto.description) ? Model.collection_dto.booth_dto.salesman_dto.description : TextHelper.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                                }
+                                @Html.DisplayWithBreaksFor(tdesc)
+                            </div>
+                            <br />
+                        </div>
+                        <br />
+                        @if (current_user == null || !Model.is_owner)
+                        {
+                            <div class="col-xs-12">
+                                @*<input type="button" class="btn white green_bg lightgreen_bdr adm_control myfade" value="Skriv til sælger" onclick="@("window.location.href='" + @Url.Action("Message", "Marketplace", new { id = (int)Model.collection_dto.id, owner_id = CurrentUser.GetInstance().UserID, type = "COLLECTION" }) + "'");" />*@
+                                @using (Html.BeginRouteForm("MessageA", new { type = "collection", id = Model.collection_dto.id }, FormMethod.Get, null))
+                                {
+                                    //@Html.Hidden("id", (int)Model.collection_dto.id);
+                                    //@Html.Hidden("owner_id", CurrentUser.GetInstance().UserID);
+                                    //@Html.Hidden("type", "COLLECTION");
+                                    <input type="submit" value="Skriv til sælger" class="btn z-background-color-black-1 z-color-white-1 z-adm-control z-hover-white2 myfade" />
+                                }
+                            </div>
+                        }
+                        <br />
+                        <div class="col-xs-12 z-background-color-white z-border-darkgrey">
+                            <br />
+                            <div class=""><span class="z-bold">Vare Beskrivelse</span></div>
+                            <div class="">
+                                @*@Html.DisplayWithBreaksFor(modelItem => @Model.collection_dto.description)*@
+                                @{
+                                    string tdescA = !string.IsNullOrEmpty(Model.collection_dto.description) ? Model.collection_dto.description : TextHelper.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                                }
+                                @Html.DisplayWithBreaksFor(tdescA)
+                            </div>
+                            <div class="">
+                                <span class="z-bold">Note:&nbsp;</span>
+                                <span class="">
+                                    @*@Html.DisplayFor(modelItem => @Model.collection_dto.note)*@
+                                    @{
+                                        string tnote = !string.IsNullOrEmpty(Model.collection_dto.note) ? Model.collection_dto.note : TextHelper.GetNopValue(NOP.NO_NOTE.ToString());
+                                    }
+                                    @Html.DisplayFor(m => tnote)
+                                </span>
+                            </div>
+                            <hr />
+                            <table>
+                                <tr>
+                                    <td><span class="z-bold">Pris:&nbsp;&nbsp;&nbsp;</span></td>
+                                    <td>
+                                        @{
+                                            string tprice = Model.collection_dto.price == NOP.INGEN_PRIS.ToString() ? TextHelper.GetNopValue(Model.collection_dto.price) : Model.collection_dto.price + " kr";
+                                        }
+                                        <span>@tprice</span>
+                                    </td>
+                                </tr>
+                                @*<tr>
+                    <td><span class="z-bold">Status:&nbsp;&nbsp;&nbsp;</span></td>
+                    <td>
+                        @if (@Model.collection_dto.status_stock != null)
+                        {
+                            <span>@Texts.GetStockValue(Model.collection_dto.status_stock)</span>
+                        }
+                    </td>
+                </tr>*@
+                            </table>
+                            <hr />
+                            <div>
+                                <span class="z-bold">Søgeord - &nbsp;&nbsp;&nbsp;</span>
+                                @if (Model.collection_dto.booth_dto.category_main != null && Model.collection_dto.category_main_id != null)
+                                {
+                                    dto_category main = Model.collection_dto.booth_dto.category_main.Where(c => c.category_id == Model.collection_dto.category_main_id).FirstOrDefault();
+                                    string main_name = main.name;
+                                    @Html.RouteLink("[" + main_name + "]", "Marketplace", new { c = SecurityHelper.Format(main_name, "_", false) }, new { @class = "z-color-green myfade" })
+                                    if (Model.collection_dto.category_second_id != null)
+                                    {
+                                        if (main.children.Count() > 0)
+                                        {
+                                            dto_category second = main.children.Where(c => c.category_id == Model.collection_dto.category_second_id).FirstOrDefault();
+                                            string second_name = second.name;
+                                            @Html.RouteLink("[" + second_name + "]", "Marketplace", new { c = SecurityHelper.Format(SecurityHelper.EncodeCats_MD5(false, main_name, second_name), "_", false) }, new { @class = "z-color-green myfade" });
+                                        }
+                                    }
+                                }
+                                @if (Model.collection_dto.tag_dtos != null)
+                                {
+                                    foreach (var tag in Model.collection_dto.tag_dtos)
+                                    {
+                                        @Html.Raw(" ")
+                                        @Html.RouteLink("[" + tag.name + "]", "Marketplace", new { s = tag.name }, new { @class = "myfade" })
+                                    }
+                                }
+                            </div>
+                            <br />
+                        </div>
+                        @*<hr />
+        <div class="col-xs-12 xz-only-desk z-background-color-darkgrey z-border-darkgrey">
+            <span class="z-bold">Andre produkter i standen</span>
+        </div>
+        <div class="col-xs-12 l-pd-others1 xz-only-desk z-background-color-lightgrey z-border-darkgrey">
+            @{
+                int tcounter = 0;
+                foreach (IBoothItem item in Model.other)
+                {
+                    if (tcounter == 2)
+                    {
+                        ;
+                    }
+                    @Html.Partial("~/Views/Partials/_Item_Other.cshtml", item)
+                    tcounter++;
+                }
+            }
+        </div>*@
+                    </div>
+                </div>
+            </div>
+            <hr class="z-hr-lightgrey" />
+            <div class="col-xs-12 z-background-color-white">
+                <div class="col-xs-12">
+                    <table class="xxtable">
+                        <tr class="z-background-color-white xadm_th_products">
+                            <th class="z-width-10-percent xadm_th_products_image">
+                            </th>
+                            <th class="z-width-15-percent xz-only-desk">
+                                @Html.DisplayNameFor(model => model.collection_dto.product_dtos.FirstOrDefault().name)
+                            </th>
+                            <th class="z-width-15-percent xz-only-desk">
+                                @Html.DisplayNameFor(model => model.collection_dto.product_dtos.FirstOrDefault().created_on)
+                            </th>
+                            <th class="z-width-45-percent xz-only-desk">
+                                @Html.DisplayNameFor(model => model.collection_dto.product_dtos.FirstOrDefault().description)
+                            </th>
+                            <th class="z-width-10-percent"></th>
+                        </tr>
+                        @foreach (var item in Model.collection_dto.product_dtos)
+                        {
+                            <tr>
+                                <td class="xadm_td_products_image">
+                                    @if (item.image_dtos != null && item.image_dtos.Count > 0 && !string.IsNullOrEmpty(item.image_dtos.FirstOrDefault().name))
+                                    {
+                                        string path = "/_content/images/profiles/" + Model.collection_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.collection_dto.booth_dto.sysname + "/products/" + item.sysname + "/" + item.image_dtos.FirstOrDefault().name;
+                                        @Html.RouteImage("Product", new { id = item.id }, path, null, "Sample Image", new string[] { "l-pd-pimage" }, null, null, null)
+                                    }
+                                    else
+                                    {
+                                        var path = "/_content/images/site/icons/armchair2_bw.png";
+                                        @Html.RouteImage("Product", new { id = item.id }, path, null, "Sample Image", new string[] { "l-pd-pimage" }, null, null, null)
+                                    }
+                                </td>
+                                <td class="xz-only-desk">
+                                    @Html.DisplayFor(modelItem => item.name)
+                                </td>
+                                <td class="xz-only-desk">
+                                    @Html.DisplayFor(modelItem => item.created_on)
+                                </td>
+                                <td class="xz-only-desk">
+                                    @Html.DisplayFor(modelItem => item.description_limit)
+                                </td>
+                                <td>
+                                    @Html.RouteLink("Vis", "Product", new { id = item.id }, null)
+                                </td>
+                            </tr>
+                        }
+
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="remove_phone_block ">
+            @*<div class="l-pd-filler z-background-color-black-1"></div>*@
+            <div class="col-xs-12 z-padding-top-15 xz-padding-sides-0 z-overflow-hidden">
+                @if (Model.collection_dto.image_dtos != null && Model.collection_dto.image_dtos.Count > 0)
+                {
+                    <input type="hidden" class="pr_hidden_no_product_dtos" value="@Model.collection_dto.image_dtos.Count" />//måske unødvendig
+                }
+
+
+
+                <div class="z-background-color-white z-border-white">
+
+                    <div>
+                        @{
+                            int mi = 0;
+                            if (@Model.collection_dto.image_dtos != null && @Model.collection_dto.image_dtos.Count > 0)
+                            {
+                                foreach (dto_image col in Model.collection_dto.image_dtos)
+                                {
+                                    if (!string.IsNullOrEmpty(col.name))
+                                    {
+                                        var image_pathB = "/_content/images/profiles/" + Model.collection_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.collection_dto.booth_dto.sysname + "/collections/" + Model.collection_dto.sysname + "/" + col.name;
+                                        <a href="#/"><img src="@image_pathB" alt="Sample Image" class="pr_img_content_productimage_@mi l-pd-productimage"></a>
+                                    }
+                                    mi++;
+                                }
+                            }
+                            else
+                            {
+                                var path = "/_content/images/site/icons/sofa_bw.png";
+                                <a href="#/"><img src="@path" alt="Sample Image" class="l-pd-productimage"></a>
+                            }
+                        }
+                    </div>
+                    <div class="z-border-white">
+                        @{
+                            mi = 0;
+                            foreach (dto_image img in Model.collection_dto.image_dtos)
+                            {
+                                if (img != null)
+                                {
+                                    var thumb_pathC = "/_content/images/profiles/" + Model.collection_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.collection_dto.booth_dto.sysname + "/collections/" + Model.collection_dto.sysname + "/t_" + img.name;
+                                    var image_pathC = "/_content/images/profiles/" + Model.collection_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.collection_dto.booth_dto.sysname + "/collections/" + Model.collection_dto.sysname + "/" + img.name;
+                                    <a href="#/">
+                                        <img src="@thumb_pathC" data-src="@image_pathC" alt="Sample Image" class="pr_img_content_thumbnail_@mi l-pd-thumbnail loadlater" onclick="setFront(@mi);">&nbsp;&nbsp;&nbsp;
+                                    </a>
+                                }
+                                mi++;
+                            }
+                        }
+                    </div>
+                </div>
+
+
+                <div class="col-xs-12 m-l-pd-profile1 z-background-color-white z-border-bottom-0 z-padding-sides-0">
+
+                    <br />
+                    <div class="col-xs-12 z-bold">
+                        @{
+                            string mname = @Model.collection_dto.booth_dto.salesman_dto.firstname != "" ? @Model.collection_dto.booth_dto.salesman_dto.firstname + " " + @Model.collection_dto.booth_dto.salesman_dto.lastname : "Sælger";
+                        }
+                        <span>@mname</span>
+
+                    </div>
+                    <table class="col-xs-12">
+                        @if (@Model.collection_dto.booth_dto.fulladdress)
+                        {
+                            <tr>
+                                @*<td class="z-color-green z-padding-left-15">Adresse:</td>*@
+                                <td class="z-padding-left-15 z-color-red">@Model.collection_dto.booth_dto.street_address</td>
+                            </tr>
+                            <tr>
+                                @*<td class="z-padding-left-15">&nbsp;</td>*@
+                                <td class="z-padding-left-15 z-color-red">@Model.collection_dto.booth_dto.region_dto.zip</td>
+                            </tr>
+                            <tr>
+                                @*<td class="z-padding-left-15">&nbsp;</td>*@
+                                <td class="z-padding-left-15 z-color-red">@Model.collection_dto.booth_dto.region_dto.town</td>
+                            </tr>
+                            <tr>
+                                @*<td class="z-padding-left-15">&nbsp;</td>*@
+                                <td class="z-padding-left-15 z-color-red">@Model.collection_dto.booth_dto.country <br /><br /></td>
+                            </tr>
+                        }
+                        else
+                        {
+
+                            <tr>
+                                @*<td class="z-color-lightgreen z-padding-left-15">Adresse:</td>*@
+                                <td class="z-padding-left-15 z-color-red">@Model.collection_dto.booth_dto.region_dto.zip</td>
+                            </tr>
+                            <tr>
+                                @*<td class="z-padding-left-15">&nbsp;</td>*@
+                                <td class="z-padding-left-15 z-color-red">@Model.collection_dto.booth_dto.region_dto.town<br /><br /></td>
+                            </tr>
+                        }
+                    </table>
+
+                </div>
+                @if (current_user == null || !Model.is_owner)
+                {
+                    <div class="col-xs-12 z-background-color-black-1 z-padding-sides-0">
+                        @using (Html.BeginRouteForm("MessageA", new { type = "collection", id = Model.collection_dto.id }, FormMethod.Get, null))
+                        {
+                            <input type="submit" value="Skriv til sælger" class="btn m-l-pd-header1 z-bold z-background-color-black-1 z-color-white-1 z-adm-control myfade" />
+                        }
+                    </div>
+                }
+                <div class="col-xs-12 z-border-darkgrey z-background-color-white">
+                    <div>
+                        <br />
+                        <table>
+
+                            @if (@Model.collection_dto.booth_dto.salesman_dto.created_on != null)
+                            {
+                                <tr>
+                                    <td class="z-color-green">Oprettet:</td>
+                                    <td>
+                                        @Model.collection_dto.booth_dto.salesman_dto.created_on.ToString("dd/MM/yyyy")
+                                    </td>
+                                </tr>
+                            }
+                            @{
+                                string mnr = Model.collection_dto.booth_dto.salesman_dto.phonenumber != null ? Model.collection_dto.booth_dto.salesman_dto.phonenumber.ToString() : "**** ****";
+                                string mphone = Model.collection_dto.booth_dto.salesman_dto.show_phone ? mnr : mnr != "**** ****" ? mnr.Substring(0, 4) + " ****" : TextHelper.GetNopValue(NOP.NO_PHONENUMBER.ToString());
+
+                                <tr>
+                                    <td class="z-color-green">Tlf Nr.:<br /><br /></td>
+                                    <td>@mphone<br /><br /></td>
+                                </tr>
+
+                            }
+
+                            <tr>
+                                <td colspan="2">
+                                    <a class="pr_btn_requestemail" onclick="requestEmail('.pr_btn_requestemail', '.pr_span_email')">>> Anmod Email <<</a>
+                                </td>
+                            </tr>
+                            <tr><td colspan="2" class=""><span class="pr_span_email"></span></td></tr>
+                        </table>
+
+                    </div>
+                    <br />
+                    <div>
+                        <span class="z-bold">Om sælger</span>
+                    </div>
+                    <div>
+                        @{
+                            string mdesc = !string.IsNullOrEmpty(Model.collection_dto.booth_dto.salesman_dto.description) ? Model.collection_dto.booth_dto.salesman_dto.description : TextHelper.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                        }
+                        @Html.DisplayWithBreaksFor(mdesc)
+                    </div>
+                    <br />
+                </div>
+
+                <div class="col-xs-12 z-background-color-white z-border-darkgrey">
+                    <br />
+                    <div class=""><span class="z-bold">Vare Beskrivelse</span></div>
+                    <div class="">
+                        @*@Html.DisplayWithBreaksFor(modelItem => @Model.collection_dto.description)*@
+                        @{
+                            string mdescA = !string.IsNullOrEmpty(Model.collection_dto.description) ? Model.collection_dto.description : TextHelper.GetNopValue(NOP.NO_DESCRIPTION.ToString());
+                        }
+                        @Html.DisplayWithBreaksFor(mdescA)
+                    </div>
+                    <div class="">
+                        <span class="z-bold">Note:&nbsp;</span>
+                        <span class="">
+                            @*@Html.DisplayFor(modelItem => @Model.collection_dto.note)*@
+                            @{
+                                string mnote = !string.IsNullOrEmpty(Model.collection_dto.note) ? Model.collection_dto.note : TextHelper.GetNopValue(NOP.NO_NOTE.ToString());
+                            }
+                            @Html.DisplayFor(m => mnote)
+                        </span>
+                    </div>
+                    <hr />
+                    <table>
+                        <tr>
+                            <td><span class="z-bold">Pris:&nbsp;&nbsp;&nbsp;</span></td>
+                            <td>
+                                @{
+                                    string mprice = Model.collection_dto.price == NOP.INGEN_PRIS.ToString() ? TextHelper.GetNopValue(Model.collection_dto.price) : Model.collection_dto.price + " kr";
+                                }
+                                <span>@mprice</span>
+                            </td>
+                        </tr>
+                        @*<tr>
+                            <td><span class="z-bold">Status:&nbsp;&nbsp;&nbsp;</span></td>
+                            <td>
+                                @if (@Model.collection_dto.status_stock != null)
+                                {
+                                    <span>@Texts.GetStockValue(Model.collection_dto.status_stock)</span>
+                                }
+                            </td>
+                        </tr>*@
+                    </table>
+                    <hr />
+                    <div>
+                        <span class="z-bold">Søgeord - &nbsp;&nbsp;&nbsp;</span>
+                        @if (Model.collection_dto.booth_dto.category_main != null && Model.collection_dto.category_main_id != null)
+                        {
+                            dto_category main = Model.collection_dto.booth_dto.category_main.Where(c => c.category_id == Model.collection_dto.category_main_id).FirstOrDefault();
+                            string main_name = main.name;
+                            @Html.RouteLink("[" + main_name + "]", "Marketplace", new { c = SecurityHelper.Format(main_name, "_", false) }, new { @class = "z-color-green myfade" })
+                            if (Model.collection_dto.category_second_id != null)
+                            {
+                                if (main.children.Count() > 0)
+                                {
+                                    dto_category second = main.children.Where(c => c.category_id == Model.collection_dto.category_second_id).FirstOrDefault();
+                                    string second_name = second.name;
+                                    @Html.RouteLink("[" + second_name + "]", "Marketplace", new { c = SecurityHelper.Format(SecurityHelper.EncodeCats_MD5(false, main_name, second_name), "_", false) }, new { @class = "z-color-green myfade" });
+                                }
+                            }
+                        }
+                        @if (Model.collection_dto.tag_dtos != null)
+                        {
+                            foreach (var tag in Model.collection_dto.tag_dtos)
+                            {
+                                @Html.Raw(" ")
+                                @Html.RouteLink("[" + tag.name + "]", "Marketplace", new { s = tag.name }, new { @class = "myfade" })
+                            }
+                        }
+                    </div>
+                    <br />
+                </div>
+                <hr />
+
+
+
+            </div>
+            <hr class="z-hr-lightgrey" />
+            <div class="col-xs-12 z-background-color-white">
+                <div class="col-xs-12">
+                    <table class="xxtable">
+                        <tr class="z-background-color-white xadm_th_products">
+                            <th class="z-width-10-percent xadm_th_products_image">
+                            </th>
+                            <th class="z-width-15-percent xz-only-desk">
+                                @Html.DisplayNameFor(model => model.collection_dto.product_dtos.FirstOrDefault().name)
+                            </th>
+                            
+                            <th class="z-width-10-percent"></th>
+                        </tr>
+                        @foreach (var item in Model.collection_dto.product_dtos)
+                        {
+                            <tr>
+                                <td class="xadm_td_products_image">
+                                    @if (item.image_dtos != null && item.image_dtos.Count > 0 && !string.IsNullOrEmpty(item.image_dtos.FirstOrDefault().name))
+                                    {
+                                        string path = "/_content/images/profiles/" + Model.collection_dto.booth_dto.salesman_dto.sysname + "/booths/" + Model.collection_dto.booth_dto.sysname + "/products/" + item.sysname + "/" + item.image_dtos.FirstOrDefault().name;
+                                        @Html.RouteImage("Product", new { id = item.id }, path, null, "Sample Image", new string[] { "l-pd-pimage" }, null, null, null)
+                                    }
+                                    else
+                                    {
+                                        var path = "/_content/images/site/icons/armchair2_bw.png";
+                                        @Html.RouteImage("Product", new { id = item.id }, path, null, "Sample Image", new string[] { "l-pd-pimage" }, null, null, null)
+                                    }
+                                </td>
+                                <td class="xz-only-desk">
+                                    @Html.DisplayFor(modelItem => item.name)
+                                </td>
+                                
+                                <td>
+                                    @Html.RouteLink("Vis", "Product", new { id = item.id }, null)
+                                </td>
+                            </tr>
+                        }
+
+                    </table>
+                </div>
+            </div>
+        </div>
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        string s = ErrorHelper.HandleError(ERROR.MARKETPLACE, e);
+                                        string subject = "Fejl i front, Booth(DESK)";
+                                        string body = s;
+                                        AdminHelper.Notification.Run("mail@e-bazar.dk", "mail@e-bazar.dk", "mail@e-bazar.dk", subject, body);
+                                    }
+
+}
+@section scripts {
+    <script>
+    window.onunload = function(){};
+    $(window).on("load", function () {
+        var downloadingImages = [];
+        var counter = 0;
+        $(".loadlater").each(function (index, element) {
+            downloadingImages[counter] = new Image();
+            downloadingImages[counter].onload = function(){
+                $(element).attr("src", this.src);
+            };
+            downloadingImages[counter].src = $(element).data("src");
+            counter++;
+        });
+    });
+    $(document).ready(function () {
+        setFront(0);
+        $('.z-myalert').hide();
+        $('.z-myalert-btn').click(function () {
+            //$('.loading').css('display','block');
+            $('.z-myalert').fadeOut(200);
+            $('.z-loading').fadeOut(200);
+        });
+        //$(".btn,.tag_name").click(function () {
+        //    $('.loading').fadeIn(200);
+        //});
+
+        var col_fol_show = false;
+        $('.z-col-fol').hide();
+        $('button.z-col-fol-toggle').click(function () {
+            col_fol_show = !col_fol_show;
+            if (col_fol_show)
+                $('.z-col-fol').show();
+            else
+                $('.z-col-fol').hide();
+        });
+    });
+    function setFront(nr) {
+        //var json = JSON.parse('@Html.Raw(ViewBag.JSON)');
+        var no_thumbnails = $('.pr_hidden_no_product_dtos').val()
+        if (no_thumbnails != undefined) {
+            for (var i = 0; i < no_thumbnails; i++) {
+                if (i == nr) {
+                    $('.pr_img_content_productimage_' + i).show();
+                }
+                else {
+                    $('.pr_img_content_productimage_' + i).hide()
+                }
+            }
+        }
+    }
+    function myalert(msg)
+    {
+        //alert('alert');
+        fade = false;
+        $('.z-loading').fadeIn(400);
+        $('.z-myalert').fadeIn(400);
+        $('.z-myalert .z-myalert-txt').html(msg);
+    }
+    function requestEmail(elem, target)
+    {
+        @*var request = @Json.Encode(Model.collection_dto.booth_dto.salesman_dto.request_email);*@
+        //if (request) {
+            var booth_id = '@Json.Encode(Model.collection_dto.booth_dto.booth_id)';
+            var path = "@Url.RouteUrl("GetEmail")";//"/Administration/GetEmail";
+            var data = { 'booth_id': booth_id };
+            getEmail_Ajax(path, data, elem, target);
+        //}
+        //else {
+        //    $(elem).css('display','none');
+        //    $(target).text('anmodning afvist.');
+        //}
+    }
+    function getEmail_Ajax(path, data, elem, target) {
+        $.ajax({
+            type: "POST",
+            url: path,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify(data),
+            success: function (result) {
+                if (result.success) {
+                    if (result.ok) {
+                        $(elem).css('display','none');
+                        $(target).text(result.value);
+                    }
+                    else {
+                        $(elem).css('display','none');
+                        $(target).text('anmodning afvist.');
+                    }
+                }
+                else
+                    myalert('Der skete en fejl, beklager.');
+            },
+            error: function (er) {
+                myalert("eerror: " + er);
+            }
+        });
+    }
+    </script>
+
+}
